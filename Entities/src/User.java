@@ -11,7 +11,6 @@ public abstract class User implements Serializable {
     protected String firstName;
     protected String lastName;
     protected String email;
-    protected String phone;
     protected boolean isLoggedIn;
 
     public User(int id, String username, String password, String firstName, String lastName, String email, String phone) {
@@ -21,7 +20,6 @@ public abstract class User implements Serializable {
         this.firstName = firstName;
         this.lastName = lastName;
         setEmail(email); // Use setter to validate
-        this.phone = phone;
         this.isLoggedIn = false;
     }
 
@@ -31,7 +29,6 @@ public abstract class User implements Serializable {
     public String getFirstName() {return firstName;}
     public String getLastName() {return lastName;}
     public String getEmail() {return email;}
-    public String getPhone() {return phone;}
     public boolean isLoggedIn() {return isLoggedIn;}
 
     public void setId(int id) {this.id = id;}
@@ -40,8 +37,12 @@ public abstract class User implements Serializable {
     public void setFirstName(String firstName) {this.firstName = firstName;}
     public void setLastName(String lastName) {this.lastName = lastName;}
     public void setEmail(String email) {this.email = email;}
-    public void setPhone(String phone) {this.phone = phone;}
-    public void setIsLoggedIn(boolean isLoggedIn) {this.isLoggedIn = isLoggedIn;}
 
+    public void login() {
+        this.isLoggedIn = true;
+    }
+    public void logout() {
+        this.isLoggedIn = false;
+    }
 
 }
