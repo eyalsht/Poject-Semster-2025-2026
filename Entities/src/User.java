@@ -13,7 +13,7 @@ public abstract class User implements Serializable {
     protected String email;
     protected boolean isLoggedIn;
 
-    public User(int id, String username, String password, String firstName, String lastName, String email, String phone) {
+    public User(int id, String username, String password, String firstName, String lastName, String email) {
         this.id = id;
         this.username = username;
         setPassword(password); // Use setter to validate
