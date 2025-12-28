@@ -37,7 +37,12 @@ public abstract class User implements Serializable {
     public void setFirstName(String firstName) {this.firstName = firstName;}
     public void setLastName(String lastName) {this.lastName = lastName;}
     public void setEmail(String email) {this.email = email;}
-    public void setIsLoggedIn(boolean isLoggedIn) {this.isLoggedIn = isLoggedIn;}
 
+    public void login() {
+        this.isLoggedIn = true;
+    }
+    public void logout() {
+        this.isLoggedIn = false;
+    }
 
 }
