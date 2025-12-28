@@ -13,7 +13,7 @@ public abstract class User implements Serializable {
     protected String email;
     protected boolean isLoggedIn;
 
-    public User(int id, String username, String password, String firstName, String lastName, String email, String phone) {
+    public User(int id, String username, String password, String firstName, String lastName, String email) {
         this.id = id;
         this.username = username;
         setPassword(password); // Use setter to validate
@@ -37,7 +37,12 @@ public abstract class User implements Serializable {
     public void setFirstName(String firstName) {this.firstName = firstName;}
     public void setLastName(String lastName) {this.lastName = lastName;}
     public void setEmail(String email) {this.email = email;}
-    public void setIsLoggedIn(boolean isLoggedIn) {this.isLoggedIn = isLoggedIn;}
 
+    public void login() {
+        this.isLoggedIn = true;
+    }
+    public void logout() {
+        this.isLoggedIn = false;
+    }
 
 }
