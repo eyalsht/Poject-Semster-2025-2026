@@ -22,6 +22,15 @@ public abstract class User implements Serializable {
         setEmail(email); // Use setter to validate
         this.isLoggedIn = false;
     }
+    public User() {
+        this.id = 0;
+        this.username = "";
+        setPassword(""); // Use setter to validate
+        this.firstName = "";
+        this.lastName = "";
+        setEmail(""); // Use setter to validate
+        this.isLoggedIn = false;
+    }
 
     public int getId() {return id;}
     public String getUsername() {return username;}

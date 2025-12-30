@@ -14,7 +14,7 @@ public class SupportRequest
         this.id = id;
         this.subject = subject;
         this.description = description;
-        this.dateOpened = LocalDate.now();
+        this.date = LocalDate.now();
         this.status = RequestStatus.OPEN;
         this.response = null;
     }
@@ -42,7 +42,7 @@ public class SupportRequest
     }
 
     public LocalDate getDateOpened() {
-        return dateOpened;
+        return date;
     }
 
     public RequestStatus getStatus() {

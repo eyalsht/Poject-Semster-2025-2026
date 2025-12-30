@@ -17,7 +17,7 @@ public class City extends ContentItem
         this.maps = new ArrayList<>();
     }
     public City(int id, String name, double priceOneTime, double priceSub) {
-        this.ID = id;       // שדה מתוך ContentItem
+        this.id = id;       // שדה מתוך ContentItem
         this.name = name;   // שדה מתוך ContentItem
         this.priceOneTime = priceOneTime;
         this.priceSub = priceSub;

@@ -5,7 +5,7 @@ public class Client extends User {
     private String phoneNumber;
     private String creditCardInfo;
 
-    public Client(String id,
+    public Client(int id,
                   String firstName,
                   String lastName,
                   String username,
@@ -23,6 +23,10 @@ public class Client extends User {
         this.phoneNumber = phoneNumber;
         this.creditCardInfo = creditCardInfo;
         this.isLoggedIn = false;
+    }
+
+    public Client(int id, String username, String password, String firstName, String lastName, String email) {
+        super(id, username, password, firstName, lastName, email);
     }
 
     public void register() {
