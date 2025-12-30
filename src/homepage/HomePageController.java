@@ -1,4 +1,4 @@
-package org.example.homepage;
+package homepage;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,6 +7,9 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import entities.User;
 import javafx.scene.control.Label;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.stage.Stage;
 
 public class HomePageController {
 
@@ -54,6 +57,17 @@ public class HomePageController {
         } else {
             showPage("/org/example/homepage/ProfilePage.fxml");
         }
+    }
+    @FXML
+    private void onCloseApp(ActionEvent event) {
+        // Close the window that contains the button
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.close();
+
+        // If you want to shut down the entire JavaFX app (all windows / threads):
+        Platform.exit();
+        // Optional "hard stop" if you still have non-daemon threads running:
+        // System.exit(0);
     }
 
     private void updateLoginButton() {

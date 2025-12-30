@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.homepage.HomePageController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homepage.HomePageController">
    <top>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
@@ -47,7 +47,7 @@
                   <Insets left="10.0" top="10.0" />
                </VBox.margin></Button>
 
-            <Button mnemonicParsing="false" onAction="#onInfo"  prefHeight="30.0" prefWidth="60.0" text="Info">
+            <Button mnemonicParsing="false" onAction="#onInfo" prefHeight="30.0" prefWidth="60.0" text="Info">
                <VBox.margin>
                   <Insets left="10.0" top="10.0" />
                </VBox.margin></Button>
@@ -61,7 +61,7 @@
                </font>
             </Button>
 
-            <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="60.0" text="Button">
+            <Button mnemonicParsing="false" onAction="#onCloseApp" prefHeight="30.0" prefWidth="60.0" text="Close">
                <VBox.margin>
                   <Insets left="10.0" top="10.0" />
                </VBox.margin>

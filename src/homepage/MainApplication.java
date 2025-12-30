@@ -1,4 +1,4 @@
-package org.example.homepage;
+package homepage;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -8,6 +8,9 @@ public class MainApplication extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        System.out.println(MainApplication.class.getResource(
+                "/org.example.homepage/images/loginBackground.png"
+        ));
         FXMLLoader loader = new FXMLLoader(
                 MainApplication.class.getResource(
                         "/org/example/homepage/HomePage.fxml"

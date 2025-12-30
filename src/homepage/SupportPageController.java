@@ -1,4 +1,4 @@
-package org.example.homepage;
+package homepage;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
