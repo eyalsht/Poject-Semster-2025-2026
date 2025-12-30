@@ -4,6 +4,8 @@ import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
 import entities.City;
 import java.io.IOException;
+import java.io.FileInputStream;
+import java.util.Properties;
 
 public class GcmServer extends AbstractServer {
 
@@ -41,11 +43,23 @@ public class GcmServer extends AbstractServer {
     @Override
     protected void serverStarted() {
         System.out.println("Server listening for connections on port " + getPort());
-        String database_name="gcm_db";
-        String mysql_pw="Dan-20055";
-        // כשהשרת מתחיל, אנחנו מחברים אותו ל-DB
-        // שים לב: שנה את הסיסמה לסיסמה שלך ב-MySQL
-        DBController.connectToDB("jdbc:mysql://localhost:3306/"+database_name+"?serverTimezone=UTC", "root","Dan-20055" );
+        
+        try {
+            Properties props = new Properties();
+            FileInputStream fis = new FileInputStream("db.properties");
+            props.load(fis);
+            fis.close();
+            
+            String dbUrl = props.getProperty("db.url");
+            String dbUser = props.getProperty("db.user");
+            String dbPassword = props.getProperty("db.password");
+            
+            // כשהשרת מתחיל, אנחנו מחברים אותו ל-DB
+            DBController.connectToDB(dbUrl, dbUser, dbPassword);
+        } catch (IOException e) {
+            System.err.println("Error loading database configuration: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
