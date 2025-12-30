@@ -5,5 +5,6 @@ module org.example.homepage {
 
     opens homepage to javafx.fxml;
     opens entities to javafx.base;
+
     exports homepage;
 }
