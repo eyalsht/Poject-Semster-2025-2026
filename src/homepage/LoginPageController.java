@@ -1,4 +1,4 @@
-package org.example.homepage;
+package homepage;
 
 public class LoginPageController {
 }

@@ -1,4 +1,4 @@
-package org.example.homepage;
+package homepage;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

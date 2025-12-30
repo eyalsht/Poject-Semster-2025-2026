@@ -11,7 +11,7 @@
 
 <VBox xmlns="http://javafx.com/javafx/23.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.homepage.SupportPageController"
+      fx:controller="homepage.SupportPageController"
       spacing="10"
       fillWidth="true">
 
