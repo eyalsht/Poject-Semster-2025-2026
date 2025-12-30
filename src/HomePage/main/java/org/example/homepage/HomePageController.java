@@ -10,18 +10,20 @@ import javafx.scene.control.Label;
 
 public class HomePageController {
 
-    @FXML private AnchorPane centerHost;
+    // @FXML private AnchorPane centerHost;
+    @FXML private Button btnCatalog;
+    @FXML private Button btnProfile;
+    @FXML private Button btnManagement;
     @FXML private Button loginBtn;
     @FXML private Label lblWelcome; // ה-Label מתןך ה-SceneBuilder
+
     private User currentUser = null; // משתנה חדש במקום ה-boolean loggedIn
 
     private boolean loggedIn = false;
 
     @FXML
     public void initialize() {
-        /*onLoginOrProfile();   // Login first
-        //updateLoginButton();*/
-        onCatalog(); // ברירת מחדל: מציג את הקטלוג
+        showPage("/org/example/homepage/HomePage.fxml");
         updateUI();  // קורא לפונקציה החדשה שמסדרת את הכפתורים
     }
 
