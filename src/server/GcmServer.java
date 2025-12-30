@@ -7,7 +7,6 @@ import java.io.IOException;
 
 public class GcmServer extends AbstractServer {
 
-    // בנאי שמקבל את הפורט ומעביר אותו למחלקת האב
     public GcmServer(int port) {
         super(port);
     }

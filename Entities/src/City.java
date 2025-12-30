@@ -7,15 +7,30 @@ public class City extends ContentItem
 {
     private double priceSub;
     private double priceOneTime;
+
+    private double pendingPriceSub;
+    private double pendingPriceOneTime;
+
     private ArrayList<Map> maps;
 
-    public City()
-    {
-        maps = new ArrayList<Map>();
+    public City() {
+        this.maps = new ArrayList<>();
     }
-    public void addMap(Map map)
-    {
-        maps.add(map);
+    public City(int id, String name, double priceOneTime, double priceSub) {
+        this.ID = id;       // שדה מתוך ContentItem
+        this.name = name;   // שדה מתוך ContentItem
+        this.priceOneTime = priceOneTime;
+        this.priceSub = priceSub;
+        this.maps = new ArrayList<>();
+    }
+    public double getPriceSub() { return priceSub; }
+    public void setPriceSub(double priceSub) { this.priceSub = priceSub; }
+
+    public double getPriceOneTime() { return priceOneTime; }
+    public void setPriceOneTime(double priceOneTime) { this.priceOneTime = priceOneTime; }
+    public void addMap(Map map) {
+        if(this.maps == null) this.maps = new ArrayList<>();
+        this.maps.add(map);
     }
     public int getMapCount()
     {
@@ -23,6 +38,6 @@ public class City extends ContentItem
     }
     @Override
     public String getDetails() {
-        return "";
+        return "City: " + name;
     }
 }
