@@ -1,5 +1,4 @@
-package HomePage.main.java.org.example.homepage;
-
+package org.example.homepage;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
