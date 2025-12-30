@@ -1,9 +1,9 @@
-package org.openjfx.demo2;// This file contains material supporting section 3.7 of the textbook:
+package ocsf;// This file contains material supporting section 3.7 of the textbook:
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
 
-import client.ChatClient;
-import common.ChatIF;
+import ocsf.client.ChatClient;
+import ocsf.common.ChatIF;
 
 import java.io.BufferedReader;
 import java.io.IOException;

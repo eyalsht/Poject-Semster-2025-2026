@@ -2,10 +2,10 @@
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
 
-package client;
+package ocsf.client;
 
-import common.ChatIF;
-import ocsf.client.AbstractClient;
+import ocsf.common.ChatIF;
+import ocsf.ocsf.client.AbstractClient;
 
 import java.io.IOException;
 
