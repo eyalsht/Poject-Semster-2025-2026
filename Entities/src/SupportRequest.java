@@ -7,6 +7,7 @@ public class SupportRequest
     private String subject;
     private String description;
     private LocalDate date;
+    private LocalDate dateOpened ;
     private RequestStatus status;
     private String response;
 
