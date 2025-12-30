@@ -16,10 +16,10 @@ public abstract class User implements Serializable {
     public User(int id, String username, String password, String firstName, String lastName, String email) {
         this.id = id;
         this.username = username;
-        setPassword(password); // Use setter to validate
+        this.password = password; // Use setter to validate
         this.firstName = firstName;
         this.lastName = lastName;
-        setEmail(email); // Use setter to validate
+        this.email = email; // Use setter to validate
         this.isLoggedIn = false;
     }
     public User() {

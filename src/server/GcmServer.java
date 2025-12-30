@@ -11,7 +11,6 @@ public class GcmServer extends AbstractServer {
         super(port);
     }
 
-    // זו הפונקציה הכי חשובה! כאן מתקבלות כל הבקשות מהלקוחות
     @Override
     protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
         System.out.println("Message received: " + msg + " from " + client);
