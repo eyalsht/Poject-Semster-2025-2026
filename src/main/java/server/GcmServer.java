@@ -41,10 +41,11 @@ public class GcmServer extends AbstractServer {
     @Override
     protected void serverStarted() {
         System.out.println("Server listening for connections on port " + getPort());
-
+        String database_name="gcm_db";
+        String mysql_pw="Dan-20055";
         // כשהשרת מתחיל, אנחנו מחברים אותו ל-DB
         // שים לב: שנה את הסיסמה לסיסמה שלך ב-MySQL
-        DBController.connectToDB("jdbc:mysql://localhost:3306/gcm_db?serverTimezone=UTC", "root", "Dan-20055");
+        DBController.connectToDB("jdbc:mysql://localhost:3306/"+database_name+"?serverTimezone=UTC", "root","Dan-20055" );
     }
 
     @Override
