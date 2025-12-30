@@ -12,7 +12,15 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-image: url(&quot;/org/example/homepage/images/loginBackground.png&quot;); -fx-background-size: cover; -fx-background-position: center center; -fx-background-repeat: no-repeat;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.homepage.LoginPageController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0"
+            style="-fx-background-image: url('/org/example/homepage/images/loginBackground.png');
+                   -fx-background-size: cover;
+                   -fx-background-position: center;
+                   -fx-background-repeat: no-repeat;"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.homepage.LoginPageController">
+
    <children>
       <VBox alignment="TOP_CENTER" layoutX="188.0" layoutY="58.0" prefHeight="266.0" prefWidth="366.0" spacing="100.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
          <children>
