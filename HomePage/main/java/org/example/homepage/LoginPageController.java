@@ -1,4 +1,4 @@
-package HomePage.main.java.org.example.homepage;
+package org.example.homepage;
 
 public class LoginPageController {
 }
