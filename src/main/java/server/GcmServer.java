@@ -11,8 +11,8 @@ public class GcmServer extends AbstractServer {
         super(port);
     }
 
-    @Override
-    protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
+
+    protected  void handleMessageFromClient(Object msg, ConnectionToClient client) {
         System.out.println("Message received: " + msg + " from " + client);
 
         // נניח שהלקוח שולח מחרוזת פשוטה שהיא שם העיר (בפרויקט אמיתי שולחים אובייקט בקשה מסודר)
@@ -44,7 +44,7 @@ public class GcmServer extends AbstractServer {
 
         // כשהשרת מתחיל, אנחנו מחברים אותו ל-DB
         // שים לב: שנה את הסיסמה לסיסמה שלך ב-MySQL
-        DBController.connectToDB("jdbc:mysql://localhost/gcm_db?serverTimezone=IST", "root", "123456");
+        DBController.connectToDB("jdbc:mysql://localhost:3306/gcm_db?serverTimezone=UTC", "root", "Dan-20055");
     }
 
     @Override
