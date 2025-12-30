@@ -10,6 +10,7 @@ public class Employee extends User {
                     String email,String password,String employeeId, EmployeeRole role) {
         // Use super to call the User constructor
         super( id,  firstName, lastName, username, email, password);
+        
         this.employeeId = employeeId;
         this.role = role;
     }
