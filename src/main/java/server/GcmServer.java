@@ -1,4 +1,4 @@
-package server;
+package main.java.server;
 
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;

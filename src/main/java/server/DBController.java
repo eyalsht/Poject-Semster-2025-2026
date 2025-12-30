@@ -1,4 +1,4 @@
-package server;
+package main.java.server;
 
 import entities.User;
 import entities.City;
