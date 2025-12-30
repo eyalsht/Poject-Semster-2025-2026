@@ -1,6 +1,5 @@
 package server;
 
-import entities.User;
 import entities.City;
 import java.sql.*;
 

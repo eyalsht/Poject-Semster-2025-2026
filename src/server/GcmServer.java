@@ -1,9 +1,11 @@
 package server;
 
-import ocsf.server.AbstractServer;
-import ocsf.server.ConnectionToClient;
+import ocsf.ocsf.server.AbstractServer;
+import ocsf.ocsf.server.ConnectionToClient;
 import entities.City;
 import java.io.IOException;
+import java.io.FileInputStream;
+import java.util.Properties;
 
 public class GcmServer extends AbstractServer {
 
@@ -11,8 +13,8 @@ public class GcmServer extends AbstractServer {
         super(port);
     }
 
-    @Override
-    protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
+
+    protected  void handleMessageFromClient(Object msg, ConnectionToClient client) {
         System.out.println("Message received: " + msg + " from " + client);
 
         // נניח שהלקוח שולח מחרוזת פשוטה שהיא שם העיר (בפרויקט אמיתי שולחים אובייקט בקשה מסודר)
@@ -25,7 +27,7 @@ public class GcmServer extends AbstractServer {
             if (request.startsWith("get_city:")) {
                 String cityName = request.split(":")[1];
 
-                // >>> כאן מתבצע הקישור ל-DBController! <<<
+                // >>> כאן מתבצע הקישור ל-server.DBController! <<<
                 City city = DBController.getCityByName(cityName);
 
                 try {
@@ -41,10 +43,23 @@ public class GcmServer extends AbstractServer {
     @Override
     protected void serverStarted() {
         System.out.println("Server listening for connections on port " + getPort());
-
-        // כשהשרת מתחיל, אנחנו מחברים אותו ל-DB
-        // שים לב: שנה את הסיסמה לסיסמה שלך ב-MySQL
-        DBController.connectToDB("jdbc:mysql://localhost/gcm_db?serverTimezone=IST", "root", "123456");
+        
+        try {
+            Properties props = new Properties();
+            FileInputStream fis = new FileInputStream("db.properties");
+            props.load(fis);
+            fis.close();
+            
+            String dbUrl = props.getProperty("db.url");
+            String dbUser = props.getProperty("db.user");
+            String dbPassword = props.getProperty("db.password");
+            
+            // כשהשרת מתחיל, אנחנו מחברים אותו ל-DB
+            DBController.connectToDB(dbUrl, dbUser, dbPassword);
+        } catch (IOException e) {
+            System.err.println("Error loading database configuration: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
