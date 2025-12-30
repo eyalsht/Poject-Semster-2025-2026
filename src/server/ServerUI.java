@@ -23,7 +23,7 @@ public class ServerUI {
             System.err.println("Server could not be started.");
         }
 
-        System.out.println("Server started on port" + port);
+        System.out.println("Server started on port " + port);
         System.out.println("Type 'Exit' to exit or 'quit' to quit.");
         Scanner sc = new Scanner(System.in);
         while(true){
