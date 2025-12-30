@@ -13,6 +13,5 @@
     <orderEntry type="library" name="ocsf (1)" level="project" />
     <orderEntry type="library" name="openjfx.javafx.controls" level="project" />
     <orderEntry type="library" name="openjfx.javafx.fxml" level="project" />
-    <orderEntry type="library" name="mysql.connector.j" level="project" />
   </component>
 </module>
