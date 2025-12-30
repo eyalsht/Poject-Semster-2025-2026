@@ -4,5 +4,6 @@ module org.example.homepage {
     requires java.sql;
 
     opens org.example.homepage to javafx.fxml;
+    opens entities to javafx.base;
     exports org.example.homepage;
 }
