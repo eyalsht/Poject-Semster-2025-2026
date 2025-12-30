@@ -10,7 +10,7 @@ import javafx.scene.control.Label;
 
 public class HomePageController {
 
-    // @FXML private AnchorPane centerHost;
+    @FXML private AnchorPane centerHost;
     @FXML private Button btnCatalog;
     @FXML private Button btnProfile;
     @FXML private Button btnManagement;
@@ -23,7 +23,7 @@ public class HomePageController {
 
     @FXML
     public void initialize() {
-        showPage("/org/example/homepage/HomePage.fxml");
+        showPage("/org/example/homepage/WelcomePage.fxml");
         updateUI();  // קורא לפונקציה החדשה שמסדרת את הכפתורים
     }
 
@@ -93,5 +93,11 @@ public class HomePageController {
             loginBtn.setText("Profile");
             if (lblWelcome != null) lblWelcome.setText("Welcome, " + currentUser.getFirstName());
         }
+    }
+
+    @FXML
+    void onManagement(javafx.event.ActionEvent event) {
+        System.out.println("Management button clicked!");
+        // בעתיד: showPage("/gui/EmployeeDashboard.fxml");
     }
 }
