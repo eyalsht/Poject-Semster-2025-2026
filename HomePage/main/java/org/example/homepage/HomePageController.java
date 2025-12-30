@@ -5,18 +5,26 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
+import entities.User;
+import javafx.scene.control.Label;
 
 public class HomePageController {
 
     @FXML private AnchorPane centerHost;
+    @FXML private Button btnCatalog;
+    @FXML private Button btnProfile;
+    @FXML private Button btnManagement;
     @FXML private Button loginBtn;
+    @FXML private Label lblWelcome; // ה-Label מתןך ה-SceneBuilder
+
+    private User currentUser = null; // משתנה חדש במקום ה-boolean loggedIn
 
     private boolean loggedIn = false;
 
     @FXML
     public void initialize() {
-        onLoginOrProfile();   // Login first
-        updateLoginButton();
+        showPage("/org/example/homepage/WelcomePage.fxml");
+        updateUI();  // קורא לפונקציה החדשה שמסדרת את הכפתורים
     }
 
     @FXML
@@ -36,7 +44,12 @@ public class HomePageController {
 
     @FXML
     private void onLoginOrProfile() {
-        if (!loggedIn) {
+      /*  if (!loggedIn) {
+            showPage("/org/example/homepage/LoginPage.fxml");
+        } else {
+            showPage("/org/example/homepage/ProfilePage.fxml");
+        }*/
+        if (currentUser == null) {
             showPage("/org/example/homepage/LoginPage.fxml");
         } else {
             showPage("/org/example/homepage/ProfilePage.fxml");
@@ -62,5 +75,29 @@ public class HomePageController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setLoggedInUser(User user) {
+        this.currentUser = user;
+        updateUI(); // עדכון השם והכפתור
+        onCatalog(); // החזרה לקטלוג הראשי (אופציונלי)
+    }
+
+    private void updateUI() {
+        if (currentUser == null) {
+            // מצב אורח
+            loginBtn.setText("Login");
+            if (lblWelcome != null) lblWelcome.setText("Welcome, Guest");
+        } else {
+            // מצב מחובר - שימוש בשם האמיתי
+            loginBtn.setText("Profile");
+            if (lblWelcome != null) lblWelcome.setText("Welcome, " + currentUser.getFirstName());
+        }
+    }
+
+    @FXML
+    void onManagement(javafx.event.ActionEvent event) {
+        System.out.println("Management button clicked!");
+        // בעתיד: showPage("/gui/EmployeeDashboard.fxml");
     }
 }
