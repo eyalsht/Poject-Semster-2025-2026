@@ -1,7 +1,7 @@
-package main.java.server;
+package server;
 
-import ocsf.server.AbstractServer;
-import ocsf.server.ConnectionToClient;
+import ocsf.ocsf.server.AbstractServer;
+import ocsf.ocsf.server.ConnectionToClient;
 import entities.City;
 import java.io.IOException;
 import java.io.FileInputStream;
@@ -27,7 +27,7 @@ public class GcmServer extends AbstractServer {
             if (request.startsWith("get_city:")) {
                 String cityName = request.split(":")[1];
 
-                // >>> כאן מתבצע הקישור ל-DBController! <<<
+                // >>> כאן מתבצע הקישור ל-server.DBController! <<<
                 City city = DBController.getCityByName(cityName);
 
                 try {

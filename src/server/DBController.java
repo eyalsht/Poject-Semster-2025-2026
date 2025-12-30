@@ -1,6 +1,5 @@
-package main.java.server;
+package server;
 
-import entities.User;
 import entities.City;
 import java.sql.*;
 
