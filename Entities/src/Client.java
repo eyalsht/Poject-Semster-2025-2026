@@ -20,6 +20,19 @@ public class Client extends User {
         this.creditCardInfo = creditCardInfo;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getCreditCardInfo() {
+        return creditCardInfo;
+    }
+    public void setCreditCardInfo(String creditCardInfo) {
+        this.creditCardInfo = creditCardInfo;
+    }
     public void register() {
         // registration logic
     }
