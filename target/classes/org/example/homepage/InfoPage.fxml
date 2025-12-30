@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.homepage.InfoPageController">
+   <children>
+      <HBox layoutX="178.0" layoutY="7.0" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Label text="Welcome to GCM information page">
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+            </Label>
+         </children>
+      </HBox>
+      <VBox layoutY="100.0" prefHeight="350.0" prefWidth="600.0">
+         <children>
+            <Label text="Email: globalcitymap_info@gmail.com">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label text="Secretary: Rivka Mualem">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label text="Phone number: 13-8695673">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Separator prefHeight="38.0" prefWidth="210.0" />
+            <Label text="The Totally Serious History of Global City Map">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label prefHeight="234.0" prefWidth="586.0" text="Global City Map was founded under very unusual circumstances.According to highly unreliable sources, the creator of the company was once an officer in the Ottoman army during World War I. During one particularly confusing battle, he allegedly made accidental contact with an ancient, cosmic, tentacled entity known only as Catulho (pronounced however you like).Catulho promised world domination, eternal knowledge, and free travel routes — in exchange for absolute loyalty and very good map design.The plan was simple: create a global city map so perfectly organized that travelers would unknowingly follow paths designed to gently hypnotize humanity into submission… right before the ancient god awakens.Unfortunately for Catulho, technology was not quite ready in 1917.Today, we proudly continue this completely imaginary mission by transferring the plan into the digital world. Our maps no longer hypnotize users (probably), but they do help people explore cities, plan routes, and occasionally question reality.So subscribe, travel the world, enjoy the map —and remember: any resemblance to ancient gods, secret domination plans, or tentacles is purely coincidental.Probably." wrapText="true">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
