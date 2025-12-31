@@ -3,6 +3,8 @@ package server;
 import ocsf.ocsf.server.AbstractServer;
 import ocsf.ocsf.server.ConnectionToClient;
 import entities.City;
+import entities.actionType;
+import entities.Message;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -12,85 +14,36 @@ public class GcmServer extends AbstractServer {
         super(port);
     }
 
-
-    /*protected  void handleMessageFromClient(Object msg, ConnectionToClient client) {
-        System.out.println("Message received: " + msg + " from " + client);
-
-        // נניח שהלקוח שולח מחרוזת פשוטה שהיא שם העיר (בפרויקט אמיתי שולחים אובייקט בקשה מסודר)
-        // אבל לצורך הדוגמה של הקישור:
-        if (msg instanceof String) {
-            String request = (String) msg;
-
-            // בדיקה האם הבקשה היא לקבלת עיר
-            // פרוטוקול דוגמה: "get_city:Tel Aviv"
-            if (request.startsWith("get_city:")) {
-                String cityName = request.split(":")[1];
-
-                // >>> כאן מתבצע הקישור ל-server.DBController! <<<
-                City city = DBController.getCityByName(cityName);
-
-                try {
-                    // שליחת האובייקט חזרה ללקוח
-                    client.sendToClient(city);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }*/
-
     @Override
     protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
-        if (!(msg instanceof String request)) {
-            System.out.println("SERVER got non-string msg: " + msg);
-            return;
-        }
+        System.out.println("Message received: " + msg + " from " + client);
 
-        System.out.println("SERVER got request: " + request);
+        if (msg instanceof Message) {
+            Message request = (Message) msg;
 
-        try {
-            if (request.equals("get_cities")) {
-                var cities = DBController.getAllCityNames();
-                System.out.println("SERVER sending cities: " + cities.size());
-                client.sendToClient(cities);
-                return;
+            try {
+                switch (request.getAction()) {
+
+                    case LOGIN_REQUEST:
+                        System.out.println("Login request received");
+                        break;
+
+                    case GET_ALL_CITIES_REQUEST:
+                        System.out.println("Catalog request received");
+                        break;
+
+                    case UPDATE_PRICE_REQUEST:
+                        System.out.println("Price update request received");
+                        break;
+
+                    default:
+                        System.out.println("Unknown action: " + request.getAction());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            if (request.startsWith("get_maps:")) {
-                String city = request.split(":", 2)[1];
-                var maps = DBController.getMapNamesForCity(city);
-                System.out.println("SERVER sending maps for " + city + ": " + maps.size());
-                client.sendToClient(maps);
-                return;
-            }
-
-            if (request.startsWith("get_versions:")) {
-                String[] parts = request.split(":", 3);
-                String city = parts[1];
-                String map  = parts[2];
-                var versions = DBController.getVersionsForCityMap(city, map);
-                System.out.println("SERVER sending versions for " + city + "/" + map + ": " + versions.size());
-                client.sendToClient(versions);
-                return;
-            }
-
-            if (request.startsWith("get_catalog:")) {
-                String[] parts = request.split(":", 4);
-                String city = parts.length > 1 && !parts[1].isBlank() ? parts[1] : null;
-                String map  = parts.length > 2 && !parts[2].isBlank() ? parts[2] : null;
-                String ver  = parts.length > 3 && !parts[3].isBlank() ? parts[3] : null;
-
-                var rows = DBController.getCatalogRows(city, map, ver);
-                System.out.println("SERVER sending catalog rows: " + rows.size()
-                        + " first=" + (rows.isEmpty() ? "none" : rows.get(0).getClass()));
-                client.sendToClient(rows);
-                return;
-            }
-
-            System.out.println("SERVER unknown request: " + request);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            System.out.println("Warning: Received a non-Message object!");
         }
     }
 
