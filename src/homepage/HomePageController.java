@@ -1,6 +1,5 @@
 package homepage;
 
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -10,6 +9,8 @@ import javafx.scene.control.Label;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
+import javafx.fxml.FXML;
+import homepage.LoginPageController;
 
 public class HomePageController {
 
@@ -51,15 +52,10 @@ public class HomePageController {
 
     @FXML
     private void onLoginOrProfile() {
-      /*  if (!loggedIn) {
-            showPage("/org/example/homepage/LoginPage.fxml");
-        } else {
-            showPage("/org/example/homepage/ProfilePage.fxml");
-        }*/
         if (currentUser == null) {
             showPage("/org/example/homepage/LoginPage.fxml");
         } else {
-            showPage("/org/example/homepage/ProfilePage.fxml");
+            showProfilePage();
         }
     }
     @FXML
@@ -76,6 +72,11 @@ public class HomePageController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Node view = loader.load();
 
+            Object controller = loader.getController();
+            if (controller instanceof LoginPageController loginController) {
+                loginController.setHomePageController(this);
+            }
+
             // Make the loaded page fill the center AnchorPane:
             AnchorPane.setTopAnchor(view, 0.0);
             AnchorPane.setRightAnchor(view, 0.0);
@@ -91,7 +92,7 @@ public class HomePageController {
     public void setLoggedInUser(User user) {
         this.currentUser = user;
         updateUI(); // עדכון השם והכפתור
-        onCatalog(); // החזרה לקטלוג הראשי (אופציונלי)
+        showProfilePage();
     }
 
     private void updateUI() {
@@ -132,7 +133,7 @@ public class HomePageController {
         System.out.println("Management button clicked!");
         // בעתיד: showPage("/gui/EmployeeDashboard.fxml");
     }
-    private void showProfilePage() {
+    public void showProfilePage() {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/org/example/homepage/ProfilePage.fxml")
