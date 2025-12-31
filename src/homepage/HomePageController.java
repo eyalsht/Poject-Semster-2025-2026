@@ -139,4 +139,27 @@ public class HomePageController {
         System.out.println("Management button clicked!");
         // בעתיד: showPage("/gui/EmployeeDashboard.fxml");
     }
+    private void showProfilePage() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/org/example/homepage/ProfilePage.fxml")
+            );
+
+            AnchorPane view = loader.load();
+
+            ProfilePageController controller = loader.getController();
+            controller.setUser(currentUser); // 👈 PASS USER HERE
+
+            AnchorPane.setTopAnchor(view, 0.0);
+            AnchorPane.setRightAnchor(view, 0.0);
+            AnchorPane.setBottomAnchor(view, 0.0);
+            AnchorPane.setLeftAnchor(view, 0.0);
+
+            centerHost.getChildren().setAll(view);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
