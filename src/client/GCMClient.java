@@ -9,8 +9,9 @@ public class GCMClient extends AbstractClient {
     private static GCMClient instance;
 
     // Fields for handling responses (based on your diagram)
+    private boolean busy = false;        // only 1 request at a time
     private boolean awaitResponse = false;
-    private Object lastResponse = null;
+    private Object lastResponse = null;;
 
     /**
      * Private constructor implements the Singleton pattern.
@@ -50,7 +51,7 @@ public class GCMClient extends AbstractClient {
         synchronized (this) {
             this.lastResponse = msg;
             this.awaitResponse = false;
-            this.notifyAll(); // Wake up the thread waiting in sendRequest
+            this.notifyAll();
         }
     }
 
@@ -62,32 +63,36 @@ public class GCMClient extends AbstractClient {
      */
     public Object sendRequest(Object msg) {
         synchronized (this) {
-            // 1. Reset state
+
+            // wait until no other request is running
+            while (busy) {
+                try { wait(); } catch (InterruptedException e) { e.printStackTrace(); }
+            }
+            busy = true;
+
+            // prepare waiting for THIS response
             awaitResponse = true;
             lastResponse = null;
 
             try {
-                // 2. Send message to server
                 sendToServer(msg);
 
-                // 3. Wait for handleMessageFromServer to update state
                 while (awaitResponse) {
-                    try {
-                        wait(); // Releases lock and waits for notify()
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    try { wait(); } catch (InterruptedException e) { e.printStackTrace(); }
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("Could not send message to server.");
-                awaitResponse = false;
+            } finally {
+                busy = false;
+                notifyAll(); // allow next request to run
             }
 
-            // 4. Return the received response
             return lastResponse;
         }
     }
+
 
     // Optional: Methods to manage connection explicitly if needed
     public void quit() {
@@ -96,6 +101,6 @@ public class GCMClient extends AbstractClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.exit(0);
     }
+
 }

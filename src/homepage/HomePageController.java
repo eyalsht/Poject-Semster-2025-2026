@@ -64,14 +64,7 @@ public class HomePageController {
     }
     @FXML
     private void onCloseApp(ActionEvent event) {
-        // Close the window that contains the button
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
-
-        // If you want to shut down the entire JavaFX app (all windows / threads):
-        Platform.exit();
-        // Optional "hard stop" if you still have non-daemon threads running:
-        // System.exit(0);
+        MainApplication.shutdownApp();
     }
 
     private void updateLoginButton() {
