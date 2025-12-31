@@ -30,6 +30,7 @@ public class HomePageController {
         updateUI();  // קורא לפונקציה החדשה שמסדרת את הכפתורים
     }
 
+
     @FXML
     private void onCatalog() {
         showPage("/org/example/homepage/CatalogPage.fxml");
