@@ -3,8 +3,13 @@ package server;
 import entities.City;
 import java.sql.*;
 import entities.MapCatalogRow;
+import entities.PriceType;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class DBController {
     private static Connection connection;
@@ -143,6 +148,68 @@ public class DBController {
         }
         return versions;
     }
+    public static ArrayList<City> getAllCities() {
+        ArrayList<City> cities = new ArrayList<>();
+        String query = "SELECT * FROM cities";
 
+        try {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ResultSet rs =ps.executeQuery();
 
+            while (rs.next()){
+                int id=rs.getInt("id");
+                String name=rs.getString("name");
+                double priceOneTime=rs.getDouble("price_one_time");
+                double PriceSub=rs.getDouble("price_sub");
+
+                City city = new City(id,name,priceOneTime,PriceSub);
+                cities.add(city);
+            }
+            rs.close();
+            ps.close();
+        }
+        catch(SQLException e) {
+            System.out.println("Error fetching cities: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return cities;
+    }
+    public static boolean requestPriceUpdate(int cityId, double newPrice, entities.PriceType type) {
+        String column = (type == PriceType.ONE_TIME) ? "pending_price_one_time" : "pending_price_sub";
+        String query = "UPDATE cities SET " + column + " = ? " + column + " WHERE id = ?";
+
+        try{
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setDouble(1, newPrice);
+            ps.setInt(2, cityId);
+
+            int rows=ps.executeUpdate();
+            ps.close();
+            return rows > 0;
+
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public static boolean approvePriceUpdate(int cityId, entities.PriceType type) {
+        String pendingCol = (type == entities.PriceType.ONE_TIME) ? "pending_price_one_time" : "pending_price_sub";
+        String realCol = (type == entities.PriceType.ONE_TIME) ? "price_one_time" : "price_sub";
+
+        String query = "UPDATE cities SET " + realCol + " = " + pendingCol + ", " + pendingCol + " = -1 WHERE id = ?";
+
+        try{
+            PreparedStatement ps= connection.prepareStatement(query);
+            ps.setInt(1,cityId);
+
+            int rows=ps.executeUpdate();
+            ps.close();
+            return rows > 0;
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
