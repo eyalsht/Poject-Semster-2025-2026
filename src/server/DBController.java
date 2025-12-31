@@ -1,9 +1,8 @@
 package server;
 
-import entities.City;
+import entities.*;
+
 import java.sql.*;
-import entities.MapCatalogRow;
-import entities.PriceType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -211,5 +210,50 @@ public class DBController {
             e.printStackTrace();
             return false;
         }
+    }
+    public static User getUserForLogin(String username) {
+        User user = null;
+
+        String query = "SELECT * FROM users WHERE username = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String role = rs.getString("role");
+                    int id = rs.getInt("id");
+                    String password = rs.getString("password");
+                    String email = rs.getString("email");
+
+
+                    if ("Client".equalsIgnoreCase(role)) {
+                        user = new Client(id, username, password, email);
+                    } else if ("Employee".equalsIgnoreCase(role) || "Manager".equalsIgnoreCase(role)) {
+                        user = new Employee(id, username, password, email, role /* פרמטרים נוספים */);
+                    }
+
+
+                    if (user != null) {
+                        user.setFailedAttempts(rs.getInt("failed_attempts"));
+                        user.setBlocked(rs.getBoolean("is_blocked"));
+                    }
+                }
+            }
+        }
+        catch (SQLException e)
+            { e.printStackTrace();
+        }
+        return user;
+    }
+
+    // פונקציה לעדכון מצב המשתמש ב-DB (חסימה/איפוס)
+    public static void updateUserSecurityState(User user) {
+        String query = "UPDATE users SET failed_attempts = ?, is_blocked = ? WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, user.getFailedAttempts());
+            ps.setBoolean(2, user.isBlocked());
+            ps.setInt(3, user.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
     }
 }

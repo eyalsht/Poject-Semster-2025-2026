@@ -37,6 +37,7 @@
                   <Insets right="10.0" top="20.0" />
                </GridPane.margin>
             </Button>
+             <Label fx:id="lblError" text="" textFill="RED" wrapText="true" alignment="CENTER" maxWidth="250.0" />
             <Button mnemonicParsing="false" prefWidth="60.0" text="Register" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets left="10.0" top="20.0" />

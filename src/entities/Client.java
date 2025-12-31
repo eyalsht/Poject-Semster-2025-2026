@@ -20,6 +20,11 @@ public class Client extends User {
         this.creditCardInfo = creditCardInfo;
     }
 
+    public Client(int id, String username, String password, String email) {
+        //to add and check
+
+    }
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
