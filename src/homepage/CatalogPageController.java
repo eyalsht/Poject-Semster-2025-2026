@@ -171,7 +171,6 @@ public class CatalogPageController {
 
 }
 */
-
 import client.GCMClient;
 import entities.MapCatalogRow;
 import entities.Message;
@@ -205,36 +204,47 @@ public class CatalogPageController {
 
     @FXML
     public void initialize() {
-
+        // קישור עמודות הטבלה לשדות במחלקה MapCatalogRow
         colCity.setCellValueFactory(new PropertyValueFactory<>("city"));
         colMap.setCellValueFactory(new PropertyValueFactory<>("map"));
         colVersion.setCellValueFactory(new PropertyValueFactory<>("version"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         colDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
 
+        // הגדרת מצב התחלתי לפקדים
         cbMap.setDisable(true);
         cbVersion.setDisable(true);
 
+        // טעינת נתונים ראשונית
         loadCitiesFromServer();
         loadCatalogFromServer(null, null, null);
 
-        // Listeners
+        // --- מאזינים (Listeners) לשינויים בבחירה ---
+
+        // בעת בחירת עיר: אפס את המפות והגרסאות, טען מפות חדשות וסנן את הטבלה
         cbCity.valueProperty().addListener((obs, oldV, newV) -> {
             cbMap.getItems().clear();
             cbVersion.getItems().clear();
+
             cbMap.setDisable(newV == null);
             cbVersion.setDisable(true);
 
-            if (newV != null) loadMapsForCityFromServer(newV);
+            if (newV != null) {
+                loadMapsForCityFromServer(newV);
+            }
+
             loadCatalogFromServer(newV, null, null);
         });
 
         cbMap.valueProperty().addListener((obs, oldV, newV) -> {
             cbVersion.getItems().clear();
             cbVersion.setDisable(newV == null);
+
             String city = cbCity.getValue();
 
-            if (city != null && newV != null) loadVersionsForCityMapFromServer(city, newV);
+            if (city != null && newV != null) {
+                loadVersionsForCityMapFromServer(city, newV);
+            }
             loadCatalogFromServer(city, newV, null);
         });
 
@@ -243,11 +253,9 @@ public class CatalogPageController {
         });
     }
 
-    // -------------------- SERVER CALLS --------------------
 
     private void loadCitiesFromServer() {
         new Thread(() -> {
-            //  Message
             Message request = new Message(actionType.GET_CITY_NAMES_REQUEST);
             Object response = client.sendRequest(request);
 
@@ -272,7 +280,6 @@ public class CatalogPageController {
 
     private void loadVersionsForCityMapFromServer(String city, String map) {
         new Thread(() -> {
-
             ArrayList<String> params = new ArrayList<>(Arrays.asList(city, map));
             Message request = new Message(actionType.GET_VERSIONS_REQUEST, params);
             Object response = client.sendRequest(request);
@@ -286,7 +293,7 @@ public class CatalogPageController {
 
     private void loadCatalogFromServer(String city, String map, String version) {
         new Thread(() -> {
-
+            // המרה למחרוזות ריקות במידה והערך הוא null (למניעת שגיאות בשרת)
             String c = (city == null) ? "" : city;
             String m = (map == null) ? "" : map;
             String v = (version == null) ? "" : version;
