@@ -8,6 +8,8 @@ CREATE TABLE users(
             first_name VARCHAR(255),
             last_name VARCHAR(255),
             email VARCHAR(255),
+            failed_attempts INT DEFAULT 0,
+            is_blocked BOOLEAN DEFAULT 0;
             role ENUM('CLIENT', 'EMPLOYEE', 'CONTENT_MANAGER', 'COMPANY_MANAGER', 'CONTENT_WORKER') NOT NULL
 );
 

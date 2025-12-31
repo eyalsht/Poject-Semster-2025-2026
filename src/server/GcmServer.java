@@ -1,5 +1,6 @@
 package server;
 
+import entities.User;
 import ocsf.ocsf.server.AbstractServer;
 import ocsf.ocsf.server.ConnectionToClient;
 import entities.City;
@@ -15,6 +16,9 @@ public class GcmServer extends AbstractServer {
     public GcmServer(int port) {
         super(port);
     }
+
+    private static final int MAX_ATTEMPTS = 3;
+    private static final int BLOCK_TIME_SEC = 30;
 /*
     @Override
     protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
@@ -49,6 +53,7 @@ public class GcmServer extends AbstractServer {
         }
     }
 */
+
 @Override
 protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
     System.out.println("Message received: " + msg + " from " + client);
@@ -126,7 +131,79 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
     } else {
         System.out.println("Warning: Received a non-Message object!");
     }
-}
+        if (msg instanceof Message) {
+            Message request = (Message) msg;
+
+            if (request.getAction() == actionType.LOGIN_REQUEST) {
+                ArrayList<String> creds = (ArrayList<String>) request.getMessage();
+                String username = creds.get(0);
+                String password = creds.get(1);
+
+                User user = DBController.getUserForLogin(username);
+
+                if (user == null) {
+                    try { client.sendToClient(new Message(actionType.LOGIN_FAILED, "User does not exist.")); }
+                    catch (IOException e) {}
+                    return;
+                }
+
+                // סנכרון על אובייקט המשתמש (כמו במעבדה)
+                synchronized (user) {
+
+                    // 1. בדיקה אם חסום
+                    if (user.isBlocked()) {
+                        try { client.sendToClient(new Message(actionType.LOGIN_FAILED, "User is BLOCKED.")); }
+                        catch (IOException e) {}
+                        return;
+                    }
+
+                    // 2. בדיקת סיסמה
+                    if (user.getPassword().equals(password)) {
+                        // --- הצלחה ---
+                        user.resetFailedAttempts();
+                        DBController.updateUserSecurityState(user); // שמירה ב-DB
+
+                        try { client.sendToClient(new Message(actionType.LOGIN_SUCCESS, user)); }
+                        catch (IOException e) {}
+
+                    } else {
+                        // --- כישלון (לוגיקה ממעבדה 3) ---
+                        user.incrementFailedAttempts();
+
+                        if (user.getFailedAttempts() >= MAX_ATTEMPTS) {
+                            // חסימה!
+                            user.setBlocked(true);
+                            DBController.updateUserSecurityState(user);
+
+                            try { client.sendToClient(new Message(actionType.LOGIN_FAILED, "Blocked for " + BLOCK_TIME_SEC + "s.")); }
+                            catch (IOException e) {}
+
+                            // התחלת טיימר לשחרור (Thread נפרד בשרת)
+                            new Thread(() -> {
+                                try {
+                                    Thread.sleep(BLOCK_TIME_SEC * 1000); // המתנה
+
+                                    synchronized(user) {
+                                        user.setBlocked(false);
+                                        user.resetFailedAttempts();
+                                        DBController.updateUserSecurityState(user);
+                                        System.out.println("User " + user.getUsername() + " unblocked automatically.");
+                                    }
+                                } catch (InterruptedException e) { e.printStackTrace(); }
+                            }).start();
+
+                        } else {
+                            // סתם טעות
+                            DBController.updateUserSecurityState(user);
+                            try { client.sendToClient(new Message(actionType.LOGIN_FAILED, "Wrong password. Attempt " + user.getFailedAttempts() + "/" + MAX_ATTEMPTS)); }
+                            catch (IOException e) {}
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     protected void serverStarted() {
         System.out.println("Server listening for connections on port " + getPort());

@@ -15,6 +15,10 @@ public class Employee extends User {
         this.role = role;
     }
 
+    public Employee(int id, String username, String password, String email, String role) {
+        //to ADD
+    }
+
     // Getters and Setters
     public String getEmployeeId() {
         return employeeId;
