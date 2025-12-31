@@ -43,7 +43,6 @@ public class MainApplication extends Application {
         stage.show();
     }
 
-    // ✅ MUST be outside start()
     public static void shutdownApp() {
         System.out.println("Shutting down app...");
 
