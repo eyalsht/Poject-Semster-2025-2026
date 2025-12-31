@@ -29,28 +29,43 @@
       </AnchorPane>
    </top>
    <left>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="430.0" prefWidth="116.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="loginBtn" mnemonicParsing="false" onAction="#onLoginOrProfile" prefHeight="30.0" prefWidth="60.0" text="Login">
+            <Button fx:id="loginBtn" mnemonicParsing="false" onAction="#onLoginOrProfile" prefHeight="30.0" prefWidth="150.0" text="Login">
                <VBox.margin>
-                  <Insets left="10.0" />
+                  <Insets left="5.0" right="5.0" />
                </VBox.margin></Button>
 
-            <Button fx:id="btnCatalog" mnemonicParsing="false" onAction="#onCatalog" prefHeight="30.0" prefWidth="60.0" text="Catalog">
+            <Button fx:id="btnCatalog" mnemonicParsing="false" onAction="#onCatalog" prefHeight="30.0" prefWidth="150.0" text="Catalog">
                <VBox.margin>
-                  <Insets left="10.0" top="10.0" />
+                  <Insets left="5.0" right="5.0" top="10.0" />
                </VBox.margin>
             </Button>
 
-            <Button mnemonicParsing="false" onAction="#onSupport" prefHeight="30.0" prefWidth="60.0" text="Support">
+            <Button mnemonicParsing="false" onAction="#onSupport" prefHeight="30.0" prefWidth="150.0" text="Support">
                <VBox.margin>
-                  <Insets left="10.0" top="10.0" />
+                  <Insets left="5.0" right="5.0" top="10.0" />
                </VBox.margin></Button>
 
-            <Button mnemonicParsing="false" onAction="#onInfo" prefHeight="30.0" prefWidth="60.0" text="Info">
+            <Button mnemonicParsing="false" onAction="#onInfo" prefHeight="30.0" prefWidth="150.0" text="Info">
                <VBox.margin>
-                  <Insets left="10.0" top="10.0" />
+                  <Insets left="5.0" right="5.0" top="10.0" />
                </VBox.margin></Button>
+            <Button fx:id="btnCatalogUpdate" disable="true" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Catalog Update">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" top="10.0" />
+               </VBox.margin></Button>
+
+            <Button fx:id="btnPriceUpdate" disable="true" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Price Update">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" top="10.0" />
+               </VBox.margin></Button>
+
+            <Button fx:id="btnReports" disable="true" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Reports">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" top="10.0" />
+               </VBox.margin></Button>
+
 
             <Button fx:id="btnManagement" mnemonicParsing="false" onAction="#onManagement" prefHeight="30.0" prefWidth="85.0" text="Management" visible="false">
                <VBox.margin>
@@ -61,9 +76,9 @@
                </font>
             </Button>
 
-            <Button mnemonicParsing="false" onAction="#onCloseApp" prefHeight="30.0" prefWidth="60.0" text="Close">
+            <Button mnemonicParsing="false" onAction="#onCloseApp" prefHeight="30.0" prefWidth="150.0" text="Close">
                <VBox.margin>
-                  <Insets left="10.0" top="10.0" />
+                  <Insets left="5.0" right="5.0" top="10.0" />
                </VBox.margin>
             </Button>
 

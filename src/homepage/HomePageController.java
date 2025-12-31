@@ -19,6 +19,9 @@ public class HomePageController {
     @FXML private Button btnManagement;
     @FXML private Button loginBtn;
     @FXML private Label lblWelcome; // ה-Label מתןך ה-SceneBuilder
+    @FXML private Button btnCatalogUpdate;
+    @FXML private Button btnPriceUpdate;
+    @FXML private Button btnReports;
 
     private User currentUser = null; // משתנה חדש במקום ה-boolean loggedIn
 
@@ -108,6 +111,27 @@ public class HomePageController {
             loginBtn.setText("Profile");
             if (lblWelcome != null) lblWelcome.setText("Welcome, " + currentUser.getFirstName());
         }
+        /*EmployeeRole role = currentUser.getEmployeeRole();
+
+        if (role == null) {
+            // CLIENT
+            setEmployeeButtons(false, false, false);
+            return;
+        }
+
+        switch (role) {
+            case Company_Manager:
+                setEmployeeButtons(true, true, true);
+                break;
+
+            case Content_Manager:
+            case Content_Worker:
+                setEmployeeButtons(true, false, false);
+                break;
+
+            default: // Support_Agent etc.
+                setEmployeeButtons(false, false, false);
+        }*/
     }
 
     @FXML
