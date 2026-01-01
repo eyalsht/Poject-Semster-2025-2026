@@ -42,7 +42,7 @@
                 <artifactId>maven-exec-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>server.ServerLauncher</mainClass>
+                    <mainClass>server.ServerUI</mainClass>
                 </configuration>
             </plugin>
         </plugins>

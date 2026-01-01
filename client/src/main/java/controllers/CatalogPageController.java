@@ -95,56 +95,108 @@ public class CatalogPageController {
 
     private void loadCitiesFromServer() {
         new Thread(() -> {
-            Message request = new Message(actionType.GET_CITY_NAMES_REQUEST);
-            Object response = client.sendRequest(request);
+            try {
+                Message request = new Message(actionType.GET_CITY_NAMES_REQUEST);
+                Object response = client.sendRequest(request);
 
-            if (response instanceof Message msgResponse && msgResponse.getAction() == actionType.GET_CITY_NAMES_RESPONSE) {
-                List<String> cities = (List<String>) msgResponse.getMessage();
-                Platform.runLater(() -> cbCity.setItems(FXCollections.observableArrayList(cities)));
+                if (response instanceof Message msgResponse && msgResponse.getAction() == actionType.GET_CITY_NAMES_RESPONSE) {
+                    List<String> cities = (List<String>) msgResponse.getMessage();
+                    Platform.runLater(() -> {
+                        if (cities != null) {
+                            cbCity.setItems(FXCollections.observableArrayList(cities));
+                            System.out.println("Loaded " + cities.size() + " cities");
+                        } else {
+                            cbCity.setItems(FXCollections.observableArrayList());
+                        }
+                    });
+                } else {
+                    System.err.println("Invalid response from server for city names request");
+                }
+            } catch (Exception e) {
+                System.err.println("Error loading cities: " + e.getMessage());
+                e.printStackTrace();
             }
         }).start();
     }
 
     private void loadMapsForCityFromServer(String city) {
         new Thread(() -> {
-            Message request = new Message(actionType.GET_MAPS_REQUEST, city);
-            Object response = client.sendRequest(request);
+            try {
+                Message request = new Message(actionType.GET_MAPS_REQUEST, city);
+                Object response = client.sendRequest(request);
 
-            if (response instanceof Message msgResponse && msgResponse.getAction() == actionType.GET_MAPS_RESPONSE) {
-                List<String> maps = (List<String>) msgResponse.getMessage();
-                Platform.runLater(() -> cbMap.setItems(FXCollections.observableArrayList(maps)));
+                if (response instanceof Message msgResponse && msgResponse.getAction() == actionType.GET_MAPS_RESPONSE) {
+                    List<String> maps = (List<String>) msgResponse.getMessage();
+                    Platform.runLater(() -> {
+                        if (maps != null) {
+                            cbMap.setItems(FXCollections.observableArrayList(maps));
+                        } else {
+                            cbMap.setItems(FXCollections.observableArrayList());
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                System.err.println("Error loading maps for city: " + e.getMessage());
+                e.printStackTrace();
             }
         }).start();
     }
 
     private void loadVersionsForCityMapFromServer(String city, String map) {
         new Thread(() -> {
-            ArrayList<String> params = new ArrayList<>(Arrays.asList(city, map));
-            Message request = new Message(actionType.GET_VERSIONS_REQUEST, params);
-            Object response = client.sendRequest(request);
+            try {
+                ArrayList<String> params = new ArrayList<>(Arrays.asList(city, map));
+                Message request = new Message(actionType.GET_VERSIONS_REQUEST, params);
+                Object response = client.sendRequest(request);
 
-            if (response instanceof Message msgResponse && msgResponse.getAction() == actionType.GET_VERSIONS_RESPONSE) {
-                List<String> versions = (List<String>) msgResponse.getMessage();
-                Platform.runLater(() -> cbVersion.setItems(FXCollections.observableArrayList(versions)));
+                if (response instanceof Message msgResponse && msgResponse.getAction() == actionType.GET_VERSIONS_RESPONSE) {
+                    List<String> versions = (List<String>) msgResponse.getMessage();
+                    Platform.runLater(() -> {
+                        if (versions != null) {
+                            cbVersion.setItems(FXCollections.observableArrayList(versions));
+                        } else {
+                            cbVersion.setItems(FXCollections.observableArrayList());
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                System.err.println("Error loading versions: " + e.getMessage());
+                e.printStackTrace();
             }
         }).start();
     }
 
     private void loadCatalogFromServer(String city, String map, String version) {
         new Thread(() -> {
+            try {
+                String c = (city == null || city.isEmpty()) ? "" : city;
+                String m = (map == null || map.isEmpty()) ? "" : map;
+                String v = (version == null || version.isEmpty()) ? "" : version;
 
-            String c = (city == null) ? "" : city;
-            String m = (map == null) ? "" : map;
-            String v = (version == null) ? "" : version;
+                ArrayList<String> params = new ArrayList<>(Arrays.asList(c, m, v));
+                Message request = new Message(actionType.GET_CATALOG_REQUEST, params);
 
-            ArrayList<String> params = new ArrayList<>(Arrays.asList(c, m, v));
-            Message request = new Message(actionType.GET_CATALOG_REQUEST, params);
+                Object response = client.sendRequest(request);
 
-            Object response = client.sendRequest(request);
-
-            if (response instanceof Message msgResponse && msgResponse.getAction() == actionType.GET_CATALOG_RESPONSE) {
-                List<MapCatalogRow> rows = (List<MapCatalogRow>) msgResponse.getMessage();
-                Platform.runLater(() -> tblCatalog.setItems(FXCollections.observableArrayList(rows)));
+                if (response instanceof Message msgResponse && msgResponse.getAction() == actionType.GET_CATALOG_RESPONSE) {
+                    List<MapCatalogRow> rows = (List<MapCatalogRow>) msgResponse.getMessage();
+                    Platform.runLater(() -> {
+                        if (rows != null) {
+                            tblCatalog.setItems(FXCollections.observableArrayList(rows));
+                            System.out.println("Loaded " + rows.size() + " catalog items");
+                        } else {
+                            tblCatalog.setItems(FXCollections.observableArrayList());
+                            System.out.println("No catalog items received");
+                        }
+                    });
+                } else {
+                    System.err.println("Invalid response from server for catalog request");
+                    Platform.runLater(() -> tblCatalog.setItems(FXCollections.observableArrayList()));
+                }
+            } catch (Exception e) {
+                System.err.println("Error loading catalog: " + e.getMessage());
+                e.printStackTrace();
+                Platform.runLater(() -> tblCatalog.setItems(FXCollections.observableArrayList()));
             }
         }).start();
     }

@@ -8,6 +8,8 @@ import javafx.scene.layout.AnchorPane;
 import common.User;
 import javafx.scene.control.Label;
 import javafx.event.ActionEvent;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class HomePageController {
 
@@ -20,6 +22,7 @@ public class HomePageController {
     @FXML private Button btnCatalogUpdate;
     @FXML private Button btnPriceUpdate;
     @FXML private Button btnReports;
+    @FXML private ImageView imgHomePage;
 
     private User currentUser = null; // משתנה חדש במקום ה-boolean loggedIn
 
@@ -27,6 +30,15 @@ public class HomePageController {
 
     @FXML
     public void initialize() {
+        // Load the home page image
+        if (imgHomePage != null) {
+            try {
+                Image image = new Image(getClass().getResourceAsStream("/images/gcmhomepage.png"));
+                imgHomePage.setImage(image);
+            } catch (Exception e) {
+                System.err.println("Failed to load home page image: " + e.getMessage());
+            }
+        }
         showPage("/GUI/WelcomePage.fxml");
         updateUI();  // קורא לפונקציה החדשה שמסדרת את הכפתורים
     }

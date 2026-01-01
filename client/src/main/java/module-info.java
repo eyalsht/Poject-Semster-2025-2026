@@ -1,7 +1,6 @@
 module com.gcm.client {
     requires javafx.controls;
     requires javafx.fxml;
-    requires com.gcm.server;
     requires com.gcm.common;
 
     opens controllers to javafx.fxml;

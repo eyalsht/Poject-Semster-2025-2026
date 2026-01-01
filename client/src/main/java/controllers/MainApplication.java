@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import server.ServerLauncher;
 
 public class MainApplication extends Application {
 
@@ -19,13 +18,11 @@ public class MainApplication extends Application {
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
 
-        // 1) Start server automatically
-        ServerLauncher.startServer(PORT);
-
-        // 2) Start client (connects to localhost:5555)
+        // Start client (connects to server on localhost:5555)
+        // Note: Server must be running separately before starting the client
         GCMClient.getInstance();
 
-        // 3) Load UI
+        // Load UI
         FXMLLoader loader = new FXMLLoader(
                 MainApplication.class.getResource("/GUI/HomePage.fxml")
         );
@@ -34,7 +31,7 @@ public class MainApplication extends Application {
         stage.setTitle("Global City Map");
         stage.setScene(scene);
 
-        // X button also shuts down server+client
+        // X button shuts down client
         stage.setOnCloseRequest(e -> {
             e.consume();        // stop default close
             shutdownApp();      // our shutdown
@@ -44,16 +41,11 @@ public class MainApplication extends Application {
     }
 
     public static void shutdownApp() {
-        System.out.println("Shutting down app...");
+        System.out.println("Shutting down client...");
 
         // close client
         try {
             GCMClient.getInstance().quit();
-        } catch (Exception ignored) {}
-
-        // stop server
-        try {
-            ServerLauncher.stopServer();
         } catch (Exception ignored) {}
 
         // close UI

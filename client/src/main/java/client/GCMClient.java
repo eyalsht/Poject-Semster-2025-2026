@@ -34,12 +34,15 @@ public class GCMClient extends AbstractClient {
                 // Default connection details - typically localhost/5555 for development
                 instance = new GCMClient("localhost", 5555);
             } catch (IOException e) {
+                System.err.println("WARNING: Failed to connect to server. Make sure the server is running on localhost:5555");
                 e.printStackTrace();
-                // You might want to show an Alert here in a real app
+                // Return null instance - caller should check connection status
+                // For now, we'll still create instance but connection will be null
             }
         }
         return instance;
     }
+    
 
     /**
      * Handles the message received from the server.
