@@ -4,9 +4,9 @@
 
 package ocsf.client;
 
-import ocsf.common.ChatIF;
-import ocsf.ocsf.client.AbstractClient;
-import entities.User;
+import main.java.ocsf.common.ChatIF;
+import oscf.AbstractClient;
+import main.java.common.User;
 import java.io.IOException;
 
 /**
