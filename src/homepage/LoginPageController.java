@@ -33,14 +33,7 @@ import java.util.ArrayList;
             String password = tfPassword.getText();
 
             // 1. בדיקות תקינות מקומיות (Client Side Validation)
-            try {
-                User.validateUsername(username);
-                User.validatePassword(password);
-            } catch (Exception e) {
-                lblError.setTextFill(Color.RED);
-                lblError.setText(e.getMessage());
-                return; // לא שולחים לשרת אם הקלט לא תקין
-            }
+
 
             // 2. שליחה לשרת
             lblError.setText("Checking credentials...");
