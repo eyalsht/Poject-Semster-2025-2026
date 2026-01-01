@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
@@ -9,13 +10,14 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homepage.CatalogPageController">
 
     <children>
 
         <!-- Top selection area -->
-        <GridPane hgap="20.0" layoutX="140.0" layoutY="90.0" vgap="12.0">
+        <GridPane hgap="20.0" layoutX="120.0" layoutY="71.0" prefHeight="134.0" prefWidth="361.0" vgap="12.0">
             <columnConstraints>
                 <ColumnConstraints prefWidth="120.0" />
                 <ColumnConstraints prefWidth="200.0" />
@@ -40,6 +42,9 @@
                     </GridPane.margin>
                 </ComboBox>
             </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
         </GridPane>
 
         <!-- Table below (scrolls automatically) -->
@@ -54,6 +59,26 @@
                 <TableColumn fx:id="colDesc" prefWidth="180.0" text="Description" />
             </columns>
         </TableView>
+        <VBox alignment="CENTER" layoutX="500.0" layoutY="26.0" prefHeight="200.0" prefWidth="100.0"
+              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
+
+            <children>
+                <Button fx:id="btnUpdateMap" mnemonicParsing="false" prefWidth="90.0" text="Update Map" />
+                <Button fx:id="btnAddMap" mnemonicParsing="false" prefWidth="90.0" text="Add Map +">
+                    <VBox.margin><Insets top="10.0" /></VBox.margin>
+                </Button>
+                <Button fx:id="btnDeleteMap" mnemonicParsing="false" prefWidth="90.0" text="Delete Map -">
+                    <VBox.margin><Insets top="10.0" /></VBox.margin>
+                </Button>
+                <Button fx:id="btnPriceUpdate" mnemonicParsing="false" prefWidth="90.0" text="Price Update">
+                    <VBox.margin><Insets top="10.0" /></VBox.margin>
+                </Button>
+                <Button fx:id="btnApprovals" mnemonicParsing="false" prefWidth="90.0" text="Approvals (0)">
+                    <VBox.margin><Insets bottom="20.0" top="10.0" /></VBox.margin>
+                </Button>
+            </children>
+        </VBox>
+
 
     </children>
 </AnchorPane>

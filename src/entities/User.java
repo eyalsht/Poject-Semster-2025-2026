@@ -2,6 +2,9 @@ package entities;
 
 import java.io.Serializable;
 import java.util.regex.Pattern;
+import entities.UserRole;
+
+
 
 public abstract class User implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -12,6 +15,7 @@ public abstract class User implements Serializable {
     protected String lastName;
     protected String email;
     protected boolean isLoggedIn;
+    protected UserRole role;
 
     // --- קבועים ו-Regex מתוך Lab 3 ---
     public static final int MAX_USERNAME_LENGTH = 50;
@@ -75,6 +79,8 @@ public abstract class User implements Serializable {
     public String getLastName() {return lastName;}
     public String getEmail() {return email;}
     public boolean isLoggedIn() {return isLoggedIn;}
+    public UserRole getRole() { return role; }
+
 
     public void setId(int id) {this.id = id;}
     public void setUsername(String username) {this.username = username;}
@@ -82,6 +88,7 @@ public abstract class User implements Serializable {
     public void setFirstName(String firstName) {this.firstName = firstName;}
     public void setLastName(String lastName) {this.lastName = lastName;}
     public void setEmail(String email) {this.email = email;}
+    public void setRole(UserRole role) { this.role = role; }
 
     public void login() {
         this.isLoggedIn = true;
