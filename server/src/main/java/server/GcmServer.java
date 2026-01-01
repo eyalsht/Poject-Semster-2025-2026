@@ -213,7 +213,7 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
             Properties props = new Properties();
 
             // Load from classpath (server/src/resources/db.properties)
-            try (var in = GcmServer.class.getResourceAsStream("db.properties")) {
+            try (var in = GcmServer.class.getResourceAsStream("/db.properties")) {
                 if (in == null) {
                     System.err.println("ERROR: db.properties not found in server/src/resources/db.properties");
                     return;
