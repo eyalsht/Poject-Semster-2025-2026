@@ -1,4 +1,4 @@
-package main.java.common;
+package common;
 
 public abstract class ContentItem {
     protected int id; // [cite: 66]

@@ -1,4 +1,4 @@
-package main.java.common;
+package common;
 /**
  * Represents the different job roles an employee can have in the GCM system.
  * This helps us know what permissions each user has.

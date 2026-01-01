@@ -1,4 +1,4 @@
-package main.java.common;
+package common;
 
 public class Client extends User {
 
