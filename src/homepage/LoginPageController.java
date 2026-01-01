@@ -51,6 +51,7 @@ import java.util.ArrayList;
                     if (response instanceof Message msg) {
                         if (msg.getAction() == actionType.LOGIN_SUCCESS) {
                             User loggedInUser = (User) msg.getMessage();
+                            client.setCurrentUser(loggedInUser);
                             // מעבר למסך הבא
                             lblError.setTextFill(Color.GREEN);
                             lblError.setText("Login Successful! Welcome " + loggedInUser.getUsername());

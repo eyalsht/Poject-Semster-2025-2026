@@ -6,7 +6,7 @@ package ocsf.client;
 
 import ocsf.common.ChatIF;
 import ocsf.ocsf.client.AbstractClient;
-
+import entities.User;
 import java.io.IOException;
 
 /**
@@ -90,6 +90,14 @@ public class ChatClient extends AbstractClient
     }
     catch(IOException e) {}
     System.exit(0);
+  }
+  private volatile User currentUser;
+
+  public User getCurrentUser() {
+    return currentUser;
+  }
+  public void setCurrentUser(User user) {
+    this.currentUser = user;
   }
 }
 //End of ChatClient class

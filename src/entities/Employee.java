@@ -29,9 +29,9 @@ public class Employee extends User {
         this.employeeId = employeeId;
     }
 
-    public EmployeeRole getRole() {
+   /* public EmployeeRole getRole() {
         return role;
-    }
+    }*/
 
     public void setRole(EmployeeRole role) {
         this.role = role;

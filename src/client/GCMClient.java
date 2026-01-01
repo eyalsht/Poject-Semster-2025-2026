@@ -2,7 +2,7 @@ package client;
 
 import ocsf.ocsf.client.*;
 import java.io.IOException;
-
+import entities.User;
 public class GCMClient extends AbstractClient {
 
     // Singleton instance
@@ -101,6 +101,16 @@ public class GCMClient extends AbstractClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    // holds the logged-in user (session)
+    private volatile User currentUser;
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
     }
 
 }
