@@ -228,7 +228,7 @@ public class DBController {
 
                     if ("Client".equalsIgnoreCase(role)) {
                         user = new Client(id, username, password, email);
-                    } else if ("Employee".equalsIgnoreCase(role) || "Manager".equalsIgnoreCase(role)) {
+                    } else if ("Company_Manager".equalsIgnoreCase(role) || "Content_Manager".equalsIgnoreCase(role) || "Content_Worker".equalsIgnoreCase(role) || "Support_Agent".equalsIgnoreCase(role)) {
                         user = new Employee(id, username, password, email, role /* פרמטרים נוספים */);
                     }
                     else {

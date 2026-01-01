@@ -16,7 +16,8 @@ public class Employee extends User {
     }
 
     public Employee(int id, String username, String password, String email, String role) {
-        //to ADD
+        super(id, username, password, email);
+        this.role = EmployeeRole.valueOf(role);
     }
 
     // Getters and Setters

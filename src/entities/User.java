@@ -48,6 +48,16 @@ public abstract class User implements Serializable {
         this.isLoggedIn = false;
     }
 
+    public User(int id, String username, String password, String email) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.firstName = "";
+        this.lastName = "";
+        this.email = email;
+        this.isLoggedIn = false;
+    }
+
     public int getId() {return id;}
     public String getUsername() {return username;}
     public String getPassword() {return password;}
