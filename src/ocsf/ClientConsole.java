@@ -3,7 +3,7 @@ package ocsf;// This file contains material supporting section 3.7 of the textbo
 // license found at www.lloseng.com 
 
 import ocsf.client.ChatClient;
-import ocsf.common.ChatIF;
+import main.java.ocsf.common.ChatIF;
 
 import java.io.BufferedReader;
 import java.io.IOException;

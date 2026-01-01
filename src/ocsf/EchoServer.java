@@ -2,8 +2,8 @@ package ocsf;// This file contains material supporting section 3.7 of the textbo
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
 
-import ocsf.ocsf.server.AbstractServer;
-import ocsf.ocsf.server.ConnectionToClient;
+import server.ocsf.AbstractServer;
+import server.ocsf.ConnectionToClient;
 
 /**
  * This class overrides some of the methods in the abstract 
