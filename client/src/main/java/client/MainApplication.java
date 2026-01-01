@@ -1,6 +1,5 @@
-package controllers;
+package client;
 
-import client.GCMClient;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
