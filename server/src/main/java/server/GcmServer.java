@@ -212,10 +212,10 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
         try {
             Properties props = new Properties();
 
-            // Load from classpath (src/main/resources)
-            try (var in = GcmServer.class.getResourceAsStream("/db.properties")) {
+            // Load from classpath (server/src/resources/db.properties)
+            try (var in = GcmServer.class.getResourceAsStream("db.properties")) {
                 if (in == null) {
-                    System.err.println("ERROR: db.properties not found in src/main/resources");
+                    System.err.println("ERROR: db.properties not found in server/src/resources/db.properties");
                     return;
                 }
                 props.load(in);
