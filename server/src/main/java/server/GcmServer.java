@@ -1,12 +1,12 @@
 package server;
 
-import main.java.common.User;
-import main.java.common.PriceType;
+import common.User;
+import common.PriceType;
 import server.ocsf.AbstractServer;
 import server.ocsf.ConnectionToClient;
-import main.java.common.City;
-import main.java.common.actionType;
-import main.java.common.Message;
+import common.City;
+import common.actionType;
+import common.Message;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
 package client;
 
 import java.io.IOException;
-import main.java.common.User;
+import common.User;
 import oscf.AbstractClient;
 
 public class GCMClient extends AbstractClient {

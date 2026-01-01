@@ -2,9 +2,9 @@ package controllers;
 
 
 import client.GCMClient;
-import main.java.common.Message;
-import main.java.common.User;
-import main.java.common.actionType;
+import common.Message;
+import common.User;
+import common.actionType;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
