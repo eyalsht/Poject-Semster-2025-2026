@@ -211,9 +211,9 @@ public class DBController {
             return false;
         }
     }
-    public static User getUserForLogin(String username) {
+    public static User getUserForLogin(String username)
+    {
         User user = null;
-
         String query = "SELECT * FROM users WHERE username = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
@@ -230,6 +230,9 @@ public class DBController {
                         user = new Client(id, username, password, email);
                     } else if ("Employee".equalsIgnoreCase(role) || "Manager".equalsIgnoreCase(role)) {
                         user = new Employee(id, username, password, email, role /* פרמטרים נוספים */);
+                    }
+                    else {
+                        System.out.println("DEBUG: Role [" + role + "] does not match Client/Employee/Manager");
                     }
 
 

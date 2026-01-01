@@ -9,7 +9,7 @@ CREATE TABLE users(
             last_name VARCHAR(255),
             email VARCHAR(255),
             failed_attempts INT DEFAULT 0,
-            is_blocked BOOLEAN DEFAULT 0;
+            is_blocked BOOLEAN DEFAULT 0,
             role ENUM('CLIENT', 'EMPLOYEE', 'CONTENT_MANAGER', 'COMPANY_MANAGER', 'CONTENT_WORKER') NOT NULL
 );
 
@@ -42,8 +42,8 @@ INSERT INTO cities (city_name, number_of_maps, price_sub, price_one_time) VALUES
     ('Holon', 2, 35.90, 13.90);
 
 INSERT INTO users (username, password, first_name, last_name, role) VALUES
-    ('manager', '123456', 'Dana', 'Levi', 'COMPANY_MANAGER'),
-    ('worker', '123456', 'Roni', 'Cohen', 'CONTENT_MANAGER');
+    ('manager', '123456', 'Dana', 'Levi', 'Company_Manager'),
+        ('worker', '123456', 'Roni', 'Cohen', 'Content_Manager');
 
 -- sample maps (so your catalog table can show something)
 INSERT INTO maps (city_id, map_name, description, version, price, status)

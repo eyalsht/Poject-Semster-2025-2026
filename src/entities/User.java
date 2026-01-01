@@ -47,26 +47,6 @@ public abstract class User implements Serializable {
         setEmail(""); // Use setter to validate
         this.isLoggedIn = false;
     }
-    public static void validateUsername(String name) throws Exception {
-        if (name == null || name.isEmpty())
-            throw new Exception("Username cannot be empty");
-        if (name.length() > MAX_USERNAME_LENGTH)
-            throw new Exception("Username is too long (max " + MAX_USERNAME_LENGTH + " chars)");
-        if (!EMAIL_PATTERN.matcher(name).matches())
-            throw new Exception("Please enter a valid Email as username");
-    }
-
-    public static void validatePassword(String password) throws Exception {
-        if (password == null || password.isEmpty())
-            throw new Exception("Password cannot be empty");
-        if (password.length() < MIN_PASSWORD_LENGTH)
-            throw new Exception("Password too short (min " + MIN_PASSWORD_LENGTH + " chars)");
-        if (password.length() > MAX_PASSWORD_LENGTH)
-            throw new Exception("Password too long (max " + MAX_PASSWORD_LENGTH + " chars)");
-        // אם רוצים לאכוף
-        if (!PASSWORD_PATTERN.matcher(password).matches())
-            throw new Exception("Password must contain a letter, digit, and symbol");
-    }
 
     public int getId() {return id;}
     public String getUsername() {return username;}
