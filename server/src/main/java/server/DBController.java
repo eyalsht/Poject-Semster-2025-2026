@@ -1,6 +1,6 @@
 package server;
 
-import main.java.common.*;
+import common.*;
 
 import java.sql.*;
 

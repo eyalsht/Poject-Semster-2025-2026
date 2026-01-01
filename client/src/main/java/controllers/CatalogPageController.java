@@ -1,8 +1,8 @@
 package controllers;
 import client.GCMClient;
-import main.java.common.MapCatalogRow;
-import main.java.common.Message;
-import main.java.common.actionType;
+import common.MapCatalogRow;
+import common.Message;
+import common.actionType;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -10,8 +10,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import main.java.common.User;
-import main.java.common.UserRole;
+import common.User;
+import common.UserRole;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
 

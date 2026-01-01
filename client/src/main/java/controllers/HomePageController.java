@@ -5,7 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
-import main.java.common.User;
+import common.User;
 import javafx.scene.control.Label;
 import javafx.event.ActionEvent;
 
