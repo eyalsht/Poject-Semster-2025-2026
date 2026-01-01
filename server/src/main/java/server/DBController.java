@@ -125,7 +125,6 @@ public class DBController {
         }
         return maps;
     }
-
     public static List<String> getVersionsForCityMap(String cityName, String mapName) {
         List<String> versions = new ArrayList<>();
         String sql = """
@@ -220,7 +219,7 @@ public class DBController {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    String role = rs.getString("role");
+                    String role = rs.getString("user_role");
                     int id = rs.getInt("id");
                     String password = rs.getString("password");
                     String email = rs.getString("email");

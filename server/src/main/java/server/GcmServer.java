@@ -142,7 +142,8 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 
                 User user = DBController.getUserForLogin(username);
 
-                if (user == null) {
+                if (user == null)
+                {
                     try { client.sendToClient(new Message(actionType.LOGIN_FAILED, "User does not exist.")); }
                     catch (IOException e) {}
                     return;
@@ -224,7 +225,6 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
             String dbUrl = props.getProperty("db.url");
             String dbUser = props.getProperty("db.user");
             String dbPassword = props.getProperty("db.password");
-
             DBController.connectToDB(dbUrl, dbUser, dbPassword);
 
         } catch (Exception e) {
