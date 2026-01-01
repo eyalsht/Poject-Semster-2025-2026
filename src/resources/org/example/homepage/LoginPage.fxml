@@ -5,45 +5,33 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homepage.LoginPageController">   <children>
-      <HBox alignment="CENTER" layoutX="186.0" layoutY="-1.0" prefHeight="100.0" prefWidth="200.0">
-         <children>
-            <Label text="Login or Register" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
-         </children>
-      </HBox>
-      <GridPane alignment="CENTER_LEFT" layoutX="165.0" layoutY="150.0" prefHeight="100.0" prefWidth="271.0">
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-         </rowConstraints>
-         <children>
-            <Label text="Email:" />
-            <Label text="Password:" GridPane.rowIndex="1" />
-            <TextField GridPane.columnIndex="1" />
-            <PasswordField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Button mnemonicParsing="false" prefWidth="60.0" text="Login" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
-               <GridPane.margin>
-                  <Insets right="10.0" top="20.0" />
-               </GridPane.margin>
-            </Button>
-             <Label fx:id="lblError" text="" textFill="RED" wrapText="true" alignment="CENTER" maxWidth="250.0" />
-            <Button mnemonicParsing="false" prefWidth="60.0" text="Register" GridPane.columnIndex="1" GridPane.rowIndex="2">
-               <GridPane.margin>
-                  <Insets left="10.0" top="20.0" />
-               </GridPane.margin>
-            </Button>
-         </children>
-      </GridPane>
-   </children>
-</AnchorPane>
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homepage.LoginPageController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <Label text="GCM Login">
+        <font>
+            <Font name="System Bold" size="24.0" />
+        </font>
+    </Label>
+
+    <TextField fx:id="tfUsername" maxWidth="250.0" promptText="Username" />
+
+    <PasswordField fx:id="tfPassword" maxWidth="250.0" promptText="Password" />
+
+    <Label fx:id="lblError" alignment="CENTER" maxWidth="300.0" text="" textFill="RED" wrapText="true">
+        <font>
+            <Font size="12.0" />
+        </font>
+    </Label>
+
+    <Button onAction="#handleLogin" prefWidth="100.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Login">
+        <font>
+            <Font name="System Bold" size="14.0" />
+        </font>
+    </Button>
+</VBox>

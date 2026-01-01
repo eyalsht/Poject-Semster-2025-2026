@@ -51,11 +51,7 @@ public class HomePageController {
 
     @FXML
     private void onLoginOrProfile() {
-      /*  if (!loggedIn) {
-            showPage("/org/example/homepage/LoginPage.fxml");
-        } else {
-            showPage("/org/example/homepage/ProfilePage.fxml");
-        }*/
+
         if (currentUser == null) {
             showPage("/org/example/homepage/LoginPage.fxml");
         } else {
