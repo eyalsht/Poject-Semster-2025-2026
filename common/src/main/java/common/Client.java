@@ -21,7 +21,7 @@ public class Client extends User {
     }
 
     public Client(int id, String username, String password, String email) {
-        //to add and check
+        super(id, username, password, email);
 
     }
 

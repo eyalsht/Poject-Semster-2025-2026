@@ -213,6 +213,10 @@ public class DBController {
     public static User getUserForLogin(String username)
     {
         User user = null;
+        if (connection == null) {
+            System.out.println("Error: Database connection is null!");
+            return null;
+        }
         String query = "SELECT * FROM users WHERE username = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {

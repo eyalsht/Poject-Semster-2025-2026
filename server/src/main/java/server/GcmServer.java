@@ -20,40 +20,6 @@ public class GcmServer extends AbstractServer {
 
     private static final int MAX_ATTEMPTS = 3;
     private static final int BLOCK_TIME_SEC = 30;
-/*
-    @Override
-    protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
-        System.out.println("Message received: " + msg + " from " + client);
-
-        if (msg instanceof Message) {
-            Message request = (Message) msg;
-
-            try {
-                switch (request.getAction()) {
-
-                    case LOGIN_REQUEST:
-                        System.out.println("Login request received");
-                        break;
-
-                    case GET_ALL_CITIES_REQUEST:
-                        System.out.println("Catalog request received");
-                        break;
-
-                    case UPDATE_PRICE_REQUEST:
-                        System.out.println("Price update request received");
-                        break;
-
-                    default:
-                        System.out.println("Unknown action: " + request.getAction());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("Warning: Received a non-Message object!");
-        }
-    }
-*/
 
 @Override
 protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
@@ -65,11 +31,11 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 
         try {
             switch (request.getAction()) {
-
+                /*
                 case LOGIN_REQUEST:
                     System.out.println("Login request received");
                     break;
-
+*/
                 case GET_ALL_CITIES_REQUEST:
                     System.out.println("Catalog request received");
                     ArrayList<City> cities = DBController.getAllCities();
