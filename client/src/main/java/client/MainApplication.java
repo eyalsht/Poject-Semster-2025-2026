@@ -17,7 +17,7 @@ public class MainApplication extends Application {
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
 
-        // Start client (connects to server on localhost:5555)
+        // Start client (connects to server on Cloud machine: 20.250.162.225:443)
         // Note: Server must be running separately before starting the client
         GCMClient.getInstance();
 

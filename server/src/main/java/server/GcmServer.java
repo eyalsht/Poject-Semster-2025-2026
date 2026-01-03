@@ -2,15 +2,18 @@ package server;
 
 import common.User;
 import common.PriceType;
-import server.ocsf.AbstractServer;
-import server.ocsf.ConnectionToClient;
 import common.City;
 import common.actionType;
 import common.Message;
+
+import server.ocsf.AbstractServer;
+import server.ocsf.ConnectionToClient;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
 
 public class GcmServer extends AbstractServer {
 
@@ -27,7 +30,7 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 
     if (msg instanceof Message) {
         Message request = (Message) msg;
-        Message response = null; // הודעת התשובה שנשלח חזרה
+        Message response = null;
 
         try {
             switch (request.getAction()) {
@@ -60,7 +63,6 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
                     }
                     break;
 
-                // בתוך ה-switch(request.getAction())
                 case GET_CITY_NAMES_REQUEST:
                     response = new Message(actionType.GET_CITY_NAMES_RESPONSE, DBController.getAllCityNames());
                     break;
@@ -71,14 +73,12 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
                     break;
 
                 case GET_VERSIONS_REQUEST:
-                    // הנחה: נשלחת רשימה [cityName, mapName]
                     List<String> versionParams = (List<String>) request.getMessage();
                     response = new Message(actionType.GET_VERSIONS_RESPONSE,
                             DBController.getVersionsForCityMap(versionParams.get(0), versionParams.get(1)));
                     break;
 
                 case GET_CATALOG_REQUEST:
-                    // הנחה: נשלחת רשימה [city, map, version]
                     List<String> catalogParams = (List<String>) request.getMessage();
                     response = new Message(actionType.GET_CATALOG_RESPONSE,
                             DBController.getCatalogRows(catalogParams.get(0), catalogParams.get(1), catalogParams.get(2)));
@@ -87,7 +87,6 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
                     System.out.println("Unknown action: " + request.getAction());
             }
 
-            // שליחת התשובה חזרה ללקוח (רק אם נוצרה תשובה)
             if (response != null) {
                 client.sendToClient(response);
             }
@@ -98,8 +97,8 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
     } else {
         System.out.println("Warning: Received a non-Message object!");
     }
-        if (msg instanceof Message) {
-            Message request = (Message) msg;
+    if (msg instanceof Message) {
+        Message request = (Message) msg;
 
             if (request.getAction() == actionType.LOGIN_REQUEST) {
                 ArrayList<String> creds = (ArrayList<String>) request.getMessage();
@@ -115,19 +114,15 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
                     return;
                 }
 
-                // סנכרון על אובייקט המשתמש (כמו במעבדה)
                 synchronized (user) {
 
-                    // 1. בדיקה אם חסום
                     if (user.isBlocked()) {
                         try { client.sendToClient(new Message(actionType.LOGIN_FAILED, "User is BLOCKED.")); }
                         catch (IOException e) {}
                         return;
                     }
 
-                    // 2. בדיקת סיסמה
                     if (user.getPassword().equals(password)) {
-                        // --- הצלחה ---
                         user.resetFailedAttempts();
                         DBController.updateUserSecurityState(user); // שמירה ב-DB
 
@@ -135,18 +130,15 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
                         catch (IOException e) {}
 
                     } else {
-                        // --- כישלון (לוגיקה ממעבדה 3) ---
                         user.incrementFailedAttempts();
 
                         if (user.getFailedAttempts() >= MAX_ATTEMPTS) {
-                            // חסימה!
                             user.setBlocked(true);
                             DBController.updateUserSecurityState(user);
 
                             try { client.sendToClient(new Message(actionType.LOGIN_FAILED, "Blocked for " + BLOCK_TIME_SEC + "s.")); }
                             catch (IOException e) {}
 
-                            // התחלת טיימר לשחרור (Thread נפרד בשרת)
                             new Thread(() -> {
                                 try {
                                     Thread.sleep(BLOCK_TIME_SEC * 1000); // המתנה
@@ -161,7 +153,6 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
                             }).start();
 
                         } else {
-                            // סתם טעות
                             DBController.updateUserSecurityState(user);
                             try { client.sendToClient(new Message(actionType.LOGIN_FAILED, "Wrong password. Attempt " + user.getFailedAttempts() + "/" + MAX_ATTEMPTS)); }
                             catch (IOException e) {}
@@ -179,7 +170,7 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
         try {
             Properties props = new Properties();
 
-            // Load from classpath (server/src/resources/db.properties)
+            // Load from classpath (server/src/main/resources/db.properties)
             try (var in = GcmServer.class.getResourceAsStream("/db.properties")) {
                 if (in == null) {
                     System.err.println("ERROR: db.properties not found in server/src/resources/db.properties");

@@ -31,15 +31,17 @@ public class GCMClient extends AbstractClient {
     public static GCMClient getInstance() {
         if (instance == null) {
             try {
-                instance = new GCMClient("localhost", 5555);
+                instance = new GCMClient("20.250.162.225", 5555);
             } catch (IOException e) {
-                System.err.println("WARNING: Failed to connect to server. Make sure the server is running on localhost:5555");
+                System.err.println("WARNING: Failed to connect to server. Make sure the server is running on 20.250.162.225:5555");
                 e.printStackTrace();
                 // Return null instance - caller should check connection status
-                // For now, we'll still create instance but connection will be null
             }
         }
-        return instance;
+        if(instance!=null) {
+            return instance;
+        }
+        return null;
     }
     
 

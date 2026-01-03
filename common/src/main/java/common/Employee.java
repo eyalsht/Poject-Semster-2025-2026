@@ -3,21 +3,21 @@ package common;
 public class Employee extends User {
 
     private String employeeId;
-    private EmployeeRole role;
+    private UserRole employeeRole;
 
     // Constructor
     public Employee(int id, String firstName, String lastName, String username,
-                    String email,String password,String employeeId, EmployeeRole role) {
+                    String email,String password,String employeeId, UserRole employeeRole) {
         // Use super to call the User constructor
         super( id,  firstName, lastName, username, email, password);
 
         this.employeeId = employeeId;
-        this.role = role;
+        this.employeeRole = employeeRole;
     }
 
-    public Employee(int id, String username, String password, String email, String role) {
+    public Employee(int id, String username, String password, String email, String employeeRole) {
         super(id, username, password, email);
-        this.role = EmployeeRole.valueOf(role);
+        this.employeeRole = UserRole.valueOf(employeeRole);
     }
 
     // Getters and Setters
@@ -29,11 +29,11 @@ public class Employee extends User {
         this.employeeId = employeeId;
     }
 
-   /* public EmployeeRole getRole() {
-        return role;
-    }*/
+    public UserRole getRole() {
+        return this.employeeRole;
+    }
 
-    public void setRole(EmployeeRole role) {
-        this.role = role;
+    public void setRole(UserRole employeeRole) {
+        this.employeeRole = employeeRole;
     }
 }

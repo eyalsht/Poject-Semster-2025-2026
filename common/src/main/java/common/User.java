@@ -69,7 +69,6 @@ public abstract class User implements Serializable {
     public boolean isLoggedIn() {return isLoggedIn;}
     public UserRole getRole() { return role; }
 
-
     public void setId(int id) {this.id = id;}
     public void setUsername(String username) {this.username = username;}
     public void setPassword(String password) {this.password = password;}

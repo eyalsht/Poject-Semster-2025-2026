@@ -43,18 +43,15 @@ public class CatalogPageController {
 
     @FXML
     public void initialize() {
-        // קישור עמודות הטבלה לשדות במחלקה MapCatalogRow
         colCity.setCellValueFactory(new PropertyValueFactory<>("city"));
         colMap.setCellValueFactory(new PropertyValueFactory<>("map"));
         colVersion.setCellValueFactory(new PropertyValueFactory<>("version"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         colDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
 
-        // הגדרת מצב התחלתי לפקדים
         cbMap.setDisable(true);
         cbVersion.setDisable(true);
 
-        // טעינת נתונים ראשונית
         loadCitiesFromServer();
         loadCatalogFromServer(null, null, null);
 
@@ -254,8 +251,6 @@ public class CatalogPageController {
             }
 
             case EMPLOYEE -> {
-                // up to you; safest default = all disabled (already)
-                // or treat EMPLOYEE as CLIENT until you define exact permissions
             }
         }
     }

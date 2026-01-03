@@ -41,7 +41,7 @@ public class HomePageController {
             }
         }
         showPage("/GUI/WelcomePage.fxml");
-        updateUI();  // קורא לפונקציה החדשה שמסדרת את הכפתורים
+        updateUI();
     }
 
 

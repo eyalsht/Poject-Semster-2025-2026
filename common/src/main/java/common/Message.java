@@ -14,7 +14,7 @@ public class Message implements Serializable {
     }
     public Message(actionType action) {
         this.action = action;
-        this.message = null;
+        this.message = action;
     }
     public actionType getAction() {
         return action;
