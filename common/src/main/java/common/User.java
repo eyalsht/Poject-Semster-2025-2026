@@ -15,16 +15,13 @@ public abstract class User implements Serializable {
     protected boolean isLoggedIn;
     protected UserRole role;
 
-    // --- קבועים ו-Regex מתוך Lab 3 ---
     public static final int MAX_USERNAME_LENGTH = 50;
     public static final int MIN_PASSWORD_LENGTH = 8;
     public static final int MAX_PASSWORD_LENGTH = 12;
 
-    // Regex לאימייל
     private static final String EMAIL_REGEX = "^[a-zA-Z0-9%+_.-]+@[a-zA-Z0-9][a-zA-Z0-9.-]*\\.[a-zA-Z]{2,}$";
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
-    // Regex לסיסמה (אות גדולה, מספר, סימן מיוחד)
     private static final String PASSWORD_REGEX = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+])[a-zA-Z\\d!@#$%^&*()_+]+$";
     private static final Pattern PASSWORD_PATTERN = Pattern.compile(PASSWORD_REGEX);
 

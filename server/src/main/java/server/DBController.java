@@ -232,7 +232,7 @@ public class DBController {
                     if ("Client".equalsIgnoreCase(role)) {
                         user = new Client(id, username, password, email);
                     } else if ("Company_Manager".equalsIgnoreCase(role) || "Content_Manager".equalsIgnoreCase(role) || "Content_Worker".equalsIgnoreCase(role) || "Support_Agent".equalsIgnoreCase(role)) {
-                        user = new Employee(id, username, password, email, role /* פרמטרים נוספים */);
+                        user = new Employee(id, username, password, email, role);
                     }
                     else {
                         System.out.println("DEBUG: Role [" + role + "] does not match Client/Employee/Manager");
@@ -252,7 +252,6 @@ public class DBController {
         return user;
     }
 
-    // פונקציה לעדכון מצב המשתמש ב-DB (חסימה/איפוס)
     public static void updateUserSecurityState(User user) {
         String query = "UPDATE users SET failed_attempts = ?, is_blocked = ? WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {

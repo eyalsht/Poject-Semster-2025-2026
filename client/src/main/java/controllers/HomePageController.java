@@ -19,13 +19,13 @@ public class HomePageController {
     @FXML private Button btnProfile;
     @FXML private Button btnManagement;
     @FXML private Button loginBtn;
-    @FXML private Label lblWelcome; // ה-Label מתןך ה-SceneBuilder
+    @FXML private Label lblWelcome;
     @FXML private Button btnCatalogUpdate;
     @FXML private Button btnPriceUpdate;
     @FXML private Button btnReports;
     @FXML private ImageView imgHomePage;
 
-    private User currentUser = null; // משתנה חדש במקום ה-boolean loggedIn
+    private User currentUser = null;
 
     private boolean loggedIn = false;
 
@@ -97,17 +97,17 @@ public class HomePageController {
 
     public void setLoggedInUser(User user) {
         this.currentUser = user;
-        updateUI(); // עדכון השם והכפתור
-        onCatalog(); // החזרה לקטלוג הראשי (אופציונלי)
+        updateUI();
+        onCatalog();
     }
 
     private void updateUI() {
         if (currentUser == null) {
-            // מצב אורח
+
             loginBtn.setText("Login");
             if (lblWelcome != null) lblWelcome.setText("Welcome, Guest");
         } else {
-            // מצב מחובר - שימוש בשם האמיתי
+
             loginBtn.setText("Profile");
             if (lblWelcome != null) lblWelcome.setText("Welcome, " + currentUser.getFirstName());
         }
@@ -137,7 +137,7 @@ public class HomePageController {
     @FXML
     void onManagement(javafx.event.ActionEvent event) {
         System.out.println("Management button clicked!");
-        // בעתיד: showPage("/gui/EmployeeDashboard.fxml");
+
     }
     private void showProfilePage() {
         try {

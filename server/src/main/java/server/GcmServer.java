@@ -124,7 +124,7 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 
                     if (user.getPassword().equals(password)) {
                         user.resetFailedAttempts();
-                        DBController.updateUserSecurityState(user); // שמירה ב-DB
+                        DBController.updateUserSecurityState(user);
 
                         try { client.sendToClient(new Message(actionType.LOGIN_SUCCESS, user)); }
                         catch (IOException e) {}
@@ -141,7 +141,7 @@ protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 
                             new Thread(() -> {
                                 try {
-                                    Thread.sleep(BLOCK_TIME_SEC * 1000); // המתנה
+                                    Thread.sleep(BLOCK_TIME_SEC * 1000);
 
                                     synchronized(user) {
                                         user.setBlocked(false);

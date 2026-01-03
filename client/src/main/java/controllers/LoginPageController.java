@@ -18,13 +18,13 @@ import java.util.ArrayList;
 
         @FXML private TextField tfUsername;
         @FXML private PasswordField tfPassword;
-        @FXML private Label lblError; // וודא שיש לך Label כזה ב-FXML
+        @FXML private Label lblError;
 
         private final GCMClient client = GCMClient.getInstance();
 
         @FXML
         public void initialize() {
-            lblError.setText(""); // איפוס הודעות שגיאה בעלייה
+            lblError.setText("");
         }
 
         @FXML
@@ -32,10 +32,8 @@ import java.util.ArrayList;
             String username = tfUsername.getText();
             String password = tfPassword.getText();
 
-            // 1. בדיקות תקינות מקומיות (Client Side Validation)
 
 
-            // 2. שליחה לשרת
             lblError.setText("Checking credentials...");
             lblError.setTextFill(Color.BLACK);
 
@@ -52,13 +50,10 @@ import java.util.ArrayList;
                         if (msg.getAction() == actionType.LOGIN_SUCCESS) {
                             User loggedInUser = (User) msg.getMessage();
                             client.setCurrentUser(loggedInUser);
-                            // מעבר למסך הבא
                             lblError.setTextFill(Color.GREEN);
                             lblError.setText("Login Successful! Welcome " + loggedInUser.getUsername());
-                            // כאן תבוא פונקציית הניווט (navigateToMainScreen)
 
                         } else if (msg.getAction() == actionType.LOGIN_FAILED) {
-                            // הצגת הודעת השגיאה המדויקת שהגיעה מהשרת (כמו במעבדה)
                             String errorMsg = (String) msg.getMessage();
                             lblError.setTextFill(Color.RED);
                             lblError.setText(errorMsg);
