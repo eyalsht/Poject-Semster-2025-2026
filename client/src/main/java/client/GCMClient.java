@@ -1,13 +1,19 @@
 package client;
 
 import java.io.IOException;
+
+import common.Message;
 import common.User;
+import controllers.LoginPageController;
+import javafx.application.Platform;
 import oscf.AbstractClient;
+
 
 public class GCMClient extends AbstractClient {
 
     // Singleton instance
     private static GCMClient instance;
+    private LoginPageController loginController;
 
     // Fields for handling responses (based on your diagram)
     private boolean busy = false;        // only 1 request at a time
@@ -18,9 +24,16 @@ public class GCMClient extends AbstractClient {
      * Private constructor implements the Singleton pattern.
      * Connects to the server immediately upon creation.
      */
+    public void setLoginController(LoginPageController controller)
+    {
+        this.loginController = controller;
+    }
+
     private GCMClient(String host, int port) throws IOException {
         super(host, port);
+        System.out.println("Before openConnection()");
         openConnection();
+        System.out.println("After openConnection()");
         System.out.println("GCMClient connected to server on " + host + ":" + port);
     }
 
@@ -31,7 +44,8 @@ public class GCMClient extends AbstractClient {
     public static GCMClient getInstance() {
         if (instance == null) {
             try {
-                instance = new GCMClient("20.250.162.225", 5555);
+                //instance = new GCMClient("20.250.162.225", 5555);
+                instance = new GCMClient("localhost", 5555);
             } catch (IOException e) {
                 System.err.println("WARNING: Failed to connect to server. Make sure the server is running on 20.250.162.225:5555");
                 e.printStackTrace();
@@ -53,12 +67,17 @@ public class GCMClient extends AbstractClient {
     protected void handleMessageFromServer(Object msg) {
         System.out.println("GCMClient received: " + msg);
 
+        if (loginController != null && msg instanceof Message m) {
+            Platform.runLater(() -> loginController.onServerMessage(m));
+        }
+
         synchronized (this) {
             this.lastResponse = msg;
             this.awaitResponse = false;
             this.notifyAll();
         }
     }
+
 
     /**
      * Sends a request to the server and waits for a response.

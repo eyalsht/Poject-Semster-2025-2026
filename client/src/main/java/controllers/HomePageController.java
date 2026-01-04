@@ -1,6 +1,7 @@
 package controllers;
 
 import client.MainApplication;
+import client.GCMClient;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -11,8 +12,12 @@ import javafx.scene.control.Label;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import controllers.LoginPageController;
+import controllers.WelcomePageController;
+import controllers.ProfilePageController;
 
-public class HomePageController {
+public class HomePageController
+{
 
     @FXML private AnchorPane centerHost;
     @FXML private Button btnCatalog;
@@ -30,7 +35,8 @@ public class HomePageController {
     private boolean loggedIn = false;
 
     @FXML
-    public void initialize() {
+    public void initialize()
+    {
         // Load the home page image
         if (imgHomePage != null) {
             try {
@@ -61,7 +67,8 @@ public class HomePageController {
     }
 
     @FXML
-    private void onLoginOrProfile() {
+    private void onLoginOrProfile()
+    {
 
         if (currentUser == null) {
             showPage("/GUI/LoginPage.fxml");
@@ -80,10 +87,38 @@ public class HomePageController {
 
     private void showPage(String fxmlPath) {
         try {
+            System.out.println("Attempting to load: " + fxmlPath);
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            if (loader.getLocation() == null) {
+                System.err.println("Error: FXML file not found at " + fxmlPath);
+                return;
+            }
             Node view = loader.load();
+            Object ctrl = loader.getController();
 
-            // Make the loaded page fill the center AnchorPane:
+            if (ctrl != null) {
+                System.out.println("Loaded controller: " + ctrl.getClass().getName());
+
+                if (ctrl instanceof LoginPageController loginCtrl) {
+                    loginCtrl.setHomePageController(this);
+                }
+
+                if (ctrl instanceof WelcomePageController welcomeCtrl) {
+                    welcomeCtrl.setUser(currentUser);
+                }
+                if (ctrl instanceof ProfilePageController profileCtrl) {
+                    profileCtrl.setUser(currentUser);
+                }
+            } else {
+                System.out.println("Loaded controller: (none) for " + fxmlPath);
+            }
+
+
+            if (centerHost == null) {
+                System.err.println("Error: centerHost AnchorPane is NULL. Check fx:id in FXML.");
+                return;
+            }
+
             AnchorPane.setTopAnchor(view, 0.0);
             AnchorPane.setRightAnchor(view, 0.0);
             AnchorPane.setBottomAnchor(view, 0.0);
@@ -91,10 +126,10 @@ public class HomePageController {
 
             centerHost.getChildren().setAll(view);
         } catch (Exception e) {
+            System.err.println("Failed to load page: " + fxmlPath);
             e.printStackTrace();
         }
     }
-
     public void setLoggedInUser(User user) {
         this.currentUser = user;
         updateUI();
@@ -148,7 +183,7 @@ public class HomePageController {
             AnchorPane view = loader.load();
 
             ProfilePageController controller = loader.getController();
-            controller.setUser(currentUser); // 👈 PASS USER HERE
+            controller.setUser(currentUser);
 
             AnchorPane.setTopAnchor(view, 0.0);
             AnchorPane.setRightAnchor(view, 0.0);
@@ -160,6 +195,11 @@ public class HomePageController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void onLoginSuccess(User user) {
+        this.currentUser = user;
+        updateUI();
+        showPage("/GUI/WelcomePage.fxml");
     }
 
 }

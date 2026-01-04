@@ -6,7 +6,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class MainApplication extends Application {
+public class MainApplication extends Application
+{
+
 
     private static final int PORT = 5555;
 

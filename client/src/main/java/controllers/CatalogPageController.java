@@ -14,6 +14,12 @@ import common.User;
 import common.UserRole;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import java.io.IOException;
 
 
 import java.util.ArrayList;
@@ -198,66 +204,54 @@ public class CatalogPageController {
         }).start();
     }
     private void applyRolePermissions() {
-        // default: everything disabled
+
         setAllButtonsVisible(true);
+
+
         setAllButtonsDisabled(true);
 
         User u = client.getCurrentUser();
         UserRole role = (u == null) ? null : u.getRole();
 
-        // if no user yet -> keep default disabled
         if (role == null) {
-            // you can also hide them by default if you want, but you asked "disabled"
             return;
         }
 
         switch (role) {
+
             case CLIENT -> {
-                // all disabled (already)
+
             }
 
             case CONTENT_WORKER -> {
-                // visible + usable only: Update/Add/Delete
-                btnUpdateMap.setVisible(true);
-                btnAddMap.setVisible(true);
-                btnDeleteMap.setVisible(true);
 
-                btnPriceUpdate.setVisible(false);
-                btnApprovals.setVisible(false);
-
-                // Add always enabled
                 btnAddMap.setDisable(false);
-
-                // Update/Delete enablement handled by setupSelectionRules()
-                // (so leave them disabled here)
+                btnUpdateMap.setDisable(false);
+                btnDeleteMap.setDisable(false);
             }
 
             case CONTENT_MANAGER -> {
-                // all visible + enabled
-                setAllButtonsVisible(true);
-                setAllButtonsDisabled(false);
 
-                // approvals count for now placeholder (later we’ll load from server)
+                btnApprovals.setDisable(false);
+                btnPriceUpdate.setDisable(false);
+
                 btnApprovals.setText("Approvals (0)");
             }
 
             case COMPANY_MANAGER -> {
-                // all visible + enabled
-                setAllButtonsVisible(true);
-                setAllButtonsDisabled(false);
 
-                // could also show approvals count for price approvals later
+                btnApprovals.setDisable(false);
                 btnApprovals.setText("Approvals (0)");
             }
 
-            case EMPLOYEE -> {
+            default -> {
+
             }
         }
     }
 
+
     private void setupSelectionRules() {
-        // Only meaningful for CONTENT_WORKER, but safe to set always.
-        // Update/Delete enabled ONLY when a table row is selected AND role allows.
 
         btnUpdateMap.disableProperty().unbind();
         btnDeleteMap.disableProperty().unbind();
@@ -267,17 +261,11 @@ public class CatalogPageController {
                     User u = client.getCurrentUser();
                     UserRole role = (u == null) ? null : u.getRole();
 
-                    boolean roleAllows = (role == UserRole.CONTENT_WORKER
-                            || role == UserRole.CONTENT_MANAGER
-                            || role == UserRole.COMPANY_MANAGER);
-
+                    boolean isWorker = (role == UserRole.CONTENT_WORKER);
                     boolean hasSelection = tblCatalog.getSelectionModel().getSelectedItem() != null;
 
-                    // For workers: must have selection
-                    if (role == UserRole.CONTENT_WORKER) return !hasSelection;
-
-                    // For managers: always enabled
-                    return !roleAllows;
+                    // only content_worker can update, and only with a selected row
+                    return !(isWorker && hasSelection);
                 }, tblCatalog.getSelectionModel().selectedItemProperty())
         );
 
@@ -286,18 +274,15 @@ public class CatalogPageController {
                     User u = client.getCurrentUser();
                     UserRole role = (u == null) ? null : u.getRole();
 
-                    boolean roleAllows = (role == UserRole.CONTENT_WORKER
-                            || role == UserRole.CONTENT_MANAGER
-                            || role == UserRole.COMPANY_MANAGER);
-
+                    boolean isWorker = (role == UserRole.CONTENT_WORKER);
                     boolean hasSelection = tblCatalog.getSelectionModel().getSelectedItem() != null;
 
-                    if (role == UserRole.CONTENT_WORKER) return !hasSelection;
-
-                    return !roleAllows;
+                    // only content_worker can delete, and only with a selected row
+                    return !(isWorker && hasSelection);
                 }, tblCatalog.getSelectionModel().selectedItemProperty())
         );
     }
+
 
     private void setAllButtonsDisabled(boolean disabled) {
         btnUpdateMap.setDisable(disabled);
@@ -314,5 +299,59 @@ public class CatalogPageController {
         btnPriceUpdate.setVisible(visible);
         btnApprovals.setVisible(visible);
     }
+    @FXML
+    private void onPriceUpdate() {
+        MapCatalogRow selected = tblCatalog.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            System.out.println("Price Update clicked but no row selected");
+            return;
+        }
+
+        openMapUpdateWindow("PRICE_UPDATE", selected);
+    }
+
+    @FXML
+    private void onAddMap() {
+        openMapUpdateWindow("ADD", null);
+    }
+
+    @FXML
+    private void onUpdateMap() {
+        MapCatalogRow selected = tblCatalog.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+        openMapUpdateWindow("UPDATE", selected);
+    }
+
+    @FXML
+    private void onDeleteMap() {
+        MapCatalogRow selected = tblCatalog.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        System.out.println("Delete clicked for: " + selected);
+    }
+
+    @FXML
+    private void onApprovals()
+    {
+        System.out.println("Approvals clicked");
+    }
+
+    private void openMapUpdateWindow(String mode, MapCatalogRow selected) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapUpdatePage.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Map Update");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(false);
+            stage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

@@ -17,7 +17,10 @@ public class DBController {
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-            System.out.println("Connected to the Database");
+            System.out.println("DB CONNECTED!");
+            System.out.println("DB URL = " + dbUrl);
+            System.out.println("DB USER = " + dbUser);
+            System.out.println("CONNECTION OBJECT = " + connection);
         }
         catch(Exception e){
             System.out.println("Error connecting to DB: "+e.getMessage());
@@ -45,7 +48,9 @@ public class DBController {
         }
         return city;
     }
-    public static List<MapCatalogRow> getCatalogRows(String cityName, String mapName, String version) {
+    public static List<MapCatalogRow> getCatalogRows(String cityName, String mapName, String version)
+    {
+        System.out.println("DBController.getCatalogRows CALLED");
         List<MapCatalogRow> rows = new ArrayList<>();
 
         // Build a flexible query: if user selected only city, or city+map, etc.
@@ -174,7 +179,7 @@ public class DBController {
     }
     public static boolean requestPriceUpdate(int cityId, double newPrice, PriceType type) {
         String column = (type == PriceType.ONE_TIME) ? "pending_price_one_time" : "pending_price_sub";
-        String query = "UPDATE cities SET " + column + " = ? " + column + " WHERE id = ?";
+        String query = "UPDATE cities SET " + column + " = ? WHERE id = ?";
 
         try{
             PreparedStatement ps = connection.prepareStatement(query);
@@ -210,47 +215,52 @@ public class DBController {
             return false;
         }
     }
-    public static User getUserForLogin(String username)
-    {
+    public static User getUserForLogin(String username) {
         User user = null;
+
         if (connection == null) {
             System.out.println("Error: Database connection is null!");
             return null;
         }
+
         String query = "SELECT * FROM users WHERE username = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, username);
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    String role = rs.getString("user_role");
+
                     int id = rs.getInt("id");
                     String password = rs.getString("password");
                     String email = rs.getString("email");
+                    String role = rs.getString("user_role");
 
+                    String firstName = rs.getString("first_name");
+                    String lastName  = rs.getString("last_name");
 
                     if ("Client".equalsIgnoreCase(role)) {
                         user = new Client(id, username, password, email);
-                    } else if ("Company_Manager".equalsIgnoreCase(role) || "Content_Manager".equalsIgnoreCase(role) || "Content_Worker".equalsIgnoreCase(role) || "Support_Agent".equalsIgnoreCase(role)) {
+                    } else {
                         user = new Employee(id, username, password, email, role);
                     }
-                    else {
-                        System.out.println("DEBUG: Role [" + role + "] does not match Client/Employee/Manager");
-                    }
-
 
                     if (user != null) {
+                        user.setFirstName(firstName);
+                        user.setLastName(lastName);
+
                         user.setFailedAttempts(rs.getInt("failed_attempts"));
                         user.setBlocked(rs.getBoolean("is_blocked"));
                     }
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        catch (SQLException e)
-            { e.printStackTrace();
-        }
+
         return user;
     }
+
 
     public static void updateUserSecurityState(User user) {
         String query = "UPDATE users SET failed_attempts = ?, is_blocked = ? WHERE id = ?";
@@ -261,4 +271,48 @@ public class DBController {
             ps.executeUpdate();
         } catch (SQLException e) { e.printStackTrace(); }
     }
+    public static boolean registerUser(String firstName, String lastName, String idNumber,
+                                       String email, String password, String cardNumber) {
+
+        // 1) Check duplicates (email OR id)
+        String checkSql = "SELECT COUNT(*) FROM users WHERE email = ? OR id_number = ?";
+        String insertSql = """
+        INSERT INTO users (username, password, email, user_role, first_name, last_name, id_number, credit_card, failed_attempts, is_blocked)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, false)
+    """;
+
+        try {
+            // make username = email for now (simple)
+            String username = email;
+
+            try (PreparedStatement check = connection.prepareStatement(checkSql)) {
+                check.setString(1, email);
+                check.setString(2, idNumber);
+
+                try (ResultSet rs = check.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        return false; // already exists
+                    }
+                }
+            }
+
+            try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
+                ps.setString(1, username);
+                ps.setString(2, password);
+                ps.setString(3, email);
+                ps.setString(4, "Client"); // default role for new register
+                ps.setString(5, firstName);
+                ps.setString(6, lastName);
+                ps.setString(7, idNumber);
+                ps.setString(8, cardNumber);
+
+                return ps.executeUpdate() > 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

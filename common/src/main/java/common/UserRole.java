@@ -8,5 +8,5 @@ public enum UserRole implements Serializable {
     CONTENT_MANAGER,
     COMPANY_MANAGER,
     CONTENT_WORKER,
-    Support_Agent
+    SUPPORT_AGENT
     }

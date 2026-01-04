@@ -42,9 +42,9 @@
                     </GridPane.margin>
                 </ComboBox>
             </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
         </GridPane>
 
         <!-- Table below (scrolls automatically) -->
@@ -63,17 +63,26 @@
               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
 
             <children>
-                <Button fx:id="btnUpdateMap" mnemonicParsing="false" prefWidth="90.0" text="Update Map" />
-                <Button fx:id="btnAddMap" mnemonicParsing="false" prefWidth="90.0" text="Add Map +">
+                <Button fx:id="btnUpdateMap" mnemonicParsing="false" prefWidth="90.0" text="Update Map"
+                        onAction="#onUpdateMap"/>
+
+                <Button fx:id="btnAddMap" mnemonicParsing="false" prefWidth="90.0" text="Add Map +"
+                        onAction="#onAddMap">
                     <VBox.margin><Insets top="10.0" /></VBox.margin>
                 </Button>
-                <Button fx:id="btnDeleteMap" mnemonicParsing="false" prefWidth="90.0" text="Delete Map -">
+
+                <Button fx:id="btnDeleteMap" mnemonicParsing="false" prefWidth="90.0" text="Delete Map -"
+                        onAction="#onDeleteMap">
                     <VBox.margin><Insets top="10.0" /></VBox.margin>
                 </Button>
-                <Button fx:id="btnPriceUpdate" mnemonicParsing="false" prefWidth="90.0" text="Price Update">
+
+                <Button fx:id="btnPriceUpdate" mnemonicParsing="false" prefWidth="90.0" text="Price Update"
+                        onAction="#onPriceUpdate">
                     <VBox.margin><Insets top="10.0" /></VBox.margin>
                 </Button>
-                <Button fx:id="btnApprovals" mnemonicParsing="false" prefWidth="90.0" text="Approvals (0)">
+
+                <Button fx:id="btnApprovals" mnemonicParsing="false" prefWidth="90.0" text="Approvals (0)"
+                        onAction="#onApprovals">
                     <VBox.margin><Insets bottom="20.0" top="10.0" /></VBox.margin>
                 </Button>
             </children>
