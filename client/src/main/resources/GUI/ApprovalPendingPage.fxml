@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ApprovalPendingPageController">
+   <children>
+      <VBox layoutX="250.0" layoutY="100.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="150.0">
+         <children>
+             <TableView fx:id="tblPending" prefHeight="200.0" prefWidth="201.0">
+                 <columns>
+                     <TableColumn fx:id="colType" prefWidth="120.0" text="Type" />
+                     <TableColumn fx:id="colTarget" prefWidth="300.0" text="Target" />
+                 </columns>
+             </TableView>
+         </children>
+      </VBox>
+      <HBox alignment="CENTER" layoutX="181.0" prefHeight="100.0" prefWidth="219.0" AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="180.0">
+         <children>
+            <Label prefHeight="35.0" prefWidth="228.0" text="Pendind Approvals">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      <HBox alignment="BOTTOM_CENTER" layoutX="400.0" layoutY="7.0" prefHeight="100.0" prefWidth="200.0">
+         <children>
+             <Button fx:id="btnChoose" mnemonicParsing="false" text="Choose" onAction="#onChoose"/>
+
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

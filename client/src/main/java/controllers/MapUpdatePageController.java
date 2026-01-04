@@ -27,6 +27,9 @@ public class MapUpdatePageController {
     @FXML private Button btnClose;
     @FXML private Button btnAddUpdate;
     @FXML private Button btnApprove;
+    @FXML private Button btnDeny;
+
+
 
     private final GCMClient client = GCMClient.getInstance();
 
@@ -36,8 +39,12 @@ public class MapUpdatePageController {
     @FXML
     public void initialize()
     {
+        taCurDesc.setDisable(true);
+        taCurDesc.setFocusTraversable(false);
         setRightEditable(false, false, false, false);
-        if (btnApprove != null) btnApprove.setVisible(false);
+        show(btnApprove, false);
+        show(btnDeny, false);
+        show(btnAddUpdate, true);
     }
 
 
@@ -87,11 +94,14 @@ public class MapUpdatePageController {
 
         setRightEditable(false, false, false, false);
 
-        btnAddUpdate.setDisable(true);
-        btnAddUpdate.setVisible(false);
+        show(btnAddUpdate, false);
+        if (btnAddUpdate != null) btnAddUpdate.setDisable(true);
 
-        btnApprove.setDisable(true);
-        btnApprove.setVisible(false);
+        show(btnApprove, false);
+        if (btnApprove != null) btnApprove.setDisable(true);
+
+        show(btnDeny, false);
+        if (btnDeny != null) btnDeny.setDisable(true);
 
 
         if (role == null) return;
@@ -100,18 +110,18 @@ public class MapUpdatePageController {
             case ADD -> {
                 // content_worker can add full map
                 if (role == UserRole.CONTENT_WORKER) {
-                    setRightEditable(true, true, true, true);
+                    setRightEditable(true, true, false, true);
                     btnAddUpdate.setVisible(true);
                     btnAddUpdate.setText("Add");
                     btnAddUpdate.setDisable(false);
                 }
             }
 
-            case UPDATE -> {
-                // content_worker can update everything
+            case UPDATE ->
+            {
                 if (role == UserRole.CONTENT_WORKER) {
-                    setRightEditable(true, true, true, true);
-                    btnAddUpdate.setVisible(true);
+                    setRightEditable(true, true, false, true);
+                    show(btnAddUpdate, true);
                     btnAddUpdate.setText("Update");
                     btnAddUpdate.setDisable(false);
                 }
@@ -127,12 +137,18 @@ public class MapUpdatePageController {
                 }
             }
 
-            case APPROVAL_REVIEW -> {
-                // company_manager approves/denies (for now only approve button exists)
-                if (role == UserRole.COMPANY_MANAGER) {
-                    // keep fields locked
-                    btnApprove.setVisible(true);
+            case APPROVAL_REVIEW ->
+            {
+                if (role == UserRole.COMPANY_MANAGER || role == UserRole.CONTENT_MANAGER) {
+                    setRightEditable(false, false, false, false);
+
+                    show(btnApprove, true);
                     btnApprove.setDisable(false);
+
+                    show(btnDeny, true);
+                    btnDeny.setDisable(false);
+
+                    show(btnAddUpdate, false);
                 }
             }
         }
@@ -166,5 +182,15 @@ public class MapUpdatePageController {
     private void closeWindow() {
         Stage stage = (Stage) btnClose.getScene().getWindow();
         stage.close();
+    }
+    @FXML
+    private void onDeny() {
+        // later: send deny request to server
+        closeWindow();
+    }
+    private void show(Button b, boolean v) {
+        if (b == null) return;
+        b.setVisible(v);
+        b.setManaged(v);
     }
 }

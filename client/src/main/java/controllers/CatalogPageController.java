@@ -1,8 +1,6 @@
 package controllers;
 import client.GCMClient;
-import common.MapCatalogRow;
-import common.Message;
-import common.actionType;
+import common.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -10,8 +8,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import common.User;
-import common.UserRole;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
 import javafx.fxml.FXMLLoader;
@@ -331,15 +327,43 @@ public class CatalogPageController {
     }
 
     @FXML
-    private void onApprovals()
-    {
-        System.out.println("Approvals clicked");
+    private void onApprovals() {
+        openApprovalsWindow();
+    }
+
+    private void openApprovalsWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/ApprovalPendingPage.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Pending Approvals");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(false);
+            stage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void openMapUpdateWindow(String mode, MapCatalogRow selected) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapUpdatePage.fxml"));
             Parent root = loader.load();
+
+            MapUpdatePageController ctrl = loader.getController();
+
+            MapUpdateMode m = switch (mode) {
+                case "ADD" -> MapUpdateMode.ADD;
+                case "UPDATE" -> MapUpdateMode.UPDATE;
+                case "PRICE_UPDATE" -> MapUpdateMode.PRICE_UPDATE_REQUEST;
+                case "APPROVAL" -> MapUpdateMode.APPROVAL_REVIEW;
+                default -> MapUpdateMode.UPDATE;
+            };
+
+            ctrl.setContext(m, selected);
 
             Stage stage = new Stage();
             stage.setTitle("Map Update");
@@ -352,6 +376,7 @@ public class CatalogPageController {
             e.printStackTrace();
         }
     }
+
 
 
 }

@@ -126,7 +126,7 @@
             </children>
         </HBox>
 
-        <HBox alignment="CENTER_RIGHT" layoutX="560.0" layoutY="404.0" prefHeight="100.0" prefWidth="240.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <HBox alignment="CENTER_RIGHT" layoutX="560.0" layoutY="404.0" prefHeight="100.0" prefWidth="413.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <children>
 
                 <Button fx:id="btnAddUpdate" mnemonicParsing="false" onAction="#onAddUpdate" prefHeight="30.0" prefWidth="150.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Add/Update">
@@ -137,10 +137,18 @@
                         <Font name="System Bold" size="14.0" />
                     </font>
                 </Button>
+                <Button fx:id="btnDeny" mnemonicParsing="false" onAction="#onDeny" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Deny">
+                    <HBox.margin>
+                        <Insets right="10.0" />
+                    </HBox.margin>
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Button>
 
                 <Button fx:id="btnApprove" mnemonicParsing="false" onAction="#onApprove" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Approve">
                     <HBox.margin>
-                        <Insets right="20.0" />
+                        <Insets left="10.0" right="20.0" />
                     </HBox.margin>
                     <font>
                         <Font name="System Bold" size="14.0" />
