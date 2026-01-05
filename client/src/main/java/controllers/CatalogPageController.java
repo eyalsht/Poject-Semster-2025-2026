@@ -44,7 +44,8 @@ public class CatalogPageController {
     private final GCMClient client = GCMClient.getInstance();
 
     @FXML
-    public void initialize() {
+    public void initialize()
+    {
         colCity.setCellValueFactory(new PropertyValueFactory<>("city"));
         colMap.setCellValueFactory(new PropertyValueFactory<>("map"));
         colVersion.setCellValueFactory(new PropertyValueFactory<>("version"));
@@ -89,6 +90,7 @@ public class CatalogPageController {
         });
         applyRolePermissions();
         setupSelectionRules();
+        refreshPriceApprovalsCount();
     }
 
 
@@ -327,8 +329,10 @@ public class CatalogPageController {
     }
 
     @FXML
-    private void onApprovals() {
+    private void onApprovals()
+    {
         openApprovalsWindow();
+        refreshPriceApprovalsCount();
     }
 
     private void openApprovalsWindow() {
@@ -376,6 +380,28 @@ public class CatalogPageController {
             e.printStackTrace();
         }
     }
+    private void refreshPriceApprovalsCount() {
+        new Thread(() -> {
+            try {
+                Object res = GCMClient.getInstance().sendRequest(
+                        new Message(actionType.GET_PENDING_PRICE_APPROVALS_COUNT_REQUEST, null)
+                );
+
+                if (res instanceof Message msg &&
+                        msg.getAction() == actionType.GET_PENDING_PRICE_APPROVALS_COUNT_RESPONSE) {
+
+                    int count = (int) msg.getMessage();
+
+                    Platform.runLater(() ->
+                            btnApprovals.setText("Approvals (" + count + ")")
+                    );
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
 
 
 

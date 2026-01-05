@@ -14,9 +14,10 @@ public class MainApplication extends Application
 
     // keep reference so controllers can close the app
     private static Stage primaryStage;
-
-    @Override
-    public void start(Stage stage) throws Exception {
+    //This is to run on one computer so dont delete!!!!
+    /*@Override
+    public void start(Stage stage) throws Exception
+    {
         primaryStage = stage;
 
         // Start client (connects to server on Cloud machine: 20.250.162.225:443)
@@ -39,14 +40,43 @@ public class MainApplication extends Application
         });
 
         stage.show();
+    }*/
+    @Override
+    public void start(Stage stage) throws Exception
+    {
+        primaryStage = stage;
+        String host = "localhost";
+        int port = 5555;
+        var params = getParameters().getRaw();
+        if (params.size() >= 1) host = params.get(0);
+        if (params.size() >= 2) port = Integer.parseInt(params.get(1));
+        System.out.println("Connecting to " + host + ":" + port);
+        GCMClient.connect(host, port);
+        FXMLLoader loader = new FXMLLoader(
+                MainApplication.class.getResource("/GUI/HomePage.fxml")
+        );
+        Scene scene = new Scene(loader.load(), 1000, 650);
+        stage.setTitle("Global City Map");
+        stage.setScene(scene);
+        stage.setOnCloseRequest(e -> {
+            e.consume();
+            shutdownApp();
+        });
+
+        stage.show();
     }
+
 
     public static void shutdownApp() {
         System.out.println("Shutting down client...");
 
         // close client
         try {
-            GCMClient.getInstance().quit();
+            GCMClient c = GCMClient.getExistingInstance();
+            if (c != null) {
+                try { c.quit(); } catch (Exception ignored) {}
+            }
+
         } catch (Exception ignored) {}
 
         // close UI
@@ -56,6 +86,7 @@ public class MainApplication extends Application
 
         System.exit(0);
     }
+
 
     public static void main(String[] args) {
         launch(args);

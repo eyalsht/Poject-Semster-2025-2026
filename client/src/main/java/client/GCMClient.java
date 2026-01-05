@@ -9,14 +9,11 @@ import javafx.application.Platform;
 import oscf.AbstractClient;
 
 
-public class GCMClient extends AbstractClient {
-
-    // Singleton instance
+public class GCMClient extends AbstractClient
+{
     private static GCMClient instance;
     private LoginPageController loginController;
-
-    // Fields for handling responses (based on your diagram)
-    private boolean busy = false;        // only 1 request at a time
+    private boolean busy = false;
     private boolean awaitResponse = false;
     private Object lastResponse = null;;
 
@@ -41,21 +38,31 @@ public class GCMClient extends AbstractClient {
      * Returns the single instance of the client.
      * If it doesn't exist, it creates it.
      */
-    public static GCMClient getInstance() {
-        if (instance == null) {
+   /* public static GCMClient getInstance()
+    {
+        if (instance == null)
+        {
             try {
                 //instance = new GCMClient("20.250.162.225", 5555);
                 instance = new GCMClient("localhost", 5555);
             } catch (IOException e) {
                 System.err.println("WARNING: Failed to connect to server. Make sure the server is running on 20.250.162.225:5555");
                 e.printStackTrace();
-                // Return null instance - caller should check connection status
             }
         }
         if(instance!=null) {
             return instance;
         }
         return null;
+    } */
+    public static GCMClient getInstance()
+    {
+        if (instance == null) {
+            throw new IllegalStateException(
+                    "GCMClient not connected yet. Call GCMClient.connect(host, port) first."
+            );
+        }
+        return instance;
     }
     
 
@@ -86,15 +93,12 @@ public class GCMClient extends AbstractClient {
      * @return The object returned by the server
      */
     public Object sendRequest(Object msg) {
-        synchronized (this) {
-
-            // wait until no other request is running
+        synchronized (this)
+        {
             while (busy) {
                 try { wait(); } catch (InterruptedException e) { e.printStackTrace(); }
             }
             busy = true;
-
-            // prepare waiting for THIS response
             awaitResponse = true;
             lastResponse = null;
 
@@ -110,15 +114,12 @@ public class GCMClient extends AbstractClient {
                 System.out.println("Could not send message to server.");
             } finally {
                 busy = false;
-                notifyAll(); // allow next request to run
+                notifyAll();
             }
-
             return lastResponse;
         }
     }
 
-
-    // Optional: Methods to manage connection explicitly if needed
     public void quit() {
         try {
             closeConnection();
@@ -126,7 +127,17 @@ public class GCMClient extends AbstractClient {
             e.printStackTrace();
         }
     }
-    // holds the logged-in user (session)
+    public static void connect(String host, int port) throws IOException {
+        if (instance == null)
+        {
+            instance = new GCMClient(host, port);
+        }
+    }
+    public static GCMClient getExistingInstance()
+    {
+        return instance;
+    }
+
     private volatile User currentUser;
 
     public User getCurrentUser() {
