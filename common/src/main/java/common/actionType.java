@@ -31,4 +31,16 @@ public enum actionType {
     REGISTER_REQUEST,
     REGISTER_SUCCESS,
     REGISTER_FAILED,
+
+    //action tyoes i added to deal with all pendings and map changes
+    GET_PENDING_PRICE_APPROVALS_REQUEST,
+    GET_PENDING_PRICE_APPROVALS_RESPONSE,
+
+    APPROVE_PENDING_PRICE_REQUEST,
+    DENY_PENDING_PRICE_REQUEST,
+    DENY_PRICE_SUCCESS,
+
+    //i added those for approval button
+    GET_PENDING_PRICE_APPROVALS_COUNT_REQUEST,
+    GET_PENDING_PRICE_APPROVALS_COUNT_RESPONSE,
 }

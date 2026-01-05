@@ -37,7 +37,7 @@ public class GcmServer extends AbstractServer {
         try {
             switch (request.getAction()) {
 
-                case LOGIN_REQUEST:
+                case LOGIN_REQUEST: {
                     try {
                         ArrayList<String> creds = (ArrayList<String>) request.getMessage();
                         String username = creds.get(0);
@@ -102,48 +102,36 @@ public class GcmServer extends AbstractServer {
                         response = new Message(actionType.LOGIN_FAILED, "Server error during login");
                     }
                     break;
+                }
 
-                case GET_ALL_CITIES_REQUEST:
+                case GET_ALL_CITIES_REQUEST: {
                     System.out.println("Catalog request received");
                     ArrayList<City> cities = DBController.getAllCities();
                     response = new Message(actionType.GET_ALL_CITIES_RESPONSE, cities);
                     break;
+                }
 
-                case UPDATE_PRICE_REQUEST:
-                    System.out.println("Price update request received");
-                    // [cityId, newPrice, type]
-                    if (request.getMessage() instanceof ArrayList) {
-                        ArrayList<Object> params = (ArrayList<Object>) request.getMessage();
-                        int cityId = (int) params.get(0);
-                        double newPrice = (double) params.get(1);
-                        PriceType type = (PriceType) params.get(2);
-
-                        boolean success = DBController.requestPriceUpdate(cityId, newPrice, type);
-
-                        if (success) {
-                            response = new Message(actionType.UPDATE_PRICE_SUCCESS, "Price update requested successfully");
-                        }
-                    }
-                    break;
-
-                case GET_CITY_NAMES_REQUEST:
+                case GET_CITY_NAMES_REQUEST: {
                     response = new Message(actionType.GET_CITY_NAMES_RESPONSE, DBController.getAllCityNames());
                     break;
+                }
 
-                case GET_MAPS_REQUEST:
+                case GET_MAPS_REQUEST: {
                     String cityForMaps = (String) request.getMessage();
                     response = new Message(actionType.GET_MAPS_RESPONSE, DBController.getMapNamesForCity(cityForMaps));
                     break;
+                }
 
-                case GET_VERSIONS_REQUEST:
+                case GET_VERSIONS_REQUEST: {
                     List<String> versionParams = (List<String>) request.getMessage();
                     response = new Message(
                             actionType.GET_VERSIONS_RESPONSE,
                             DBController.getVersionsForCityMap(versionParams.get(0), versionParams.get(1))
                     );
                     break;
+                }
 
-                case GET_CATALOG_REQUEST:
+                case GET_CATALOG_REQUEST: {
                     System.out.println("CATALOG REQUEST → querying DB");
                     List<String> catalogParams = (List<String>) request.getMessage();
                     response = new Message(
@@ -151,8 +139,9 @@ public class GcmServer extends AbstractServer {
                             DBController.getCatalogRows(catalogParams.get(0), catalogParams.get(1), catalogParams.get(2))
                     );
                     break;
+                }
 
-                case REGISTER_REQUEST:
+                case REGISTER_REQUEST: {
                     try {
                         ArrayList<String> data = (ArrayList<String>) request.getMessage();
 
@@ -176,10 +165,74 @@ public class GcmServer extends AbstractServer {
                         response = new Message(actionType.REGISTER_FAILED, "Server error during register");
                     }
                     break;
+                }
 
-                default:
+                // ===================== FIXED: price approvals flow (NO DUPLICATES) =====================
+
+                case GET_PENDING_PRICE_APPROVALS_REQUEST: {
+                    response = new Message(
+                            actionType.GET_PENDING_PRICE_APPROVALS_RESPONSE,
+                            DBController.getPendingMapPriceUpdates()
+                    );
+                    break;
+                }
+
+                case UPDATE_PRICE_REQUEST: {
+                    // MAP price update request
+                    // Expect: [cityName, mapName, version, newPrice, requesterId]
+                    ArrayList<Object> p = (ArrayList<Object>) request.getMessage();
+
+                    String cityName = (String) p.get(0);
+                    String mapName  = (String) p.get(1);
+                    String version  = (String) p.get(2);
+                    double newPrice = (double) p.get(3);
+                    Integer requesterId = (Integer) p.get(4);
+
+                    Integer mapId = DBController.getMapId(cityName, mapName, version);
+                    boolean ok = (mapId != null)
+                            && DBController.createPendingMapPriceUpdate(mapId, newPrice, requesterId);
+
+                    response = new Message(actionType.UPDATE_PRICE_SUCCESS, ok);
+                    break;
+                }
+
+                case APPROVE_PENDING_PRICE_REQUEST: {
+                    // Expect: [pendingId, reviewerId]
+                    ArrayList<Object> p = (ArrayList<Object>) request.getMessage();
+                    int pendingId = (int) p.get(0);
+                    Integer reviewerId = (Integer) p.get(1);
+
+                    boolean ok = DBController.approvePendingMapPriceUpdate(pendingId, reviewerId);
+                    response = new Message(actionType.APPROVE_PRICE_SUCCESS, ok);
+                    break;
+                }
+
+                case DENY_PENDING_PRICE_REQUEST: {
+                    // Expect: [pendingId, reviewerId]
+                    ArrayList<Object> p = (ArrayList<Object>) request.getMessage();
+                    int pendingId = (int) p.get(0);
+                    Integer reviewerId = (Integer) p.get(1);
+
+                    boolean ok = DBController.denyPendingMapPriceUpdate(pendingId, reviewerId);
+                    response = new Message(actionType.DENY_PRICE_SUCCESS, ok);
+                    break;
+                }
+                case GET_PENDING_PRICE_APPROVALS_COUNT_REQUEST: {
+                    int count = DBController.getPendingPriceUpdatesCount();
+                    response = new Message(
+                            actionType.GET_PENDING_PRICE_APPROVALS_COUNT_RESPONSE,
+                            count
+                    );
+                    break;
+                }
+
+
+                // ================================================================================
+
+                default: {
                     System.out.println("Unknown action: " + request.getAction());
                     break;
+                }
             }
 
             if (response != null) {

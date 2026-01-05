@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
         public void setHomePageController(HomePageController homePageController)
         {
-            System.out.println("LoginPageController got HomePageController injected ✅");
+            System.out.println("LoginPageController got HomePageController");
             this.homePageController = homePageController;
         }
 
