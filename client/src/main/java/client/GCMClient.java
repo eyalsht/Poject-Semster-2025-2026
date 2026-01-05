@@ -44,7 +44,7 @@ public class GCMClient extends AbstractClient
         {
             try {
                 //instance = new GCMClient("20.250.162.225", 5555);
-                instance = new GCMClient("localhost", 5555);
+                instance = new GCMClient("20.250.162.225", 5555);
             } catch (IOException e) {
                 System.err.println("WARNING: Failed to connect to server. Make sure the server is running on 20.250.162.225:5555");
                 e.printStackTrace();
