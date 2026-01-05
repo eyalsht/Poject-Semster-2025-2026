@@ -16,7 +16,7 @@ public abstract class ContentItem {
     }
 
     public int getID() {
-        return id;
+        return this.id;
     }
     public void setID(int id) {
         this.id = id;
@@ -36,3 +36,4 @@ public abstract class ContentItem {
 
     public abstract String getDetails();
 }
+// comment to update renat
