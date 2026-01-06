@@ -359,12 +359,12 @@ public class CatalogPageController {
 
             MapUpdatePageController ctrl = loader.getController();
 
-            MapUpdateMode m = switch (mode) {
-                case "ADD" -> MapUpdateMode.ADD;
-                case "UPDATE" -> MapUpdateMode.UPDATE;
-                case "PRICE_UPDATE" -> MapUpdateMode.PRICE_UPDATE_REQUEST;
-                case "APPROVAL" -> MapUpdateMode.APPROVAL_REVIEW;
-                default -> MapUpdateMode.UPDATE;
+            MapStatus m = switch (mode) {
+                case "ADD" -> MapStatus.ADD;
+                case "UPDATE" -> MapStatus.UPDATE;
+                case "PRICE_UPDATE" -> MapStatus.PRICE_UPDATE_REQUEST;
+                case "APPROVAL" -> MapStatus.APPROVAL_REVIEW;
+                default -> MapStatus.UPDATE;
             };
 
             ctrl.setContext(m, selected);

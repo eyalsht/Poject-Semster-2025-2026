@@ -28,7 +28,7 @@ public abstract class User implements Serializable {
     protected int failedAttempts = 0;
     protected boolean isBlocked = false;
 
-    public User(int id, String username, String password, String firstName, String lastName, String email) {
+    public User(int id, String username, String password, String firstName, String lastName, String email, UserRole role) {
         this.id = id;
         this.username = username;
         this.password = password; // Use setter to validate
@@ -36,6 +36,7 @@ public abstract class User implements Serializable {
         this.lastName = lastName;
         this.email = email; // Use setter to validate
         this.isLoggedIn = false;
+        this.role = role;
     }
     public User() {
         this.id = 0;

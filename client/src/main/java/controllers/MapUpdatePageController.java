@@ -37,7 +37,7 @@ public class MapUpdatePageController {
 
     private final GCMClient client = GCMClient.getInstance();
 
-    private MapUpdateMode mode = MapUpdateMode.UPDATE;
+    private MapStatus mode = MapStatus.UPDATE;
 
     // For ADD/UPDATE/PRICE_UPDATE_REQUEST we keep the selected catalog row
     private MapCatalogRow currentRow;
@@ -60,7 +60,7 @@ public class MapUpdatePageController {
     }
 
     /** Existing API used from CatalogPageController */
-    public void setContext(MapUpdateMode mode, MapCatalogRow selectedRow) {
+    public void setContext(MapStatus mode, MapCatalogRow selectedRow) {
         this.pending = null;
         this.mode = mode;
         this.currentRow = selectedRow;
@@ -74,7 +74,7 @@ public class MapUpdatePageController {
     public void setApprovalContext(PendingPriceUpdate pending) {
         this.currentRow = null;
         this.pending = pending;
-        this.mode = MapUpdateMode.APPROVAL_REVIEW;
+        this.mode = MapStatus.APPROVAL_REVIEW;
 
         fillLeftFromPending(pending);
         fillRightDefaultsFromPending(pending);
@@ -97,8 +97,8 @@ public class MapUpdatePageController {
         taCurDesc.setText(row.getDescription());
     }
 
-    private void fillRightDefaultsFromCatalogRow(MapUpdateMode mode, MapCatalogRow row) {
-        if (mode == MapUpdateMode.ADD || row == null) {
+    private void fillRightDefaultsFromCatalogRow(MapStatus mode, MapCatalogRow row) {
+        if (mode == MapStatus.ADD || row == null) {
             tfNewCity.clear();
             tfNewMap.clear();
             tfNewPrice.clear();
@@ -234,7 +234,7 @@ public class MapUpdatePageController {
     @FXML
     private void onAddUpdate() {
         // Only implemented right now for PRICE_UPDATE_REQUEST
-        if (mode != MapUpdateMode.PRICE_UPDATE_REQUEST) {
+        if (mode != MapStatus.PRICE_UPDATE_REQUEST) {
             closeWindow();
             return;
         }

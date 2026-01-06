@@ -40,15 +40,14 @@ public class DBController {
                     int id = rs.getInt("id");
                     String password = rs.getString("password");
                     String email = rs.getString("email");
-                    String role = rs.getString("user_role");
-
+                    String roleStr = rs.getString("user_role");
                     String firstName = rs.getString("first_name");
                     String lastName = rs.getString("last_name");
-
+/*
                     if ("Client".equalsIgnoreCase(role)) {
                         user = new Client(id, username, password, email);
                     } else {
-                        user = new Employee(id, username, password, email, role);
+                        user = new Employee(id,firstName,lastName, username, password, email,password,UserRole.valueOf(roleStr), employeeId);
                     }
 
                     user.setFirstName(firstName);
@@ -56,6 +55,40 @@ public class DBController {
 
                     user.setFailedAttempts(rs.getInt("failed_attempts"));
                     user.setBlocked(rs.getBoolean("is_blocked"));
+                }*/
+
+                    String employeeId = null;
+                    try {
+                        employeeId = rs.getString("employee_id");
+                    } catch (SQLException e) {
+                        // אם העמודה לא קיימת בטבלה, נשים ערך ברירת מחדל כדי שהקוד לא יקרוס
+                        employeeId = "N/A";
+                    }
+
+                    if ("Client".equalsIgnoreCase(roleStr)) {
+                        // אם זה לקוח - יצירה רגילה
+                        user = new Client(id, username, password, email);
+                        user.setFirstName(firstName);
+                        user.setLastName(lastName);
+                    } else {
+                        // תיקון 3: שימוש במשתנים שהגדרנו כרגע (roleStr, employeeId)
+                        // ושימוש בבנאי הנכון לפי הסדר: id, first, last, user, email, pass, role, empId
+                        user = new Employee(
+                                id,
+                                firstName,
+                                lastName,
+                                username,
+                                email,
+                                password,
+                                UserRole.valueOf(roleStr),
+                                employeeId
+                        );
+                    }
+
+                    if (user != null) {
+                        user.setFailedAttempts(rs.getInt("failed_attempts"));
+                        user.setBlocked(rs.getBoolean("is_blocked"));
+                    }
                 }
             }
         } catch (SQLException e) {

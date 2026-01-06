@@ -1,6 +1,6 @@
 package common;
 
-public enum MapUpdateMode
+public enum MapStatus
 {
     ADD,
     UPDATE,
