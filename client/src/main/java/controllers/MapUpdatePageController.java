@@ -92,7 +92,7 @@ public class MapUpdatePageController {
             return;
         }
         lblCurCity.setText(row.getCity());
-        lblCurMap.setText(row.getMap() + " (" + row.getVersion() + ")");
+        lblCurMap.setText(row.getMapName() + " (" + row.getVersion() + ")");
         lblCurPrice.setText(String.valueOf(row.getPrice()));
         taCurDesc.setText(row.getDescription());
     }
@@ -108,7 +108,7 @@ public class MapUpdatePageController {
 
         // copy current to right by default
         tfNewCity.setText(row.getCity());
-        tfNewMap.setText(row.getMap());
+        tfNewMap.setText(row.getMapName());
         tfNewPrice.setText(String.valueOf(row.getPrice()));
         taNewDesc.setText(row.getDescription());
     }
@@ -262,7 +262,7 @@ public class MapUpdatePageController {
 
         ArrayList<Object> payload = new ArrayList<>();
         payload.add(currentRow.getCity());
-        payload.add(currentRow.getMap());
+        payload.add(currentRow.getMapName());
         payload.add(currentRow.getVersion());
         payload.add(newPrice);
         payload.add(requesterId);
