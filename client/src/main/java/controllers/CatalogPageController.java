@@ -47,7 +47,7 @@ public class CatalogPageController {
     public void initialize()
     {
         colCity.setCellValueFactory(new PropertyValueFactory<>("city"));
-        colMap.setCellValueFactory(new PropertyValueFactory<>("map"));
+        colMap.setCellValueFactory(new PropertyValueFactory<>("mapName"));
         colVersion.setCellValueFactory(new PropertyValueFactory<>("version"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         colDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
