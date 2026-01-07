@@ -1,10 +1,6 @@
 package server;
 
-import common.User;
-import common.PriceType;
-import common.City;
-import common.actionType;
-import common.Message;
+import common.*;
 
 import server.ocsf.AbstractServer;
 import server.ocsf.ConnectionToClient;
@@ -134,10 +130,25 @@ public class GcmServer extends AbstractServer {
                 case GET_CATALOG_REQUEST: {
                     System.out.println("CATALOG REQUEST → querying DB");
                     List<String> catalogParams = (List<String>) request.getMessage();
-                    response = new Message(
-                            actionType.GET_CATALOG_RESPONSE,
-                            DBController.getCatalogRows(catalogParams.get(0), catalogParams.get(1), catalogParams.get(2))
+
+                    // 1. Print params to ensure they are what you expect (should be empty strings, not nulls)
+                    System.out.println("Params received: " + catalogParams);
+
+                    // 2. Fetch data into a variable first
+                    List<MapCatalogRow> results = DBController.getCatalogRows(
+                            catalogParams.get(0),
+                            catalogParams.get(1),
+                            catalogParams.get(2)
                     );
+
+                    // 3. Print the size of the result list
+                    if (results == null) {
+                        System.out.println("ERROR: DBController returned NULL!");
+                    } else {
+                        System.out.println("DB Success! Found " + results.size() + " rows.");
+                    }
+
+                    response = new Message(actionType.GET_CATALOG_RESPONSE, results);
                     break;
                 }
 

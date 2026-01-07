@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class MapCatalogRow implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private final String city;
     private final String mapName;
     private final String version;

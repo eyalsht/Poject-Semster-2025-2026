@@ -22,12 +22,8 @@ public abstract class Report {
         this.producedDate = LocalDateTime.now();
     }
 
-    public void exportToPDF() {
-        // placeholder: real PDF export would require a library
-        // (you can leave empty if assignment doesn't require actual PDF)
-    }
 
-    // getters (optional but useful)
+
     public int getReportId() { return reportId; }
     public LocalDateTime getProducedDate() { return producedDate; }
     public LocalDate getStartDate() { return startDate; }

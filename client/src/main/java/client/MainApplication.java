@@ -45,7 +45,7 @@ public class MainApplication extends Application
     public void start(Stage stage) throws Exception
     {
         primaryStage = stage;
-        String host = "localhost";
+        String host = "20.250.162.225";
         int port = 5555;
         var params = getParameters().getRaw();
         if (params.size() >= 1) host = params.get(0);

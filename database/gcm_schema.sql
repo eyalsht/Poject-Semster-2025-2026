@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS gcm_db;
 USE gcm_db;
 
-CREATE TABLE users(
+CREATE TABLE IF NOT EXISTS users(
             id INT AUTO_INCREMENT PRIMARY KEY,
             username VARCHAR(255) NOT NULL UNIQUE,
             password VARCHAR(255) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE users(
             user_role ENUM('Client', 'Content_Manager', 'Company_Manager', 'Content_Worker','Support_Agent') NOT NULL
 );
 
-CREATE TABLE cities (
+CREATE TABLE IF NOT EXISTS cities (
             id INT AUTO_INCREMENT PRIMARY KEY,
             city_name VARCHAR(255) NOT NULL,
             number_of_maps INT DEFAULT 0,
@@ -23,7 +23,7 @@ CREATE TABLE cities (
             pending_price_sub DOUBLE DEFAULT -1
 );
 
-CREATE TABLE maps (
+CREATE TABLE IF NOT EXISTS maps (
             id INT AUTO_INCREMENT PRIMARY KEY,
             city_id INT NOT NULL,
             map_name VARCHAR(255) NOT NULL,
