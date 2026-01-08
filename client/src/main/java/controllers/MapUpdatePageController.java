@@ -182,7 +182,7 @@ public class MapUpdatePageController {
             }
 
             case APPROVAL_REVIEW -> {
-                if (role == UserRole.COMPANY_MANAGER || role == UserRole.CONTENT_MANAGER) {
+                if (role == UserRole.COMPANY_MANAGER ) {
                     setRightEditable(false, false, false, false);
 
                     show(btnApprove, true);
