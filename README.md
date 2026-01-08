@@ -4,13 +4,16 @@ Eyal Shtinmetz, Imree Cohen, Roni , Daneil Groshko, Renat Krimov, Guy Segal
 A shared workspace for building and maintaining the GMC project Semester 2025–2026.
 
 Poject-Semster-2025-2026/
-├── client/           # Client-side application
-├── server/           # Server-side application
-├── common/           # Shared code and models
-├── database/         # Database scripts and schemas
-├── lib/              # External libraries
-├── pom.xml           # Root Maven configuration
-└── README.md         # You are here!
+
+## Repository structure
+- **client/** — user interface
+- **server/** — backend services and APIs
+- **common/** — shared code and utilities
+-  **pom.xml /**          # Root Maven configuration
+- **database/** — schemas, migrations, and data setup
+- **lib/** — reusable libraries and helpers
+- **README.md /**        # You are here!
+
 
 
 ## Quick start
