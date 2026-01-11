@@ -13,7 +13,6 @@ import java.util.ArrayList;
  * Map update / price update / approval review popup.
  *
  * LEFT side: current (read-only)
- * RIGHT side: proposed changes (editable depending on mode + role)
  */
 public class MapUpdatePageController {
 

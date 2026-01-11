@@ -32,3 +32,4 @@ bin/
 ### Database Configuration ###
 .db.properties
 
+/common/target/
