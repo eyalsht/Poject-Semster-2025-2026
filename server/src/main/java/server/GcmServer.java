@@ -237,6 +237,37 @@ public class GcmServer extends AbstractServer {
                     break;
                 }
 
+                case PURCHASE_REQUEST: {
+                    try {
+                        // Extract payload: [userId, cityId, mapId, purchaseType, creditCardToken, monthsToAdd]
+                        ArrayList<Object> purchaseData = (ArrayList<Object>) request.getMessage();
+
+                        int userId = (Integer) purchaseData.get(0);
+                        int cityId = (Integer) purchaseData.get(1);
+                        Integer mapId = (purchaseData.get(2) != null) ? (Integer) purchaseData.get(2) : null;
+                        String purchaseType = (String) purchaseData.get(3);
+                        String creditCardToken = (String) purchaseData.get(4);
+                        int monthsToAdd = (Integer) purchaseData.get(5);
+
+                        System.out.println("Purchase request received: UserID=" + userId + 
+                                         ", CityID=" + cityId + ", MapID=" + mapId + 
+                                         ", Type=" + purchaseType + ", Months=" + monthsToAdd);
+
+                        // Execute purchase logic
+                        boolean result = PurchaseController.getInstance().processPurchase(
+                                userId, cityId, mapId, purchaseType, creditCardToken, monthsToAdd
+                        );
+
+                        // Send response
+                        response = new Message(actionType.PURCHASE_RESPONSE, result);
+
+                    } catch (Exception e) {
+                        System.err.println("Error processing purchase request: " + e.getMessage());
+                        e.printStackTrace();
+                        response = new Message(actionType.PURCHASE_RESPONSE, false);
+                    }
+                    break;
+                }
 
                 // ================================================================================
 

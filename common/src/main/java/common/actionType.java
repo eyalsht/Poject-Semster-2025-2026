@@ -43,4 +43,7 @@ public enum actionType {
     //i added those for approval button
     GET_PENDING_PRICE_APPROVALS_COUNT_REQUEST,
     GET_PENDING_PRICE_APPROVALS_COUNT_RESPONSE,
+
+    PURCHASE_REQUEST,
+    PURCHASE_RESPONSE,
 }
