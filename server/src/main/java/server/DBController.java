@@ -3,6 +3,7 @@ package server;
 import common.*;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,18 +62,14 @@ public class DBController {
                     try {
                         employeeId = rs.getString("employee_id");
                     } catch (SQLException e) {
-                        // אם העמודה לא קיימת בטבלה, נשים ערך ברירת מחדל כדי שהקוד לא יקרוס
                         employeeId = "N/A";
                     }
 
                     if ("Client".equalsIgnoreCase(roleStr)) {
-                        // אם זה לקוח - יצירה רגילה
                         user = new Client(id, username, password, email);
                         user.setFirstName(firstName);
                         user.setLastName(lastName);
                     } else {
-                        // תיקון 3: שימוש במשתנים שהגדרנו כרגע (roleStr, employeeId)
-                        // ושימוש בבנאי הנכון לפי הסדר: id, first, last, user, email, pass, role, empId
                         user = new Employee(
                                 id,
                                 firstName,
@@ -503,5 +500,108 @@ public class DBController {
         return 0;
     }
 
+    // -------------------- PRICE QUERIES --------------------
+
+    public static double getCitySubscriptionPrice(int cityId) {
+        ensureConnected();
+
+        String query = "SELECT subscription_price FROM cities WHERE id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, cityId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("subscription_price");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching subscription price for city ID " + cityId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
+    public static double getMapOneTimePrice(int mapId) {
+        ensureConnected();
+
+        String query = "SELECT one_time_price FROM maps WHERE id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, mapId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("one_time_price");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching one-time price for map ID " + mapId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
+    // -------------------- SUBSCRIPTION MANAGEMENT --------------------
+    
+    public static boolean logPurchase(int userId, int cityId, Integer mapId, String purchaseType, double price) {
+        ensureConnected();
+
+        String query = "INSERT INTO purchases (user_id, city_id, map_id, purchase_type, price, purchase_date) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, cityId);
+            
+            if (mapId != null) {
+                ps.setInt(3, mapId);
+            } else {
+                ps.setNull(3, Types.INTEGER);
+            }
+            
+            ps.setString(4, purchaseType);
+            ps.setDouble(5, price);
+            ps.setDate(6, java.sql.Date.valueOf(java.time.LocalDate.now()));
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error logging purchase for user ID " + userId + ", city ID " + cityId + 
+                             ", map ID " + mapId + ", type " + purchaseType + ": " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean updateUserSubscription(int userId, LocalDate newExpiryDate) {
+        ensureConnected();
+
+        // SQL ALTER TABLE command to add the column if it doesn't exist:
+        // ALTER TABLE users ADD COLUMN subscription_expiry DATE DEFAULT NULL;
+
+        String query = "UPDATE users SET subscription_expiry = ? WHERE id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            // Convert LocalDate to java.sql.Date
+
+            if (newExpiryDate != null) {
+                ps.setDate(1, java.sql.Date.valueOf(newExpiryDate));
+            } else {
+                ps.setNull(1, Types.DATE);
+            }
+            ps.setInt(2, userId);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error updating subscription for user ID " + userId + ": " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 }

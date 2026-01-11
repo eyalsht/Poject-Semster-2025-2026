@@ -33,3 +33,4 @@ bin/
 .db.properties
 
 /common/target/
+/server/target/
