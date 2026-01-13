@@ -1,20 +1,16 @@
 package controllers;
 
 import client.MainApplication;
-import client.GCMClient;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
-import common.User;
+import common.user.User;
 import javafx.scene.control.Label;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import controllers.LoginPageController;
-import controllers.WelcomePageController;
-import controllers.ProfilePageController;
 
 public class HomePageController
 {

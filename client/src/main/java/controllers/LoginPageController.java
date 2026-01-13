@@ -2,137 +2,154 @@ package controllers;
 
 
 import client.GCMClient;
-import common.Message;
-import common.User;
-import common.actionType;
+import common.messaging.Message;
+import common.user.User;
+import common.enums.ActionType;
+import common.dto.AuthResponse;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-import javafx.scene.Parent;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
-    public class LoginPageController
-    {
+/**
+ * Controller for the login page.
+ * Handles user authentication.
+ */
+public class LoginPageController {
 
-        @FXML private TextField tfUsername;
-        @FXML private PasswordField tfPassword;
-        @FXML private Label lblError;
-        private HomePageController homePageController;
+    @FXML private TextField tfUsername;
+    @FXML private PasswordField tfPassword;
+    @FXML private Label lblError;
+    
+    private HomePageController homePageController;
+    private final GCMClient client = GCMClient.getInstance();
 
-        public void setHomePageController(HomePageController homePageController)
-        {
-            System.out.println("LoginPageController got HomePageController");
-            this.homePageController = homePageController;
-        }
-
-        private final GCMClient client = GCMClient.getInstance();
-
-        @FXML
-        public void initialize()
-        {
-            lblError.setText("");
-            client.setLoginController(this);
-        }
-
-        @FXML
-        private void handleLogin() {
-            String username = tfUsername.getText();
-            String password = tfPassword.getText();
-
-
-
-            lblError.setText("Checking credentials...");
-            lblError.setTextFill(Color.BLACK);
-
-            new Thread(() -> {
-                ArrayList<String> creds = new ArrayList<>();
-                creds.add(username);
-                creds.add(password);
-
-                Message request = new Message(actionType.LOGIN_REQUEST, creds);
-                Object response = client.sendRequest(request);
-
-                Platform.runLater(() -> {
-                    if (response instanceof Message msg) {
-                        if (msg.getAction() == actionType.LOGIN_SUCCESS) {
-                            User loggedInUser = (User) msg.getMessage();
-                            client.setCurrentUser(loggedInUser);
-                            System.out.println("homePageController = " + homePageController);
-                            if (homePageController != null)
-                            {
-                                homePageController.onLoginSuccess(loggedInUser);
-                            }
-                            lblError.setTextFill(Color.GREEN);
-                            lblError.setText("Login Successful! Welcome " + loggedInUser.getUsername());
-
-                        } else if (msg.getAction() == actionType.LOGIN_FAILED) {
-                            String errorMsg = (String) msg.getMessage();
-                            lblError.setTextFill(Color.RED);
-                            lblError.setText(errorMsg);
-                        }
-                    } else {
-                        lblError.setTextFill(Color.RED);
-                        lblError.setText("Server communication error.");
-                    }
-                });
-            }).start();
-        }
-        @FXML
-        private void handleRegister()
-        {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/RegisterPage.fxml"));
-                Parent root = loader.load();
-
-                Stage stage = new Stage();
-                stage.setTitle("Register");
-                stage.setScene(new Scene(root));
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.setResizable(false);
-
-                RegisterPageController regCtrl = loader.getController();
-                regCtrl.setDialogStage(stage);
-                regCtrl.setLoginController(this);
-
-                stage.showAndWait();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        public void fillAfterRegister(String email) {
-            tfUsername.setText(email);
-            tfPassword.clear();
-        }
-        public void onServerMessage(Message msg)
-        {
-            if (msg.getAction() == actionType.LOGIN_SUCCESS) {
-                User loggedInUser = (User) msg.getMessage();
-                System.out.println("firstName=" + loggedInUser.getFirstName()
-                        + " lastName=" + loggedInUser.getLastName()
-                        + " username=" + loggedInUser.getUsername()
-                        + " email=" + loggedInUser.getEmail());
-                client.setCurrentUser(loggedInUser);
-
-                if (homePageController != null) {
-                    homePageController.onLoginSuccess(loggedInUser);
-                }
-                return;
-            }
-
-            if (msg.getAction() == actionType.LOGIN_FAILED) {
-                String errorMsg = (String) msg.getMessage();
-                lblError.setTextFill(Color.RED);
-                lblError.setText(errorMsg);
-            }
-        }
-
-
+    public void setHomePageController(HomePageController controller) {
+        this.homePageController = controller;
     }
+
+    @FXML
+    public void initialize() {
+        clearError();
+    }
+
+    @FXML
+    private void handleLogin() {
+        String username = tfUsername.getText().trim();
+        String password = tfPassword.getText();
+
+        // Basic validation
+        if (username.isEmpty() || password.isEmpty()) {
+            showError("Please enter username and password.");
+            return;
+        }
+
+        showMessage("Checking credentials...", Color.GRAY);
+
+        // Send login request in background thread
+        new Thread(() -> {
+            try {
+                ArrayList<String> credentials = new ArrayList<>();
+                credentials.add(username);
+                credentials.add(password);
+
+                Message request = new Message(ActionType.LOGIN_REQUEST, credentials);
+                Message response = (Message) client.sendRequest(request);
+
+                Platform.runLater(() -> handleLoginResponse(response));
+
+            } catch (Exception e) {
+                Platform.runLater(() -> showError("Connection error: " + e.getMessage()));
+            }
+        }).start();
+    }
+
+    /**
+     * Handle the login response from server.
+     */
+    private void handleLoginResponse(Message response) {
+        if (response == null) {
+            showError("No response from server.");
+            return;
+        }
+
+        if (response.getAction() == ActionType.LOGIN_RESPONSE) {
+            AuthResponse authResponse = (AuthResponse) response.getMessage();
+            
+            if (authResponse.isSuccess()) {
+                User user = authResponse.getUser();
+                client.setCurrentUser(user);
+                
+                showMessage("Welcome, " + user.getFirstName() + "!", Color.GREEN);
+                
+                if (homePageController != null) {
+                    homePageController.onLoginSuccess(user);
+                }
+            } else {
+                showError(authResponse.getMessage());
+            }
+        } else if (response.getAction() == ActionType.ERROR) {
+            showError("Server error: " + response.getMessage());
+        } else {
+            showError("Unexpected response from server.");
+        }
+    }
+
+    @FXML
+    private void handleRegister() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/RegisterPage.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Register New Account");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(false);
+
+            RegisterPageController controller = loader.getController();
+            controller.setDialogStage(stage);
+            controller.setLoginController(this);
+
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Could not open registration form.");
+        }
+    }
+
+    /**
+     * Called by RegisterPageController after successful registration.
+     */
+    public void fillAfterRegister(String email) {
+        tfUsername.setText(email);
+        tfPassword.clear();
+        tfPassword.requestFocus();
+        showMessage("Registration successful! Please log in.", Color.GREEN);
+    }
+
+    // ==================== HELPER METHODS ====================
+
+    private void showError(String message) {
+        lblError.setTextFill(Color.RED);
+        lblError.setText(message);
+    }
+
+    private void showMessage(String message, Color color) {
+        lblError.setTextFill(color);
+        lblError.setText(message);
+    }
+
+    private void clearError() {
+        lblError.setText("");
+    }
+}

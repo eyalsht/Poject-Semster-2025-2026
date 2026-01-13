@@ -1,7 +1,19 @@
 package server;
 
-import java.time.LocalDate;
+import common.content.City;
+import common.content.GCMMap;
+import common.purchase.Subscription;
+import common.user.Client;
+import common.user.User;
+import server.repository.*;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
+/**
+ * Controller for handling purchase operations.
+ * Refactored to use Repository pattern instead of DBController.
+ */
 public class PurchaseController {
 
     // Purchase type constants
@@ -12,19 +24,25 @@ public class PurchaseController {
     private static PurchaseController instance;
 
     // Dependencies
+    private final UserRepository userRepository;
+    private final CityRepository cityRepository;
+    private final MapRepository mapRepository;
+    private final PurchaseRepository purchaseRepository;
     private final PaymentService paymentService;
 
     /**
      * Private constructor to enforce Singleton pattern.
-     * Initializes the PaymentService dependency.
      */
     private PurchaseController() {
+        this.userRepository = UserRepository.getInstance();
+        this.cityRepository = CityRepository.getInstance();
+        this.mapRepository = MapRepository.getInstance();
+        this.purchaseRepository = PurchaseRepository.getInstance();
         this.paymentService = new PaymentService();
     }
 
     /**
      * Returns the singleton instance of PurchaseController.
-     * Creates the instance if it doesn't exist.
      */
     public static synchronized PurchaseController getInstance() {
         if (instance == null) {
@@ -33,84 +51,147 @@ public class PurchaseController {
         return instance;
     }
 
-
-    public boolean processPurchase(int userId, int cityId, Integer mapId, String purchaseType, 
+    /**
+     * Process a purchase request.
+     * 
+     * @param userId          The ID of the user making the purchase
+     * @param cityId          The ID of the city
+     * @param mapId           The ID of the map (null for subscription)
+     * @param purchaseType    SUBSCRIPTION or ONE_TIME
+     * @param creditCardToken Payment token
+     * @param monthsToAdd     Months to add for subscription
+     * @return true if purchase was successful
+     */
+    public boolean processPurchase(int userId, int cityId, Integer mapId, String purchaseType,
                                    String creditCardToken, int monthsToAdd) {
-        System.out.println("Processing " + purchaseType + " purchase for UserID: " + userId + 
-                         ", CityID: " + cityId + ", MapID: " + mapId + 
-                         " with token: " + creditCardToken);
+        
+        System.out.println("Processing " + purchaseType + " purchase for UserID: " + userId +
+            ", CityID: " + cityId + ", MapID: " + mapId);
 
-        // Step 1: Determine and validate price
-        double price;
-        if (PURCHASE_TYPE_SUBSCRIPTION.equals(purchaseType)) {
-            price = DBController.getCitySubscriptionPrice(cityId);
-        }
-        else if (PURCHASE_TYPE_ONE_TIME.equals(purchaseType)) {
-            if (mapId == null) {
-                System.err.println("Purchase failed: Map ID is required for ONE_TIME purchase");
+        try {
+            // Step 1: Load entities from database
+            Optional<User> optionalUser = userRepository.findById(userId);
+            Optional<City> optionalCity = cityRepository.findById(cityId);
+
+            if (optionalUser.isEmpty()) {
+                System.err.println("Purchase failed: User not found with ID: " + userId);
                 return false;
             }
-            price = DBController.getMapOneTimePrice(mapId);
-        } else {
-            System.err.println("Purchase failed: Invalid purchase type: " + purchaseType);
-            return false;
-        }
 
-        // Validate price
-        if (price <= 0) {
-            System.err.println("Purchase failed: Price not found or invalid for UserID: " + userId + 
-                             ", PurchaseType: " + purchaseType);
-            return false;
-        }
-
-        System.out.println("Price determined: " + price + " for " + purchaseType + " purchase, UserID: " + userId);
-
-        // Step 2: Validate payment
-        boolean paymentValid = paymentService.validate(creditCardToken);
-        
-        if (!paymentValid) {
-            System.err.println("Purchase failed: Payment validation failed for UserID: " + userId);
-            return false;
-        }
-
-        System.out.println("Payment validated successfully for UserID: " + userId + ", Amount: " + price);
-
-        // Step 3: Log the purchase
-        boolean logSuccess = DBController.logPurchase(userId, cityId, mapId, purchaseType, price);
-        
-        if (!logSuccess) {
-            System.err.println("Purchase failed: Failed to log purchase in database for UserID: " + userId);
-            return false;
-        }
-
-        System.out.println("Purchase logged successfully for UserID: " + userId);
-
-        // Step 4: Conditional logic based on purchase type
-        if (PURCHASE_TYPE_SUBSCRIPTION.equals(purchaseType)) {
-            // Update subscription expiry date
-            LocalDate newExpiryDate = LocalDate.now().plusMonths(monthsToAdd);
-            System.out.println("Calculated new subscription expiry date: " + newExpiryDate + " for UserID: " + userId);
-            
-            boolean subscriptionSuccess = DBController.updateUserSubscription(userId, newExpiryDate);
-            
-            if (!subscriptionSuccess) {
-                System.err.println("Purchase failed: Failed to update subscription for UserID: " + userId);
+            if (optionalCity.isEmpty()) {
+                System.err.println("Purchase failed: City not found with ID: " + cityId);
                 return false;
             }
-            
-            System.out.println("Subscription updated successfully for UserID: " + userId + ". Expires: " + newExpiryDate);
-            
-        } else if (PURCHASE_TYPE_ONE_TIME.equals(purchaseType)) {
-            // One-time purchase: just log it, no subscription update needed
-            System.out.println("One-time purchase completed for UserID: " + userId + ", MapID: " + mapId);
-            
-        } else {
-            System.err.println("Purchase failed: Invalid purchase type: " + purchaseType);
+
+            User user = optionalUser.get();
+            City city = optionalCity.get();
+            GCMMap map = null;
+
+            // Step 2: Determine price based on purchase type
+            double price;
+
+            if (PURCHASE_TYPE_SUBSCRIPTION.equals(purchaseType)) {
+                price = city.getPriceSub();
+                
+                if (price <= 0) {
+                    System.err.println("Purchase failed: Invalid subscription price for city: " + city.getName());
+                    return false;
+                }
+
+            } else if (PURCHASE_TYPE_ONE_TIME.equals(purchaseType)) {
+                if (mapId == null) {
+                    System.err.println("Purchase failed: Map ID is required for ONE_TIME purchase");
+                    return false;
+                }
+
+                Optional<GCMMap> optionalMap = mapRepository.findById(mapId);
+                if (optionalMap.isEmpty()) {
+                    System.err.println("Purchase failed: Map not found with ID: " + mapId);
+                    return false;
+                }
+
+                map = optionalMap.get();
+                price = map.getPrice();
+
+                if (price <= 0) {
+                    System.err.println("Purchase failed: Invalid price for map: " + map.getName());
+                    return false;
+                }
+
+            } else {
+                System.err.println("Purchase failed: Invalid purchase type: " + purchaseType);
+                return false;
+            }
+
+            System.out.println("Price determined: " + price + " for " + purchaseType);
+
+            // Step 3: Validate payment
+            boolean paymentValid = paymentService.validate(creditCardToken);
+
+            if (!paymentValid) {
+                System.err.println("Purchase failed: Payment validation failed for UserID: " + userId);
+                return false;
+            }
+
+            System.out.println("Payment validated successfully for UserID: " + userId + ", Amount: " + price);
+
+            // Step 4: Create the purchase record and update user if needed
+            if (PURCHASE_TYPE_SUBSCRIPTION.equals(purchaseType)) {
+                return processSubscriptionPurchase(user, city, price, monthsToAdd);
+            } else {
+                return processOneTimePurchase(user, city, map, price);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Purchase failed with exception: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
+    }
 
-        System.out.println("Purchase completed successfully for UserID: " + userId + ", Type: " + purchaseType);
-        return true;
+    /**
+     * Process a subscription purchase.
+     */
+    private boolean processSubscriptionPurchase(User user, City city, double price, int monthsToAdd) {
+        try {
+            // Create subscription record
+            Subscription subscription = purchaseRepository.createSubscription(user, city, price, monthsToAdd);
+
+            // Update user's subscription expiry (if user is a Client)
+            if (user instanceof Client client) {
+                LocalDate newExpiry = subscription.getExpirationDate();
+                userRepository.updateSubscriptionExpiry(user.getId(), newExpiry);
+                System.out.println("Subscription updated for UserID: " + user.getId() + 
+                    ". Expires: " + newExpiry);
+            }
+
+            System.out.println("Subscription purchase completed successfully for UserID: " + user.getId());
+            return true;
+
+        } catch (Exception e) {
+            System.err.println("Failed to process subscription purchase: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Process a one-time map purchase.
+     */
+    private boolean processOneTimePurchase(User user, City city, GCMMap map, double price) {
+        try {
+            // Create one-time purchase record
+            purchaseRepository.createOneTimePurchase(user, city, map, price);
+
+            System.out.println("One-time purchase completed for UserID: " + user.getId() + 
+                ", MapID: " + map.getId());
+            return true;
+
+        } catch (Exception e) {
+            System.err.println("Failed to process one-time purchase: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 }
 

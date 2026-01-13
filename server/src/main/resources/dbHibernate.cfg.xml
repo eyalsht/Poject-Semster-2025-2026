@@ -1,0 +1,48 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/gcm_db?serverTimezone=UTC&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</property>
+        <property name="connection.username">root</property>
+        <property name="connection.password">123123</property>
+
+        <!-- HikariCP Connection Pool (recommended for production) -->
+        <property name="hibernate.hikari.minimumIdle">5</property>
+        <property name="hibernate.hikari.maximumPoolSize">20</property>
+        <property name="hibernate.hikari.idleTimeout">30000</property>
+
+        <!-- Hibernate Settings -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <!-- Use HikariCP as connection provider -->
+        <property name="hibernate.connection.provider_class">org.hibernate.hikaricp.internal.HikariCPConnectionProvider</property>
+
+        <!-- Current Session Context (for session-per-request pattern) -->
+        <property name="hibernate.current_session_context_class">thread</property>
+
+        <!-- User hierarchy (Single Table and separate tables) -->
+        <mapping class="common.user.User"/>
+        <mapping class="common.user.Client"/>
+        <mapping class="common.user.Employee"/>
+
+        <!-- Content entities (separate tables) -->
+        <mapping class="common.content.City"/>
+        <mapping class="common.content.GCMMap"/>
+        <mapping class="common.content.Site"/>
+        <mapping class="common.content.Tour"/>
+
+        <!-- Purchase hierarchy (Single Table) -->
+        <mapping class="common.purchase.Purchase"/>
+        <mapping class="common.purchase.Subscription"/>
+        <mapping class="common.purchase.OneTimePurchase"/>
+
+        <!-- Pending Updates -->
+        <mapping class="common.workflow.PendingPriceUpdate"/>
+    </session-factory>
+</hibernate-configuration>

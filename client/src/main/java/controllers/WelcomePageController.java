@@ -1,6 +1,6 @@
 package controllers;
 
-import common.User;
+import common.user.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 

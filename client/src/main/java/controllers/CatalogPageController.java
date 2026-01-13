@@ -1,338 +1,321 @@
 package controllers;
 import client.GCMClient;
-import common.*;
+import common.content.GCMMap;
+import common.dto.CatalogFilter;
+import common.dto.CatalogResponse;
+import common.enums.EmployeeRole;
+import common.enums.ActionType;
+import common.messaging.Message;
+import common.user.Employee;
+import common.user.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.beans.binding.Bindings;
-import javafx.scene.control.Button;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import java.io.IOException;
-
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Controller for the catalog page.
+ * Displays cities, maps, and allows filtering.
+ */
 public class CatalogPageController {
 
     @FXML private ComboBox<String> cbCity;
     @FXML private ComboBox<String> cbMap;
     @FXML private ComboBox<String> cbVersion;
 
-    @FXML private TableView<MapCatalogRow> tblCatalog;
-    @FXML private TableColumn<MapCatalogRow, String> colCity;
-    @FXML private TableColumn<MapCatalogRow, String> colMap;
-    @FXML private TableColumn<MapCatalogRow, String> colVersion;
-    @FXML private TableColumn<MapCatalogRow, Double> colPrice;
-    @FXML private TableColumn<MapCatalogRow, String> colDesc;
+    @FXML private TableView<GCMMap> tblCatalog;
+    @FXML private TableColumn<GCMMap, String> colCity;
+    @FXML private TableColumn<GCMMap, String> colMap;
+    @FXML private TableColumn<GCMMap, String> colVersion;
+    @FXML private TableColumn<GCMMap, Double> colPrice;
+    @FXML private TableColumn<GCMMap, String> colDesc;
+
     @FXML private Button btnUpdateMap;
     @FXML private Button btnAddMap;
     @FXML private Button btnDeleteMap;
     @FXML private Button btnPriceUpdate;
     @FXML private Button btnApprovals;
 
-
     private final GCMClient client = GCMClient.getInstance();
+    
+    // Cache the last response for filter cascading
+    private CatalogResponse lastCatalogResponse;
 
     @FXML
-    public void initialize()
-    {
-        colCity.setCellValueFactory(new PropertyValueFactory<>("city"));
-        colMap.setCellValueFactory(new PropertyValueFactory<>("mapName"));
+    public void initialize() {
+        setupTableColumns();
+        setupComboBoxListeners();
+        applyRolePermissions();
+        
+        // Load initial data
+        loadCatalog(null, null, null);
+    }
+
+    /**
+     * Setup table column bindings.
+     * Using GCMMap entity directly instead of MapCatalogRow DTO.
+     */
+    private void setupTableColumns() {
+        // Use property names from GCMMap entity
+        colCity.setCellValueFactory(cellData -> 
+            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCityName()));
+        colMap.setCellValueFactory(new PropertyValueFactory<>("name"));
         colVersion.setCellValueFactory(new PropertyValueFactory<>("version"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         colDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
 
-        cbMap.setDisable(true);
-        cbVersion.setDisable(true);
+        // Format price column
+        colPrice.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Double price, boolean empty) {
+                super.updateItem(price, empty);
+                setText(empty || price == null ? "" : String.format("$%.2f", price));
+            }
+        });
+    }
 
-        loadCitiesFromServer();
-        loadCatalogFromServer(null, null, null);
-
-
-        cbCity.valueProperty().addListener((obs, oldV, newV) -> {
-            cbMap.getItems().clear();
+    /**
+     * Setup combo box change listeners for cascading filters.
+     */
+    private void setupComboBoxListeners() {
+        cbCity.setOnAction(e -> {
+            String selectedCity = cbCity.getValue();
+            updateMapComboBox(selectedCity);
             cbVersion.getItems().clear();
-
-            cbMap.setDisable(newV == null);
-            cbVersion.setDisable(true);
-
-            if (newV != null) {
-                loadMapsForCityFromServer(newV);
-            }
-
-            loadCatalogFromServer(newV, null, null);
+            loadCatalog(selectedCity, null, null);
         });
 
-        cbMap.valueProperty().addListener((obs, oldV, newV) -> {
-            cbVersion.getItems().clear();
-            cbVersion.setDisable(newV == null);
-
-            String city = cbCity.getValue();
-
-            if (city != null && newV != null) {
-                loadVersionsForCityMapFromServer(city, newV);
-            }
-            loadCatalogFromServer(city, newV, null);
+        cbMap.setOnAction(e -> {
+            String selectedCity = cbCity.getValue();
+            String selectedMap = cbMap.getValue();
+            updateVersionComboBox(selectedCity, selectedMap);
+            loadCatalog(selectedCity, selectedMap, null);
         });
 
-        cbVersion.valueProperty().addListener((obs, oldV, newV) -> {
-            loadCatalogFromServer(cbCity.getValue(), cbMap.getValue(), newV);
+        cbVersion.setOnAction(e -> {
+            loadCatalog(cbCity.getValue(), cbMap.getValue(), cbVersion.getValue());
         });
-        applyRolePermissions();
-        setupSelectionRules();
-        refreshPriceApprovalsCount();
     }
 
-
-    private void loadCitiesFromServer() {
+    /**
+     * Load catalog data from server with filters.
+     * Single request replaces the old 4 separate requests!
+     */
+    private void loadCatalog(String city, String map, String version) {
         new Thread(() -> {
             try {
-                Message request = new Message(actionType.GET_CITY_NAMES_REQUEST);
-                Object response = client.sendRequest(request);
+                CatalogFilter filter = new CatalogFilter(city, map, version);
+                Message request = new Message(ActionType.GET_CATALOG_REQUEST, filter);
+                Message response = (Message) client.sendRequest(request);
 
-                if (response instanceof Message msgResponse && msgResponse.getAction() == actionType.GET_CITY_NAMES_RESPONSE) {
-                    List<String> cities = (List<String>) msgResponse.getMessage();
-                    Platform.runLater(() -> {
-                        if (cities != null) {
-                            cbCity.setItems(FXCollections.observableArrayList(cities));
-                            System.out.println("Loaded " + cities.size() + " cities");
-                        } else {
-                            cbCity.setItems(FXCollections.observableArrayList());
-                        }
-                    });
-                } else {
-                    System.err.println("Invalid response from server for city names request");
-                }
+                Platform.runLater(() -> handleCatalogResponse(response));
+
             } catch (Exception e) {
-                System.err.println("Error loading cities: " + e.getMessage());
-                e.printStackTrace();
+                Platform.runLater(() -> showAlert("Error", "Failed to load catalog: " + e.getMessage()));
             }
         }).start();
     }
 
-    private void loadMapsForCityFromServer(String city) {
-        new Thread(() -> {
-            try {
-                Message request = new Message(actionType.GET_MAPS_REQUEST, city);
-                Object response = client.sendRequest(request);
-
-                if (response instanceof Message msgResponse && msgResponse.getAction() == actionType.GET_MAPS_RESPONSE) {
-                    List<String> maps = (List<String>) msgResponse.getMessage();
-                    Platform.runLater(() -> {
-                        if (maps != null) {
-                            cbMap.setItems(FXCollections.observableArrayList(maps));
-                        } else {
-                            cbMap.setItems(FXCollections.observableArrayList());
-                        }
-                    });
-                }
-            } catch (Exception e) {
-                System.err.println("Error loading maps for city: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-    private void loadVersionsForCityMapFromServer(String city, String map) {
-        new Thread(() -> {
-            try {
-                ArrayList<String> params = new ArrayList<>(Arrays.asList(city, map));
-                Message request = new Message(actionType.GET_VERSIONS_REQUEST, params);
-                Object response = client.sendRequest(request);
-
-                if (response instanceof Message msgResponse && msgResponse.getAction() == actionType.GET_VERSIONS_RESPONSE) {
-                    List<String> versions = (List<String>) msgResponse.getMessage();
-                    Platform.runLater(() -> {
-                        if (versions != null) {
-                            cbVersion.setItems(FXCollections.observableArrayList(versions));
-                        } else {
-                            cbVersion.setItems(FXCollections.observableArrayList());
-                        }
-                    });
-                }
-            } catch (Exception e) {
-                System.err.println("Error loading versions: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-    private void loadCatalogFromServer(String city, String map, String version) {
-        new Thread(() -> {
-            try {
-                String c = (city == null || city.isEmpty()) ? "" : city;
-                String m = (map == null || map.isEmpty()) ? "" : map;
-                String v = (version == null || version.isEmpty()) ? "" : version;
-
-                ArrayList<String> params = new ArrayList<>(Arrays.asList(c, m, v));
-                Message request = new Message(actionType.GET_CATALOG_REQUEST, params);
-
-                Object response = client.sendRequest(request);
-
-                if (response instanceof Message msgResponse && msgResponse.getAction() == actionType.GET_CATALOG_RESPONSE) {
-                    List<MapCatalogRow> rows = (List<MapCatalogRow>) msgResponse.getMessage();
-                    Platform.runLater(() -> {
-                        if (rows != null) {
-                            tblCatalog.setItems(FXCollections.observableArrayList(rows));
-                            System.out.println("Loaded " + rows.size() + " catalog items");
-                        } else {
-                            tblCatalog.setItems(FXCollections.observableArrayList());
-                            System.out.println("No catalog items received");
-                        }
-                    });
-                } else {
-                    System.err.println("Invalid response from server for catalog request");
-                    Platform.runLater(() -> tblCatalog.setItems(FXCollections.observableArrayList()));
-                }
-            } catch (Exception e) {
-                System.err.println("Error loading catalog: " + e.getMessage());
-                e.printStackTrace();
-                Platform.runLater(() -> tblCatalog.setItems(FXCollections.observableArrayList()));
-            }
-        }).start();
-    }
-    private void applyRolePermissions() {
-
-        setAllButtonsVisible(true);
-
-
-        setAllButtonsDisabled(true);
-
-        User u = client.getCurrentUser();
-        UserRole role = (u == null) ? null : u.getRole();
-
-        if (role == null) {
+    /**
+     * Handle catalog response from server.
+     */
+    private void handleCatalogResponse(Message response) {
+        if (response == null || response.getAction() == ActionType.ERROR) {
+            showAlert("Error", "Failed to load catalog data.");
             return;
         }
 
-        switch (role) {
+        if (response.getAction() == ActionType.GET_CATALOG_RESPONSE) {
+            CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
+            this.lastCatalogResponse = catalogResponse;
 
-            case CLIENT -> {
+            // Update table
+            tblCatalog.setItems(FXCollections.observableArrayList(catalogResponse.getMaps()));
 
+            // Update city dropdown (only on first load or if empty)
+            if (cbCity.getItems().isEmpty() && !catalogResponse.getAvailableCities().isEmpty()) {
+                List<String> cities = new ArrayList<>();
+                cities.add("");  // Empty option for "All"
+                cities.addAll(catalogResponse.getAvailableCities());
+                cbCity.setItems(FXCollections.observableArrayList(cities));
             }
 
-            case CONTENT_WORKER -> {
-
-                btnAddMap.setDisable(false);
-                btnUpdateMap.setDisable(false);
-                btnDeleteMap.setDisable(false);
+            // Update map dropdown if available
+            if (!catalogResponse.getAvailableMapNames().isEmpty()) {
+                updateMapComboBoxFromResponse(catalogResponse.getAvailableMapNames());
             }
 
-            case CONTENT_MANAGER -> {
-
-                btnApprovals.setDisable(false);
-                btnPriceUpdate.setDisable(false);
-
-                btnApprovals.setText("Approvals (0)");
-            }
-
-            case COMPANY_MANAGER -> {
-
-                btnApprovals.setDisable(false);
-                btnApprovals.setText("Approvals (0)");
-            }
-
-            default -> {
-
+            // Update version dropdown if available
+            if (!catalogResponse.getAvailableVersions().isEmpty()) {
+                updateVersionComboBoxFromResponse(catalogResponse.getAvailableVersions());
             }
         }
     }
 
-
-    private void setupSelectionRules() {
-
-        btnUpdateMap.disableProperty().unbind();
-        btnDeleteMap.disableProperty().unbind();
-
-        btnUpdateMap.disableProperty().bind(
-                Bindings.createBooleanBinding(() -> {
-                    User u = client.getCurrentUser();
-                    UserRole role = (u == null) ? null : u.getRole();
-
-                    boolean isWorker = (role == UserRole.CONTENT_WORKER);
-                    boolean hasSelection = tblCatalog.getSelectionModel().getSelectedItem() != null;
-
-                    // only content_worker can update, and only with a selected row
-                    return !(isWorker && hasSelection);
-                }, tblCatalog.getSelectionModel().selectedItemProperty())
-        );
-
-        btnDeleteMap.disableProperty().bind(
-                Bindings.createBooleanBinding(() -> {
-                    User u = client.getCurrentUser();
-                    UserRole role = (u == null) ? null : u.getRole();
-
-                    boolean isWorker = (role == UserRole.CONTENT_WORKER);
-                    boolean hasSelection = tblCatalog.getSelectionModel().getSelectedItem() != null;
-
-                    // only content_worker can delete, and only with a selected row
-                    return !(isWorker && hasSelection);
-                }, tblCatalog.getSelectionModel().selectedItemProperty())
-        );
+    /**
+     * Update map combo box based on selected city.
+     */
+    private void updateMapComboBox(String selectedCity) {
+        cbMap.getItems().clear();
+        if (selectedCity == null || selectedCity.isEmpty()) {
+            return;
+        }
+        
+        // If we have cached data, filter from it
+        if (lastCatalogResponse != null && lastCatalogResponse.getAvailableMapNames() != null) {
+            updateMapComboBoxFromResponse(lastCatalogResponse.getAvailableMapNames());
+        }
     }
 
-
-    private void setAllButtonsDisabled(boolean disabled) {
-        btnUpdateMap.setDisable(disabled);
-        btnAddMap.setDisable(disabled);
-        btnDeleteMap.setDisable(disabled);
-        btnPriceUpdate.setDisable(disabled);
-        btnApprovals.setDisable(disabled);
+    private void updateMapComboBoxFromResponse(List<String> mapNames) {
+        List<String> maps = new ArrayList<>();
+        maps.add("");  // Empty option for "All"
+        maps.addAll(mapNames);
+        cbMap.setItems(FXCollections.observableArrayList(maps));
     }
 
-    private void setAllButtonsVisible(boolean visible) {
-        btnUpdateMap.setVisible(visible);
+    /**
+     * Update version combo box based on selected city and map.
+     */
+    private void updateVersionComboBox(String selectedCity, String selectedMap) {
+        cbVersion.getItems().clear();
+        if (selectedCity == null || selectedMap == null || 
+            selectedCity.isEmpty() || selectedMap.isEmpty()) {
+            return;
+        }
+        
+        if (lastCatalogResponse != null && lastCatalogResponse.getAvailableVersions() != null) {
+            updateVersionComboBoxFromResponse(lastCatalogResponse.getAvailableVersions());
+        }
+    }
+
+    private void updateVersionComboBoxFromResponse(List<String> versions) {
+        List<String> versionList = new ArrayList<>();
+        versionList.add("");  // Empty option for "All"
+        versionList.addAll(versions);
+        cbVersion.setItems(FXCollections.observableArrayList(versionList));
+    }
+
+    /**
+     * Apply visibility/permissions based on user role.
+     */
+    private void applyRolePermissions() {
+        User user = client.getCurrentUser();
+        
+        // Hide all management buttons by default
+        setManagementButtonsVisible(false);
+
+        if (user == null) {
+            return;  // Guest - no management buttons
+        }
+
+        // Show buttons based on user type/role
+        if (user instanceof Employee employee) {
+            EmployeeRole role = employee.getRole();
+            if (role != null) {
+                switch (role) {
+                    case COMPANY_MANAGER:
+                        setManagementButtonsVisible(true);
+                        break;
+                    case CONTENT_MANAGER:
+                    case CONTENT_WORKER:
+                        btnAddMap.setVisible(true);
+                        btnUpdateMap.setVisible(true);
+                        btnPriceUpdate.setVisible(true);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    private void setManagementButtonsVisible(boolean visible) {
         btnAddMap.setVisible(visible);
+        btnUpdateMap.setVisible(visible);
         btnDeleteMap.setVisible(visible);
         btnPriceUpdate.setVisible(visible);
         btnApprovals.setVisible(visible);
     }
+
+    // ==================== BUTTON HANDLERS ====================
+
     @FXML
     private void onPriceUpdate() {
-        MapCatalogRow selected = tblCatalog.getSelectionModel().getSelectedItem();
+        GCMMap selected = tblCatalog.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            System.out.println("Price Update clicked but no row selected");
+            showAlert("Selection Required", "Please select a map to update price.");
             return;
         }
-
-        openMapUpdateWindow("PRICE_UPDATE", selected);
+        openMapUpdateWindow("price", selected);
     }
 
     @FXML
     private void onAddMap() {
-        openMapUpdateWindow("ADD", null);
+        openMapUpdateWindow("add", null);
     }
 
     @FXML
     private void onUpdateMap() {
-        MapCatalogRow selected = tblCatalog.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-        openMapUpdateWindow("UPDATE", selected);
+        GCMMap selected = tblCatalog.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert("Selection Required", "Please select a map to update.");
+            return;
+        }
+        openMapUpdateWindow("edit", selected);
     }
 
     @FXML
     private void onDeleteMap() {
-        MapCatalogRow selected = tblCatalog.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
-
-        System.out.println("Delete clicked for: " + selected);
+        GCMMap selected = tblCatalog.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert("Selection Required", "Please select a map to delete.");
+            return;
+        }
+        // TODO: Implement delete confirmation and request
     }
 
     @FXML
-    private void onApprovals()
-    {
+    private void onApprovals() {
         openApprovalsWindow();
-        refreshPriceApprovalsCount();
+    }
+
+    // ==================== HELPER METHODS ====================
+
+    private void openMapUpdateWindow(String mode, GCMMap selected) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapUpdatePage.fxml"));
+            Parent root = loader.load();
+
+            MapUpdatePageController controller = loader.getController();
+            controller.setMode(mode);
+            if (selected != null) {
+                controller.setSelectedMap(selected);
+            }
+            controller.setCatalogController(this);
+
+            Stage stage = new Stage();
+            stage.setTitle(mode.equals("add") ? "Add New Map" : "Update Map");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            // Refresh after closing
+            loadCatalog(cbCity.getValue(), cbMap.getValue(), cbVersion.getValue());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not open map editor.");
+        }
     }
 
     private void openApprovalsWindow() {
@@ -344,65 +327,29 @@ public class CatalogPageController {
             stage.setTitle("Pending Approvals");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setResizable(false);
             stage.showAndWait();
 
-        } catch (IOException e) {
+            // Refresh after closing
+            loadCatalog(cbCity.getValue(), cbMap.getValue(), cbVersion.getValue());
+
+        } catch (Exception e) {
             e.printStackTrace();
+            showAlert("Error", "Could not open approvals window.");
         }
     }
 
-    private void openMapUpdateWindow(String mode, MapCatalogRow selected) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapUpdatePage.fxml"));
-            Parent root = loader.load();
-
-            MapUpdatePageController ctrl = loader.getController();
-
-            MapStatus m = switch (mode) {
-                case "ADD" -> MapStatus.ADD;
-                case "UPDATE" -> MapStatus.UPDATE;
-                case "PRICE_UPDATE" -> MapStatus.PRICE_UPDATE_REQUEST;
-                case "APPROVAL" -> MapStatus.APPROVAL_REVIEW;
-                default -> MapStatus.UPDATE;
-            };
-
-            ctrl.setContext(m, selected);
-
-            Stage stage = new Stage();
-            stage.setTitle("Map Update");
-            stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setResizable(false);
-            stage.showAndWait();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    private void refreshPriceApprovalsCount() {
-        new Thread(() -> {
-            try {
-                Object res = GCMClient.getInstance().sendRequest(
-                        new Message(actionType.GET_PENDING_PRICE_APPROVALS_COUNT_REQUEST, null)
-                );
-
-                if (res instanceof Message msg &&
-                        msg.getAction() == actionType.GET_PENDING_PRICE_APPROVALS_COUNT_RESPONSE) {
-
-                    int count = (int) msg.getMessage();
-
-                    Platform.runLater(() ->
-                            btnApprovals.setText("Approvals (" + count + ")")
-                    );
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
+    /**
+     * Public method to refresh catalog (called from other controllers).
+     */
+    public void refreshCatalog() {
+        loadCatalog(cbCity.getValue(), cbMap.getValue(), cbVersion.getValue());
     }
 
-
-
-
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 }

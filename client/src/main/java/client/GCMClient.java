@@ -1,82 +1,93 @@
 package client;
 
-import java.io.IOException;
-
-import common.Message;
-import common.User;
-import controllers.LoginPageController;
-import javafx.application.Platform;
+import common.messaging.Message;
+import common.user.User;
 import oscf.AbstractClient;
 
+import java.io.IOException;
 
-public class GCMClient extends AbstractClient
-{
+/**
+ * Singleton client for communication with the GCM server.
+ * Uses synchronous request-response pattern via sendRequest().
+ */
+public class GCMClient extends AbstractClient {
+
     private static GCMClient instance;
-    private LoginPageController loginController;
+
+    // Synchronization state for request-response
     private boolean busy = false;
     private boolean awaitResponse = false;
-    private Object lastResponse = null;;
+    private Object lastResponse = null;
+
+    // Current logged-in user
+    private volatile User currentUser;
+
+    // ==================== SINGLETON PATTERN ====================
 
     /**
-     * Private constructor implements the Singleton pattern.
-     * Connects to the server immediately upon creation.
+     * Private constructor - use connect() to create instance.
      */
-    public void setLoginController(LoginPageController controller)
-    {
-        this.loginController = controller;
-    }
-
     private GCMClient(String host, int port) throws IOException {
         super(host, port);
-        System.out.println("Before openConnection()");
         openConnection();
-        System.out.println("After openConnection()");
-        System.out.println("GCMClient connected to server on " + host + ":" + port);
+        System.out.println("GCMClient connected to server at " + host + ":" + port);
     }
 
     /**
-     * Returns the single instance of the client.
-     * If it doesn't exist, it creates it.
+     * Connect to the server. Must be called before getInstance().
+     *
+     * @param host Server hostname or IP
+     * @param port Server port
+     * @throws IOException if connection fails
      */
-   /* public static GCMClient getInstance()
-    {
-        if (instance == null)
-        {
-            try {
-                //instance = new GCMClient("20.250.162.225", 5555);
-                instance = new GCMClient("20.250.162.225", 5555);
-            } catch (IOException e) {
-                System.err.println("WARNING: Failed to connect to server. Make sure the server is running on 20.250.162.225:5555");
-                e.printStackTrace();
-            }
+    public static void connect(String host, int port) throws IOException {
+        if (instance == null) {
+            instance = new GCMClient(host, port);
         }
-        if(instance!=null) {
-            return instance;
-        }
-        return null;
-    } */
-    public static GCMClient getInstance()
-    {
+    }
+
+    /**
+     * Get the singleton instance.
+     *
+     * @return The GCMClient instance
+     * @throws IllegalStateException if connect() hasn't been called
+     */
+    public static GCMClient getInstance() {
         if (instance == null) {
             throw new IllegalStateException(
-                    "GCMClient not connected yet. Call GCMClient.connect(host, port) first."
+                    "GCMClient not connected. Call GCMClient.connect(host, port) first."
             );
         }
         return instance;
     }
-    
 
     /**
-     * Handles the message received from the server.
-     * Signals the waiting thread that a response has arrived.
+     * Get existing instance without throwing exception.
+     *
+     * @return The instance or null if not connected
+     */
+    public static GCMClient getExistingInstance() {
+        return instance;
+    }
+
+    /**
+     * Check if the singleton client is initialized and connected to the server.
+     *
+     * @return true if instance exists and connection is open
+     */
+    public static boolean isClientConnected() {
+        return instance != null && instance.isConnected();
+    }
+
+    // ==================== COMMUNICATION ====================
+
+    /**
+     * Handle message received from server.
+     * Notifies waiting sendRequest() call.
      */
     @Override
     protected void handleMessageFromServer(Object msg) {
         System.out.println("GCMClient received: " + msg);
-
-        if (loginController != null && msg instanceof Message m) {
-            Platform.runLater(() -> loginController.onServerMessage(m));
-        }
 
         synchronized (this) {
             this.lastResponse = msg;
@@ -85,67 +96,129 @@ public class GCMClient extends AbstractClient
         }
     }
 
-
     /**
-     * Sends a request to the server and waits for a response.
-     * This blocks the calling thread until the server replies.
-     * * @param msg The message/request object to send
-     * @return The object returned by the server
+     * Send a request to the server and wait for response.
+     * This is a synchronous (blocking) call.
+     *
+     * @param request The request message to send
+     * @return The response from server, or null if error
      */
-    public Object sendRequest(Object msg) {
-        synchronized (this)
-        {
+    public Object sendRequest(Object request) {
+        synchronized (this) {
+            // Wait if another request is in progress
             while (busy) {
-                try { wait(); } catch (InterruptedException e) { e.printStackTrace(); }
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return null;
+                }
             }
+
             busy = true;
             awaitResponse = true;
             lastResponse = null;
 
             try {
-                sendToServer(msg);
+                sendToServer(request);
 
+                // Wait for response
                 while (awaitResponse) {
-                    try { wait(); } catch (InterruptedException e) { e.printStackTrace(); }
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        return null;
+                    }
                 }
 
             } catch (IOException e) {
+                System.err.println("Failed to send message to server: " + e.getMessage());
                 e.printStackTrace();
-                System.out.println("Could not send message to server.");
+                return null;
             } finally {
                 busy = false;
                 notifyAll();
             }
+
             return lastResponse;
         }
     }
 
-    public void quit() {
-        try {
-            closeConnection();
-        } catch (IOException e) {
-            e.printStackTrace();
+    /**
+     * Send a request and cast the response to Message.
+     * Convenience method for type-safe communication.
+     *
+     * @param request The request message
+     * @return The response as Message, or null if error
+     */
+    public Message sendMessage(Message request) {
+        Object response = sendRequest(request);
+        if (response instanceof Message) {
+            return (Message) response;
         }
-    }
-    public static void connect(String host, int port) throws IOException {
-        if (instance == null)
-        {
-            instance = new GCMClient(host, port);
-        }
-    }
-    public static GCMClient getExistingInstance()
-    {
-        return instance;
+        return null;
     }
 
-    private volatile User currentUser;
+    // ==================== USER SESSION ====================
 
+    /**
+     * Get the currently logged-in user.
+     */
     public User getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(User currentUser) {
-        this.currentUser = currentUser;
+    /**
+     * Set the current user (called after successful login).
+     */
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
     }
 
+    /**
+     * Clear the current user (called on logout).
+     */
+    public void logout() {
+        this.currentUser = null;
+    }
+
+    /**
+     * Check if a user is currently logged in.
+     */
+    public boolean isLoggedIn() {
+        return currentUser != null;
+    }
+
+    // ==================== LIFECYCLE ====================
+
+    /**
+     * Disconnect from server and cleanup.
+     */
+    public void quit() {
+        try {
+            logout();
+            closeConnection();
+            instance = null;
+            System.out.println("GCMClient disconnected.");
+        } catch (IOException e) {
+            System.err.println("Error during disconnect: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Called when connection to server is closed.
+     */
+    @Override
+    protected void connectionClosed() {
+        System.out.println("Connection to server closed.");
+    }
+
+    /**
+     * Called when an exception occurs in connection.
+     */
+    @Override
+    protected void connectionException(Exception exception) {
+        System.err.println("Connection error: " + exception.getMessage());
+    }
 }

@@ -57,7 +57,7 @@
                         </goals>
                         <configuration>
 
-                            <!-- Optional but recommended: avoid JPMS/module conflicts -->
+                            <!-- avoid JPMS/module conflicts -->
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
