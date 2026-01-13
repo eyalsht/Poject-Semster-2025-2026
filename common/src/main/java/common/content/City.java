@@ -14,14 +14,8 @@ public class City extends ContentItem implements Serializable {
     @Column(name = "price_sub")
     private double priceSub;
 
-    @Column(name = "price_one_time")
-    private double priceOneTime;
-
     @Transient  // Not persisted - only for pending workflow
     private double pendingPriceSub;
-
-    @Transient  // Not persisted - only for pending workflow
-    private double pendingPriceOneTime;
 
     // ONE City has MANY Maps
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -44,18 +38,16 @@ public class City extends ContentItem implements Serializable {
         this.tours = new ArrayList<>();
     }
 
-    public City(int id, String name, double priceOneTime, double priceSub) {
+    public City(int id, String name, double priceSub) {
         super(id, name, null);
-        this.priceOneTime = priceOneTime;
         this.priceSub = priceSub;
         this.maps = new ArrayList<>();
         this.sites = new ArrayList<>();
         this.tours = new ArrayList<>();
     }
 
-    public City(int id, String name, String description, double priceOneTime, double priceSub) {
+    public City(int id, String name, String description, double priceSub) {
         super(id, name, description);
-        this.priceOneTime = priceOneTime;
         this.priceSub = priceSub;
         this.maps = new ArrayList<>();
         this.sites = new ArrayList<>();
@@ -67,14 +59,10 @@ public class City extends ContentItem implements Serializable {
     public double getPriceSub() { return priceSub; }
     public void setPriceSub(double priceSub) { this.priceSub = priceSub; }
 
-    public double getPriceOneTime() { return priceOneTime; }
-    public void setPriceOneTime(double priceOneTime) { this.priceOneTime = priceOneTime; }
-
     public double getPendingPriceSub() { return pendingPriceSub; }
     public void setPendingPriceSub(double pendingPriceSub) { this.pendingPriceSub = pendingPriceSub; }
 
-    public double getPendingPriceOneTime() { return pendingPriceOneTime; }
-    public void setPendingPriceOneTime(double pendingPriceOneTime) { this.pendingPriceOneTime = pendingPriceOneTime; }
+    // REMOVED: getPriceOneTime(), setPriceOneTime(), getPendingPriceOneTime(), setPendingPriceOneTime()
 
     // ==================== MAP RELATIONSHIP ====================
     

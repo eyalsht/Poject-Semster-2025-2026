@@ -16,8 +16,13 @@ public class OneTimePurchase extends Purchase implements Serializable {
 
     // Specific map for one-time purchase
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "map_id")
+    @JoinColumn(name = "map_id", nullable = false)
     private GCMMap map;
+
+    // Reference to the snapshot created for this purchase
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "snapshot_id")
+    private PurchasedMapSnapshot snapshot;
 
     // ==================== CONSTRUCTORS ====================
     
@@ -37,6 +42,14 @@ public class OneTimePurchase extends Purchase implements Serializable {
 
     public GCMMap getMap() { return map; }
     public void setMap(GCMMap map) { this.map = map; }
+
+    public PurchasedMapSnapshot getSnapshot() { return snapshot; }
+    public void setSnapshot(PurchasedMapSnapshot snapshot) { this.snapshot = snapshot; }
+
+    // Convenience method to get city name from map
+    public String getCityName() {
+        return map != null ? map.getCityName() : null;
+    }
 
     @Override
     public boolean isValid() {

@@ -55,42 +55,47 @@ public class PurchaseController {
      * Process a purchase request.
      * 
      * @param userId          The ID of the user making the purchase
-     * @param cityId          The ID of the city
-     * @param mapId           The ID of the map (null for subscription)
+     * @param cityId          The ID of the city (required for subscription, optional for one-time)
+     * @param mapId           The ID of the map (required for one-time purchase)
      * @param purchaseType    SUBSCRIPTION or ONE_TIME
      * @param creditCardToken Payment token
      * @param monthsToAdd     Months to add for subscription
      * @return true if purchase was successful
      */
-    public boolean processPurchase(int userId, int cityId, Integer mapId, String purchaseType,
+    public boolean processPurchase(int userId, Integer cityId, Integer mapId, String purchaseType,
                                    String creditCardToken, int monthsToAdd) {
-        
+    
         System.out.println("Processing " + purchaseType + " purchase for UserID: " + userId +
             ", CityID: " + cityId + ", MapID: " + mapId);
 
         try {
-            // Step 1: Load entities from database
+            // Step 1: Load user from database
             Optional<User> optionalUser = userRepository.findById(userId);
-            Optional<City> optionalCity = cityRepository.findById(cityId);
 
             if (optionalUser.isEmpty()) {
                 System.err.println("Purchase failed: User not found with ID: " + userId);
                 return false;
             }
 
-            if (optionalCity.isEmpty()) {
-                System.err.println("Purchase failed: City not found with ID: " + cityId);
-                return false;
-            }
-
             User user = optionalUser.get();
-            City city = optionalCity.get();
-            GCMMap map = null;
 
-            // Step 2: Determine price based on purchase type
+            // Step 2: Handle based on purchase type
             double price;
 
             if (PURCHASE_TYPE_SUBSCRIPTION.equals(purchaseType)) {
+                // Subscriptions require a city
+                if (cityId == null) {
+                    System.err.println("Purchase failed: City ID is required for SUBSCRIPTION purchase");
+                    return false;
+                }
+
+                Optional<City> optionalCity = cityRepository.findById(cityId);
+                if (optionalCity.isEmpty()) {
+                    System.err.println("Purchase failed: City not found with ID: " + cityId);
+                    return false;
+                }
+
+                City city = optionalCity.get();
                 price = city.getPriceSub();
                 
                 if (price <= 0) {
@@ -98,7 +103,16 @@ public class PurchaseController {
                     return false;
                 }
 
+                // Validate payment
+                if (!paymentService.validate(creditCardToken)) {
+                    System.err.println("Purchase failed: Payment validation failed for UserID: " + userId);
+                    return false;
+                }
+
+                return processSubscriptionPurchase(user, city, price, monthsToAdd);
+
             } else if (PURCHASE_TYPE_ONE_TIME.equals(purchaseType)) {
+                // One-time purchases are for maps only - no city required
                 if (mapId == null) {
                     System.err.println("Purchase failed: Map ID is required for ONE_TIME purchase");
                     return false;
@@ -110,7 +124,7 @@ public class PurchaseController {
                     return false;
                 }
 
-                map = optionalMap.get();
+                GCMMap map = optionalMap.get();
                 price = map.getPrice();
 
                 if (price <= 0) {
@@ -118,28 +132,17 @@ public class PurchaseController {
                     return false;
                 }
 
+                // Validate payment
+                if (!paymentService.validate(creditCardToken)) {
+                    System.err.println("Purchase failed: Payment validation failed for UserID: " + userId);
+                    return false;
+                }
+
+                return processOneTimePurchase(user, map, price);
+
             } else {
                 System.err.println("Purchase failed: Invalid purchase type: " + purchaseType);
                 return false;
-            }
-
-            System.out.println("Price determined: " + price + " for " + purchaseType);
-
-            // Step 3: Validate payment
-            boolean paymentValid = paymentService.validate(creditCardToken);
-
-            if (!paymentValid) {
-                System.err.println("Purchase failed: Payment validation failed for UserID: " + userId);
-                return false;
-            }
-
-            System.out.println("Payment validated successfully for UserID: " + userId + ", Amount: " + price);
-
-            // Step 4: Create the purchase record and update user if needed
-            if (PURCHASE_TYPE_SUBSCRIPTION.equals(purchaseType)) {
-                return processSubscriptionPurchase(user, city, price, monthsToAdd);
-            } else {
-                return processOneTimePurchase(user, city, map, price);
             }
 
         } catch (Exception e) {
@@ -177,14 +180,15 @@ public class PurchaseController {
 
     /**
      * Process a one-time map purchase.
+     * Note: City parameter removed - maps are purchased directly, not through cities.
      */
-    private boolean processOneTimePurchase(User user, City city, GCMMap map, double price) {
+    private boolean processOneTimePurchase(User user, GCMMap map, double price) {
         try {
-            // Create one-time purchase record
-            purchaseRepository.createOneTimePurchase(user, city, map, price);
+            // Create one-time purchase record (also creates snapshot for the user)
+            purchaseRepository.createOneTimePurchase(user, map, price);
 
             System.out.println("One-time purchase completed for UserID: " + user.getId() + 
-                ", MapID: " + map.getId());
+                ", MapID: " + map.getId() + ", Version: " + map.getVersion());
             return true;
 
         } catch (Exception e) {

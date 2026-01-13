@@ -41,6 +41,7 @@
         <mapping class="common.purchase.Purchase"/>
         <mapping class="common.purchase.Subscription"/>
         <mapping class="common.purchase.OneTimePurchase"/>
+        <mapping class="common.purchase.PurchasedMapSnapshot"/>
 
         <!-- Pending Updates -->
         <mapping class="common.workflow.PendingPriceUpdate"/>

@@ -4,7 +4,9 @@ import common.content.City;
 import common.content.GCMMap;
 import common.purchase.OneTimePurchase;
 import common.purchase.Purchase;
+import common.purchase.PurchasedMapSnapshot;
 import common.purchase.Subscription;
+import common.user.Client;
 import common.user.User;
 
 import java.time.LocalDate;
@@ -46,16 +48,23 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
     }
 
     /**
-     * Log a new one-time purchase.
+     * Log a new one-time purchase for a map.
+     * Creates a snapshot of the map at purchase time.
      */
-    public OneTimePurchase createOneTimePurchase(User user, City city, GCMMap map, double price) {
+    public OneTimePurchase createOneTimePurchase(User user, GCMMap map, double price) {
         OneTimePurchase purchase = new OneTimePurchase();
         purchase.setUser(user);
-        purchase.setCity(city);
         purchase.setMap(map);
         purchase.setPricePaid(price);
         purchase.setPurchaseDate(LocalDate.now());
         purchase.setPurchasedVersion(map.getVersion());
+
+        // Create snapshot if user is a Client
+        if (user instanceof Client client) {
+            PurchasedMapSnapshot snapshot = new PurchasedMapSnapshot(client, map, price);
+            client.addPurchasedMap(snapshot);
+            purchase.setSnapshot(snapshot);
+        }
 
         save(purchase);
         return purchase;
