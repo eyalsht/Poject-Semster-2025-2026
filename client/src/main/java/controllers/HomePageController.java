@@ -12,6 +12,10 @@ import javafx.scene.control.Label;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import java.util.Optional;
+
 import controllers.LoginPageController;
 import controllers.WelcomePageController;
 import controllers.ProfilePageController;
@@ -24,6 +28,7 @@ public class HomePageController
     @FXML private Button btnProfile;
     @FXML private Button btnManagement;
     @FXML private Button loginBtn;
+    @FXML private Button logOutBtn;
     @FXML private Label lblWelcome;
     @FXML private Button btnCatalogUpdate;
     @FXML private Button btnPriceUpdate;
@@ -136,8 +141,10 @@ public class HomePageController
         onCatalog();
     }
 
-    private void updateUI() {
-        if (currentUser == null) {
+    private void updateUI()
+    {
+        if (currentUser == null)
+        {
 
             loginBtn.setText("Login");
             if (lblWelcome != null) lblWelcome.setText("Welcome, Guest");
@@ -145,6 +152,9 @@ public class HomePageController
 
             loginBtn.setText("Profile");
             if (lblWelcome != null) lblWelcome.setText("Welcome, " + currentUser.getFirstName());
+        }
+        if (logOutBtn != null) {
+            logOutBtn.setDisable(currentUser==null);
         }
         /*EmployeeRole role = currentUser.getEmployeeRole();
 
@@ -201,5 +211,25 @@ public class HomePageController
         updateUI();
         showPage("/GUI/WelcomePage.fxml");
     }
+    @FXML
+    private void onLogout(ActionEvent event)
+    {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Log Out");
+        alert.setHeaderText("Are you sure you want to Log Out?");
+
+        ButtonType yes = new ButtonType("Yes");
+        ButtonType no = new ButtonType("No");
+        alert.getButtonTypes().setAll(yes, no);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isEmpty() || result.get() == no) {
+            return;
+        }
+        currentUser = null;
+        updateUI();
+        showPage("/GUI/WelcomePage.fxml");
+    }
+
 
 }
