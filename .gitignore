@@ -39,3 +39,5 @@ bin/
 /server/target/
 /common/target/
 /client/target/
+/server/target/
+/client/target/
