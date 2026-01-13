@@ -44,3 +44,12 @@ bin/
 /server/target/
 /client/target/
 /server/target/
+/server/target/
+/server/target/
+/server/target/
+/server/target/classes/
+/server/target/generated-sources/
+/server/target/maven-archiver/
+/server/target/maven-status/
+/server/target/original-server-1.0-SNAPSHOT.jar
+/server/target/server-1.0-SNAPSHOT.jar
