@@ -81,7 +81,6 @@ public class ApprovalPendingPageController {
             stage.setResizable(false);
             stage.showAndWait();
 
-            // refresh list after approve/deny
             loadPendingFromServer();
 
         } catch (Exception e) {

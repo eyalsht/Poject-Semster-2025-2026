@@ -15,7 +15,7 @@ public class Site extends ContentItem {
                 double recommendedVisitDuration,
                 String location) {
 
-        super(id, name, description); // <-- ContentItem fields
+        super(id, name, description);
         this.category = category;
         this.isAccessible = isAccessible;
         this.recommendedVisitDuration = recommendedVisitDuration;

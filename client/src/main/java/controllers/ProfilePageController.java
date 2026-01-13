@@ -12,12 +12,14 @@ public class ProfilePageController {
     @FXML private Label lblPayment;
     @FXML private Label lblInbox;
     @FXML private Label lblHistory;
+    @FXML private Label lbStatus;
 
     public void setUser(User user) {
         if (user == null) return;
 
         String first = user.getFirstName();
         String last  = user.getLastName();
+        String status = user.getRole().toString();
 
         String fullName = ((first != null ? first : "") + " " + (last != null ? last : "")).trim();
         if (fullName.isBlank()) fullName = user.getUsername();
@@ -29,5 +31,6 @@ public class ProfilePageController {
         lblPayment.setText("Not set");
         lblInbox.setText("You have 0 new messages");
         lblHistory.setText("(coming soon)");
+        lbStatus.setText(status);
     }
 }

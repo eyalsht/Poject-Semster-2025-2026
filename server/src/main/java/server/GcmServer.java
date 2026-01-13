@@ -33,7 +33,8 @@ public class GcmServer extends AbstractServer {
         try {
             switch (request.getAction()) {
 
-                case LOGIN_REQUEST: {
+                case LOGIN_REQUEST:
+                {
                     try {
                         ArrayList<String> creds = (ArrayList<String>) request.getMessage();
                         String username = creds.get(0);
@@ -178,7 +179,7 @@ public class GcmServer extends AbstractServer {
                     break;
                 }
 
-                // ===================== FIXED: price approvals flow (NO DUPLICATES) =====================
+
 
                 case GET_PENDING_PRICE_APPROVALS_REQUEST: {
                     response = new Message(
@@ -189,8 +190,8 @@ public class GcmServer extends AbstractServer {
                 }
 
                 case UPDATE_PRICE_REQUEST: {
-                    // MAP price update request
-                    // Expect: [cityName, mapName, version, newPrice, requesterId]
+
+
                     ArrayList<Object> p = (ArrayList<Object>) request.getMessage();
 
                     String cityName = (String) p.get(0);
@@ -208,7 +209,7 @@ public class GcmServer extends AbstractServer {
                 }
 
                 case APPROVE_PENDING_PRICE_REQUEST: {
-                    // Expect: [pendingId, reviewerId]
+
                     ArrayList<Object> p = (ArrayList<Object>) request.getMessage();
                     int pendingId = (int) p.get(0);
                     Integer reviewerId = (Integer) p.get(1);
@@ -219,7 +220,7 @@ public class GcmServer extends AbstractServer {
                 }
 
                 case DENY_PENDING_PRICE_REQUEST: {
-                    // Expect: [pendingId, reviewerId]
+
                     ArrayList<Object> p = (ArrayList<Object>) request.getMessage();
                     int pendingId = (int) p.get(0);
                     Integer reviewerId = (Integer) p.get(1);
@@ -269,7 +270,7 @@ public class GcmServer extends AbstractServer {
                     break;
                 }
 
-                // ================================================================================
+
 
                 default: {
                     System.out.println("Unknown action: " + request.getAction());
@@ -293,7 +294,7 @@ public class GcmServer extends AbstractServer {
         try {
             Properties props = new Properties();
 
-            // Load from classpath (server/src/main/resources/db.properties)
+
             try (var in = GcmServer.class.getResourceAsStream("/db.properties")) {
                 if (in == null) {
                     System.err.println("ERROR: db.properties not found in server/src/resources/db.properties");

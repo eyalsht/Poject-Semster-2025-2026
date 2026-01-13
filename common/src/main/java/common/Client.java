@@ -22,8 +22,8 @@ public class Client extends User {
                   String creditCardToken,
                   LocalDate subscriptionExpiry) {
 
-        // Use super to call the User constructor
-        super(id, firstName, lastName, username, email, password);
+
+        super(id, username, password, firstName, lastName, email, UserRole.CLIENT);
         this.phoneNumber = phoneNumber;
         this.creditCardInfo = creditCardInfo;
         this.creditCardToken = creditCardToken;
@@ -71,15 +71,15 @@ public class Client extends User {
     }
     
     public void register() {
-        // registration logic
+
     }
 
     public void updateProfile() {
-        // profile update logic
+
     }
 
     public void purchaseSubscription() {
-        // subscription purchase logic
+
     }
     
     @Override

@@ -11,7 +11,7 @@ public class Subscription extends Purchase {
         this.expirationDate = expirationDate;
     }
 
-    // UML: +renew(months : int) : void
+
     public void renew(int months) {
         if (expirationDate.isBefore(LocalDate.now())) {
             expirationDate = LocalDate.now().plusMonths(months);
