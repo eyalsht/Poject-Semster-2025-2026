@@ -10,15 +10,15 @@ import java.io.Serializable;
  */
 public class Tour extends ContentItem implements Serializable {
 
-    // Unique attributes for Tour
-    private String recommendedDuration; // e.g., "3 hours", "Half day"
-    private ArrayList<Site> sites; // List of sites included in the tour
+
+    private String recommendedDuration;
+    private ArrayList<Site> sites;
 
     /**
      * Default constructor. Initializes the sites list to avoid NullPointerException.
      */
     public Tour() {
-        super(); // Calls the default constructor of ContentItem
+        super();
         this.sites = new ArrayList<>();
     }
 
@@ -30,12 +30,12 @@ public class Tour extends ContentItem implements Serializable {
      * @param recommendedDuration The suggested time to complete the tour.
      */
     public Tour(int id, String name, String description, String recommendedDuration) {
-        super(id, name, description); // Initialize fields from the abstract parent class
+        super(id, name, description);
         this.recommendedDuration = recommendedDuration;
         this.sites = new ArrayList<>();
     }
 
-    // --- Getters and Setters ---
+
 
     public String getRecommendedDuration() {
         return recommendedDuration;
@@ -53,7 +53,7 @@ public class Tour extends ContentItem implements Serializable {
         this.sites = sites;
     }
 
-    // --- List Management Methods ---
+
 
     /**
      * Adds a site to the tour if it's not already present.
@@ -86,7 +86,6 @@ public class Tour extends ContentItem implements Serializable {
         return (sites == null) ? 0 : sites.size();
     }
 
-    // --- Abstract Method Implementation ---
 
     /**
      * Returns a string summary of the tour details.

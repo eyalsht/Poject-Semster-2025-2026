@@ -14,10 +14,10 @@ public abstract class Purchase {
         this.pricePaid = pricePaid;
     }
 
-    // UML: +isValid() : boolean
+
     public abstract boolean isValid();
 
-    // getters (optional but standard)
+
     public int getId() { return id; }
     public LocalDate getPurchaseDate() { return purchaseDate; }
     public double getPricePaid() { return pricePaid; }

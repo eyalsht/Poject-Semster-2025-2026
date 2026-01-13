@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
@@ -87,6 +88,27 @@
                 </Button>
             </children>
         </VBox>
+
+        <!-- Purchase Buttons at Bottom -->
+        <HBox alignment="CENTER" spacing="10.0" layoutX="200.0" layoutY="390.0" 
+              AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+            <children>
+                <Button fx:id="btnSubscribe" text="Subscribe to City" disable="true" 
+                        onAction="#handleSubscribeAction" prefWidth="150.0"
+                        style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;">
+                    <HBox.margin>
+                        <Insets right="5.0" />
+                    </HBox.margin>
+                </Button>
+                <Button fx:id="btnBuyOneTime" text="Buy Collection" disable="true" 
+                        onAction="#handleBuyOneTimeAction" prefWidth="150.0"
+                        style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;">
+                    <HBox.margin>
+                        <Insets left="5.0" />
+                    </HBox.margin>
+                </Button>
+            </children>
+        </HBox>
 
 
     </children>

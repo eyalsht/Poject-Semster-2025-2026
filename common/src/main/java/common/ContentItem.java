@@ -1,9 +1,9 @@
 package common;
 
 public abstract class ContentItem {
-    protected int id; // [cite: 66]
-    protected String name; // [cite: 67]
-    protected String description; // [cite: 68]
+    protected int id;
+    protected String name;
+    protected String description;
 
     public ContentItem() {
         this(0, null, null);
@@ -36,4 +36,3 @@ public abstract class ContentItem {
 
     public abstract String getDetails();
 }
-// comment to update renat

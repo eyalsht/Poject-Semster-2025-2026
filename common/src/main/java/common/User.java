@@ -31,20 +31,20 @@ public abstract class User implements Serializable {
     public User(int id, String username, String password, String firstName, String lastName, String email, UserRole role) {
         this.id = id;
         this.username = username;
-        this.password = password; // Use setter to validate
+        this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email; // Use setter to validate
+        this.email = email;
         this.isLoggedIn = false;
         this.role = role;
     }
     public User() {
         this.id = 0;
         this.username = "";
-        setPassword(""); // Use setter to validate
+        setPassword("");
         this.firstName = "";
         this.lastName = "";
-        setEmail(""); // Use setter to validate
+        setEmail("");
         this.isLoggedIn = false;
     }
 

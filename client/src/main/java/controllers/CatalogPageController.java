@@ -15,6 +15,7 @@ import common.actionType;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -286,19 +287,6 @@ public class CatalogPageController {
                     return !(isWorker && hasSelection);
                 }, tblCatalog.getSelectionModel().selectedItemProperty())
         );
-
-        btnDeleteMap.disableProperty().bind(
-                Bindings.createBooleanBinding(() -> {
-                    User u = client.getCurrentUser();
-                    UserRole role = (u == null) ? null : u.getRole();
-
-                    boolean isWorker = (role == UserRole.CONTENT_WORKER);
-                    boolean hasSelection = tblCatalog.getSelectionModel().getSelectedItem() != null;
-
-                    // only content_worker can delete, and only with a selected row
-                    return !(isWorker && hasSelection);
-                }, tblCatalog.getSelectionModel().selectedItemProperty())
-        );
     }
 
 
@@ -400,6 +388,7 @@ public class CatalogPageController {
             e.printStackTrace();
         }
     }
+
     private void refreshPriceApprovalsCount() {
         new Thread(() -> {
             try {
@@ -572,6 +561,9 @@ public class CatalogPageController {
     }
 
 
+    public void handleSubscribeAction(ActionEvent actionEvent) {
+    }
 
-
+    public void handleBuyOneTimeAction(ActionEvent actionEvent) {
+    }
 }

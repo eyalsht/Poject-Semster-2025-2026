@@ -21,7 +21,6 @@ public class OneTimePurchase extends Purchase {
 
     @Override
     public boolean isValid() {
-        // one-time purchases never expire
-        return true;
+                return true;
     }
 }

@@ -34,7 +34,7 @@ public class RegisterPageController {
 
     @FXML
     private void handleRegister() {
-        // 1) validate locally
+
         String first = txtFirstName.getText().trim();
         String last  = txtLastName.getText().trim();
         String id    = txtId.getText().trim();
@@ -47,7 +47,7 @@ public class RegisterPageController {
             return;
         }
 
-        // 2) build request payload (keep it simple for now)
+
         Map<String, String> data = new HashMap<>();
         data.put("firstName", first);
         data.put("lastName", last);
@@ -56,7 +56,7 @@ public class RegisterPageController {
         data.put("password", pass);
         data.put("card", card);
 
-        // 3) send to server
+
         new Thread(() -> {
             try {
                 GCMClient client = GCMClient.getInstance();
@@ -66,7 +66,7 @@ public class RegisterPageController {
                 javafx.application.Platform.runLater(() -> {
                     if (resp instanceof Message msg) {
                         if (msg.getAction() == actionType.REGISTER_SUCCESS) {
-                            // auto-fill login
+
                             if (loginController != null) {
                                 loginController.fillAfterRegister(email);
                             }

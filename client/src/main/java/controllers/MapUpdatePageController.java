@@ -16,19 +16,19 @@ import java.util.ArrayList;
  */
 public class MapUpdatePageController {
 
-    // LEFT (current)
+
     @FXML private Label lblCurCity;
     @FXML private Label lblCurMap;
     @FXML private Label lblCurPrice;
     @FXML private TextArea taCurDesc;
 
-    // RIGHT (new values)
+
     @FXML private TextField tfNewCity;
     @FXML private TextField tfNewMap;
     @FXML private TextField tfNewPrice;
     @FXML private TextArea taNewDesc;
 
-    // Buttons
+
     @FXML private Button btnAddUpdate;
     @FXML private Button btnApprove;
     @FXML private Button btnDeny;
@@ -38,27 +38,26 @@ public class MapUpdatePageController {
 
     private MapStatus mode = MapStatus.UPDATE;
 
-    // For ADD/UPDATE/PRICE_UPDATE_REQUEST we keep the selected catalog row
+
     private MapCatalogRow currentRow;
 
-    // For APPROVAL_REVIEW we keep the pending request
+
     private PendingPriceUpdate pending;
 
     @FXML
     public void initialize() {
-        // left is always read-only
+
         if (taCurDesc != null) {
             taCurDesc.setDisable(true);
             taCurDesc.setFocusTraversable(false);
         }
-        // start with everything locked down, then enable based on mode+role
+
         setRightEditable(false, false, false, false);
         show(btnApprove, false);
         show(btnDeny, false);
         show(btnAddUpdate, true);
     }
 
-    /** Existing API used from CatalogPageController */
     public void setContext(MapStatus mode, MapCatalogRow selectedRow) {
         this.pending = null;
         this.mode = mode;
@@ -69,7 +68,7 @@ public class MapUpdatePageController {
         applyPermissions();
     }
 
-    /** New API used from ApprovalPendingPageController */
+
     public void setApprovalContext(PendingPriceUpdate pending) {
         this.currentRow = null;
         this.pending = pending;
@@ -79,8 +78,6 @@ public class MapUpdatePageController {
         fillRightDefaultsFromPending(pending);
         applyPermissions();
     }
-
-    // ---------------- UI helpers ----------------
 
     private void fillLeftFromCatalogRow(MapCatalogRow row) {
         if (row == null) {
@@ -105,7 +102,6 @@ public class MapUpdatePageController {
             return;
         }
 
-        // copy current to right by default
         tfNewCity.setText(row.getCity());
         tfNewMap.setText(row.getMapName());
         tfNewPrice.setText(String.valueOf(row.getPrice()));
@@ -137,7 +133,7 @@ public class MapUpdatePageController {
         User u = client.getCurrentUser();
         UserRole role = (u == null) ? null : u.getRole();
 
-        // safe defaults
+
         setRightEditable(false, false, false, false);
 
         show(btnAddUpdate, false);
@@ -228,11 +224,9 @@ public class MapUpdatePageController {
         stage.close();
     }
 
-    // ---------------- Actions ----------------
-
     @FXML
     private void onAddUpdate() {
-        // Only implemented right now for PRICE_UPDATE_REQUEST
+
         if (mode != MapStatus.PRICE_UPDATE_REQUEST) {
             closeWindow();
             return;
