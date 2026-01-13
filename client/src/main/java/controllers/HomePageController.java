@@ -2,6 +2,7 @@ package controllers;
 
 import client.MainApplication;
 import client.GCMClient;
+import common.UserRole;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -69,6 +70,10 @@ public class HomePageController
     @FXML
     private void onInfo() {
         showPage("/GUI/InfoPage.fxml");
+    }
+    @FXML
+    private void onReport() {
+        showPage("/GUI/ReportPage.fxml");
     }
 
     @FXML
@@ -156,6 +161,20 @@ public class HomePageController
         if (logOutBtn != null) {
             logOutBtn.setDisable(currentUser==null);
         }
+
+        if (btnReports != null) {
+            boolean canSeeReports = false;
+
+            if (currentUser != null) {
+                UserRole role = currentUser.getRole();
+                canSeeReports = (role == UserRole.CONTENT_MANAGER ||
+                        role == UserRole.COMPANY_MANAGER);
+            }
+
+            btnReports.setDisable(!canSeeReports);
+        }
+
+
         /*EmployeeRole role = currentUser.getEmployeeRole();
 
         if (role == null) {

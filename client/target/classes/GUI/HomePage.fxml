@@ -47,12 +47,12 @@
                   <Insets left="5.0" right="5.0" top="10.0" />
                </VBox.margin></Button>
 
-            <Button mnemonicParsing="false" onAction="#onInfo" prefHeight="30.0" prefWidth="150.0" text="Info">
+            <Button mnemonicParsing="false" onAction="#onInfo" prefHeight="30.0" prefWidth="150.0" text="Info" >
                <VBox.margin>
                   <Insets left="5.0" right="5.0" top="10.0" />
                </VBox.margin></Button>
 
-            <Button fx:id="btnReports" disable="true" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Reports">
+            <Button fx:id="btnReports" disable="true" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Reports" onAction="#onReport" >
                <VBox.margin>
                   <Insets left="5.0" right="5.0" top="10.0" />
                </VBox.margin></Button>
