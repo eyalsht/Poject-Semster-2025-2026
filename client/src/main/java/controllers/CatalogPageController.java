@@ -1,26 +1,32 @@
 package controllers;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import client.GCMClient;
-import common.*;
+import common.City;
+import common.MapCatalogRow;
+import common.MapStatus;
+import common.Message;
+import common.User;
+import common.UserRole;
+import common.actionType;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.beans.binding.Bindings;
-import javafx.scene.control.Button;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import java.io.IOException;
-
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class CatalogPageController {
 
@@ -39,6 +45,10 @@ public class CatalogPageController {
     @FXML private Button btnDeleteMap;
     @FXML private Button btnPriceUpdate;
     @FXML private Button btnApprovals;
+    
+    // Purchase buttons
+    @FXML private Button btnSubscribe;
+    @FXML private Button btnBuyOneTime;
 
 
     private final GCMClient client = GCMClient.getInstance();
@@ -91,6 +101,16 @@ public class CatalogPageController {
         applyRolePermissions();
         setupSelectionRules();
         refreshPriceApprovalsCount();
+        
+        // Add listener for purchase buttons - enable when city is selected
+        tblCatalog.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            // Enable purchase buttons only if a city is selected (via ComboBox)
+            String selectedCity = cbCity.getValue();
+            boolean hasCity = (selectedCity != null && !selectedCity.isEmpty());
+            
+            btnSubscribe.setDisable(!hasCity);
+            btnBuyOneTime.setDisable(!hasCity);
+        });
     }
 
 
@@ -400,6 +420,155 @@ public class CatalogPageController {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    /**
+     * Handler for Subscribe to City button.
+     * Opens the PurchaseDialog with SUBSCRIPTION type.
+     */
+    @FXML
+    private void handleSubscribeAction() {
+        String cityName = cbCity.getValue();
+        if (cityName == null || cityName.isEmpty()) {
+            System.err.println("No city selected for subscription");
+            return;
+        }
+        
+        // Fetch city data from server
+        fetchCityAndOpenDialog(cityName, "SUBSCRIPTION");
+    }
+
+    /**
+     * Handler for Buy Collection button.
+     * Opens the PurchaseDialog with ONE_TIME type.
+     */
+    @FXML
+    private void handleBuyOneTimeAction() {
+        String cityName = cbCity.getValue();
+        if (cityName == null || cityName.isEmpty()) {
+            System.err.println("No city selected for one-time purchase");
+            return;
+        }
+        
+        // Fetch city data from server
+        fetchCityAndOpenDialog(cityName, "ONE_TIME");
+    }
+
+    /**
+     * Fetches city data from the server and opens the purchase dialog.
+     */
+    private void fetchCityAndOpenDialog(String cityName, String purchaseType) {
+        new Thread(() -> {
+            try {
+                // Request all cities from server
+                Message request = new Message(actionType.GET_ALL_CITIES_REQUEST);
+                Object response = client.sendRequest(request);
+
+                if (response instanceof Message msgResponse && 
+                    msgResponse.getAction() == actionType.GET_ALL_CITIES_RESPONSE) {
+                    
+                    ArrayList<City> cities = (ArrayList<City>) msgResponse.getMessage();
+                    
+                    if (cities != null) {
+                        // Find the city by name
+                        City city = null;
+                        for (City c : cities) {
+                            if (c.getName().equals(cityName)) {
+                                city = c;
+                                break;
+                            }
+                        }
+                        
+                        if (city != null) {
+                            final City foundCity = city;
+                            Platform.runLater(() -> openPurchaseDialog(foundCity, purchaseType));
+                        } else {
+                            System.err.println("City not found: " + cityName);
+                        }
+                    } else {
+                        System.err.println("No cities received from server");
+                    }
+                } else {
+                    System.err.println("Invalid response from server for cities request");
+                }
+            } catch (Exception e) {
+                System.err.println("Error fetching city data: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void openPurchaseDialog(City city, String purchaseType) {
+        try {
+            // 1. Get User ID (Safety Check)
+            int userId = 1; // Default dummy for testing
+            User currentUser = client.getCurrentUser();
+            if (currentUser != null) {
+                userId = currentUser.getId();
+            } else {
+                System.err.println("!!! WARNING: No logged-in user found. Using Dummy ID: 1 !!!");
+            }
+
+            // 2. Load FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/PurchaseDialog.fxml"));
+            Parent root = loader.load();
+
+            // 3. Get Controller
+            PurchaseDialogController controller = loader.getController();
+            
+            // 4. Calculate base price (Safe check for nulls)
+            double basePrice;
+            if ("SUBSCRIPTION".equals(purchaseType)) {
+                basePrice = city.getPriceSub(); // Monthly subscription price
+            } else {
+                basePrice = city.getPriceOneTime(); // One-time purchase price
+            }
+            
+            // Fallback if price is missing or invalid
+            if (basePrice <= 0) {
+                System.err.println("WARNING: Invalid price (" + basePrice + ") for city " + city.getName() + ". Using fallback price: 100.0");
+                basePrice = 100.0;
+            }
+
+            // 5. Initialize the dialog with data
+            controller.initData(
+                userId,                    // userId
+                city.getID(),              // cityId
+                null,                      // mapId (not used for city purchases)
+                city.getName(),            // itemName
+                purchaseType,              // "SUBSCRIPTION" or "ONE_TIME"
+                basePrice                  // price
+            );
+
+            // 6. Create and show the dialog stage
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Secure Purchase - " + city.getName());
+            dialogStage.setScene(new Scene(root));
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            
+            // Set owner to current window (prevents dialog from appearing behind main window)
+            if (btnSubscribe != null && btnSubscribe.getScene() != null && btnSubscribe.getScene().getWindow() != null) {
+                dialogStage.initOwner(btnSubscribe.getScene().getWindow());
+            }
+            
+            dialogStage.setResizable(false);
+            
+            // Pass stage to controller so it can close itself
+            controller.setDialogStage(dialogStage);
+            
+            dialogStage.showAndWait();
+
+        } catch (Exception e) {
+            System.err.println("CRITICAL ERROR: Failed to open purchase dialog!");
+            e.printStackTrace(); // This will show us WHY it crashes
+            
+            // Show alert to user
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Could not open purchase window");
+            alert.setContentText("Check console for details.\n" + e.getMessage());
+            alert.showAndWait();
+        }
     }
 
 
