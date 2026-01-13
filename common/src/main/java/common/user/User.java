@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 @Entity
 @Table(name = "users")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)  // Changed from SINGLE_TABLE
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class User implements Serializable {
     private static final long serialVersionUID = 1L;

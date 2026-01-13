@@ -98,9 +98,9 @@ public class PendingPriceUpdate implements Serializable {
 
     // For TableView columns (backward compatibility)
     public String getType() { return "PRICE"; }
-    
-    public String getTarget() { 
-        return getCity() + " - " + getMapName() + " (" + getVersion() + ")"; 
+
+    public String getTarget() {
+        return getCity() + " - " + getMapName() + " (" + getVersion() + ")";
     }
     
     public String getInfo() { 

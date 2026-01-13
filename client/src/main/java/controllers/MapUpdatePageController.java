@@ -17,14 +17,23 @@ import java.util.ArrayList;
  */
 public class MapUpdatePageController {
 
-    @FXML private TextField txtCity;
-    @FXML private TextField txtMapName;
-    @FXML private TextField txtVersion;
-    @FXML private TextField txtPrice;
-    @FXML private TextArea txtDescription;
-    @FXML private Label lblTitle;
-    @FXML private Label lblStatus;
-    @FXML private Button btnSave;
+    // Current values (left side - read-only display)
+    @FXML private Label lblCurCity;
+    @FXML private Label lblCurMap;
+    @FXML private Label lblCurPrice;
+    @FXML private TextArea taCurDesc;
+
+    // New values (right side - editable)
+    @FXML private TextField tfNewCity;
+    @FXML private TextField tfNewMap;
+    @FXML private TextField tfNewPrice;
+    @FXML private TextArea taNewDesc;
+
+    // Buttons
+    @FXML private Button btnClose;
+    @FXML private Button btnAddUpdate;
+    @FXML private Button btnDeny;
+    @FXML private Button btnApprove;
 
     private String mode;  // "add", "edit", or "price"
     private GCMMap selectedMap;
@@ -48,60 +57,98 @@ public class MapUpdatePageController {
 
     @FXML
     public void initialize() {
-        clearStatus();
+        // Initial setup if needed
     }
 
     private void updateUIForMode() {
         switch (mode) {
             case "add":
-                lblTitle.setText("Add New Map");
-                setFieldsEditable(true, true, true, true, true);
+                setFieldsEditable(true, true, true, true);
+                btnAddUpdate.setText("Add");
+                btnApprove.setVisible(false);
+                btnDeny.setVisible(false);
                 break;
             case "edit":
-                lblTitle.setText("Edit Map");
-                setFieldsEditable(false, true, false, true, true);
+                setFieldsEditable(false, true, true, true);
+                btnAddUpdate.setText("Update");
+                btnApprove.setVisible(false);
+                btnDeny.setVisible(false);
                 break;
             case "price":
-                lblTitle.setText("Update Price");
-                setFieldsEditable(false, false, false, true, false);
+                setFieldsEditable(false, false, true, false);
+                btnAddUpdate.setText("Submit Price Update");
+                btnApprove.setVisible(false);
+                btnDeny.setVisible(false);
+                break;
+            case "approve":
+                // For approval workflow
+                setFieldsEditable(false, false, false, false);
+                btnAddUpdate.setVisible(false);
+                btnApprove.setVisible(true);
+                btnDeny.setVisible(true);
                 break;
         }
     }
 
-    private void setFieldsEditable(boolean city, boolean mapName, boolean version, 
-                                    boolean price, boolean description) {
-        txtCity.setEditable(city);
-        txtMapName.setEditable(mapName);
-        txtVersion.setEditable(version);
-        txtPrice.setEditable(price);
-        txtDescription.setEditable(description);
+    private void setFieldsEditable(boolean city, boolean mapName, boolean price, boolean description) {
+        tfNewCity.setEditable(city);
+        tfNewMap.setEditable(mapName);
+        tfNewPrice.setEditable(price);
+        taNewDesc.setEditable(description);
     }
 
     private void populateFields() {
         if (selectedMap != null) {
-            txtCity.setText(selectedMap.getCityName());
-            txtMapName.setText(selectedMap.getName());
-            txtVersion.setText(selectedMap.getVersion());
-            txtPrice.setText(String.valueOf(selectedMap.getPrice()));
-            txtDescription.setText(selectedMap.getDescription());
+            // Populate current values (left side)
+            lblCurCity.setText(selectedMap.getCityName());
+            lblCurMap.setText(selectedMap.getName());
+            lblCurPrice.setText(String.valueOf(selectedMap.getPrice()));
+            taCurDesc.setText(selectedMap.getDescription());
+
+            // Pre-fill new values (right side) with current values
+            tfNewCity.setText(selectedMap.getCityName());
+            tfNewMap.setText(selectedMap.getName());
+            tfNewPrice.setText(String.valueOf(selectedMap.getPrice()));
+            taNewDesc.setText(selectedMap.getDescription());
         }
     }
 
     @FXML
-    private void onSave() {
+    private void onClose() {
+        Stage stage = (Stage) btnClose.getScene().getWindow();
+        stage.close();
+    }
+
+    @FXML
+    private void onAddUpdate() {
         if ("price".equals(mode)) {
             submitPriceUpdate();
-        } else {
-            // TODO: Implement add/edit map
-            showStatus("This feature is not yet implemented.", true);
+        } else if ("add".equals(mode)) {
+            // TODO: Implement add map
+            showAlert("Info", "Add map feature is not yet implemented.");
+        } else if ("edit".equals(mode)) {
+            // TODO: Implement edit map
+            showAlert("Info", "Edit map feature is not yet implemented.");
         }
     }
 
+    @FXML
+    private void onApprove() {
+        // TODO: Implement approval logic
+        showAlert("Info", "Approval feature is not yet implemented.");
+    }
+
+    @FXML
+    private void onDeny() {
+        // TODO: Implement deny logic
+        showAlert("Info", "Deny feature is not yet implemented.");
+    }
+
     private void submitPriceUpdate() {
-        String priceText = txtPrice.getText().trim();
-        
+        String priceText = tfNewPrice.getText().trim();
+
         if (priceText.isEmpty()) {
-            showStatus("Please enter a price.", true);
+            showAlert("Validation Error", "Please enter a price.");
             return;
         }
 
@@ -109,15 +156,13 @@ public class MapUpdatePageController {
         try {
             newPrice = Double.parseDouble(priceText);
             if (newPrice < 0) {
-                showStatus("Price cannot be negative.", true);
+                showAlert("Validation Error", "Price cannot be negative.");
                 return;
             }
         } catch (NumberFormatException e) {
-            showStatus("Invalid price format.", true);
+            showAlert("Validation Error", "Invalid price format.");
             return;
         }
-
-        showStatus("Submitting price update...", false);
 
         new Thread(() -> {
             try {
@@ -137,53 +182,36 @@ public class MapUpdatePageController {
                 Platform.runLater(() -> handlePriceUpdateResponse(response));
 
             } catch (Exception e) {
-                Platform.runLater(() -> showStatus("Error: " + e.getMessage(), true));
+                Platform.runLater(() -> showAlert("Error", "Error: " + e.getMessage()));
             }
         }).start();
     }
 
     private void handlePriceUpdateResponse(Message response) {
         if (response == null) {
-            showStatus("No response from server.", true);
+            showAlert("Error", "No response from server.");
             return;
         }
 
         if (response.getAction() == ActionType.UPDATE_PRICE_RESPONSE) {
             boolean success = (Boolean) response.getMessage();
             if (success) {
-                showStatus("Price update submitted for approval!", false);
-                
-                // Close after a short delay
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(1500);
-                        Platform.runLater(this::onCancel);
-                    } catch (InterruptedException ignored) {}
-                }).start();
+                showAlert("Success", "Price update submitted for approval!");
+                // Close after showing the message
+                onClose();
             } else {
-                showStatus("Failed to submit price update.", true);
+                showAlert("Error", "Failed to submit price update.");
             }
         } else {
-            showStatus("Unexpected response from server.", true);
+            showAlert("Error", "Unexpected response from server.");
         }
     }
 
-    @FXML
-    private void onCancel() {
-        Stage stage = (Stage) btnSave.getScene().getWindow();
-        stage.close();
-    }
-
-    private void showStatus(String message, boolean isError) {
-        if (lblStatus != null) {
-            lblStatus.setText(message);
-            lblStatus.setStyle(isError ? "-fx-text-fill: red;" : "-fx-text-fill: green;");
-        }
-    }
-
-    private void clearStatus() {
-        if (lblStatus != null) {
-            lblStatus.setText("");
-        }
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

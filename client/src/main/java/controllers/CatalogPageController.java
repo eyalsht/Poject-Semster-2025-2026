@@ -3,6 +3,7 @@ import client.GCMClient;
 import common.content.GCMMap;
 import common.dto.CatalogFilter;
 import common.dto.CatalogResponse;
+import common.dto.PendingApprovalsResponse;  // Add this import
 import common.enums.EmployeeRole;
 import common.enums.ActionType;
 import common.messaging.Message;
@@ -49,15 +50,17 @@ public class CatalogPageController {
     
     // Cache the last response for filter cascading
     private CatalogResponse lastCatalogResponse;
+    
+    // Flag to prevent recursive updates
+    private boolean isUpdatingComboBoxes = false;
 
     @FXML
     public void initialize() {
         setupTableColumns();
         setupComboBoxListeners();
         applyRolePermissions();
-        
-        // Load initial data
         loadCatalog(null, null, null);
+        refreshPendingApprovalsCount();  // Updated method name
     }
 
     /**
@@ -88,6 +91,7 @@ public class CatalogPageController {
      */
     private void setupComboBoxListeners() {
         cbCity.setOnAction(e -> {
+            if (isUpdatingComboBoxes) return;  // Prevent recursive calls
             String selectedCity = cbCity.getValue();
             updateMapComboBox(selectedCity);
             cbVersion.getItems().clear();
@@ -95,6 +99,7 @@ public class CatalogPageController {
         });
 
         cbMap.setOnAction(e -> {
+            if (isUpdatingComboBoxes) return;  // Prevent recursive calls
             String selectedCity = cbCity.getValue();
             String selectedMap = cbMap.getValue();
             updateVersionComboBox(selectedCity, selectedMap);
@@ -102,6 +107,7 @@ public class CatalogPageController {
         });
 
         cbVersion.setOnAction(e -> {
+            if (isUpdatingComboBoxes) return;  // Prevent recursive calls
             loadCatalog(cbCity.getValue(), cbMap.getValue(), cbVersion.getValue());
         });
     }
@@ -141,22 +147,28 @@ public class CatalogPageController {
             // Update table
             tblCatalog.setItems(FXCollections.observableArrayList(catalogResponse.getMaps()));
 
-            // Update city dropdown (only on first load or if empty)
-            if (cbCity.getItems().isEmpty() && !catalogResponse.getAvailableCities().isEmpty()) {
-                List<String> cities = new ArrayList<>();
-                cities.add("");  // Empty option for "All"
-                cities.addAll(catalogResponse.getAvailableCities());
-                cbCity.setItems(FXCollections.observableArrayList(cities));
-            }
+            // Set flag to prevent listener recursion
+            isUpdatingComboBoxes = true;
+            try {
+                // Update city dropdown (only on first load or if empty)
+                if (cbCity.getItems().isEmpty() && !catalogResponse.getAvailableCities().isEmpty()) {
+                    List<String> cities = new ArrayList<>();
+                    cities.add("");  // Empty option for "All"
+                    cities.addAll(catalogResponse.getAvailableCities());
+                    cbCity.setItems(FXCollections.observableArrayList(cities));
+                }
 
-            // Update map dropdown if available
-            if (!catalogResponse.getAvailableMapNames().isEmpty()) {
-                updateMapComboBoxFromResponse(catalogResponse.getAvailableMapNames());
-            }
+                // Update map dropdown if available
+                if (!catalogResponse.getAvailableMapNames().isEmpty()) {
+                    updateMapComboBoxFromResponse(catalogResponse.getAvailableMapNames());
+                }
 
-            // Update version dropdown if available
-            if (!catalogResponse.getAvailableVersions().isEmpty()) {
-                updateVersionComboBoxFromResponse(catalogResponse.getAvailableVersions());
+                // Update version dropdown if available
+                if (!catalogResponse.getAvailableVersions().isEmpty()) {
+                    updateVersionComboBoxFromResponse(catalogResponse.getAvailableVersions());
+                }
+            } finally {
+                isUpdatingComboBoxes = false;
             }
         }
     }
@@ -289,6 +301,29 @@ public class CatalogPageController {
         openApprovalsWindow();
     }
 
+    /**
+     * Load the pending approvals count and update the button text.
+     * Public so it can be called from ApprovalPendingPageController.
+     */
+    public void refreshPendingApprovalsCount() {
+        new Thread(() -> {
+            try {
+                Message request = new Message(ActionType.GET_PENDING_APPROVALS_REQUEST, null);
+                Message response = (Message) client.sendRequest(request);
+
+                Platform.runLater(() -> {
+                    if (response != null && response.getAction() == ActionType.GET_PENDING_APPROVALS_RESPONSE) {
+                        PendingApprovalsResponse approvals = (PendingApprovalsResponse) response.getMessage();
+                        int count = approvals.getTotalCount();
+                        btnApprovals.setText("Approvals (" + count + ")");
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
     // ==================== HELPER METHODS ====================
 
     private void openMapUpdateWindow(String mode, GCMMap selected) {
@@ -322,6 +357,10 @@ public class CatalogPageController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/ApprovalPendingPage.fxml"));
             Parent root = loader.load();
+
+            // Pass reference to this controller
+            ApprovalPendingPageController controller = loader.getController();
+            controller.setCatalogController(this);
 
             Stage stage = new Stage();
             stage.setTitle("Pending Approvals");

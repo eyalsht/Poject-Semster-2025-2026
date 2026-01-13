@@ -29,6 +29,12 @@ public class ApprovalPendingPageController {
     @FXML private Label lblStatus;
 
     private final GCMClient client = GCMClient.getInstance();
+    
+    private CatalogPageController catalogController;  // Add this field
+
+    public void setCatalogController(CatalogPageController controller) {  // Add this method
+        this.catalogController = controller;
+    }
 
     @FXML
     public void initialize() {
@@ -144,6 +150,11 @@ public class ApprovalPendingPageController {
             if (success) {
                 setStatus(wasApprove ? "Approved successfully!" : "Denied successfully!");
                 loadPendingApprovals();  // Refresh the list
+                
+                // Notify catalog controller to refresh its count
+                if (catalogController != null) {
+                    catalogController.refreshPendingApprovalsCount();
+                }
             } else {
                 setStatus("Operation failed. Please try again.");
             }
