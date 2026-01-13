@@ -10,7 +10,8 @@ out/
 .factorypath
 .project
 .settings
-.springBeans
+.springBean
+s
 .sts4-cache
 bin/
 !**/src/main/**/bin/
@@ -37,3 +38,4 @@ bin/
 /common/target/
 /server/target/
 /common/target/
+/client/target/

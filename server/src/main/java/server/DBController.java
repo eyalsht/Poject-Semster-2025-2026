@@ -1,11 +1,22 @@
 package server;
 
-import common.*;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import common.City;
+import common.Client;
+import common.Employee;
+import common.MapCatalogRow;
+import common.PendingPriceUpdate;
+import common.User;
+import common.UserRole;
 
 public class DBController {
     private static Connection connection;
@@ -517,6 +528,27 @@ public class DBController {
             }
         } catch (SQLException e) {
             System.err.println("Error fetching subscription price for city ID " + cityId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
+    public static double getCityOneTimePrice(int cityId) {
+        ensureConnected();
+
+        String query = "SELECT one_time_price FROM cities WHERE id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, cityId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("one_time_price");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching one-time price for city ID " + cityId + ": " + e.getMessage());
             e.printStackTrace();
         }
 
