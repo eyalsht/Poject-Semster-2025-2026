@@ -302,7 +302,7 @@ public class CatalogPageController {
     private void onUpdateMap() {
         GCMMap selected = tblCatalog.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showAlert("Selection Required", "Please select a map to update.");
+            showAlert("Selection Required", "Please select a map to edit.");
             return;
         }
         openMapUpdateWindow("edit", selected);
@@ -466,7 +466,7 @@ public class CatalogPageController {
             controller.setCatalogController(this);
 
             Stage stage = new Stage();
-            stage.setTitle(mode.equals("add") ? "Add New Map" : "Update Map");
+            stage.setTitle(mode.equals("add") ? "Add New Map" : "Edit Map");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
