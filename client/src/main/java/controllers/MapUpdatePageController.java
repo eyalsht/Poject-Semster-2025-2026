@@ -2,21 +2,31 @@ package controllers;
 
 import client.GCMClient;
 import common.content.GCMMap;
+import common.content.Site;
+import common.dto.ContentChangeRequest;
 import common.enums.ActionType;
+import common.enums.ContentActionType;
+import common.enums.ContentType;
 import common.messaging.Message;
 import common.user.User;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import common.dto.ContentChangeRequest;
-import common.enums.ContentActionType;
-import common.enums.ContentType;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Controller for map update/price update dialog.
+ * Supports three distinct modes with strict UI separation:
+ * - "price": Only price editing (for Content Managers requesting price changes)
+ * - "edit": Only description and sites editing (City/Price are read-only)
+ * - "add": Full creation mode (all fields editable except price initially)
  */
 public class MapUpdatePageController {
 
@@ -25,12 +35,35 @@ public class MapUpdatePageController {
     @FXML private Label lblCurMap;
     @FXML private Label lblCurPrice;
     @FXML private TextArea taCurDesc;
+    @FXML private Label lblCurrentTitle;
+    @FXML private Label lblUpdateTitle;
+
+    // Labels that may be hidden based on mode
+    @FXML private Label lblPriceLabel;
+    @FXML private Label lblDescLabel;
+    @FXML private Label lblNewCityLabel;
+    @FXML private Label lblNewMapLabel;
+    @FXML private Label lblNewPriceLabel;
+    @FXML private Label lblNewDescLabel;
 
     // New values (right side - editable)
     @FXML private TextField tfNewCity;
     @FXML private TextField tfNewMap;
     @FXML private TextField tfNewPrice;
     @FXML private TextArea taNewDesc;
+
+    // Container VBoxes for visibility control
+    @FXML private VBox vboxCurrentValues;
+    @FXML private VBox vboxNewValues;
+    @FXML private VBox vboxCurrentSites;
+    @FXML private VBox vboxSitesManagement;
+
+    // Sites management
+    @FXML private ListView<Site> lvCurrentSites;
+    @FXML private ListView<Site> lvAvailableSites;
+    @FXML private ListView<Site> lvSelectedSites;
+    @FXML private Button btnAddSite;
+    @FXML private Button btnRemoveSite;
 
     // Buttons
     @FXML private Button btnClose;
@@ -42,6 +75,10 @@ public class MapUpdatePageController {
     private GCMMap selectedMap;
     private CatalogPageController catalogController;
 
+    // Sites data
+    private ObservableList<Site> availableSites = FXCollections.observableArrayList();
+    private ObservableList<Site> selectedSites = FXCollections.observableArrayList();
+
     private final GCMClient client = GCMClient.getInstance();
 
     public void setMode(String mode) {
@@ -52,6 +89,9 @@ public class MapUpdatePageController {
     public void setSelectedMap(GCMMap map) {
         this.selectedMap = map;
         populateFields();
+        if ("edit".equals(mode)) {
+            loadSitesForMap();
+        }
     }
 
     public void setCatalogController(CatalogPageController controller) {
@@ -60,59 +100,237 @@ public class MapUpdatePageController {
 
     @FXML
     public void initialize() {
-        // Initial setup if needed
+        // Setup site list views
+        if (lvAvailableSites != null) {
+            lvAvailableSites.setItems(availableSites);
+        }
+        if (lvSelectedSites != null) {
+            lvSelectedSites.setItems(selectedSites);
+        }
     }
 
+    /**
+     * Configure UI visibility and editability based on mode.
+     * Enforces strict separation between price update and content edit.
+     */
     private void updateUIForMode() {
+        // Hide all optional sections by default
+        hideAllOptionalSections();
+
         switch (mode) {
-            case "add":
-                setFieldsEditable(true, true, true, true);
-                btnAddUpdate.setText("Add");
-                btnApprove.setVisible(false);
-                btnDeny.setVisible(false);
+            case "price":
+                configurePriceMode();
                 break;
             case "edit":
-                setFieldsEditable(false, true, true, true);
-                btnAddUpdate.setText("Update");
-                btnApprove.setVisible(false);
-                btnDeny.setVisible(false);
+                configureEditMode();
                 break;
-            case "price":
-                setFieldsEditable(false, false, true, false);
-                btnAddUpdate.setText("Submit Price Update");
-                btnApprove.setVisible(false);
-                btnDeny.setVisible(false);
+            case "add":
+                configureAddMode();
                 break;
             case "approve":
-                // For approval workflow
-                setFieldsEditable(false, false, false, false);
-                btnAddUpdate.setVisible(false);
-                btnApprove.setVisible(true);
-                btnDeny.setVisible(true);
+                configureApproveMode();
                 break;
         }
     }
 
-    private void setFieldsEditable(boolean city, boolean mapName, boolean price, boolean description) {
-        tfNewCity.setEditable(city);
-        tfNewMap.setEditable(mapName);
-        tfNewPrice.setEditable(price);
-        taNewDesc.setEditable(description);
+    private void hideAllOptionalSections() {
+        // Hide sites sections by default
+        if (vboxCurrentSites != null) vboxCurrentSites.setVisible(false);
+        if (vboxCurrentSites != null) vboxCurrentSites.setManaged(false);
+        if (vboxSitesManagement != null) vboxSitesManagement.setVisible(false);
+        if (vboxSitesManagement != null) vboxSitesManagement.setManaged(false);
+        
+        // Hide approve/deny buttons by default
+        btnApprove.setVisible(false);
+        btnDeny.setVisible(false);
+    }
+
+    /**
+     * Price Mode: ONLY show price-related fields.
+     * Hide description, sites, city, map name editing.
+     */
+    private void configurePriceMode() {
+        lblCurrentTitle.setText("Current Price");
+        lblUpdateTitle.setText("New Price");
+        
+        // Show only price fields
+        tfNewCity.setVisible(false);
+        tfNewCity.setManaged(false);
+        tfNewMap.setVisible(false);
+        tfNewMap.setManaged(false);
+        taNewDesc.setVisible(false);
+        taNewDesc.setManaged(false);
+        
+        // Hide labels for hidden fields
+        if (lblNewCityLabel != null) { lblNewCityLabel.setVisible(false); lblNewCityLabel.setManaged(false); }
+        if (lblNewMapLabel != null) { lblNewMapLabel.setVisible(false); lblNewMapLabel.setManaged(false); }
+        if (lblNewDescLabel != null) { lblNewDescLabel.setVisible(false); lblNewDescLabel.setManaged(false); }
+        
+        // Hide description on left side too
+        if (taCurDesc != null) { taCurDesc.setVisible(false); taCurDesc.setManaged(false); }
+        if (lblDescLabel != null) { lblDescLabel.setVisible(false); lblDescLabel.setManaged(false); }
+        
+        // Price field is editable
+        tfNewPrice.setEditable(true);
+        tfNewPrice.setVisible(true);
+        
+        btnAddUpdate.setText("Submit Price Change");
+        btnAddUpdate.setVisible(true);
+    }
+
+    /**
+     * Edit Mode: Edit description and manage sites.
+     * City and Price are READ-ONLY (grayed out).
+     */
+    private void configureEditMode() {
+        lblCurrentTitle.setText("Current Map Details");
+        lblUpdateTitle.setText("Edit Map");
+        
+        // City is read-only (show as label, hide text field)
+        tfNewCity.setEditable(false);
+        tfNewCity.setStyle("-fx-background-color: #e0e0e0;");
+        
+        // Map name is read-only
+        tfNewMap.setEditable(false);
+        tfNewMap.setStyle("-fx-background-color: #e0e0e0;");
+        
+        // Price is read-only (grayed out)
+        tfNewPrice.setEditable(false);
+        tfNewPrice.setStyle("-fx-background-color: #e0e0e0;");
+        
+        // Description IS editable
+        taNewDesc.setEditable(true);
+        
+        // Show sites management sections
+        if (vboxCurrentSites != null) { vboxCurrentSites.setVisible(true); vboxCurrentSites.setManaged(true); }
+        if (vboxSitesManagement != null) { vboxSitesManagement.setVisible(true); vboxSitesManagement.setManaged(true); }
+        
+        btnAddUpdate.setText("Submit Update");
+        btnAddUpdate.setVisible(true);
+    }
+
+    /**
+     * Add Mode: All content fields editable (except price which uses separate workflow).
+     */
+    private void configureAddMode() {
+        lblCurrentTitle.setText("(New Map)");
+        lblUpdateTitle.setText("New Map Details");
+        
+        // All content fields editable
+        tfNewCity.setEditable(true);
+        tfNewMap.setEditable(true);
+        taNewDesc.setEditable(true);
+        
+        // Price is NOT editable in add mode (set later by Content Manager)
+        tfNewPrice.setEditable(false);
+        tfNewPrice.setStyle("-fx-background-color: #e0e0e0;");
+        tfNewPrice.setPromptText("Set via Price Update");
+        
+        // Hide left side (no current values for new map)
+        if (vboxCurrentValues != null) { vboxCurrentValues.setVisible(false); vboxCurrentValues.setManaged(false); }
+        
+        // Show sites management
+        if (vboxSitesManagement != null) { vboxSitesManagement.setVisible(true); vboxSitesManagement.setManaged(true); }
+        
+        btnAddUpdate.setText("Submit New Map");
+        btnAddUpdate.setVisible(true);
+    }
+
+    /**
+     * Approve Mode: All fields read-only, show approve/deny buttons.
+     */
+    private void configureApproveMode() {
+        lblCurrentTitle.setText("Pending Change");
+        lblUpdateTitle.setText("Proposed Values");
+        
+        tfNewCity.setEditable(false);
+        tfNewMap.setEditable(false);
+        tfNewPrice.setEditable(false);
+        taNewDesc.setEditable(false);
+        
+        btnAddUpdate.setVisible(false);
+        btnApprove.setVisible(true);
+        btnDeny.setVisible(true);
     }
 
     private void populateFields() {
         if (selectedMap != null) {
             // Populate current values (left side)
-            lblCurCity.setText(selectedMap.getCityName());
-            lblCurMap.setText(selectedMap.getName());
-            lblCurPrice.setText(String.valueOf(selectedMap.getPrice()));
-            taCurDesc.setText(selectedMap.getDescription());
+            lblCurCity.setText(selectedMap.getCityName() != null ? selectedMap.getCityName() : "-");
+            lblCurMap.setText(selectedMap.getName() != null ? selectedMap.getName() : "-");
+            lblCurPrice.setText(String.format("$%.2f", selectedMap.getPrice()));
+            if (taCurDesc != null) {
+                taCurDesc.setText(selectedMap.getDescription() != null ? selectedMap.getDescription() : "");
+            }
 
-            // Pre-fill new values (right side) with current values
-            tfNewCity.setText(selectedMap.getCityName());
-            tfNewMap.setText(selectedMap.getName());
-            tfNewPrice.setText(String.valueOf(selectedMap.getPrice()));
-            taNewDesc.setText(selectedMap.getDescription());
+            // Pre-fill new values based on mode
+            if (!"price".equals(mode)) {
+                tfNewCity.setText(selectedMap.getCityName());
+                tfNewMap.setText(selectedMap.getName());
+                taNewDesc.setText(selectedMap.getDescription());
+            }
+            tfNewPrice.setText(String.format("%.2f", selectedMap.getPrice()));
+        } else {
+            // Clear for add mode
+            lblCurCity.setText("-");
+            lblCurMap.setText("-");
+            lblCurPrice.setText("-");
+            if (taCurDesc != null) taCurDesc.setText("");
+        }
+    }
+
+    /**
+     * Load sites for the current map's city.
+     * Shows which sites are currently on the map and which are available to add.
+     */
+    private void loadSitesForMap() {
+        if (selectedMap == null) return;
+
+        // Get current sites on this map
+        List<Site> currentSites = selectedMap.getSites();
+        if (currentSites != null) {
+            selectedSites.setAll(currentSites);
+            if (lvCurrentSites != null) {
+                lvCurrentSites.setItems(FXCollections.observableArrayList(currentSites));
+            }
+        }
+
+        // TODO: Load available sites from server for this city
+        // For now, this would require a server call to get all sites in the city
+        // that are not already on this map
+        loadAvailableSitesFromServer();
+    }
+
+    private void loadAvailableSitesFromServer() {
+        // This would make a server request to get available sites
+        // For now, placeholder - you'll need to implement the server handler
+        new Thread(() -> {
+            try {
+                // TODO: Implement GET_AVAILABLE_SITES_REQUEST
+                // Message request = new Message(ActionType.GET_AVAILABLE_SITES_REQUEST, selectedMap.getCityName());
+                // Message response = (Message) client.sendRequest(request);
+                // Platform.runLater(() -> handleAvailableSitesResponse(response));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    @FXML
+    private void onAddSite() {
+        Site selected = lvAvailableSites.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            availableSites.remove(selected);
+            selectedSites.add(selected);
+        }
+    }
+
+    @FXML
+    private void onRemoveSite() {
+        Site selected = lvSelectedSites.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            selectedSites.remove(selected);
+            availableSites.add(selected);
         }
     }
 
@@ -143,14 +361,15 @@ public class MapUpdatePageController {
         String description = taNewDesc.getText().trim();
         String cityName = tfNewCity.getText().trim();
         
-        if (mapName.isEmpty()) {
-            showAlert("Validation Error", "Map name is required.");
-            return;
-        }
-        
-        if (actionType == ContentActionType.ADD && cityName.isEmpty()) {
-            showAlert("Validation Error", "City name is required for new maps.");
-            return;
+        if (actionType == ContentActionType.ADD) {
+            if (mapName.isEmpty()) {
+                showAlert("Validation Error", "Map name is required.");
+                return;
+            }
+            if (cityName.isEmpty()) {
+                showAlert("Validation Error", "City name is required for new maps.");
+                return;
+            }
         }
 
         new Thread(() -> {
@@ -158,8 +377,8 @@ public class MapUpdatePageController {
                 User currentUser = client.getCurrentUser();
                 Integer requesterId = currentUser != null ? currentUser.getId() : null;
 
-                // Build JSON content details
-                String contentJson = buildMapContentJson(cityName, mapName, description, tfNewPrice.getText());
+                // Build JSON content details including sites
+                String contentJson = buildMapContentJson(cityName, mapName, description);
                 
                 // Determine target name for display
                 String targetName = actionType == ContentActionType.ADD 
@@ -190,18 +409,21 @@ public class MapUpdatePageController {
         }).start();
     }
 
-    private String buildMapContentJson(String cityName, String mapName, String description, String priceStr) {
-        // Simple JSON builder - consider using a JSON library like Gson in production
+    private String buildMapContentJson(String cityName, String mapName, String description) {
         StringBuilder json = new StringBuilder("{");
         json.append("\"cityName\":\"").append(escapeJson(cityName)).append("\",");
         json.append("\"mapName\":\"").append(escapeJson(mapName)).append("\",");
         json.append("\"description\":\"").append(escapeJson(description)).append("\"");
-        if (priceStr != null && !priceStr.trim().isEmpty()) {
-            try {
-                double price = Double.parseDouble(priceStr.trim());
-                json.append(",\"price\":").append(price);
-            } catch (NumberFormatException ignored) {}
+        
+        // Include selected site IDs
+        if (!selectedSites.isEmpty()) {
+            json.append(",\"siteIds\":[");
+            json.append(selectedSites.stream()
+                .map(s -> String.valueOf(s.getId()))
+                .collect(Collectors.joining(",")));
+            json.append("]");
         }
+        
         json.append("}");
         return json.toString();
     }
@@ -238,13 +460,11 @@ public class MapUpdatePageController {
 
     @FXML
     private void onApprove() {
-        // TODO: Implement approval logic
         showAlert("Info", "Approval feature is not yet implemented.");
     }
 
     @FXML
     private void onDeny() {
-        // TODO: Implement deny logic
         showAlert("Info", "Deny feature is not yet implemented.");
     }
 
@@ -301,7 +521,6 @@ public class MapUpdatePageController {
             boolean success = (Boolean) response.getMessage();
             if (success) {
                 showAlert("Success", "Price update submitted for approval!");
-                // Close after showing the message
                 onClose();
             } else {
                 showAlert("Error", "Failed to submit price update.");

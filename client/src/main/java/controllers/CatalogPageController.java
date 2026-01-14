@@ -5,6 +5,7 @@ import common.dto.CatalogFilter;
 import common.dto.CatalogResponse;
 import common.dto.ContentChangeRequest;
 import common.dto.PendingApprovalsResponse;  // Add this import
+import common.dto.PendingContentApprovalsResponse;
 import common.enums.ContentActionType;
 import common.enums.ContentType;
 import common.enums.EmployeeRole;
@@ -381,25 +382,63 @@ public class CatalogPageController {
 
     /**
      * Load the pending approvals count and update the button text.
+     * Role-based: Company Manager sees price approvals, Content Manager sees content approvals.
      * Public so it can be called from ApprovalPendingPageController.
      */
     public void refreshPendingApprovalsCount() {
+        User user = client.getCurrentUser();
+        if (user == null || !(user instanceof Employee)) {
+            return;
+        }
+
+        Employee employee = (Employee) user;
+        EmployeeRole role = employee.getRole();
+        
+        // Determine which type of approvals to count based on role
+        ActionType requestType;
+        if (role == EmployeeRole.COMPANY_MANAGER) {
+            // Company Manager sees ONLY price approvals
+            requestType = ActionType.GET_PENDING_APPROVALS_REQUEST;
+        } else if (role == EmployeeRole.CONTENT_MANAGER) {
+            // Content Manager sees ONLY content approvals
+            requestType = ActionType.GET_PENDING_CONTENT_APPROVALS_REQUEST;
+        } else {
+            // Other roles don't see approvals
+            return;
+        }
+
+        final ActionType finalRequestType = requestType;
+        
         new Thread(() -> {
             try {
-                Message request = new Message(ActionType.GET_PENDING_APPROVALS_REQUEST, null);
+                Message request = new Message(finalRequestType, null);
                 Message response = (Message) client.sendRequest(request);
 
-                Platform.runLater(() -> {
-                    if (response != null && response.getAction() == ActionType.GET_PENDING_APPROVALS_RESPONSE) {
-                        PendingApprovalsResponse approvals = (PendingApprovalsResponse) response.getMessage();
-                        int count = approvals.getTotalCount();
-                        btnApprovals.setText("Approvals (" + count + ")");
-                    }
-                });
+                Platform.runLater(() -> updateApprovalButtonCount(response, role));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    private void updateApprovalButtonCount(Message response, EmployeeRole role) {
+        int count = 0;
+        
+        if (response != null) {
+            if (role == EmployeeRole.COMPANY_MANAGER && 
+                response.getAction() == ActionType.GET_PENDING_APPROVALS_RESPONSE) {
+                PendingApprovalsResponse approvals = (PendingApprovalsResponse) response.getMessage();
+                count = approvals.getTotalCount();
+            } else if (role == EmployeeRole.CONTENT_MANAGER && 
+                       response.getAction() == ActionType.GET_PENDING_CONTENT_APPROVALS_RESPONSE) {
+                PendingContentApprovalsResponse approvals = (PendingContentApprovalsResponse) response.getMessage();
+                count = approvals.getTotalCount();
+            }
+        }
+        
+        // Update button text with appropriate label
+        String label = (role == EmployeeRole.COMPANY_MANAGER) ? "Price Approvals" : "Content Approvals";
+        btnApprovals.setText(label + " (" + count + ")");
     }
 
     // ==================== HELPER METHODS ====================
