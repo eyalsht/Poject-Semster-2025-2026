@@ -7,6 +7,9 @@ import common.messaging.Message;
 import common.user.User;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import common.dto.ContentChangeRequest;
+import common.enums.ContentActionType;
+import common.enums.ContentType;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
@@ -124,11 +127,112 @@ public class MapUpdatePageController {
         if ("price".equals(mode)) {
             submitPriceUpdate();
         } else if ("add".equals(mode)) {
-            // TODO: Implement add map
-            showAlert("Info", "Add map feature is not yet implemented.");
+            submitContentChange(ContentActionType.ADD);
         } else if ("edit".equals(mode)) {
-            // TODO: Implement edit map
-            showAlert("Info", "Edit map feature is not yet implemented.");
+            submitContentChange(ContentActionType.EDIT);
+        }
+    }
+
+    /**
+     * Submit content change as a pending request (for Content Workers/Managers).
+     * The change will require approval from a Content Manager.
+     */
+    private void submitContentChange(ContentActionType actionType) {
+        // Validate inputs
+        String mapName = tfNewMap.getText().trim();
+        String description = taNewDesc.getText().trim();
+        String cityName = tfNewCity.getText().trim();
+        
+        if (mapName.isEmpty()) {
+            showAlert("Validation Error", "Map name is required.");
+            return;
+        }
+        
+        if (actionType == ContentActionType.ADD && cityName.isEmpty()) {
+            showAlert("Validation Error", "City name is required for new maps.");
+            return;
+        }
+
+        new Thread(() -> {
+            try {
+                User currentUser = client.getCurrentUser();
+                Integer requesterId = currentUser != null ? currentUser.getId() : null;
+
+                // Build JSON content details
+                String contentJson = buildMapContentJson(cityName, mapName, description, tfNewPrice.getText());
+                
+                // Determine target name for display
+                String targetName = actionType == ContentActionType.ADD 
+                    ? cityName + " - " + mapName 
+                    : selectedMap.getCityName() + " - " + selectedMap.getName();
+                
+                Integer targetId = actionType == ContentActionType.ADD 
+                    ? null 
+                    : selectedMap.getId();
+
+                ContentChangeRequest changeRequest = new ContentChangeRequest(
+                    requesterId,
+                    actionType,
+                    ContentType.MAP,
+                    targetId,
+                    targetName,
+                    contentJson
+                );
+
+                Message request = new Message(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, changeRequest);
+                Message response = (Message) client.sendRequest(request);
+
+                Platform.runLater(() -> handleContentChangeResponse(response, actionType));
+
+            } catch (Exception e) {
+                Platform.runLater(() -> showAlert("Error", "Error: " + e.getMessage()));
+            }
+        }).start();
+    }
+
+    private String buildMapContentJson(String cityName, String mapName, String description, String priceStr) {
+        // Simple JSON builder - consider using a JSON library like Gson in production
+        StringBuilder json = new StringBuilder("{");
+        json.append("\"cityName\":\"").append(escapeJson(cityName)).append("\",");
+        json.append("\"mapName\":\"").append(escapeJson(mapName)).append("\",");
+        json.append("\"description\":\"").append(escapeJson(description)).append("\"");
+        if (priceStr != null && !priceStr.trim().isEmpty()) {
+            try {
+                double price = Double.parseDouble(priceStr.trim());
+                json.append(",\"price\":").append(price);
+            } catch (NumberFormatException ignored) {}
+        }
+        json.append("}");
+        return json.toString();
+    }
+
+    private String escapeJson(String text) {
+        if (text == null) return "";
+        return text.replace("\\", "\\\\")
+                   .replace("\"", "\\\"")
+                   .replace("\n", "\\n")
+                   .replace("\r", "\\r");
+    }
+
+    private void handleContentChangeResponse(Message response, ContentActionType actionType) {
+        if (response == null) {
+            showAlert("Error", "No response from server.");
+            return;
+        }
+
+        if (response.getAction() == ActionType.SUBMIT_CONTENT_CHANGE_RESPONSE) {
+            boolean success = (Boolean) response.getMessage();
+            if (success) {
+                String actionName = actionType == ContentActionType.ADD ? "addition" : "update";
+                showAlert("Success", "Map " + actionName + " submitted for approval!");
+                onClose();
+            } else {
+                showAlert("Error", "Failed to submit content change.");
+            }
+        } else if (response.getAction() == ActionType.ERROR) {
+            showAlert("Error", response.getMessage().toString());
+        } else {
+            showAlert("Error", "Unexpected response from server.");
         }
     }
 

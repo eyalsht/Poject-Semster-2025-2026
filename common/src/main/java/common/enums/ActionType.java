@@ -30,6 +30,30 @@ public enum ActionType {
     UPDATE_PRICE_REQUEST,
     UPDATE_PRICE_RESPONSE,
     
+    GET_PENDING_PRICE_APPROVALS_REQUEST,    // Renamed for clarity
+    GET_PENDING_PRICE_APPROVALS_RESPONSE,
+    
+    APPROVE_PRICE_REQUEST,                   // Renamed for clarity
+    APPROVE_PRICE_RESPONSE,
+    
+    DENY_PRICE_REQUEST,                      // Renamed for clarity
+    DENY_PRICE_RESPONSE,
+
+    // ==================== CONTENT MANAGEMENT ====================
+    // Content change requests (add/edit/delete maps, sites, tours)
+    SUBMIT_CONTENT_CHANGE_REQUEST,
+    SUBMIT_CONTENT_CHANGE_RESPONSE,
+    
+    GET_PENDING_CONTENT_APPROVALS_REQUEST,
+    GET_PENDING_CONTENT_APPROVALS_RESPONSE,
+    
+    APPROVE_CONTENT_REQUEST,
+    APPROVE_CONTENT_RESPONSE,
+    
+    DENY_CONTENT_REQUEST,
+    DENY_CONTENT_RESPONSE,
+
+    // Legacy support (can be deprecated later)
     GET_PENDING_APPROVALS_REQUEST,
     GET_PENDING_APPROVALS_RESPONSE,
     

@@ -3,7 +3,10 @@ import client.GCMClient;
 import common.content.GCMMap;
 import common.dto.CatalogFilter;
 import common.dto.CatalogResponse;
+import common.dto.ContentChangeRequest;
 import common.dto.PendingApprovalsResponse;  // Add this import
+import common.enums.ContentActionType;
+import common.enums.ContentType;
 import common.enums.EmployeeRole;
 import common.enums.ActionType;
 import common.messaging.Message;
@@ -219,44 +222,62 @@ public class CatalogPageController {
 
     /**
      * Apply visibility/permissions based on user role.
+     * 
+     * Role permissions:
+     * - Content Worker: Add/Edit/Delete (creates pending requests), NO price updates, NO approvals
+     * - Content Manager: Add/Edit/Delete + Price Updates + Content Approvals
+     * - Company Manager: ONLY Price Approvals + View Reports (NO content editing)
      */
     private void applyRolePermissions() {
         User user = client.getCurrentUser();
         
         // Hide all management buttons by default
         setManagementButtonsVisible(false);
+        btnApprovals.setVisible(false);
 
         if (user == null) {
             return;  // Guest - no management buttons
         }
 
-        // Show buttons based on user type/role
         if (user instanceof Employee employee) {
             EmployeeRole role = employee.getRole();
             if (role != null) {
                 switch (role) {
-                    case COMPANY_MANAGER:
-                        setManagementButtonsVisible(true);
-                        break;
-                    case CONTENT_MANAGER:
                     case CONTENT_WORKER:
+                        // Can add/edit/delete content (as pending requests)
+                        // CANNOT approve or change prices
                         btnAddMap.setVisible(true);
                         btnUpdateMap.setVisible(true);
-                        btnPriceUpdate.setVisible(true);
+                        btnDeleteMap.setVisible(true);
+                        btnPriceUpdate.setVisible(false);
+                        btnApprovals.setVisible(false);
                         break;
+                        
+                    case CONTENT_MANAGER:
+                        // Can do everything a worker does
+                        // PLUS: approve content, request price changes
+                        btnAddMap.setVisible(true);
+                        btnUpdateMap.setVisible(true);
+                        btnDeleteMap.setVisible(true);
+                        btnPriceUpdate.setVisible(true);
+                        btnApprovals.setVisible(true);  // Shows content approvals
+                        break;
+                        
+                    case COMPANY_MANAGER:
+                        // CANNOT edit content
+                        // ONLY approves price changes
+                        btnAddMap.setVisible(false);
+                        btnUpdateMap.setVisible(false);
+                        btnDeleteMap.setVisible(false);
+                        btnPriceUpdate.setVisible(false);
+                        btnApprovals.setVisible(true);  // Shows price approvals only
+                        break;
+                        
                     default:
                         break;
                 }
             }
         }
-    }
-
-    private void setManagementButtonsVisible(boolean visible) {
-        btnAddMap.setVisible(visible);
-        btnUpdateMap.setVisible(visible);
-        btnDeleteMap.setVisible(visible);
-        btnPriceUpdate.setVisible(visible);
-        btnApprovals.setVisible(visible);
     }
 
     // ==================== BUTTON HANDLERS ====================
@@ -293,7 +314,64 @@ public class CatalogPageController {
             showAlert("Selection Required", "Please select a map to delete.");
             return;
         }
-        // TODO: Implement delete confirmation and request
+        
+        // Confirm deletion
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirm Deletion Request");
+        confirm.setHeaderText("Request to Delete Map");
+        confirm.setContentText("This will submit a deletion request for:\n" + 
+                              selected.getCityName() + " - " + selected.getName() + 
+                              "\n\nThe request will need to be approved by a Content Manager.");
+        
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                submitDeleteRequest(selected);
+            }
+        });
+    }
+
+    private void submitDeleteRequest(GCMMap map) {
+        new Thread(() -> {
+            try {
+                User currentUser = client.getCurrentUser();
+                Integer requesterId = currentUser != null ? currentUser.getId() : null;
+
+                String targetName = map.getCityName() + " - " + map.getName();
+                String contentJson = "{\"mapId\":" + map.getId() + 
+                                    ",\"mapName\":\"" + map.getName() + 
+                                    "\",\"version\":\"" + map.getVersion() + "\"}";
+
+                ContentChangeRequest changeRequest = new ContentChangeRequest(
+                    requesterId,
+                    ContentActionType.DELETE,
+                    ContentType.MAP,
+                    map.getId(),
+                    targetName,
+                    contentJson
+                );
+
+                Message request = new Message(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, changeRequest);
+                Message response = (Message) client.sendRequest(request);
+
+                Platform.runLater(() -> handleDeleteResponse(response));
+
+            } catch (Exception e) {
+                Platform.runLater(() -> showAlert("Error", "Error: " + e.getMessage()));
+            }
+        }).start();
+    }
+
+    private void handleDeleteResponse(Message response) {
+        if (response != null && response.getAction() == ActionType.SUBMIT_CONTENT_CHANGE_RESPONSE) {
+            boolean success = (Boolean) response.getMessage();
+            if (success) {
+                showAlert("Success", "Deletion request submitted for approval!");
+            } else {
+                showAlert("Error", "Failed to submit deletion request.");
+            }
+        } else {
+            showAlert("Error", "Failed to submit deletion request.");
+        }
     }
 
     @FXML
@@ -325,6 +403,16 @@ public class CatalogPageController {
     }
 
     // ==================== HELPER METHODS ====================
+
+    /**
+     * Helper to hide/show all management buttons at once.
+     */
+    private void setManagementButtonsVisible(boolean visible) {
+        btnAddMap.setVisible(visible);
+        btnUpdateMap.setVisible(visible);
+        btnDeleteMap.setVisible(visible);
+        btnPriceUpdate.setVisible(visible);
+    }
 
     private void openMapUpdateWindow(String mode, GCMMap selected) {
         try {
