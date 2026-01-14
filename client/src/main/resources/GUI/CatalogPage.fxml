@@ -59,35 +59,36 @@
                 <TableColumn fx:id="colDesc" prefWidth="180.0" text="Description" />
             </columns>
         </TableView>
-        <VBox alignment="CENTER" layoutX="500.0" layoutY="26.0" prefHeight="200.0" prefWidth="140.0"
+        <VBox alignment="CENTER" layoutX="500.0" layoutY="26.0" prefHeight="200.0" prefWidth="200.0"
               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
 
             <children>
-                <Button fx:id="btnUpdateMap" mnemonicParsing="false" prefWidth="130.0" text="Edit Map"
-                        onAction="#onUpdateMap"/>
+                <Button fx:id="btnUpdateMap" mnemonicParsing="false" maxWidth="Infinity" text="Edit Map"
+                        onAction="#onUpdateMap">
+                    <VBox.margin><Insets left="10.0" right="10.0" /></VBox.margin>
+                </Button>
 
-                <Button fx:id="btnAddMap" mnemonicParsing="false" prefWidth="130.0" text="Add Map +"
+                <Button fx:id="btnAddMap" mnemonicParsing="false" maxWidth="Infinity" text="Add Map"
                         onAction="#onAddMap">
-                    <VBox.margin><Insets top="10.0" /></VBox.margin>
+                    <VBox.margin><Insets top="10.0" left="10.0" right="10.0" /></VBox.margin>
                 </Button>
 
-                <Button fx:id="btnDeleteMap" mnemonicParsing="false" prefWidth="130.0" text="Delete Map -"
+                <Button fx:id="btnDeleteMap" mnemonicParsing="false" maxWidth="Infinity" text="Delete Map"
                         onAction="#onDeleteMap">
-                    <VBox.margin><Insets top="10.0" /></VBox.margin>
+                    <VBox.margin><Insets top="10.0" left="10.0" right="10.0" /></VBox.margin>
                 </Button>
 
-                <Button fx:id="btnPriceUpdate" mnemonicParsing="false" prefWidth="130.0" text="Price Update"
+                <Button fx:id="btnPriceUpdate" mnemonicParsing="false" maxWidth="Infinity" text="Price Update"
                         onAction="#onPriceUpdate">
-                    <VBox.margin><Insets top="10.0" /></VBox.margin>
+                    <VBox.margin><Insets top="10.0" left="10.0" right="10.0" /></VBox.margin>
                 </Button>
 
-                <Button fx:id="btnApprovals" mnemonicParsing="false" prefWidth="130.0" text="Approvals (0)"
+                <Button fx:id="btnApprovals" mnemonicParsing="false" maxWidth="Infinity" text="Approvals (0)"
                         onAction="#onApprovals">
-                    <VBox.margin><Insets bottom="20.0" top="10.0" /></VBox.margin>
+                    <VBox.margin><Insets bottom="20.0" top="10.0" left="10.0" right="10.0" /></VBox.margin>
                 </Button>
             </children>
         </VBox>
-
 
     </children>
 </AnchorPane>
