@@ -45,11 +45,11 @@ public class HandlerRegistry {
         register(ActionType.APPROVE_PENDING_REQUEST, new ApprovePendingHandler());
         register(ActionType.DENY_PENDING_REQUEST, new DenyPendingHandler());
 
-        // Content Management (NEW)
+        // Content Management
         register(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, new SubmitContentChangeHandler());
         register(ActionType.GET_PENDING_CONTENT_APPROVALS_REQUEST, new GetPendingContentApprovalsHandler());
-        // register(ActionType.APPROVE_CONTENT_REQUEST, new ApproveContentHandler());  // TODO
-        // register(ActionType.DENY_CONTENT_REQUEST, new DenyContentHandler());        // TODO
+        register(ActionType.APPROVE_CONTENT_REQUEST, new ApproveContentHandler());
+        register(ActionType.DENY_CONTENT_REQUEST, new DenyContentHandler());
 
         // Purchases
         register(ActionType.PURCHASE_REQUEST, new PurchaseHandler());
