@@ -2,6 +2,7 @@ package common.content;
 
 import common.enums.SiteCategory;
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,14 @@ import java.util.List;
 @Entity
 @Table(name = "sites")
 public class Site extends ContentItem implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
@@ -39,7 +46,7 @@ public class Site extends ContentItem implements Serializable {
     private List<Tour> tours = new ArrayList<>();
 
     // ==================== CONSTRUCTORS ====================
-    
+
     public Site() {
         super();
         this.maps = new ArrayList<>();
@@ -63,33 +70,84 @@ public class Site extends ContentItem implements Serializable {
     }
 
     // ==================== GETTERS & SETTERS ====================
-    
-    public SiteCategory getCategory() { return category; }
-    public void setCategory(SiteCategory category) { this.category = category; }
 
-    public boolean isAccessible() { return isAccessible; }
-    public void setAccessible(boolean accessible) { isAccessible = accessible; }
+    public String getName() {
+        return name;
+    }
 
-    public double getRecommendedVisitDuration() { return recommendedVisitDuration; }
-    public void setRecommendedVisitDuration(double duration) { this.recommendedVisitDuration = duration; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public SiteCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(SiteCategory category) {
+        this.category = category;
+    }
+
+    public boolean isAccessible() {
+        return isAccessible;
+    }
+
+    public void setAccessible(boolean accessible) {
+        isAccessible = accessible;
+    }
+
+    public double getRecommendedVisitDuration() {
+        return recommendedVisitDuration;
+    }
+
+    public void setRecommendedVisitDuration(double duration) {
+        this.recommendedVisitDuration = duration;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
     // ==================== RELATIONSHIP METHODS ====================
-    
-    public City getCity() { return city; }
-    public void setCity(City city) { this.city = city; }
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
+    }
 
     public String getCityName() {
         return city != null ? city.getName() : null;
     }
 
-    public List<GCMMap> getMaps() { return maps; }
-    public void setMaps(List<GCMMap> maps) { this.maps = maps; }
+    public List<GCMMap> getMaps() {
+        return maps;
+    }
 
-    public List<Tour> getTours() { return tours; }
-    public void setTours(List<Tour> tours) { this.tours = tours; }
+    public void setMaps(List<GCMMap> maps) {
+        this.maps = maps;
+    }
+
+    public List<Tour> getTours() {
+        return tours;
+    }
+
+    public void setTours(List<Tour> tours) {
+        this.tours = tours;
+    }
 
     @Override
     public String getDetails() {

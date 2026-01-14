@@ -89,8 +89,11 @@ public class MapUpdatePageController {
     public void setSelectedMap(GCMMap map) {
         this.selectedMap = map;
         populateFields();
+        // Don't try to load sites here - they're lazily loaded and will cause errors
+        // Sites will be loaded from server when we implement GET_MAP_DETAILS_REQUEST
         if ("edit".equals(mode)) {
-            loadSitesForMap();
+            // For now, just show empty sites lists
+            // loadSitesForMap();  // Disabled until server-side fetch is implemented
         }
     }
 
@@ -179,14 +182,15 @@ public class MapUpdatePageController {
     }
 
     /**
-     * Edit Mode: Edit description and manage sites.
+     * Edit Mode: Edit description only for now.
      * City and Price are READ-ONLY (grayed out).
+     * Sites management is disabled until server-side fetch is implemented.
      */
     private void configureEditMode() {
         lblCurrentTitle.setText("Current Map Details");
         lblUpdateTitle.setText("Edit Map");
         
-        // City is read-only (show as label, hide text field)
+        // City is read-only
         tfNewCity.setEditable(false);
         tfNewCity.setStyle("-fx-background-color: #e0e0e0;");
         
@@ -201,9 +205,10 @@ public class MapUpdatePageController {
         // Description IS editable
         taNewDesc.setEditable(true);
         
-        // Show sites management sections
-        if (vboxCurrentSites != null) { vboxCurrentSites.setVisible(true); vboxCurrentSites.setManaged(true); }
-        if (vboxSitesManagement != null) { vboxSitesManagement.setVisible(true); vboxSitesManagement.setManaged(true); }
+        // Hide sites management sections until fully implemented
+        // TODO: Enable these when GET_MAP_SITES_REQUEST is implemented
+        if (vboxCurrentSites != null) { vboxCurrentSites.setVisible(false); vboxCurrentSites.setManaged(false); }
+        if (vboxSitesManagement != null) { vboxSitesManagement.setVisible(false); vboxSitesManagement.setManaged(false); }
         
         btnAddUpdate.setText("Submit Update");
         btnAddUpdate.setVisible(true);
@@ -281,24 +286,24 @@ public class MapUpdatePageController {
 
     /**
      * Load sites for the current map's city.
-     * Shows which sites are currently on the map and which are available to add.
+     * This requires a server call because sites are lazily loaded.
+     * For now, this is a placeholder until we implement the server handler.
      */
     private void loadSitesForMap() {
-        if (selectedMap == null) return;
-
-        // Get current sites on this map
-        List<Site> currentSites = selectedMap.getSites();
-        if (currentSites != null) {
-            selectedSites.setAll(currentSites);
-            if (lvCurrentSites != null) {
-                lvCurrentSites.setItems(FXCollections.observableArrayList(currentSites));
-            }
+        // Sites are lazily loaded on the entity, so we can't access them directly
+        // We need to fetch them from the server with a dedicated request
+        
+        // For now, just clear the lists - sites management will be implemented
+        // when we add GET_MAP_SITES_REQUEST / GET_CITY_SITES_REQUEST handlers
+        selectedSites.clear();
+        availableSites.clear();
+        
+        if (lvCurrentSites != null) {
+            lvCurrentSites.setItems(FXCollections.observableArrayList());
         }
 
-        // TODO: Load available sites from server for this city
-        // For now, this would require a server call to get all sites in the city
-        // that are not already on this map
-        loadAvailableSitesFromServer();
+        // TODO: Implement server call to get sites
+        // loadAvailableSitesFromServer();
     }
 
     private void loadAvailableSitesFromServer() {
