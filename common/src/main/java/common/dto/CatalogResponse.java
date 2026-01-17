@@ -2,6 +2,7 @@ package common.dto;
 
 import common.content.City;
 import common.content.GCMMap;
+import common.content.Site;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -49,4 +50,5 @@ public class CatalogResponse implements Serializable {
     public int getMapCount() {
         return maps != null ? maps.size() : 0;
     }
+
 }

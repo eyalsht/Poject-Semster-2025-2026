@@ -46,7 +46,6 @@ public class HomePageController
         updateUI();
     }
 
-
     @FXML
     private void onCatalog() {
         showPage("/GUI/CatalogPage.fxml");

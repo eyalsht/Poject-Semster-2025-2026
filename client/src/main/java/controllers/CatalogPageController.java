@@ -49,12 +49,16 @@ public class CatalogPageController {
     @FXML private Button btnDeleteMap;
     @FXML private Button btnPriceUpdate;
     @FXML private Button btnApprovals;
+    @FXML private Button btnCreateCity;
+    @FXML private Button btnEditCity;
+    @FXML private Button btnCreateTour;
+    @FXML private Button btnEditTour;
 
     private final GCMClient client = GCMClient.getInstance();
-    
+
     // Cache the last response for filter cascading
     private CatalogResponse lastCatalogResponse;
-    
+
     // Flag to prevent recursive updates
     private boolean isUpdatingComboBoxes = false;
 
@@ -73,8 +77,8 @@ public class CatalogPageController {
      */
     private void setupTableColumns() {
         // Use property names from GCMMap entity
-        colCity.setCellValueFactory(cellData -> 
-            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCityName()));
+        colCity.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCityName()));
         colMap.setCellValueFactory(new PropertyValueFactory<>("name"));
         colVersion.setCellValueFactory(new PropertyValueFactory<>("version"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
@@ -177,6 +181,7 @@ public class CatalogPageController {
         }
     }
 
+    public CatalogResponse getLastCatalogResponse() {return this.lastCatalogResponse;}
     /**
      * Update map combo box based on selected city.
      */
@@ -185,7 +190,7 @@ public class CatalogPageController {
         if (selectedCity == null || selectedCity.isEmpty()) {
             return;
         }
-        
+
         // If we have cached data, filter from it
         if (lastCatalogResponse != null && lastCatalogResponse.getAvailableMapNames() != null) {
             updateMapComboBoxFromResponse(lastCatalogResponse.getAvailableMapNames());
@@ -204,11 +209,11 @@ public class CatalogPageController {
      */
     private void updateVersionComboBox(String selectedCity, String selectedMap) {
         cbVersion.getItems().clear();
-        if (selectedCity == null || selectedMap == null || 
-            selectedCity.isEmpty() || selectedMap.isEmpty()) {
+        if (selectedCity == null || selectedMap == null ||
+                selectedCity.isEmpty() || selectedMap.isEmpty()) {
             return;
         }
-        
+
         if (lastCatalogResponse != null && lastCatalogResponse.getAvailableVersions() != null) {
             updateVersionComboBoxFromResponse(lastCatalogResponse.getAvailableVersions());
         }
@@ -223,7 +228,7 @@ public class CatalogPageController {
 
     /**
      * Apply visibility/permissions based on user role.
-     * 
+     *
      * Role permissions:
      * - Content Worker: Add/Edit/Delete (creates pending requests), NO price updates, NO approvals
      * - Content Manager: Add/Edit/Delete + Price Updates + Content Approvals
@@ -231,7 +236,7 @@ public class CatalogPageController {
      */
     private void applyRolePermissions() {
         User user = client.getCurrentUser();
-        
+
         // Hide all management buttons by default
         setManagementButtonsVisible(false);
         btnApprovals.setVisible(false);
@@ -250,10 +255,14 @@ public class CatalogPageController {
                         btnAddMap.setVisible(true);
                         btnUpdateMap.setVisible(true);
                         btnDeleteMap.setVisible(true);
+                        btnCreateCity.setVisible(true);
+                        btnEditCity.setVisible(true);
+                        btnCreateTour.setVisible(true);
+                        btnEditTour.setVisible(true);
                         btnPriceUpdate.setVisible(false);
                         btnApprovals.setVisible(false);
                         break;
-                        
+
                     case CONTENT_MANAGER:
                         // Can do everything a worker does
                         // PLUS: approve content, request price changes
@@ -261,9 +270,13 @@ public class CatalogPageController {
                         btnUpdateMap.setVisible(true);
                         btnDeleteMap.setVisible(true);
                         btnPriceUpdate.setVisible(true);
+                        btnCreateCity.setVisible(true);
+                        btnEditCity.setVisible(true);
+                        btnCreateTour.setVisible(true);
+                        btnEditTour.setVisible(true);
                         btnApprovals.setVisible(true);  // Shows content approvals
                         break;
-                        
+
                     case COMPANY_MANAGER:
                         // CANNOT edit content
                         // ONLY approves price changes
@@ -273,7 +286,7 @@ public class CatalogPageController {
                         btnPriceUpdate.setVisible(false);
                         btnApprovals.setVisible(true);  // Shows price approvals only
                         break;
-                        
+
                     default:
                         break;
                 }
@@ -309,21 +322,35 @@ public class CatalogPageController {
     }
 
     @FXML
+    private void onCreateCity() { OpenCityUpdateWindow("create");}
+    @FXML
+    private void onEditCity() {
+        OpenCityUpdateWindow("edit");
+    }
+
+    @FXML
+    private void onCreateTour() { OpenCityUpdateWindow("create");}
+    @FXML
+    private void onEditTour() {
+        OpenCityUpdateWindow("edit");
+    }
+
+    @FXML
     private void onDeleteMap() {
         GCMMap selected = tblCatalog.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showAlert("Selection Required", "Please select a map to delete.");
             return;
         }
-        
+
         // Confirm deletion
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirm Deletion Request");
         confirm.setHeaderText("Request to Delete Map");
-        confirm.setContentText("This will submit a deletion request for:\n" + 
-                              selected.getCityName() + " - " + selected.getName() + 
-                              "\n\nThe request will need to be approved by a Content Manager.");
-        
+        confirm.setContentText("This will submit a deletion request for:\n" +
+                selected.getCityName() + " - " + selected.getName() +
+                "\n\nThe request will need to be approved by a Content Manager.");
+
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 submitDeleteRequest(selected);
@@ -338,17 +365,17 @@ public class CatalogPageController {
                 Integer requesterId = currentUser != null ? currentUser.getId() : null;
 
                 String targetName = map.getCityName() + " - " + map.getName();
-                String contentJson = "{\"mapId\":" + map.getId() + 
-                                    ",\"mapName\":\"" + map.getName() + 
-                                    "\",\"version\":\"" + map.getVersion() + "\"}";
+                String contentJson = "{\"mapId\":" + map.getId() +
+                        ",\"mapName\":\"" + map.getName() +
+                        "\",\"version\":\"" + map.getVersion() + "\"}";
 
                 ContentChangeRequest changeRequest = new ContentChangeRequest(
-                    requesterId,
-                    ContentActionType.DELETE,
-                    ContentType.MAP,
-                    map.getId(),
-                    targetName,
-                    contentJson
+                        requesterId,
+                        ContentActionType.DELETE,
+                        ContentType.MAP,
+                        map.getId(),
+                        targetName,
+                        contentJson
                 );
 
                 Message request = new Message(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, changeRequest);
@@ -393,7 +420,7 @@ public class CatalogPageController {
 
         Employee employee = (Employee) user;
         EmployeeRole role = employee.getRole();
-        
+
         // Determine which type of approvals to count based on role
         ActionType requestType;
         if (role == EmployeeRole.COMPANY_MANAGER) {
@@ -408,7 +435,7 @@ public class CatalogPageController {
         }
 
         final ActionType finalRequestType = requestType;
-        
+
         new Thread(() -> {
             try {
                 Message request = new Message(finalRequestType, null);
@@ -423,19 +450,19 @@ public class CatalogPageController {
 
     private void updateApprovalButtonCount(Message response, EmployeeRole role) {
         int count = 0;
-        
+
         if (response != null) {
-            if (role == EmployeeRole.COMPANY_MANAGER && 
-                response.getAction() == ActionType.GET_PENDING_APPROVALS_RESPONSE) {
+            if (role == EmployeeRole.COMPANY_MANAGER &&
+                    response.getAction() == ActionType.GET_PENDING_APPROVALS_RESPONSE) {
                 PendingApprovalsResponse approvals = (PendingApprovalsResponse) response.getMessage();
                 count = approvals.getTotalCount();
-            } else if (role == EmployeeRole.CONTENT_MANAGER && 
-                       response.getAction() == ActionType.GET_PENDING_CONTENT_APPROVALS_RESPONSE) {
+            } else if (role == EmployeeRole.CONTENT_MANAGER &&
+                    response.getAction() == ActionType.GET_PENDING_CONTENT_APPROVALS_RESPONSE) {
                 PendingContentApprovalsResponse approvals = (PendingContentApprovalsResponse) response.getMessage();
                 count = approvals.getTotalCount();
             }
         }
-        
+
         // Update button text with appropriate label
         String label = (role == EmployeeRole.COMPANY_MANAGER) ? "Price Approvals" : "Content Approvals";
         btnApprovals.setText(label + " (" + count + ")");
@@ -451,6 +478,11 @@ public class CatalogPageController {
         btnUpdateMap.setVisible(visible);
         btnDeleteMap.setVisible(visible);
         btnPriceUpdate.setVisible(visible);
+        btnCreateTour.setVisible(visible);
+        btnCreateCity.setVisible(visible);
+        btnEditCity.setVisible(visible);
+        btnEditTour.setVisible(visible);
+
     }
 
     private void openMapUpdateWindow(String mode, GCMMap selected) {
@@ -477,6 +509,29 @@ public class CatalogPageController {
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Could not open map editor.");
+        }
+    }
+    private void OpenCityUpdateWindow(String mode) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityUpdatePage.fxml"));
+            Parent root = loader.load();
+
+            CityUpdatePageController controller = loader.getController();
+            controller.setCatalogController(this);
+            controller.setMode(mode);
+
+            Stage stage = new Stage();
+            stage.setTitle(mode.equals("add") ? "Add New City" : "Edit City");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            // Refresh after closing
+            loadCatalog(cbCity.getValue(), cbMap.getValue(), cbVersion.getValue());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not open map editor1.");
         }
     }
 

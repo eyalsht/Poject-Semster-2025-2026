@@ -50,6 +50,7 @@ public class HandlerRegistry {
         register(ActionType.GET_PENDING_CONTENT_APPROVALS_REQUEST, new GetPendingContentApprovalsHandler());
         register(ActionType.APPROVE_CONTENT_REQUEST, new ApproveContentHandler());
         register(ActionType.DENY_CONTENT_REQUEST, new DenyContentHandler());
+            register(ActionType.GET_CITY_SITES_REQUEST, new GetSitesHandler());
 
         // Purchases
         register(ActionType.PURCHASE_REQUEST, new PurchaseHandler());

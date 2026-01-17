@@ -68,6 +68,9 @@ public enum ActionType {
     PURCHASE_RESPONSE,
     
     // ==================== GENERIC ====================
-    ERROR;
+    ERROR,
 
+    //=====================ADDITIONS ===================
+    GET_CITY_SITES_REQUEST,
+    GET_CITY_SITES_RESPONSE;
 }
