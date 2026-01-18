@@ -113,7 +113,7 @@
                   </GridPane>
                   <HBox prefHeight="33.0" prefWidth="370.0">
                      <children>
-                        <Button fx:id="btnSubmit" prefWidth="150.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Submit">
+                        <Button fx:id="btnSubmit" onAction="#onSubmit" prefWidth="150.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Submit">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>

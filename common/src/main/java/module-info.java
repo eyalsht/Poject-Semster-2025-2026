@@ -2,7 +2,7 @@ module com.gcm.common {
     requires jakarta.persistence;
     requires java.sql;
     requires org.hibernate.orm.core;
-    //requires com.gcm.common;  // ADD THIS LINE - needed for proxy generation
+    requires com.gcm.common;  // ADD THIS LINE - needed for proxy generation
 
     exports common.dto;
     exports common.user;

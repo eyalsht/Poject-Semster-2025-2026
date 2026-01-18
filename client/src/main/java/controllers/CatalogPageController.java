@@ -511,27 +511,49 @@ public class CatalogPageController {
             showAlert("Error", "Could not open map editor.");
         }
     }
+    // In CatalogPageController
     private void OpenCityUpdateWindow(String mode) {
         try {
+            System.out.println(">>> [CATALOG] OpenCityUpdateWindow START - mode=" + mode);
+            System.out.println(">>> [CATALOG] After resetState");
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityUpdatePage.fxml"));
             Parent root = loader.load();
+            System.out.println(">>> [CATALOG] FXML loaded");
 
             CityUpdatePageController controller = loader.getController();
             controller.setCatalogController(this);
-            controller.setMode(mode);
 
             Stage stage = new Stage();
-            stage.setTitle(mode.equals("add") ? "Add New City" : "Edit City");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
 
-            // Refresh after closing
-            loadCatalog(cbCity.getValue(), cbMap.getValue(), cbVersion.getValue());
+            System.out.println(">>> [CATALOG] Calling setMode()");
+            controller.setMode(mode);
+            System.out.println(">>> [CATALOG] setMode() completed");
+
+            stage.setOnShown(event -> {
+                System.out.println(">>> [CATALOG] setOnShown event fired");
+                if (mode.equals("edit")) {
+                    System.out.println(">>> [CATALOG] Calling getCitiesComboBox()");
+                    controller.getCitiesComboBox();
+                }
+            });
+
+            stage.setOnHidden(event -> {
+                System.out.println(">>> [CATALOG] Window closed, refreshing catalog");
+                if (GCMClient.isClientConnected()) {
+                    refreshCatalog();
+                }
+            });
+
+            System.out.println(">>> [CATALOG] Calling stage.show()");
+            stage.show();
+            System.out.println(">>> [CATALOG] stage.show() completed");
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Error", "Could not open map editor1.");
+            showAlert("Error", "Could not open city editor.");
         }
     }
 
@@ -548,7 +570,7 @@ public class CatalogPageController {
             stage.setTitle("Pending Approvals");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
+            stage.show();
 
             // Refresh after closing
             loadCatalog(cbCity.getValue(), cbMap.getValue(), cbVersion.getValue());

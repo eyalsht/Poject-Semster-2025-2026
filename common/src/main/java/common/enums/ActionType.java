@@ -72,5 +72,7 @@ public enum ActionType {
 
     //=====================ADDITIONS ===================
     GET_CITY_SITES_REQUEST,
-    GET_CITY_SITES_RESPONSE;
+    GET_CITY_SITES_RESPONSE,
+    GET_CITIES_REQUEST,
+    GET_CITIES_RESPONSE;
 }

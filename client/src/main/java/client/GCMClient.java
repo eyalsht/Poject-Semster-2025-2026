@@ -221,4 +221,11 @@ public class GCMClient extends AbstractClient {
     protected void connectionException(Exception exception) {
         System.err.println("Connection error: " + exception.getMessage());
     }
+    public void resetState() {
+        synchronized(this) {
+            this.busy = false;
+            this.awaitResponse = false;
+            this.notifyAll();
+        }
+    }
 }
