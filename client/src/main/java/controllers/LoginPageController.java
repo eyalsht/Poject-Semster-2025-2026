@@ -29,7 +29,7 @@ public class LoginPageController {
     @FXML private TextField tfUsername;
     @FXML private PasswordField tfPassword;
     @FXML private Label lblError;
-    
+
     private HomePageController homePageController;
     private final GCMClient client = GCMClient.getInstance();
 
@@ -84,13 +84,13 @@ public class LoginPageController {
 
         if (response.getAction() == ActionType.LOGIN_RESPONSE) {
             AuthResponse authResponse = (AuthResponse) response.getMessage();
-            
+
             if (authResponse.isSuccess()) {
                 User user = authResponse.getUser();
                 client.setCurrentUser(user);
-                
+
                 showMessage("Welcome, " + user.getFirstName() + "!", Color.GREEN);
-                
+
                 if (homePageController != null) {
                     homePageController.onLoginSuccess(user);
                 }

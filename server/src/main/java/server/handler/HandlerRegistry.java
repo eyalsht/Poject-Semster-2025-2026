@@ -38,6 +38,7 @@ public class HandlerRegistry {
         // Catalog
         register(ActionType.GET_CATALOG_REQUEST, new GetCatalogHandler());
         register(ActionType.GET_CITY_DETAILS_REQUEST, new GetCityDetailsHandler());
+        register(ActionType.GET_CITIES_REQUEST,new GetCitiesHandler());
 
         // Price Management
         register(ActionType.UPDATE_PRICE_REQUEST, new UpdatePriceHandler());

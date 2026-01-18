@@ -21,7 +21,11 @@ public enum ActionType {
     // Single request for all catalog data (cities, maps, filters)
     GET_CATALOG_REQUEST,
     GET_CATALOG_RESPONSE,
-    
+
+    // Get all cities
+    GET_CITIES_REQUEST,
+    GET_CITIES_RESPONSE,
+
     // Get full details for a specific city (with all maps, sites, tours)
     GET_CITY_DETAILS_REQUEST,
     GET_CITY_DETAILS_RESPONSE,

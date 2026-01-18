@@ -59,33 +59,51 @@
                 <TableColumn fx:id="colDesc" prefWidth="180.0" text="Description" />
             </columns>
         </TableView>
-        <VBox alignment="CENTER" layoutX="500.0" layoutY="26.0" prefHeight="200.0" prefWidth="200.0"
-              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
+        <VBox alignment="CENTER" layoutX="500.0" layoutY="26.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
 
             <children>
-                <Button fx:id="btnUpdateMap" mnemonicParsing="false" maxWidth="Infinity" text="Edit Map"
-                        onAction="#onUpdateMap">
+                <Button fx:id="btnUpdateMap" maxWidth="Infinity" mnemonicParsing="false" onAction="#onUpdateMap" text="Edit Map">
                     <VBox.margin><Insets left="10.0" right="10.0" /></VBox.margin>
                 </Button>
 
-                <Button fx:id="btnAddMap" mnemonicParsing="false" maxWidth="Infinity" text="Add Map"
-                        onAction="#onAddMap">
-                    <VBox.margin><Insets top="10.0" left="10.0" right="10.0" /></VBox.margin>
+                <Button fx:id="btnAddMap" maxWidth="Infinity" mnemonicParsing="false" onAction="#onAddMap" text="Add Map">
+                    <VBox.margin><Insets left="10.0" right="10.0" top="10.0" /></VBox.margin>
                 </Button>
 
-                <Button fx:id="btnDeleteMap" mnemonicParsing="false" maxWidth="Infinity" text="Delete Map"
-                        onAction="#onDeleteMap">
-                    <VBox.margin><Insets top="10.0" left="10.0" right="10.0" /></VBox.margin>
+                <Button fx:id="btnDeleteMap" maxWidth="Infinity" mnemonicParsing="false" onAction="#onDeleteMap" text="Delete Map">
+                    <VBox.margin><Insets left="10.0" right="10.0" top="10.0" /></VBox.margin>
                 </Button>
 
-                <Button fx:id="btnPriceUpdate" mnemonicParsing="false" maxWidth="Infinity" text="Price Update"
-                        onAction="#onPriceUpdate">
-                    <VBox.margin><Insets top="10.0" left="10.0" right="10.0" /></VBox.margin>
+                <Button fx:id="btnPriceUpdate" maxWidth="Infinity" mnemonicParsing="false" onAction="#onPriceUpdate" text="Price Update">
+                    <VBox.margin><Insets left="10.0" right="10.0" top="10.0" /></VBox.margin>
                 </Button>
 
-                <Button fx:id="btnApprovals" mnemonicParsing="false" maxWidth="Infinity" text="Approvals (0)"
-                        onAction="#onApprovals">
-                    <VBox.margin><Insets bottom="20.0" top="10.0" left="10.0" right="10.0" /></VBox.margin>
+                <Button fx:id="btnApprovals" maxWidth="Infinity" mnemonicParsing="false" onAction="#onApprovals" text="Approvals (0)">
+                    <VBox.margin><Insets bottom="20.0" left="10.0" right="10.0" top="10.0" /></VBox.margin>
+                </Button>
+            </children>
+        </VBox>
+        <VBox alignment="CENTER" layoutX="212.0" layoutY="5.0" prefHeight="187.0" prefWidth="200.0" AnchorPane.rightAnchor="188.0">
+            <children>
+                <Button fx:id="btnCreateCity" maxWidth="Infinity" mnemonicParsing="false" onAction="#onCreateCity" text="Create City">
+                    <VBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                    </VBox.margin>
+                </Button>
+                <Button fx:id="btnEditCity" maxWidth="Infinity" mnemonicParsing="false" onAction="#onEditCity" text="Edit City">
+                    <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="10.0" />
+                    </VBox.margin>
+                </Button>
+                <Button fx:id="btnCreateTour" maxWidth="Infinity" mnemonicParsing="false" onAction="#onCreateTour" text="Create Tour">
+                    <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="10.0" />
+                    </VBox.margin>
+                </Button>
+                <Button fx:id="btnEditTour" maxWidth="Infinity" mnemonicParsing="false" onAction="#onEditTour" text="Edit Tour">
+                    <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="10.0" />
+                    </VBox.margin>
                 </Button>
             </children>
         </VBox>
