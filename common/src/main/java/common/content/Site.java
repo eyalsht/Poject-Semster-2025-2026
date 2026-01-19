@@ -69,6 +69,12 @@ public class Site extends ContentItem implements Serializable {
         this.tours = new ArrayList<>();
     }
 
+    public Site(String name, City city)
+    {
+        super(name);
+        this.city = city;
+    }
+
     // ==================== GETTERS & SETTERS ====================
 
     public String getName() {

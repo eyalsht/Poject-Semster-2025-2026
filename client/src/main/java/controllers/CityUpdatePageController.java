@@ -10,7 +10,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.util.StringConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +32,7 @@ public class CityUpdatePageController
     @FXML private TextField tfNewCity;
     @FXML private TextField tfNewSite;
 
-    @FXML private ComboBox <String> cbChooseCity;
+    @FXML private ComboBox <City> cbChooseCity;
 
     @FXML private ListView<Site> lvAvailableSites;
 
@@ -58,6 +60,19 @@ public class CityUpdatePageController
                 }
             });
         }
+        lvAvailableSites.setItems(availableSites);
+        cbChooseCity.setConverter(new StringConverter<City>()
+        {
+            @Override
+            public String toString(City city) {
+                return (city == null) ? "" : city.getName();
+            }
+
+            @Override
+            public City fromString(String string) {
+                return null;
+            }
+        });
     }
 
     public void setMode(String mode)
@@ -82,10 +97,14 @@ public class CityUpdatePageController
     private void onAddSite()
     {
         String siteName = tfNewSite.getText().trim();
-        if (siteName.length() >= 3 && !isSiteDuplicate(siteName)) //make a verify site name method and replace the >=3 condition
+        if (siteName.length() >= 3 && !isSiteDuplicate(siteName) ) //make a verify site name method and replace the >=3 condition
         {
-            Site newSite = new Site();
-            newSite.setName(siteName);
+            City selectedCity = cbChooseCity.getSelectionModel().getSelectedItem();
+            if (selectedCity == null) {
+                showAlert("Error", "Please select a city first.");
+                return;
+            }
+            Site newSite = new Site(siteName, selectedCity);
             availableSites.add(newSite);
             tfNewSite.clear();
         }
@@ -167,13 +186,12 @@ public class CityUpdatePageController
         cbChooseCity.setVisible(true);
         btnConfirmEdit.setVisible(false);
         cbChooseCity.getSelectionModel().selectedItemProperty().addListener((obs, oldCity, newCity) -> {
-            if (newCity != null) {
-                //updateSitesList(newCity);
-            }
+            if (newCity != null)
+                updateSitesList(newCity.getName());
         });
     }
 
-    /*private void updateSitesList(String cityName)
+    private void updateSitesList(String cityName)
     {
         availableSites.clear();
         new Thread(() -> {
@@ -186,11 +204,7 @@ public class CityUpdatePageController
                     if (response != null && response.getAction() == ActionType.GET_CITY_SITES_RESPONSE)
                     {
                         List<Site> sites = (List<Site>) response.getMessage();
-                        if (response != null)
-                        {
-                            availableSites.setAll(sites);
-                            lvAvailableSites.setItems(FXCollections.observableArrayList(availableSites));
-                        }
+                        availableSites.addAll(sites);
                     }
                     else
                     {
@@ -201,13 +215,12 @@ public class CityUpdatePageController
                 Platform.runLater(() -> showAlert("Network Error", "Could not connect: " + e.getMessage()));
             }
         }).start();
-    }*/
+    }
 
     private boolean isSiteDuplicate(String name)
     {
-        return availableSites.stream().anyMatch(s -> s.getName().equalsIgnoreCase(name));
+        return availableSites.stream().anyMatch(site -> site.getName().equalsIgnoreCase(name));
     }
-
     private void showAlert(String title, String message)
     {
         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -234,8 +247,7 @@ public class CityUpdatePageController
                         if(cities != null)
                         {
                             this.availableCities.setAll(cities);
-                            List<String> cityNames = cities.stream().map(City::getName).collect(Collectors.toList());
-                            cbChooseCity.setItems(FXCollections.observableArrayList(cityNames));
+                            cbChooseCity.setItems(FXCollections.observableArrayList(availableCities));
                         }
                     }
                 });

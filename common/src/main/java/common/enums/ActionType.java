@@ -26,6 +26,10 @@ public enum ActionType {
     GET_CITIES_REQUEST,
     GET_CITIES_RESPONSE,
 
+    // Get all cities sites
+    GET_CITY_SITES_REQUEST,
+    GET_CITY_SITES_RESPONSE,
+
     // Get full details for a specific city (with all maps, sites, tours)
     GET_CITY_DETAILS_REQUEST,
     GET_CITY_DETAILS_RESPONSE,

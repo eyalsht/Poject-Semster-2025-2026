@@ -28,6 +28,11 @@ public abstract class ContentItem implements Serializable {
         this.description = description;
     }
 
+    public ContentItem(String name) {
+        this.name = name;
+        this.id = 0;
+    }
+
     public int getID() { return this.id; }
     public void setID(int id) { this.id = id; }
     
