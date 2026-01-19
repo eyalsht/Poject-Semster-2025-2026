@@ -325,7 +325,7 @@ public class CatalogPageController {
     private void onCreateCity() { OpenCityUpdateWindow("create");}
     @FXML
     private void onEditCity() {
-        OpenCityUpdateWindow("edit");
+        OpenCityUpdateWindow("add");
     }
 
     @FXML
@@ -527,19 +527,8 @@ public class CatalogPageController {
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
 
-            System.out.println(">>> [CATALOG] Calling setMode()");
             controller.setMode(mode);
-            System.out.println(">>> [CATALOG] setMode() completed");
-
-            stage.setOnShown(event -> {
-                System.out.println(">>> [CATALOG] setOnShown event fired");
-                if (mode.equals("edit")) {
-                    controller.getCitiesComboBox();
-                }
-            });
-
             stage.setOnHidden(event -> {
-                System.out.println(">>> [CATALOG] Window closed, refreshing catalog");
                 if (GCMClient.isClientConnected()) {
                     refreshCatalog();
                 }

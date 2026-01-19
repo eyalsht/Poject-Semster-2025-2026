@@ -71,7 +71,7 @@ public class Site extends ContentItem implements Serializable {
 
     public Site(String name, City city)
     {
-        super(name);
+        this.name = name;
         this.city = city;
     }
 
@@ -163,5 +163,13 @@ public class Site extends ContentItem implements Serializable {
     @Override
     public String toString() {
         return name;
+    }
+
+    public boolean isNamed(String name)
+    {
+        if (name == null || this.name == null)
+            return false;
+
+        return this.name.trim().equalsIgnoreCase(name.trim());
     }
 }

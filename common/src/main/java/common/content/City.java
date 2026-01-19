@@ -54,6 +54,11 @@ public class City extends ContentItem implements Serializable {
         this.tours = new ArrayList<>();
     }
 
+    public City(String name)
+    {
+        super(name);
+    }
+
     // ==================== GETTERS & SETTERS ====================
     
     public double getPriceSub() { return priceSub; }

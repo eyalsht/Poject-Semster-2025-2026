@@ -8,6 +8,7 @@ import common.enums.MapStatus;
 import common.enums.RequestStatus;
 import common.user.User;
 import common.workflow.PendingContentRequest;
+import org.hibernate.Session;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -147,7 +148,15 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
             case TOUR:
                 applyTourChange(session, pending);
                 break;
+            case CITY:
+                applyCityChanges(session,pending);
+                break;
         }
+    }
+
+    private void applyCityChanges(org.hibernate.Session session, PendingContentRequest pending)
+    {
+
     }
 
     private void applyMapChange(org.hibernate.Session session, PendingContentRequest pending) {

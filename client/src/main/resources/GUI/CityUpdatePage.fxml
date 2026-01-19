@@ -14,29 +14,30 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="275.0" prefWidth="425.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CityUpdatePageController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="350.0" prefWidth="425.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CityUpdatePageController">
     <children>
         <HBox prefHeight="50.0" prefWidth="425.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Label fx:id="lblCurrentTitle" prefWidth="110.0" text="Create City">
+                <Label fx:id="lblCurrentTitle" prefHeight="25.0" prefWidth="139.0" text="Create\Edit City">
                     <font>
                         <Font name="System Bold" size="16.0" />
                     </font>
                     <HBox.margin>
-                        <Insets left="167.0" top="10.0" />
+                        <Insets left="157.0" top="10.0" />
                     </HBox.margin>
                 </Label>
             </children>
         </HBox>
         <VBox prefWidth="385.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
             <children>
-                <GridPane prefHeight="40.0" prefWidth="385.0">
+                <GridPane prefHeight="88.0" prefWidth="385.0">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="193.66668701171875" minWidth="10.0" prefWidth="10.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="268.33331298828125" minWidth="10.0" prefWidth="267.6666259765625" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
                         <Label fx:id="lblNewCity" text="New City Name:">
@@ -44,13 +45,13 @@
                                 <Insets left="15.0" />
                             </GridPane.margin>
                         </Label>
-                        <TextField fx:id="tfNewCity" GridPane.columnIndex="1" />
-                        <Label fx:id="lblChooseCity" text="Choose City:">
+                        <TextField fx:id="tfNewCity" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="lblChooseCity" text="Choose City:" GridPane.rowIndex="1">
                             <GridPane.margin>
                                 <Insets left="15.0" />
                             </GridPane.margin>
                         </Label>
-                        <ComboBox fx:id="cbChooseCity" prefHeight="25.0" prefWidth="184.0" GridPane.columnIndex="1" />
+                        <ComboBox fx:id="cbChooseCity" prefHeight="25.0" prefWidth="184.0" promptText="----------Add city----------" GridPane.columnIndex="1" />
                     </children>
                 </GridPane>
                 <VBox prefHeight="200.0" prefWidth="100.0">
@@ -118,7 +119,7 @@
                                         <Font name="System Bold" size="14.0" />
                                     </font>
                                     <HBox.margin>
-                                        <Insets left="100.0" top="5.0" />
+                                        <Insets left="100.0" top="10.0" />
                                     </HBox.margin>
                                 </Button>
                             </children>

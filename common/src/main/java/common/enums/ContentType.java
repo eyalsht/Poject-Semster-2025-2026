@@ -8,5 +8,6 @@ import java.io.Serializable;
 public enum ContentType implements Serializable {
     MAP,
     SITE,
-    TOUR
+    TOUR,
+    CITY
 }
