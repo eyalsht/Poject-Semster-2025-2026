@@ -318,6 +318,11 @@ public class CatalogPageController {
         }
         openMapUpdateWindow("price", selected);
     }*/
+    @FXML
+    private void onPriceUpdate() {
+        // NEW: Placeholder method to resolve FXML error
+        showAlert("Info", "Selection logic needs to be updated for city cards.");
+    }
 
 
 
@@ -370,6 +375,11 @@ public class CatalogPageController {
             }
         });
     }*/
+  @FXML
+  private void onDeleteMap() {
+      // NEW: Placeholder method to resolve FXML error
+      showAlert("Info", "Selection logic needs to be updated for city cards.");
+  }
 
     private void submitDeleteRequest(GCMMap map) {
         new Thread(() -> {
