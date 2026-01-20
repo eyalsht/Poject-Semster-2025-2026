@@ -26,13 +26,15 @@ public class CityCardController {
             // UPDATED: Now using the local 'city' variable to get the name
             lblCityName.setText(city.getName());
             lblPrice.setText(String.format("Sub: $%.2f", city.getPriceSub()));
-
-            if (city.getImagePath() != null) {
+            System.out.println("Checking image for city: " + city.getName() +
+                    " | Path in DB: [" + city.getImagePath() + "]");
+            if (city.getImagePath() != null && !city.getImagePath().isEmpty()) {
                 try {
                     // Generates the path: /images/paris.png
-                    String path = "/images/" + city.getImagePath();
-                    Image image = new Image(getClass().getResourceAsStream(path));
-                    imgCity.setImage(image);
+                    String path = "/images/cities/" + city.getImagePath() +".png/";
+                    System.out.println("path: " + path);
+                    Image img = new Image(getClass().getResourceAsStream(path));
+                    imgCity.setImage(img);
                 } catch (Exception e) {
                     System.err.println("Could not find image: " + city.getImagePath());
                 }

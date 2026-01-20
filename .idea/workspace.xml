@@ -4,13 +4,60 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="עדכון CITY וCONT של הצגת ערים בקטלוג">
+    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="עדכון שלא יופיע 3 פעמים חיפה - מופע אחד לכל עיר">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CatalogPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CatalogPageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/MapCardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/MapCardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/MapCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/MapCard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CityCardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CityCardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/CatalogPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/CatalogPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/images/cities/haifa.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/images/cities/Haifaimg.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/images/jewCutulhu.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/images/jewCutulhu.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/AddMapPage.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ApprovalPendingPage.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CatalogPage.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CityCard.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CityUpdatePage.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/HomePage.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/InfoPage.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/MapCard.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/MapUpdatePage.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ProfilePage.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/RegisterPage.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/SupportPage.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/WelcomePage.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/client/ClientLauncher.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/client/GCMClient.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/client/MainApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ApprovalPendingPageController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/HomePageController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/InfoPageController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/LoginPageController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/MapCardController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/MapUpdatePageController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/RegisterPageController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/SupportPageController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/WelcomePageController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/images/GCMLogo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/images/cities/haifa.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/images/gcmL.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/images/gcmL2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/images/gcmL3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/images/gcmhomepage.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/images/jewCutulhu.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/images/loginBackground.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/module-info.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/oscf/AbstractClient.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/oscf/AdaptableClient.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/oscf/ObservableClient.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/legacy/gcm_db_cities.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/legacy/gcm_db_cities.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,31 +99,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.ClientLauncher.executor&quot;: &quot;Run&quot;,
-    &quot;Application.appServer.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/ronia/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Scene Builder/SceneBuilder.lnk&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.JavaFX&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.ClientLauncher.executor": "Run",
+    "Application.appServer.executor": "Run",
+    "Maven.client [clean].executor": "Run",
+    "Maven.client [install].executor": "Run",
+    "Maven.common [install].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/ronia/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Scene Builder/SceneBuilder.lnk",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "database.query.execution",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql_aurora"
+    ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\ronia\IdeaProjects\Poject-Semster-2025-2026\client\src\main\resources\images\cities" />
       <recent name="C:\Users\ronia\IdeaProjects\Poject-Semster-2025-2026\client\src\main\resources\images" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.appServer">
     <configuration name="ClientLauncher" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="client.ClientLauncher" />
       <module name="client" />
@@ -90,9 +145,29 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="appServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="server.appServer" />
+      <module name="server" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gcm_db_cities.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
+      <script-file value="$PROJECT_DIR$/database/legacy/gcm_db_cities.sql" />
+      <script-mode>FILE</script-mode>
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.appServer" />
         <item itemvalue="Application.ClientLauncher" />
+        <item itemvalue="Database Script.gcm_db_cities.sql" />
       </list>
     </recent_temporary>
   </component>
@@ -117,7 +192,7 @@
       <workItem from="1768210884883" duration="217000" />
       <workItem from="1768317433522" duration="767000" />
       <workItem from="1768475231119" duration="15893000" />
-      <workItem from="1768922350781" duration="4428000" />
+      <workItem from="1768922350781" duration="10126000" />
     </task>
     <task id="LOCAL‎-00001" summary="Delete of SRC folder in general project">
       <option name="closed" value="true" />
@@ -215,7 +290,23 @@
       <option name="project" value="LOCAL‎" />
       <updated>1768925775774</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL‎-00013" summary="עדכון שלא יופיע 3 פעמים חיפה - מופע אחד לכל עיר">
+      <option name="closed" value="true" />
+      <created>1768926873783</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL‎-00013" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1768926873783</updated>
+    </task>
+    <task id="LOCAL‎-00014" summary="עדכון שלא יופיע 3 פעמים חיפה - מופע אחד לכל עיר">
+      <option name="closed" value="true" />
+      <created>1768926889804</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL‎-00014" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1768926889804</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -242,7 +333,8 @@
     <MESSAGE value="תיקון למתודה onUpdateMap" />
     <MESSAGE value="CityCard.fxml file creat" />
     <MESSAGE value="עדכון CITY וCONT של הצגת ערים בקטלוג" />
-    <option name="LAST_COMMIT_MESSAGE" value="עדכון CITY וCONT של הצגת ערים בקטלוג" />
+    <MESSAGE value="עדכון שלא יופיע 3 פעמים חיפה - מופע אחד לכל עיר" />
+    <option name="LAST_COMMIT_MESSAGE" value="עדכון שלא יופיע 3 פעמים חיפה - מופע אחד לכל עיר" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
