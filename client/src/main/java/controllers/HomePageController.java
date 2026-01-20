@@ -20,6 +20,7 @@ public class HomePageController
     @FXML private Button btnProfile;
     @FXML private Button btnManagement;
     @FXML private Button loginBtn;
+    @FXML private Button btnLogout;
     @FXML private Label lblWelcome;
     @FXML private Button btnCatalogUpdate;
     @FXML private Button btnPriceUpdate;
@@ -83,7 +84,13 @@ public class HomePageController
     private void updateLoginButton() {
         loginBtn.setText(loggedIn ? "Profile" : "Login");
     }
-
+    @FXML
+    private void onLogout(ActionEvent event) {
+        loggedIn = false;
+        updateLoginButton();
+        currentUser = null;
+        initialize();
+    }
     private void showPage(String fxmlPath) {
         try {
             System.out.println("Attempting to load: " + fxmlPath);
@@ -137,12 +144,15 @@ public class HomePageController
 
     private void updateUI() {
         if (currentUser == null) {
-
+            btnLogout.setDisable(true);
+            btnLogout.setVisible(false);
             loginBtn.setText("Login");
             if (lblWelcome != null) lblWelcome.setText("Welcome, Guest");
         } else {
 
             loginBtn.setText("Profile");
+            btnLogout.setDisable(false);
+            btnLogout.setVisible(true);
             if (lblWelcome != null) lblWelcome.setText("Welcome, " + currentUser.getFirstName());
         }
         /*EmployeeRole role = currentUser.getEmployeeRole();
