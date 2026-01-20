@@ -11,6 +11,8 @@ import javafx.scene.control.Label;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import common.enums.EmployeeRole;
+import common.user.Employee;
 
 public class HomePageController
 {
@@ -20,6 +22,7 @@ public class HomePageController
     @FXML private Button btnProfile;
     @FXML private Button btnManagement;
     @FXML private Button loginBtn;
+    @FXML private Button btnLogout;
     @FXML private Label lblWelcome;
     @FXML private Button btnCatalogUpdate;
     @FXML private Button btnPriceUpdate;
@@ -63,6 +66,9 @@ public class HomePageController
     }
 
     @FXML
+    private void onReports() {showPage("/GUI/ReportPage.fxml");}
+
+    @FXML
     private void onLoginOrProfile()
     {
 
@@ -80,7 +86,13 @@ public class HomePageController
     private void updateLoginButton() {
         loginBtn.setText(loggedIn ? "Profile" : "Login");
     }
-
+    @FXML
+    private void onLogout(ActionEvent event) {
+        loggedIn = false;
+        updateLoginButton();
+        currentUser = null;
+        initialize();
+    }
     private void showPage(String fxmlPath) {
         try {
             System.out.println("Attempting to load: " + fxmlPath);
@@ -128,19 +140,40 @@ public class HomePageController
     }
     public void setLoggedInUser(User user) {
         this.currentUser = user;
+        this.loggedIn=true;
         updateUI();
         onCatalog();
     }
 
-    private void updateUI() {
-        if (currentUser == null) {
-
+    private void updateUI()
+    {
+        if (currentUser == null)
+        {
+            btnLogout.setDisable(true);
+            btnLogout.setVisible(false);
             loginBtn.setText("Login");
             if (lblWelcome != null) lblWelcome.setText("Welcome, Guest");
-        } else {
-
+        }
+        else
+        {
             loginBtn.setText("Profile");
+            btnLogout.setDisable(false);
+            btnLogout.setVisible(true);
             if (lblWelcome != null) lblWelcome.setText("Welcome, " + currentUser.getFirstName());
+        }
+
+        // ===== minimal Reports button logic (ONLY company manager) =====
+        if (btnReports != null)
+        {
+            boolean showReports = false;
+
+            if (currentUser instanceof Employee emp) {
+                showReports = (emp.getRole() == EmployeeRole.COMPANY_MANAGER);
+            }
+
+            btnReports.setDisable(!showReports);
+            btnReports.setVisible(showReports);
+            btnReports.setManaged(showReports); // removes VBox space when hidden
         }
         /*EmployeeRole role = currentUser.getEmployeeRole();
 
@@ -197,5 +230,10 @@ public class HomePageController
         updateUI();
         showPage("/GUI/WelcomePage.fxml");
     }
-
+    private void setReportsButton(boolean show) {
+        if (btnReports == null) return;
+        btnReports.setVisible(show);
+        btnReports.setManaged(show);
+        btnReports.setDisable(!show);
+    }
 }
