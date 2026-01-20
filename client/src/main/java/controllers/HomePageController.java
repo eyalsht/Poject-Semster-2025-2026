@@ -138,6 +138,7 @@ public class HomePageController
     }
     public void setLoggedInUser(User user) {
         this.currentUser = user;
+        this.loggedIn=true;
         updateUI();
         onCatalog();
     }
