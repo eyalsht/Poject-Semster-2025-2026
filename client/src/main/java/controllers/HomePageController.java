@@ -226,6 +226,7 @@ public class HomePageController
     }
     public void onLoginSuccess(User user) {
         this.currentUser = user;
+        this.loggedIn=true;
         updateUI();
         showPage("/GUI/WelcomePage.fxml");
     }
