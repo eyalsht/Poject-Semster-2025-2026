@@ -170,7 +170,6 @@ public class HomePageController
             if (currentUser instanceof Employee emp) {
                 showReports = (emp.getRole() == EmployeeRole.COMPANY_MANAGER);
             }
-
             btnReports.setDisable(!showReports);
             btnReports.setVisible(showReports);
             btnReports.setManaged(showReports); // removes VBox space when hidden
