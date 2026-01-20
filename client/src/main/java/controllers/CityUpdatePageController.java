@@ -4,9 +4,7 @@ import client.GCMClient;
 import common.content.City;
 import common.content.Site;
 import common.dto.ContentChangeRequest;
-import common.enums.ActionType;
-import common.enums.ContentActionType;
-import common.enums.ContentType;
+import common.enums.*;
 import common.messaging.Message;
 import common.user.User;
 import javafx.application.Platform;
@@ -16,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,16 +23,23 @@ public class CityUpdatePageController
     private ObservableList<Site> availableSites = FXCollections.observableArrayList();
     private ObservableList<City> availableCities = FXCollections.observableArrayList();
     private ObservableList<Site> sitesToDelete = FXCollections.observableArrayList();
-    private double [] timeOptions = new double[]{30, 1, 1.5, 2, 2.5, 3, 3.5, 4};
     private String prevSiteName;
 
+    //Labels
     @FXML private Label lblChooseCity;
     @FXML private Label lblSites;
     @FXML private Label lblSiteName;
 
-    @FXML private TextField tfNewSite;
-
+    //City Choice
     @FXML private ComboBox <City> cbChooseCity;
+
+    //Site Details
+    @FXML private TextField tfNewSite;
+    @FXML private ComboBox<SiteCategory> categoryComboBox;
+    @FXML private CheckBox Accessibility;
+    @FXML private ComboBox <SiteDuration> visitDuration;
+    @FXML private TextField tfLocation;
+    @FXML private TextArea taDescription;
 
     @FXML private ListView<Site> lvAvailableSites;
 
@@ -51,6 +55,12 @@ public class CityUpdatePageController
     @FXML
     public void initialize()
     {
+        for (SiteCategory category : SiteCategory.values())
+            categoryComboBox.getItems().add(category);
+
+        for (SiteDuration duration : SiteDuration.values())
+            visitDuration.getItems().add(duration);
+
         System.out.println("Initializing CityUpdatePageController");
         getCitiesComboBox();
         if (lvAvailableSites != null)
@@ -97,7 +107,13 @@ public class CityUpdatePageController
     private void onAddSite()
     {
         String siteName = tfNewSite.getText().trim();
-        if (siteName.length() >= 3 && !isSiteDuplicate(siteName)) //make a verify site name method and replace the >=3 condition
+        String siteLocation = tfLocation.getText().trim();
+        SiteCategory category = categoryComboBox.getSelectionModel().getSelectedItem();
+        boolean isAccessible = Accessibility.isSelected();
+        SiteDuration duration = visitDuration.getSelectionModel().getSelectedItem();
+        String description = taDescription.getText();
+
+        if (siteName.length() >= 3 && !isSiteDuplicate(siteName) && siteLocation.length()>=3) //make a verify site name method and replace the >=3 condition
         {
             City selectedCity = cbChooseCity.getSelectionModel().getSelectedItem();
             if (selectedCity == null)
@@ -105,7 +121,7 @@ public class CityUpdatePageController
                 showAlert("Error", "Please select a city first.");
                 return;
             }
-            Site newSite = new Site(siteName, selectedCity);
+            Site newSite = new Site(0,siteName, description,selectedCity,category,isAccessible,duration,siteLocation);
             availableSites.add(newSite);
             lvAvailableSites.refresh();
             tfNewSite.clear();
@@ -137,8 +153,15 @@ public class CityUpdatePageController
         if (selectedSite != null)
         {
             btnConfirmEdit.setVisible(true);
+
             tfNewSite.setText(selectedSite.getName());
             prevSiteName = selectedSite.getName();
+            categoryComboBox.setValue(selectedSite.getCategory());
+            Accessibility.setSelected(selectedSite.isAccessible());
+            visitDuration.setValue(selectedSite.getRecommendedVisitDuration());
+            tfLocation.setText(selectedSite.getLocation());
+            taDescription.setText(selectedSite.getDescription());
+
             btnConfirmEdit.setVisible(true);
             btnEditSite.setDisable(true);
             btnDeleteSite.setDisable(true);
@@ -165,6 +188,12 @@ public class CityUpdatePageController
         toEdit.setName(newName);
         lvAvailableSites.refresh();
         tfNewSite.clear();
+        categoryComboBox.getSelectionModel().clearSelection();
+        visitDuration.getSelectionModel().clearSelection();
+        Accessibility.setSelected(false);
+        tfLocation.clear();
+        taDescription.clear();
+
         btnConfirmEdit.setVisible(false);
         btnAddSite.setDisable(false);
         btnEditSite.setDisable(false);
@@ -203,7 +232,7 @@ public class CityUpdatePageController
                 ContentActionType action = (site.getID() <= 0) ? ContentActionType.ADD : ContentActionType.EDIT;
                 String Json = buildSiteJson(site);
                 String targetName = site.getCityName() + " - " + site.getName();
-                Integer targetId = (action == ContentActionType.ADD) ? selectedCity.getId() : site.getID();
+                Integer targetId = (action == ContentActionType.ADD) ? selectedCity.getId(): site.getID();
                 ContentChangeRequest changeRequest = new ContentChangeRequest(
                         requesterId,
                         action,
@@ -323,12 +352,32 @@ public class CityUpdatePageController
     private String buildSiteJson(Site site)
     {
         StringBuilder json = new StringBuilder("{");
+
         json.append("\"id\":").append(site.getID()).append(",");
-        json.append("\"name\":\"").append(site.getName().replace("\"", "\\\"")).append("\",");
-        int cId = site.getCity().getId();
-        json.append("\"cityId\":").append(cId);
+        json.append("\"name\":\"").append(escapeJson(site.getName())).append("\",");
+        json.append("\"description\":\"").append(escapeJson(site.getDescription())).append("\",");
+
+        if (site.getCity() != null) {
+            json.append("\"cityId\":").append(site.getCity().getId()).append(",");
+            json.append("\"cityName\":\"").append(escapeJson(site.getCity().getName())).append("\",");
+        } else {
+            json.append("\"cityId\":0,");
+            json.append("\"cityName\":\"Unknown\",");
+        }
+
+        json.append("\"category\":\"").append(site.getCategory()).append("\",");
+        json.append("\"isAccessible\":").append(site.isAccessible()).append(",");
+        json.append("\"recommendedVisitDuration\":\"").append(site.getRecommendedVisitDuration()).append("\",");
+
+        json.append("\"location\":\"").append(escapeJson(site.getLocation())).append("\"");
+
         json.append("}");
         return json.toString();
+    }
+
+    private String escapeJson(String input) {
+        if (input == null) return "";
+        return input.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
     private void handleContentChangeResponse(Message response, ContentActionType actionType) {

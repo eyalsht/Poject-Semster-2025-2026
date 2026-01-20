@@ -4,249 +4,31 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="עדכון CITY וCONT של הצגת ערים בקטלוג">
+    <list default="true" id="01a932cd-f48c-4d53-b2ef-f3b533275cb4" name="Changes" comment="Total project backup before update&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml">
+      <change afterPath="$PROJECT_DIR$/common/src/main/java/common/enums/SiteDuration.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CatalogPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CatalogPageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/MapCardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/MapCardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/MapCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/MapCard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CityUpdatePageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CityUpdatePageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/MapUpdatePageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/MapUpdatePageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/CityUpdatePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/CityUpdatePage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/content/Site.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/content/Site.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/enums/SiteCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/enums/SiteCategory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/repository/PendingContentRequestRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/repository/PendingContentRequestRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-        <option value="FxmlFile" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;roniamir&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "git-widget-placeholder": "Rebasing master"
   }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/eyalsht/Poject-Semster-2025-2026.git&quot;,
-    &quot;accountId&quot;: &quot;0ed4a794-3927-408d-9e1c-f49064f5821c&quot;
-  }
-}</component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 3
-}</component>
-  <component name="ProjectId" id="37phW3Dn7v0G49g6EI1TforVoJg" />
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
-  </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.ClientLauncher.executor&quot;: &quot;Run&quot;,
-    &quot;Application.appServer.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/ronia/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Scene Builder/SceneBuilder.lnk&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.JavaFX&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
-  }
-}</component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\ronia\IdeaProjects\Poject-Semster-2025-2026\client\src\main\resources\images\cities" />
-      <recent name="C:\Users\ronia\IdeaProjects\Poject-Semster-2025-2026\client\src\main\resources\images" />
-    </key>
-  </component>
-  <component name="RunManager">
-    <configuration name="ClientLauncher" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="client.ClientLauncher" />
-      <module name="client" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="client.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Application.ClientLauncher" />
-      </list>
-    </recent_temporary>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
-      </set>
-    </attachedChunks>
-  </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+}]]></component>
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="" />
-      <created>1767605947851</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1767605947851</updated>
-      <workItem from="1767605949128" duration="4399000" />
-      <workItem from="1767645874765" duration="24134000" />
-      <workItem from="1768210884883" duration="217000" />
-      <workItem from="1768317433522" duration="767000" />
-      <workItem from="1768475231119" duration="15893000" />
-      <workItem from="1768922350781" duration="4428000" />
-    </task>
-    <task id="LOCAL‎-00001" summary="Delete of SRC folder in general project">
-      <option name="closed" value="true" />
-      <created>1767606042609</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL‎-00001" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1767606042609</updated>
-    </task>
-    <task id="LOCAL‎-00002" summary="Tour class">
-      <option name="closed" value="true" />
-      <created>1767607350150</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL‎-00002" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1767607350150</updated>
-    </task>
-    <task id="LOCAL‎-00003" summary="עריכת USER ןEMPLOYEE שהבנאים יהיו תקינים. הסרת כפילות של USERROLE בEMPLOYEE">
-      <option name="closed" value="true" />
-      <created>1767704574557</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL‎-00003" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1767704574557</updated>
-    </task>
-    <task id="LOCAL‎-00004" summary="change 'map' to 'mapName'">
-      <option name="closed" value="true" />
-      <created>1767705483656</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL‎-00004" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1767705483656</updated>
-    </task>
-    <task id="LOCAL‎-00005" summary="עריכת הקטלוג מטבלה לתצוגת כרטיסים, מבלי לערוך את המופע של כרטיס עיר. עריכת CITY שתכיל מפה">
-      <option name="closed" value="true" />
-      <created>1768910343437</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL‎-00005" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768910343437</updated>
-    </task>
-    <task id="LOCAL‎-00006" summary="עריכת הקטלוג מטבלה לתצוגת כרטיסים, מבלי לערוך את המופע של כרטיס עיר. עריכת CITY שתכיל מפה">
-      <option name="closed" value="true" />
-      <created>1768910586909</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL‎-00006" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768910586909</updated>
-    </task>
-    <task id="LOCAL‎-00007" summary="עריכת הקטלוג מטבלה לתצוגת כרטיסים, מבלי לערוך את המופע של כרטיס עיר. עריכת CITY שתכיל מפה">
-      <option name="closed" value="true" />
-      <created>1768910639323</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL‎-00007" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768910639323</updated>
-    </task>
-    <task id="LOCAL‎-00008" summary="תיקון למתודה onUpdateMap">
-      <option name="closed" value="true" />
-      <created>1768911118574</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL‎-00008" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768911118574</updated>
-    </task>
-    <task id="LOCAL‎-00009" summary="CityCard.fxml file creat">
-      <option name="closed" value="true" />
-      <created>1768922278513</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL‎-00009" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768922278513</updated>
-    </task>
-    <task id="LOCAL‎-00010" summary="CityCard.fxml file creat">
-      <option name="closed" value="true" />
-      <created>1768922334095</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL‎-00010" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768922334095</updated>
-    </task>
-    <task id="LOCAL‎-00011" summary="CityCard.fxml file creat">
-      <option name="closed" value="true" />
-      <created>1768922432657</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL‎-00011" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768922432657</updated>
-    </task>
-    <task id="LOCAL‎-00012" summary="עדכון CITY וCONT של הצגת ערים בקטלוג">
-      <option name="closed" value="true" />
-      <created>1768925775774</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL‎-00012" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768925775774</updated>
-    </task>
-    <option name="localTasksCounter" value="13" />
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="Delete of SRC folder in general project" />
-    <MESSAGE value="Tour Class" />
-    <MESSAGE value="Tour class" />
-    <MESSAGE value="עריכת USER ןEMPLOYEE שהבנאים יהיו תקינים. הסרת כפילות של USERROLE בEMPLOYEE" />
-    <MESSAGE value="change 'map' to 'mapName'" />
-    <MESSAGE value="עריכת הקטלוג מטבלה לתצוגת כרטיסים, מבלי לערוך את המופע של כרטיס עיר. עריכת CITY שתכיל מפה" />
-    <MESSAGE value="תיקון למתודה onUpdateMap" />
-    <MESSAGE value="CityCard.fxml file creat" />
-    <MESSAGE value="עדכון CITY וCONT של הצגת ערים בקטלוג" />
-    <option name="LAST_COMMIT_MESSAGE" value="עדכון CITY וCONT של הצגת ערים בקטלוג" />
-    <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
   </component>
 </project>
