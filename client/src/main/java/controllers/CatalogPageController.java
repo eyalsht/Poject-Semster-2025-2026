@@ -21,6 +21,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -37,12 +38,8 @@ public class CatalogPageController {
     @FXML private ComboBox<String> cbMap;
     @FXML private ComboBox<String> cbVersion;
 
-    @FXML private TableView<GCMMap> tblCatalog;
-    @FXML private TableColumn<GCMMap, String> colCity;
-    @FXML private TableColumn<GCMMap, String> colMap;
-    @FXML private TableColumn<GCMMap, String> colVersion;
-    @FXML private TableColumn<GCMMap, Double> colPrice;
-    @FXML private TableColumn<GCMMap, String> colDesc;
+    @FXML private ScrollPane scrollPaneCities;
+    @FXML private FlowPane flowPaneCities;
 
     @FXML private Button btnUpdateMap;
     @FXML private Button btnAddMap;
@@ -55,27 +52,43 @@ public class CatalogPageController {
     @FXML private Button btnEditTour;
 
     private final GCMClient client = GCMClient.getInstance();
-
-    // Cache the last response for filter cascading
-    private CatalogResponse lastCatalogResponse;
-
-    // Flag to prevent recursive updates
-    private boolean isUpdatingComboBoxes = false;
+    private CatalogResponse lastCatalogResponse;     // Cache the last response for filter cascading
+    private boolean isUpdatingComboBoxes = false;    // Flag to prevent recursive updates
 
     @FXML
     public void initialize() {
-        setupTableColumns();
         setupComboBoxListeners();
         applyRolePermissions();
+        scrollPaneCities.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPaneCities.setFitToWidth(true);
         loadCatalog(null, null, null);
         refreshPendingApprovalsCount();  // Updated method name
     }
 
+    private void updateCityCards(List<GCMMap> maps) {
+        Platform.runLater(() -> {
+            flowPaneCities.getChildren().clear(); // clean old card
+            for (GCMMap map : maps) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityCard.fxml"));
+                    Parent card = loader.load();
+
+                    CityCardController controller = loader.getController();
+                    controller.setData(map); // Injecting map and city data
+
+                    flowPaneCities.getChildren().add(card);
+                } catch (Exception e) {
+                    System.err.println("Error loading city card: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
     /**
      * Setup table column bindings.
      * Using GCMMap entity directly instead of MapCatalogRow DTO.
      */
-    private void setupTableColumns() {
+  /*  private void setupTableColumns() {
         // Use property names from GCMMap entity
         colCity.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCityName()));
@@ -92,7 +105,7 @@ public class CatalogPageController {
                 setText(empty || price == null ? "" : String.format("$%.2f", price));
             }
         });
-    }
+    }*/
 
     /**
      * Setup combo box change listeners for cascading filters.
@@ -152,8 +165,8 @@ public class CatalogPageController {
             CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
             this.lastCatalogResponse = catalogResponse;
 
-            // Update table
-            tblCatalog.setItems(FXCollections.observableArrayList(catalogResponse.getMaps()));
+            // Using updateCityCards instead of TableView.setItems
+            updateCityCards(catalogResponse.getMaps());
 
             // Set flag to prevent listener recursion
             isUpdatingComboBoxes = true;
@@ -296,7 +309,7 @@ public class CatalogPageController {
 
     // ==================== BUTTON HANDLERS ====================
 
-    @FXML
+    /*@FXML   Using Table info - which no longer exist
     private void onPriceUpdate() {
         GCMMap selected = tblCatalog.getSelectionModel().getSelectedItem();
         if (selected == null) {
@@ -304,14 +317,11 @@ public class CatalogPageController {
             return;
         }
         openMapUpdateWindow("price", selected);
-    }
+    }*/
 
-    @FXML
-    private void onAddMap() {
-        openMapUpdateWindow("add", null);
-    }
 
-    @FXML
+
+ /*   @FXML Using Table info - which no longer exist
     private void onUpdateMap() {
         GCMMap selected = tblCatalog.getSelectionModel().getSelectedItem();
         if (selected == null) {
@@ -319,7 +329,7 @@ public class CatalogPageController {
             return;
         }
         openMapUpdateWindow("edit", selected);
-    }
+    }*/
 
     @FXML
     private void onCreateCity() { OpenCityUpdateWindow("create");}
@@ -327,7 +337,10 @@ public class CatalogPageController {
     private void onEditCity() {
         OpenCityUpdateWindow("add");
     }
-
+    @FXML
+    private void onAddMap() {
+        openMapUpdateWindow("add", null);
+    }
     @FXML
     private void onCreateTour() { OpenCityUpdateWindow("create");}
     @FXML
@@ -335,7 +348,7 @@ public class CatalogPageController {
         OpenCityUpdateWindow("edit");
     }
 
-    @FXML
+  /*  @FXML Using Table info - which no longer exist
     private void onDeleteMap() {
         GCMMap selected = tblCatalog.getSelectionModel().getSelectedItem();
         if (selected == null) {
@@ -356,7 +369,7 @@ public class CatalogPageController {
                 submitDeleteRequest(selected);
             }
         });
-    }
+    }*/
 
     private void submitDeleteRequest(GCMMap map) {
         new Thread(() -> {
@@ -583,3 +596,4 @@ public class CatalogPageController {
         alert.showAndWait();
     }
 }
+

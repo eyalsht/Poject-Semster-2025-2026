@@ -11,8 +11,10 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CatalogPageController">
+<AnchorPane prefHeight="430.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CatalogPageController">
 
     <children>
 
@@ -48,10 +50,10 @@
         </GridPane>
 
         <!-- Table below (scrolls automatically) -->
-        <TableView fx:id="tblCatalog" layoutX="70.0" layoutY="210.0" prefHeight="170.0" prefWidth="550.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+        <!--       <TableView fx:id="tblCatalog" layoutX="70.0" layoutY="210.0" prefHeight="170.0" prefWidth="550.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
 
-            <columns>
-                <!-- First column: City -->
+                   <columns>
+
                 <TableColumn fx:id="colCity" prefWidth="110.0" text="City" />
                 <TableColumn fx:id="colMap" prefWidth="120.0" text="Map" />
                 <TableColumn fx:id="colVersion" prefWidth="70.0" text="Version" />
@@ -59,8 +61,21 @@
                 <TableColumn fx:id="colDesc" prefWidth="180.0" text="Description" />
             </columns>
         </TableView>
-        <VBox alignment="CENTER" layoutX="500.0" layoutY="26.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
+        -->
 
+        <ScrollPane fx:id="scrollPaneCities" fitToWidth="true" layoutY="210.0"
+                    prefHeight="200.0" prefWidth="830.0"
+                    AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+            <content>
+                <FlowPane fx:id="flowPaneCities" hgap="20.0" vgap="20.0" prefWrapLength="800.0">
+                    <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                    </padding>
+                </FlowPane>
+            </content>
+        </ScrollPane>
+
+        <VBox alignment="CENTER" layoutX="500.0" layoutY="26.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0">
             <children>
                 <Button fx:id="btnUpdateMap" maxWidth="Infinity" mnemonicParsing="false" onAction="#onUpdateMap" text="Edit Map">
                     <VBox.margin><Insets left="10.0" right="10.0" /></VBox.margin>
