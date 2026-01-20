@@ -6,58 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="עדכון שלא יופיע 3 פעמים חיפה - מופע אחד לכל עיר">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CityCardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CityCardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/CatalogPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/CatalogPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/images/cities/haifa.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/images/cities/Haifaimg.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/images/jewCutulhu.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/images/jewCutulhu.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/AddMapPage.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ApprovalPendingPage.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CatalogPage.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CityCard.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CityUpdatePage.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/HomePage.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/InfoPage.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/MapCard.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/MapUpdatePage.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ProfilePage.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/RegisterPage.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/SupportPage.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/WelcomePage.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/client/ClientLauncher.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/client/GCMClient.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/client/MainApplication.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ApprovalPendingPageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/HomePageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/InfoPageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/LoginPageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/MapCardController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/MapUpdatePageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/RegisterPageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/SupportPageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/WelcomePageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/images/GCMLogo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/images/cities/haifa.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/images/gcmL.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/images/gcmL2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/images/gcmL3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/images/gcmhomepage.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/images/jewCutulhu.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/images/loginBackground.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/module-info.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/oscf/AbstractClient.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/oscf/AdaptableClient.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/oscf/ObservableClient.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/legacy/gcm_db_cities.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/legacy/gcm_db_cities.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/module-info.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/module-info.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +38,7 @@
   }
 }</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -106,6 +56,8 @@
     "Maven.client [clean].executor": "Run",
     "Maven.client [install].executor": "Run",
     "Maven.common [install].executor": "Run",
+    "Maven.project-semester-2025-2026 [install].executor": "Run",
+    "Maven.server [install].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
@@ -131,7 +83,7 @@
       <recent name="C:\Users\ronia\IdeaProjects\Poject-Semster-2025-2026\client\src\main\resources\images" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.appServer">
+  <component name="RunManager" selected="Application.ClientLauncher">
     <configuration name="ClientLauncher" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="client.ClientLauncher" />
       <module name="client" />
@@ -165,8 +117,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.appServer" />
         <item itemvalue="Application.ClientLauncher" />
+        <item itemvalue="Application.appServer" />
         <item itemvalue="Database Script.gcm_db_cities.sql" />
       </list>
     </recent_temporary>
