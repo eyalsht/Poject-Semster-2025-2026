@@ -97,6 +97,7 @@ public class LoginPageController {
 
                     if (homePageController != null) {
                         homePageController.onLoginSuccess(user);
+
                     }
                 }
             } else {
