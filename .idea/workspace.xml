@@ -4,9 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="עריכת הקטלוג מטבלה לתצוגת כרטיסים, מבלי לערוך את המופע של כרטיס עיר. עריכת CITY שתכיל מפה">
+    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="תיקון למתודה onUpdateMap">
+      <change afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/CityCard.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CatalogPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CatalogPageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CatalogPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/CatalogPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/HomePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/HomePageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/LoginPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/LoginPageController.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,6 +23,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="FxmlFile" />
       </list>
     </option>
   </component>
@@ -85,7 +92,7 @@
       <workItem from="1767645874765" duration="24134000" />
       <workItem from="1768210884883" duration="217000" />
       <workItem from="1768317433522" duration="767000" />
-      <workItem from="1768475231119" duration="15248000" />
+      <workItem from="1768475231119" duration="15780000" />
     </task>
     <task id="LOCAL‎-00001" summary="Delete of SRC folder in general project">
       <option name="closed" value="true" />
@@ -143,7 +150,15 @@
       <option name="project" value="LOCAL‎" />
       <updated>1768910639323</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL‎-00008" summary="תיקון למתודה onUpdateMap">
+      <option name="closed" value="true" />
+      <created>1768911118574</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL‎-00008" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1768911118574</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -167,7 +182,8 @@
     <MESSAGE value="עריכת USER ןEMPLOYEE שהבנאים יהיו תקינים. הסרת כפילות של USERROLE בEMPLOYEE" />
     <MESSAGE value="change 'map' to 'mapName'" />
     <MESSAGE value="עריכת הקטלוג מטבלה לתצוגת כרטיסים, מבלי לערוך את המופע של כרטיס עיר. עריכת CITY שתכיל מפה" />
-    <option name="LAST_COMMIT_MESSAGE" value="עריכת הקטלוג מטבלה לתצוגת כרטיסים, מבלי לערוך את המופע של כרטיס עיר. עריכת CITY שתכיל מפה" />
+    <MESSAGE value="תיקון למתודה onUpdateMap" />
+    <option name="LAST_COMMIT_MESSAGE" value="תיקון למתודה onUpdateMap" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
