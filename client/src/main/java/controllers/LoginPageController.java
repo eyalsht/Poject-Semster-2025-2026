@@ -87,12 +87,17 @@ public class LoginPageController {
 
             if (authResponse.isSuccess()) {
                 User user = authResponse.getUser();
-                client.setCurrentUser(user);
+                if (user.isLoggedIn()) {
+                    showError("User is already logged in.");
+                }
+                else {
+                    client.setCurrentUser(user);
 
-                showMessage("Welcome, " + user.getFirstName() + "!", Color.GREEN);
+                    showMessage("Welcome, " + user.getFirstName() + "!", Color.GREEN);
 
-                if (homePageController != null) {
-                    homePageController.onLoginSuccess(user);
+                    if (homePageController != null) {
+                        homePageController.onLoginSuccess(user);
+                    }
                 }
             } else {
                 showError(authResponse.getMessage());
