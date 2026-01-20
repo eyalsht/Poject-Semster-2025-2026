@@ -23,19 +23,16 @@ import java.util.List;
 public class CityUpdatePageController
 {
     private final GCMClient client = GCMClient.getInstance();
-    private String mode;
     private ObservableList<Site> availableSites = FXCollections.observableArrayList();
     private ObservableList<City> availableCities = FXCollections.observableArrayList();
     private ObservableList<Site> sitesToDelete = FXCollections.observableArrayList();
+    private double [] timeOptions = new double[]{30, 1, 1.5, 2, 2.5, 3, 3.5, 4};
     private String prevSiteName;
 
-    @FXML private Label lblCurrentTitle;
-    @FXML private Label lblNewCity;
     @FXML private Label lblChooseCity;
     @FXML private Label lblSites;
     @FXML private Label lblSiteName;
 
-    @FXML private TextField tfNewCity;
     @FXML private TextField tfNewSite;
 
     @FXML private ComboBox <City> cbChooseCity;
@@ -85,48 +82,15 @@ public class CityUpdatePageController
         });
         cbChooseCity.getSelectionModel().selectedItemProperty().addListener((obs, oldCity, newCity) -> {
             if (newCity != null){
-                if(newCity.getName().equals("----------Add city----------")) {
-                    configureAddMode();
+                if(newCity.getName().equals("--------Choose City--------")) {
+                    availableSites.clear();
                 }
                 else
                 {
-                    configureEditMode();
                     updateSitesList(newCity.getName());
                 }
             }
         });
-    }
-
-    public void setMode(String mode)
-    {
-        this.mode = mode;
-        updateUIForMode();
-    }
-
-    private void updateUIForMode()
-    {
-        switch (mode) {
-            case "edit":
-                configureEditMode();
-                break;
-            case "add":
-                configureAddMode();
-                break;
-        }
-    }
-
-    private void configureAddMode()
-    {
-        this.mode = "add";
-        btnConfirmEdit.setVisible(false);
-        tfNewCity.setDisable(false);
-    }
-
-    private void configureEditMode()
-    {
-        this.mode = "edit";
-        tfNewCity.setDisable(true);
-        btnConfirmEdit.setVisible(false);
     }
 
     @FXML
@@ -135,13 +99,9 @@ public class CityUpdatePageController
         String siteName = tfNewSite.getText().trim();
         if (siteName.length() >= 3 && !isSiteDuplicate(siteName)) //make a verify site name method and replace the >=3 condition
         {
-            if(this.mode.equals("add") && tfNewCity.getText().isEmpty())
+            City selectedCity = cbChooseCity.getSelectionModel().getSelectedItem();
+            if (selectedCity == null)
             {
-                showAlert("Error", "No city name input");
-                return;
-            }
-            City selectedCity = this.mode.equals("add") ? new City(tfNewCity.getText().trim()) : cbChooseCity.getSelectionModel().getSelectedItem();
-            if (selectedCity == null) {
                 showAlert("Error", "Please select a city first.");
                 return;
             }
@@ -176,6 +136,7 @@ public class CityUpdatePageController
         Site selectedSite = lvAvailableSites.getSelectionModel().getSelectedItem();
         if (selectedSite != null)
         {
+            btnConfirmEdit.setVisible(true);
             tfNewSite.setText(selectedSite.getName());
             prevSiteName = selectedSite.getName();
             btnConfirmEdit.setVisible(true);
@@ -191,7 +152,7 @@ public class CityUpdatePageController
     private void onConfirmEdit()
     {
         String newName = tfNewSite.getText().trim();
-        if (newName.length() < 3 && isSiteDuplicate(newName)) {
+        if (newName.length() < 3 || isSiteDuplicate(newName)) {
             showAlert("Invalid Name", "Name must be at least 3 characters.");
             return;
         }
@@ -214,66 +175,26 @@ public class CityUpdatePageController
     private void onSubmit()
     {
         new Thread(() -> {
-            try {
-                if ("add".equals(mode))
-                    onSubmitAdd();
-                else
-                {
-                    onSubmitEdit();
-                    onSubmitDelete();
-                }
+            try
+            {
+                onSubmitEdit();
+                onSubmitDelete();
                 Platform.runLater(() -> {
                     showAlert("Success", "All changes submitted for approval.");
                     onClose();
                 });
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 Platform.runLater(() -> showAlert("Error", "Submission failed: " + e.getMessage()));
             }
         }).start();
     }
-
-    private void onSubmitAdd()
-    {
-        if(this.mode.equals("edit"))
-            return;
-        User currentUser = GCMClient.getInstance().getCurrentUser();
-        Integer requesterId = (currentUser != null) ? currentUser.getId() : null;
-        try
-        {
-            String cityName = tfNewCity.getText().trim();
-            if (cityName.isEmpty())
-            {
-                showAlert("Error", "Enter city name.");
-                return;
-            }
-            String Json = buildFullCityJson(cityName, new ArrayList<>(availableSites));
-            ContentChangeRequest req = new ContentChangeRequest(
-                    requesterId,
-                    ContentActionType.ADD,
-                    ContentType.CITY,
-                    null,
-                    cityName,
-                    Json);
-            Message request = new Message(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, req);
-            Message response = (Message) client.sendRequest(request);
-
-            Platform.runLater(() -> handleContentChangeResponse(response, ContentActionType.ADD));
-            showAlert("Success", "New city and its sites submitted as one package.");
-        }
-        catch (Exception e)
-        {
-            Platform.runLater(() -> showAlert("Error", "Error: " + e.getMessage()));
-        }
-    }
-
     private void onSubmitEdit()
     {
-        if(this.mode.equals("add"))
-            return;
         User currentUser = GCMClient.getInstance().getCurrentUser();
         Integer requesterId = (currentUser != null) ? currentUser.getId() : null;
         City selectedCity = cbChooseCity.getSelectionModel().getSelectedItem();
-        if (selectedCity == null)
+        if (selectedCity == null || selectedCity.equals("--------Choose City--------"))
             return;
         try
         {
@@ -305,8 +226,6 @@ public class CityUpdatePageController
 
     private void onSubmitDelete()
     {
-        if(this.mode.equals("add"))
-            return;
         User currentUser = GCMClient.getInstance().getCurrentUser();
         Integer requesterId = (currentUser != null) ? currentUser.getId() : null;
         for (Site site : sitesToDelete) {
@@ -357,6 +276,7 @@ public class CityUpdatePageController
         return availableSites.stream()
                 .anyMatch(site -> site.getName().equalsIgnoreCase(newName));
     }
+
     private void showAlert(String title, String message)
     {
         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -403,34 +323,10 @@ public class CityUpdatePageController
     private String buildSiteJson(Site site)
     {
         StringBuilder json = new StringBuilder("{");
-
         json.append("\"id\":").append(site.getID()).append(",");
         json.append("\"name\":\"").append(site.getName().replace("\"", "\\\"")).append("\",");
-
-        int cId = (site.getCity() != null) ? site.getCity().getId() : 0;
+        int cId = site.getCity().getId();
         json.append("\"cityId\":").append(cId);
-        json.append("}");
-        return json.toString();
-    }
-
-    private String buildFullCityJson(String cityName, List<Site> sites)
-    {
-        StringBuilder json = new StringBuilder("{");
-
-        json.append("\"cityName\":\"").append(cityName.replace("\"", "\\\"")).append("\",");
-        json.append("\"sites\":[");
-        for (int i = 0; i < sites.size(); i++) {
-            Site s = sites.get(i);
-            json.append("{");
-            json.append("\"name\":\"").append(s.getName().replace("\"", "\\\"")).append("\",");
-            json.append("\"id\":").append(s.getID());
-            json.append("}");
-
-            if (i < sites.size() - 1) {
-                json.append(",");
-            }
-        }
-        json.append("]");
         json.append("}");
         return json.toString();
     }

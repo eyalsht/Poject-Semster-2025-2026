@@ -37,6 +37,9 @@ public class Site extends ContentItem implements Serializable {
     @JoinColumn(name = "city_id", nullable = false)
     private City city;
 
+    @Column(name = "city_id", nullable = false)
+    private int cityId;
+
     // Bidirectional Many-to-Many with GCMMap (a site can appear on multiple maps)
     @ManyToMany(mappedBy = "sites", fetch = FetchType.LAZY)
     private List<GCMMap> maps = new ArrayList<>();
@@ -44,6 +47,7 @@ public class Site extends ContentItem implements Serializable {
     // Bidirectional Many-to-Many with Tour (a site can be part of multiple tours)
     @ManyToMany(mappedBy = "sites", fetch = FetchType.LAZY)
     private List<Tour> tours = new ArrayList<>();
+
 
     // ==================== CONSTRUCTORS ====================
 
@@ -56,11 +60,13 @@ public class Site extends ContentItem implements Serializable {
     public Site(int id,
                 String name,
                 String description,
+                int cityId,
                 SiteCategory category,
                 boolean isAccessible,
                 double recommendedVisitDuration,
                 String location) {
         super(id, name, description);
+        this.cityId = cityId;
         this.category = category;
         this.isAccessible = isAccessible;
         this.recommendedVisitDuration = recommendedVisitDuration;
@@ -69,11 +75,6 @@ public class Site extends ContentItem implements Serializable {
         this.tours = new ArrayList<>();
     }
 
-    public Site(String name, City city)
-    {
-        this.name = name;
-        this.city = city;
-    }
 
     // ==================== GETTERS & SETTERS ====================
 

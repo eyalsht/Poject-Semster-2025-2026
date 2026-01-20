@@ -2,6 +2,7 @@ package server.repository;
 
 import common.content.City;
 import common.content.GCMMap;
+import common.content.Site;
 import common.enums.ContentActionType;
 import common.enums.ContentType;
 import common.enums.MapStatus;
@@ -242,7 +243,6 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
         session.merge(map);
         System.out.println("Map update applied for ID: " + mapId);
     }
-
     /**
      * Delete a map by ID.
      */
@@ -323,8 +323,8 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
     }
 
     private void applySiteChange(org.hibernate.Session session, PendingContentRequest pending) {
-        // TODO: Implement site changes
-        System.out.println("Site changes not yet implemented");
+        String json = pending.getContentDetails();
+        Site site = new Site(extractJsonValue(json,"id"), extractJsonValue(json,"name"),extractJsonValue(json,"cityID"),)
     }
 
     private void applyTourChange(org.hibernate.Session session, PendingContentRequest pending) {
