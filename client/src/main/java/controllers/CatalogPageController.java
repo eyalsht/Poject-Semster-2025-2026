@@ -335,6 +335,11 @@ public class CatalogPageController {
         }
         openMapUpdateWindow("edit", selected);
     }*/
+ @FXML
+ private void onUpdateMap() {
+     // NEW: Placeholder method to resolve FXML error
+     showAlert("Info", "Selection logic needs to be updated for city cards.");
+ }
 
     @FXML
     private void onCreateCity() { OpenCityUpdateWindow("create");}
