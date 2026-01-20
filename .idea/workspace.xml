@@ -4,7 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="CityCard.fxml file creat" />
+    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="CityCard.fxml file creat">
+      <change afterPath="$PROJECT_DIR$/client/src/main/java/controllers/MapCardController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/MapCard.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/resources/images/cities/haifa.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CatalogPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CatalogPageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CityCardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CityCardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/content/City.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/content/City.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/content/GCMMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/content/GCMMap.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -45,24 +57,50 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.ClientLauncher.executor": "Run",
-    "Application.appServer.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/ronia/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Scene Builder/SceneBuilder.lnk",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.JavaFX",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.ClientLauncher.executor&quot;: &quot;Run&quot;,
+    &quot;Application.appServer.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/ronia/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Scene Builder/SceneBuilder.lnk&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.JavaFX&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ronia\IdeaProjects\Poject-Semster-2025-2026\client\src\main\resources\images\cities" />
+      <recent name="C:\Users\ronia\IdeaProjects\Poject-Semster-2025-2026\client\src\main\resources\images" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="ClientLauncher" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.ClientLauncher" />
+      <module name="client" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.ClientLauncher" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -84,6 +122,7 @@
       <workItem from="1768210884883" duration="217000" />
       <workItem from="1768317433522" duration="767000" />
       <workItem from="1768475231119" duration="15893000" />
+      <workItem from="1768922350781" duration="3234000" />
     </task>
     <task id="LOCAL‎-00001" summary="Delete of SRC folder in general project">
       <option name="closed" value="true" />
@@ -165,7 +204,15 @@
       <option name="project" value="LOCAL‎" />
       <updated>1768922334095</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL‎-00011" summary="CityCard.fxml file creat">
+      <option name="closed" value="true" />
+      <created>1768922432657</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL‎-00011" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1768922432657</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

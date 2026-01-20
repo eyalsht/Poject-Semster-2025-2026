@@ -11,22 +11,39 @@ import common.content.GCMMap;
 import java.io.ByteArrayInputStream;
 
 public class CityCardController {
-    @FXML
-    private ImageView imgCity;
+    @FXML private ImageView imgCity;
     @FXML private Label lblCityName;
     @FXML private Label lblPrice;
 
-    public void setData(GCMMap mapData) {
+    private City city;
+    private CatalogPageController mainController;
 
-        City city = mapData.getCity();
+    public void setData(GCMMap mapData, CatalogPageController mainController) {
+        this.mainController = mainController;
+        this.city = mapData.getCity();
+
         if (city != null) {
             // UPDATED: Now using the local 'city' variable to get the name
             lblCityName.setText(city.getName());
             lblPrice.setText(String.format("Sub: $%.2f", city.getPriceSub()));
-            imgCity.setImage(new Image(new ByteArrayInputStream(mapData.getImage())));
+
+            if (city.getImagePath() != null) {
+                try {
+                    // Generates the path: /images/paris.png
+                    String path = "/images/" + city.getImagePath();
+                    Image image = new Image(getClass().getResourceAsStream(path));
+                    imgCity.setImage(image);
+                } catch (Exception e) {
+                    System.err.println("Could not find image: " + city.getImagePath());
+                }
+            }
         }
-        if (mapData.getImage() != null) {
-            imgCity.setImage(new Image(new ByteArrayInputStream(mapData.getImage())));
+    }
+
+    @FXML
+    private void onCardClicked() {
+        if (mainController != null && city != null) {
+            mainController.showCityMaps(city);
         }
     }
 }

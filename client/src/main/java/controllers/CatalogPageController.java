@@ -27,7 +27,9 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import common.content.City; // NEW - Fixes "Cannot resolve symbol 'City'"
+import controllers.CityCardController; // NEW
+import controllers.MapCardController;
 /**
  * Controller for the catalog page.
  * Displays cities, maps, and allows filtering.
@@ -65,6 +67,35 @@ public class CatalogPageController {
         refreshPendingApprovalsCount();  // Updated method name
     }
 
+    public void showCityMaps(City city) {
+        Platform.runLater(() -> {
+            flowPaneCities.getChildren().clear(); // Clear city cards
+
+            // Add a "Back" button to return to City Catalog
+            Button btnBack = new Button("← Back to Catalog");
+            btnBack.setOnAction(e -> loadCatalog(null, null, null));
+            flowPaneCities.getChildren().add(btnBack);
+
+            // Display maps of the selected city
+            if (city.getMaps() != null) {
+                for (GCMMap map : city.getMaps()) {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
+                        Parent mapCard = loader.load();
+
+                        // You will need a MapCardController for this
+                        MapCardController controller = loader.getController();
+                        controller.setData(map);
+
+                        flowPaneCities.getChildren().add(mapCard);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
     private void updateCityCards(List<GCMMap> maps) {
         Platform.runLater(() -> {
             flowPaneCities.getChildren().clear(); // clean old card
@@ -74,7 +105,7 @@ public class CatalogPageController {
                     Parent card = loader.load();
 
                     CityCardController controller = loader.getController();
-                    controller.setData(map); // Injecting map and city data
+                    controller.setData(map, this); // Injecting map and city data
 
                     flowPaneCities.getChildren().add(card);
                 } catch (Exception e) {
