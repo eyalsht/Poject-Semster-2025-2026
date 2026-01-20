@@ -1,0 +1,36 @@
+Index: common/src/main/java/common/SupportRequest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package common;\r\n\r\nimport java.time.LocalDate;\r\npublic class SupportRequest\r\n{\r\n    private int id;\r\n    private String subject;\r\n    private String description;\r\n    private LocalDate date;\r\n    private LocalDate dateOpened ;\r\n    private RequestStatus status;\r\n    private String response;\r\n\r\n    public SupportRequest(int id, String subject, String description) {\r\n        this.id = id;\r\n        this.subject = subject;\r\n        this.description = description;\r\n        this.date = LocalDate.now();\r\n        this.status = RequestStatus.OPEN;\r\n        this.response = null;\r\n    }\r\n\r\n\r\n    public void closeRequest() {\r\n        this.status = RequestStatus.CLOSED;\r\n    }\r\n\r\n    public void setResponse(String answer) {\r\n        this.response = answer;\r\n    }\r\n\r\n    // getters (usually expected even if not drawn)\r\n    public int getId() {\r\n        return id;\r\n    }\r\n\r\n    public String getSubject() {\r\n        return subject;\r\n    }\r\n\r\n    public String getDescription() {\r\n        return description;\r\n    }\r\n\r\n    public LocalDate getDateOpened() {\r\n        return date;\r\n    }\r\n\r\n    public RequestStatus getStatus() {\r\n        return status;\r\n    }\r\n\r\n    public String getResponse() {\r\n        return response;\r\n    }\r\n}\r\n
+===================================================================
+diff --git a/common/src/main/java/common/SupportRequest.java b/common/src/main/java/common/SupportRequest.java
+--- a/common/src/main/java/common/SupportRequest.java	(revision af6210394a20de263769e7658303b4f4db7dbb0b)
++++ b/common/src/main/java/common/SupportRequest.java	(date 1768317457404)
+@@ -6,8 +6,7 @@
+     private int id;
+     private String subject;
+     private String description;
+-    private LocalDate date;
+-    private LocalDate dateOpened ;
++    private LocalDate dateOpened;
+     private RequestStatus status;
+     private String response;
+ 
+@@ -15,7 +14,7 @@
+         this.id = id;
+         this.subject = subject;
+         this.description = description;
+-        this.date = LocalDate.now();
++        this.dateOpened = LocalDate.now();
+         this.status = RequestStatus.OPEN;
+         this.response = null;
+     }
+@@ -43,7 +42,7 @@
+     }
+ 
+     public LocalDate getDateOpened() {
+-        return date;
++        return dateOpened;
+     }
+ 
+     public RequestStatus getStatus() {
