@@ -25,11 +25,14 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 import common.content.City; // NEW - Fixes "Cannot resolve symbol 'City'"
 import controllers.CityCardController; // NEW
 import controllers.MapCardController;
+
 /**
  * Controller for the catalog page.
  * Displays cities, maps, and allows filtering.
@@ -78,14 +81,14 @@ public class CatalogPageController {
 
             // Display maps of the selected city
             if (city.getMaps() != null) {
-                for (GCMMap map : city.getMaps()) {
+                for (GCMMap gcmMap : city.getMaps()) {
                     try {
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
                         Parent mapCard = loader.load();
 
                         // You will need a MapCardController for this
                         MapCardController controller = loader.getController();
-                        controller.setData(map);
+                        controller.setData(gcmMap);
 
                         flowPaneCities.getChildren().add(mapCard);
                     } catch (Exception e) {
@@ -99,19 +102,25 @@ public class CatalogPageController {
     private void updateCityCards(List<GCMMap> maps) {
         Platform.runLater(() -> {
             flowPaneCities.getChildren().clear(); // clean old card
-            for (GCMMap map : maps) {
-                try {
+            Set<Integer> displayedCityIds = new HashSet<>();
+
+            for (GCMMap gcmMap : maps) {
+                City city = gcmMap.getCity();
+                if (city != null && !displayedCityIds.contains(city.getId())){
+                    try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityCard.fxml"));
                     Parent card = loader.load();
 
                     CityCardController controller = loader.getController();
-                    controller.setData(map, this); // Injecting map and city data
+                    controller.setData(gcmMap, this); // Injecting map and city data
 
                     flowPaneCities.getChildren().add(card);
+                    displayedCityIds.add(city.getId());
                 } catch (Exception e) {
                     System.err.println("Error loading city card: " + e.getMessage());
                     e.printStackTrace();
                 }
+            }
             }
         });
     }

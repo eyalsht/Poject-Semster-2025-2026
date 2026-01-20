@@ -4,18 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="CityCard.fxml file creat">
-      <change afterPath="$PROJECT_DIR$/client/src/main/java/controllers/MapCardController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/MapCard.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/main/resources/images/cities/haifa.jpg" afterDir="false" />
+    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="עדכון CITY וCONT של הצגת ערים בקטלוג">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CatalogPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CatalogPageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CityCardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CityCardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/MapCardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/MapCardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/MapCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/MapCard.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/content/City.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/content/City.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/content/GCMMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/content/GCMMap.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,7 +41,7 @@
   }
 }</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -122,7 +117,7 @@
       <workItem from="1768210884883" duration="217000" />
       <workItem from="1768317433522" duration="767000" />
       <workItem from="1768475231119" duration="15893000" />
-      <workItem from="1768922350781" duration="3234000" />
+      <workItem from="1768922350781" duration="4428000" />
     </task>
     <task id="LOCAL‎-00001" summary="Delete of SRC folder in general project">
       <option name="closed" value="true" />
@@ -212,7 +207,15 @@
       <option name="project" value="LOCAL‎" />
       <updated>1768922432657</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL‎-00012" summary="עדכון CITY וCONT של הצגת ערים בקטלוג">
+      <option name="closed" value="true" />
+      <created>1768925775774</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL‎-00012" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1768925775774</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -238,7 +241,8 @@
     <MESSAGE value="עריכת הקטלוג מטבלה לתצוגת כרטיסים, מבלי לערוך את המופע של כרטיס עיר. עריכת CITY שתכיל מפה" />
     <MESSAGE value="תיקון למתודה onUpdateMap" />
     <MESSAGE value="CityCard.fxml file creat" />
-    <option name="LAST_COMMIT_MESSAGE" value="CityCard.fxml file creat" />
+    <MESSAGE value="עדכון CITY וCONT של הצגת ערים בקטלוג" />
+    <option name="LAST_COMMIT_MESSAGE" value="עדכון CITY וCONT של הצגת ערים בקטלוג" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
