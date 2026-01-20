@@ -63,6 +63,9 @@ public class HomePageController
     }
 
     @FXML
+    private void onReports() {showPage("/GUI/ReportPage.fxml");}
+
+    @FXML
     private void onLoginOrProfile()
     {
 
@@ -197,5 +200,6 @@ public class HomePageController
         updateUI();
         showPage("/GUI/WelcomePage.fxml");
     }
+
 
 }
