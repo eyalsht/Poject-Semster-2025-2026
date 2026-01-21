@@ -2,94 +2,159 @@
 <dataSource name="gcm_db@localhost">
   <database-model serializer="dbm" dbms="MYSQL" family-id="MYSQL" format-version="4.53">
     <root id="1">
-      <DefaultCasing>lower/lower</DefaultCasing>
+      <DefaultCasing>exact</DefaultCasing>
       <DefaultEngine>InnoDB</DefaultEngine>
       <DefaultTmpEngine>InnoDB</DefaultTmpEngine>
-      <Grants>|root||root|localhost|ALTER|G
+      <Grants>|root||debian-sys-maint|localhost|ALTER|G
+|root||root|localhost|ALTER|G
+|root||debian-sys-maint|localhost|ALTER ROUTINE|G
 |root||root|localhost|ALTER ROUTINE|G
+|root||debian-sys-maint|localhost|APPLICATION_PASSWORD_ADMIN|G
 |root||root|localhost|APPLICATION_PASSWORD_ADMIN|G
 |root||mysql.infoschema|localhost|AUDIT_ABORT_EXEMPT|G
 |root||mysql.session|localhost|AUDIT_ABORT_EXEMPT|G
 |root||mysql.sys|localhost|AUDIT_ABORT_EXEMPT|G
 |root||root|localhost|AUDIT_ABORT_EXEMPT|G
+|root||debian-sys-maint|localhost|AUDIT_ADMIN|G
 |root||root|localhost|AUDIT_ADMIN|G
+|root||debian-sys-maint|localhost|AUTHENTICATION_POLICY_ADMIN|G
 |root||mysql.session|localhost|AUTHENTICATION_POLICY_ADMIN|G
 |root||root|localhost|AUTHENTICATION_POLICY_ADMIN|G
+|root||debian-sys-maint|localhost|BACKUP_ADMIN|G
 |root||mysql.session|localhost|BACKUP_ADMIN|G
 |root||root|localhost|BACKUP_ADMIN|G
+|root||debian-sys-maint|localhost|BINLOG_ADMIN|G
 |root||root|localhost|BINLOG_ADMIN|G
+|root||debian-sys-maint|localhost|BINLOG_ENCRYPTION_ADMIN|G
 |root||root|localhost|BINLOG_ENCRYPTION_ADMIN|G
+|root||debian-sys-maint|localhost|CLONE_ADMIN|G
 |root||mysql.session|localhost|CLONE_ADMIN|G
 |root||root|localhost|CLONE_ADMIN|G
+|root||debian-sys-maint|localhost|CONNECTION_ADMIN|G
 |root||mysql.session|localhost|CONNECTION_ADMIN|G
 |root||root|localhost|CONNECTION_ADMIN|G
+|root||debian-sys-maint|localhost|CREATE|G
 |root||root|localhost|CREATE|G
+|root||debian-sys-maint|localhost|CREATE ROLE|G
 |root||root|localhost|CREATE ROLE|G
+|root||debian-sys-maint|localhost|CREATE ROUTINE|G
 |root||root|localhost|CREATE ROUTINE|G
+|root||debian-sys-maint|localhost|CREATE TABLESPACE|G
 |root||root|localhost|CREATE TABLESPACE|G
+|root||debian-sys-maint|localhost|CREATE TEMPORARY TABLES|G
 |root||root|localhost|CREATE TEMPORARY TABLES|G
+|root||debian-sys-maint|localhost|CREATE USER|G
 |root||root|localhost|CREATE USER|G
+|root||debian-sys-maint|localhost|CREATE VIEW|G
 |root||root|localhost|CREATE VIEW|G
+|root||debian-sys-maint|localhost|DELETE|G
 |root||root|localhost|DELETE|G
+|root||debian-sys-maint|localhost|DROP|G
 |root||root|localhost|DROP|G
+|root||debian-sys-maint|localhost|DROP ROLE|G
 |root||root|localhost|DROP ROLE|G
+|root||debian-sys-maint|localhost|ENCRYPTION_KEY_ADMIN|G
 |root||root|localhost|ENCRYPTION_KEY_ADMIN|G
+|root||debian-sys-maint|localhost|EVENT|G
 |root||root|localhost|EVENT|G
+|root||debian-sys-maint|localhost|EXECUTE|G
 |root||root|localhost|EXECUTE|G
+|root||debian-sys-maint|localhost|FILE|G
 |root||root|localhost|FILE|G
 |root||mysql.infoschema|localhost|FIREWALL_EXEMPT|G
 |root||mysql.session|localhost|FIREWALL_EXEMPT|G
 |root||mysql.sys|localhost|FIREWALL_EXEMPT|G
 |root||root|localhost|FIREWALL_EXEMPT|G
+|root||debian-sys-maint|localhost|FLUSH_OPTIMIZER_COSTS|G
 |root||root|localhost|FLUSH_OPTIMIZER_COSTS|G
+|root||debian-sys-maint|localhost|FLUSH_STATUS|G
 |root||root|localhost|FLUSH_STATUS|G
+|root||debian-sys-maint|localhost|FLUSH_TABLES|G
 |root||root|localhost|FLUSH_TABLES|G
+|root||debian-sys-maint|localhost|FLUSH_USER_RESOURCES|G
 |root||root|localhost|FLUSH_USER_RESOURCES|G
+|root||debian-sys-maint|localhost|GROUP_REPLICATION_ADMIN|G
 |root||root|localhost|GROUP_REPLICATION_ADMIN|G
+|root||debian-sys-maint|localhost|GROUP_REPLICATION_STREAM|G
 |root||root|localhost|GROUP_REPLICATION_STREAM|G
+|root||debian-sys-maint|localhost|INDEX|G
 |root||root|localhost|INDEX|G
+|root||debian-sys-maint|localhost|INNODB_REDO_LOG_ARCHIVE|G
 |root||root|localhost|INNODB_REDO_LOG_ARCHIVE|G
+|root||debian-sys-maint|localhost|INNODB_REDO_LOG_ENABLE|G
 |root||root|localhost|INNODB_REDO_LOG_ENABLE|G
+|root||debian-sys-maint|localhost|INSERT|G
 |root||root|localhost|INSERT|G
+|root||debian-sys-maint|localhost|LOCK TABLES|G
 |root||root|localhost|LOCK TABLES|G
+|root||debian-sys-maint|localhost|PASSWORDLESS_USER_ADMIN|G
 |root||root|localhost|PASSWORDLESS_USER_ADMIN|G
+|root||debian-sys-maint|localhost|PERSIST_RO_VARIABLES_ADMIN|G
 |root||mysql.session|localhost|PERSIST_RO_VARIABLES_ADMIN|G
 |root||root|localhost|PERSIST_RO_VARIABLES_ADMIN|G
+|root||debian-sys-maint|localhost|PROCESS|G
 |root||root|localhost|PROCESS|G
+|root||debian-sys-maint|localhost|REFERENCES|G
 |root||root|localhost|REFERENCES|G
+|root||debian-sys-maint|localhost|RELOAD|G
 |root||root|localhost|RELOAD|G
+|root||debian-sys-maint|localhost|REPLICATION CLIENT|G
 |root||root|localhost|REPLICATION CLIENT|G
+|root||debian-sys-maint|localhost|REPLICATION SLAVE|G
 |root||root|localhost|REPLICATION SLAVE|G
+|root||debian-sys-maint|localhost|REPLICATION_APPLIER|G
 |root||root|localhost|REPLICATION_APPLIER|G
+|root||debian-sys-maint|localhost|REPLICATION_SLAVE_ADMIN|G
 |root||root|localhost|REPLICATION_SLAVE_ADMIN|G
+|root||debian-sys-maint|localhost|RESOURCE_GROUP_ADMIN|G
 |root||root|localhost|RESOURCE_GROUP_ADMIN|G
+|root||debian-sys-maint|localhost|RESOURCE_GROUP_USER|G
 |root||root|localhost|RESOURCE_GROUP_USER|G
+|root||debian-sys-maint|localhost|ROLE_ADMIN|G
 |root||root|localhost|ROLE_ADMIN|G
+|root||debian-sys-maint|localhost|SELECT|G
 |root||mysql.infoschema|localhost|SELECT|G
 |root||root|localhost|SELECT|G
+|root||debian-sys-maint|localhost|SENSITIVE_VARIABLES_OBSERVER|G
 |root||root|localhost|SENSITIVE_VARIABLES_OBSERVER|G
+|root||debian-sys-maint|localhost|SERVICE_CONNECTION_ADMIN|G
 |root||root|localhost|SERVICE_CONNECTION_ADMIN|G
+|root||debian-sys-maint|localhost|SESSION_VARIABLES_ADMIN|G
 |root||mysql.session|localhost|SESSION_VARIABLES_ADMIN|G
 |root||root|localhost|SESSION_VARIABLES_ADMIN|G
+|root||debian-sys-maint|localhost|SET_USER_ID|G
 |root||root|localhost|SET_USER_ID|G
+|root||debian-sys-maint|localhost|SHOW DATABASES|G
 |root||root|localhost|SHOW DATABASES|G
+|root||debian-sys-maint|localhost|SHOW VIEW|G
 |root||root|localhost|SHOW VIEW|G
+|root||debian-sys-maint|localhost|SHOW_ROUTINE|G
 |root||root|localhost|SHOW_ROUTINE|G
+|root||debian-sys-maint|localhost|SHUTDOWN|G
 |root||mysql.session|localhost|SHUTDOWN|G
 |root||root|localhost|SHUTDOWN|G
+|root||debian-sys-maint|localhost|SUPER|G
 |root||mysql.session|localhost|SUPER|G
 |root||root|localhost|SUPER|G
+|root||debian-sys-maint|localhost|SYSTEM_USER|G
 |root||mysql.infoschema|localhost|SYSTEM_USER|G
 |root||mysql.session|localhost|SYSTEM_USER|G
 |root||mysql.sys|localhost|SYSTEM_USER|G
 |root||root|localhost|SYSTEM_USER|G
+|root||debian-sys-maint|localhost|SYSTEM_VARIABLES_ADMIN|G
 |root||mysql.session|localhost|SYSTEM_VARIABLES_ADMIN|G
 |root||root|localhost|SYSTEM_VARIABLES_ADMIN|G
+|root||debian-sys-maint|localhost|TABLE_ENCRYPTION_ADMIN|G
 |root||root|localhost|TABLE_ENCRYPTION_ADMIN|G
+|root||debian-sys-maint|localhost|TELEMETRY_LOG_ADMIN|G
 |root||root|localhost|TELEMETRY_LOG_ADMIN|G
+|root||debian-sys-maint|localhost|TRIGGER|G
 |root||root|localhost|TRIGGER|G
+|root||debian-sys-maint|localhost|UPDATE|G
 |root||root|localhost|UPDATE|G
+|root||debian-sys-maint|localhost|XA_RECOVER_ADMIN|G
 |root||root|localhost|XA_RECOVER_ADMIN|G
+|root||debian-sys-maint|localhost|grant option|G
 |root||root|localhost|grant option|G
 performance_schema|schema||mysql.session|localhost|SELECT|G
 sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
@@ -996,211 +1061,750 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     </collation>
     <schema id="288" parent="1" name="gcm_db">
       <Current>1</Current>
-      <LastIntrospectionLocalTimestamp>2026-01-20.20:16:30</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2026-01-21.10:31:12</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="289" parent="1" name="information_schema">
       <CollationName>utf8mb3_general_ci</CollationName>
     </schema>
-    <schema id="290" parent="1" name="lab5">
+    <schema id="290" parent="1" name="mysql">
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
-    <schema id="291" parent="1" name="lab5db">
+    <schema id="291" parent="1" name="performance_schema">
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
-    <schema id="292" parent="1" name="lab8_schema">
+    <schema id="292" parent="1" name="sys">
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
-    <schema id="293" parent="1" name="localhost:3306/myfirstdatabase">
-      <CollationName>utf8mb4_0900_ai_ci</CollationName>
-    </schema>
-    <schema id="294" parent="1" name="myfirstdatabase">
-      <CollationName>utf8mb4_0900_ai_ci</CollationName>
-    </schema>
-    <schema id="295" parent="1" name="myfirstdb">
-      <CollationName>utf8mb4_0900_ai_ci</CollationName>
-    </schema>
-    <schema id="296" parent="1" name="mysql">
-      <CollationName>utf8mb4_0900_ai_ci</CollationName>
-    </schema>
-    <schema id="297" parent="1" name="performance_schema">
-      <CollationName>utf8mb4_0900_ai_ci</CollationName>
-    </schema>
-    <schema id="298" parent="1" name="sys">
-      <CollationName>utf8mb4_0900_ai_ci</CollationName>
-    </schema>
-    <user id="299" parent="1" name="mysql.infoschema">
+    <user id="293" parent="1" name="debian-sys-maint">
+      <Host>localhost</Host>
+      <Plugin>caching_sha2_password</Plugin>
+    </user>
+    <user id="294" parent="1" name="mysql.infoschema">
       <CanLogin>0</CanLogin>
       <Host>localhost</Host>
       <Plugin>caching_sha2_password</Plugin>
     </user>
-    <user id="300" parent="1" name="mysql.session">
+    <user id="295" parent="1" name="mysql.session">
       <CanLogin>0</CanLogin>
       <Host>localhost</Host>
       <Plugin>caching_sha2_password</Plugin>
     </user>
-    <user id="301" parent="1" name="mysql.sys">
+    <user id="296" parent="1" name="mysql.sys">
       <CanLogin>0</CanLogin>
       <Host>localhost</Host>
       <Plugin>caching_sha2_password</Plugin>
     </user>
-    <user id="302" parent="1" name="root">
+    <user id="297" parent="1" name="root">
       <Host>localhost</Host>
-      <Plugin>caching_sha2_password</Plugin>
     </user>
-    <table id="303" parent="288" name="cities">
+    <table id="298" parent="288" name="cities">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="304" parent="288" name="maps">
+    <table id="299" parent="288" name="clients">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="305" parent="288" name="users">
+    <table id="300" parent="288" name="employees">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <column id="306" parent="303" name="id">
+    <table id="301" parent="288" name="map_sites">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="302" parent="288" name="maps">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="303" parent="288" name="pending_content_requests">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="304" parent="288" name="pending_price_updates">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="305" parent="288" name="purchased_map_snapshots">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="306" parent="288" name="purchases">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="307" parent="288" name="sites">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="308" parent="288" name="tour_sites">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="309" parent="288" name="tours">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <table id="310" parent="288" name="users">
+      <Engine>InnoDB</Engine>
+      <CollationName>utf8mb4_0900_ai_ci</CollationName>
+    </table>
+    <column id="311" parent="298" name="id">
+      <AutoIncrement>5</AutoIncrement>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="312" parent="298" name="description">
+      <Position>2</Position>
+      <StoredType>text|0s</StoredType>
+    </column>
+    <column id="313" parent="298" name="name">
+      <Position>3</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="314" parent="298" name="price_sub">
+      <Position>4</Position>
+      <StoredType>double|0s</StoredType>
+    </column>
+    <column id="315" parent="298" name="image">
+      <Position>5</Position>
+      <StoredType>longblob|0s</StoredType>
+    </column>
+    <column id="316" parent="298" name="image_path">
+      <Position>6</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <index id="317" parent="298" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <key id="318" parent="298" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="319" parent="299" name="credit_card">
+      <Position>1</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="320" parent="299" name="credit_card_token">
+      <Position>2</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="321" parent="299" name="phone_number">
+      <Position>3</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="322" parent="299" name="subscription_expiry">
+      <Position>4</Position>
+      <StoredType>date|0s</StoredType>
+    </column>
+    <column id="323" parent="299" name="id">
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <foreign-key id="324" parent="299" name="FK1hgwdp9vl25xl9i7s354sifey">
+      <ColNames>id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>users</RefTableName>
+    </foreign-key>
+    <index id="325" parent="299" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <key id="326" parent="299" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="327" parent="300" name="job_role">
+      <Position>1</Position>
+      <StoredType>enum(&apos;CONTENT_MANAGER&apos;, &apos;COMPANY_MANAGER&apos;, &apos;CONTENT_WORKER&apos;, &apos;SUPPORT_AGENT&apos;)|0e</StoredType>
+    </column>
+    <column id="328" parent="300" name="id">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <foreign-key id="329" parent="300" name="FKd6th9xowehhf1kmmq1dsseq28">
+      <ColNames>id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>users</RefTableName>
+    </foreign-key>
+    <index id="330" parent="300" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <key id="331" parent="300" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="332" parent="301" name="map_id">
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="333" parent="301" name="site_id">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <foreign-key id="334" parent="301" name="FKebki10it4peo2agplslkmk9n0">
+      <ColNames>map_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>maps</RefTableName>
+    </foreign-key>
+    <foreign-key id="335" parent="301" name="FKlhi4qhoyoqdnv0yxo97ukmtdp">
+      <ColNames>site_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>sites</RefTableName>
+    </foreign-key>
+    <index id="336" parent="301" name="FKebki10it4peo2agplslkmk9n0">
+      <ColNames>map_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="337" parent="301" name="FKlhi4qhoyoqdnv0yxo97ukmtdp">
+      <ColNames>site_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <column id="338" parent="302" name="id">
       <AutoIncrement>6</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="307" parent="303" name="city_name">
-      <NotNull>1</NotNull>
+    <column id="339" parent="302" name="description">
       <Position>2</Position>
+      <StoredType>text|0s</StoredType>
+    </column>
+    <column id="340" parent="302" name="name">
+      <Position>3</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="308" parent="303" name="number_of_maps">
-      <DefaultExpression>0</DefaultExpression>
-      <Position>3</Position>
-      <StoredType>int|0s</StoredType>
-    </column>
-    <column id="309" parent="303" name="price_one_time">
+    <column id="341" parent="302" name="image">
       <Position>4</Position>
-      <StoredType>double|0s</StoredType>
+      <StoredType>longblob|0s</StoredType>
     </column>
-    <column id="310" parent="303" name="price_sub">
+    <column id="342" parent="302" name="price">
       <Position>5</Position>
       <StoredType>double|0s</StoredType>
     </column>
-    <column id="311" parent="303" name="pending_price_one_time">
-      <DefaultExpression>-1</DefaultExpression>
+    <column id="343" parent="302" name="status">
       <Position>6</Position>
-      <StoredType>double|0s</StoredType>
+      <StoredType>enum(&apos;ADD&apos;, &apos;UPDATE&apos;, &apos;PRICE_UPDATE_REQUEST&apos;, &apos;APPROVAL_REVIEW&apos;, &apos;PUBLISHED&apos;)|0e</StoredType>
     </column>
-    <column id="312" parent="303" name="pending_price_sub">
-      <DefaultExpression>-1</DefaultExpression>
+    <column id="344" parent="302" name="version">
       <Position>7</Position>
-      <StoredType>double|0s</StoredType>
-    </column>
-    <column id="313" parent="303" name="image_path">
-      <Position>8</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <index id="314" parent="303" name="PRIMARY">
+    <column id="345" parent="302" name="city_id">
+      <NotNull>1</NotNull>
+      <Position>8</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="346" parent="302" name="image_path">
+      <Position>9</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <foreign-key id="347" parent="302" name="FKtroe8nxxxif1h7el96hpq6hxu">
+      <ColNames>city_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>cities</RefTableName>
+    </foreign-key>
+    <index id="348" parent="302" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="315" parent="303" name="PRIMARY">
+    <index id="349" parent="302" name="FKtroe8nxxxif1h7el96hpq6hxu">
+      <ColNames>city_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="350" parent="302" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="316" parent="304" name="id">
+    <column id="351" parent="303" name="id">
+      <AutoIncrement>15</AutoIncrement>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="352" parent="303" name="action_type">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>enum(&apos;ADD&apos;, &apos;EDIT&apos;, &apos;DELETE&apos;)|0e</StoredType>
+    </column>
+    <column id="353" parent="303" name="content_details">
+      <Position>3</Position>
+      <StoredType>text|0s</StoredType>
+    </column>
+    <column id="354" parent="303" name="content_type">
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <StoredType>enum(&apos;MAP&apos;, &apos;SITE&apos;, &apos;TOUR&apos;)|0e</StoredType>
+    </column>
+    <column id="355" parent="303" name="created_at">
+      <Position>5</Position>
+      <StoredType>datetime(6)|0s</StoredType>
+    </column>
+    <column id="356" parent="303" name="processed_at">
+      <Position>6</Position>
+      <StoredType>datetime(6)|0s</StoredType>
+    </column>
+    <column id="357" parent="303" name="status">
+      <Position>7</Position>
+      <StoredType>enum(&apos;OPEN&apos;, &apos;IN_PROGRESS&apos;, &apos;CLOSED&apos;, &apos;APPROVED&apos;, &apos;DENIED&apos;)|0e</StoredType>
+    </column>
+    <column id="358" parent="303" name="target_id">
+      <Position>8</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="359" parent="303" name="target_name">
+      <Position>9</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="360" parent="303" name="processed_by_user_id">
+      <Position>10</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="361" parent="303" name="requester_user_id">
+      <Position>11</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <foreign-key id="362" parent="303" name="FKi9xiv857l50hxu1foue0vp3jb">
+      <ColNames>processed_by_user_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>users</RefTableName>
+    </foreign-key>
+    <foreign-key id="363" parent="303" name="FKbca89jth1mubt4p0mr4vblou6">
+      <ColNames>requester_user_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>users</RefTableName>
+    </foreign-key>
+    <index id="364" parent="303" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="365" parent="303" name="FKi9xiv857l50hxu1foue0vp3jb">
+      <ColNames>processed_by_user_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="366" parent="303" name="FKbca89jth1mubt4p0mr4vblou6">
+      <ColNames>requester_user_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="367" parent="303" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="368" parent="304" name="id">
+      <AutoIncrement>5</AutoIncrement>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="369" parent="304" name="created_at">
+      <Position>2</Position>
+      <StoredType>datetime(6)|0s</StoredType>
+    </column>
+    <column id="370" parent="304" name="new_price">
+      <Position>3</Position>
+      <StoredType>double|0s</StoredType>
+    </column>
+    <column id="371" parent="304" name="old_price">
+      <Position>4</Position>
+      <StoredType>double|0s</StoredType>
+    </column>
+    <column id="372" parent="304" name="status">
+      <Position>5</Position>
+      <StoredType>enum(&apos;OPEN&apos;, &apos;IN_PROGRESS&apos;, &apos;CLOSED&apos;)|0e</StoredType>
+    </column>
+    <column id="373" parent="304" name="map_id">
+      <NotNull>1</NotNull>
+      <Position>6</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="374" parent="304" name="requester_user_id">
+      <Position>7</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <foreign-key id="375" parent="304" name="FK7q8bdb26uxvx02siqf5ryt1dg">
+      <ColNames>map_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>maps</RefTableName>
+    </foreign-key>
+    <foreign-key id="376" parent="304" name="FK5i4uegc90ctxaeb912ygru9n2">
+      <ColNames>requester_user_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>users</RefTableName>
+    </foreign-key>
+    <index id="377" parent="304" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="378" parent="304" name="FK7q8bdb26uxvx02siqf5ryt1dg">
+      <ColNames>map_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="379" parent="304" name="FK5i4uegc90ctxaeb912ygru9n2">
+      <ColNames>requester_user_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="380" parent="304" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="381" parent="305" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="317" parent="304" name="city_id">
+    <column id="382" parent="305" name="city_name">
+      <Position>2</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="383" parent="305" name="description">
+      <Position>3</Position>
+      <StoredType>text|0s</StoredType>
+    </column>
+    <column id="384" parent="305" name="map_image_data">
+      <Position>4</Position>
+      <StoredType>tinyblob|0s</StoredType>
+    </column>
+    <column id="385" parent="305" name="map_name">
+      <Position>5</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="386" parent="305" name="price_paid">
+      <Position>6</Position>
+      <StoredType>double|0s</StoredType>
+    </column>
+    <column id="387" parent="305" name="purchase_date">
+      <Position>7</Position>
+      <StoredType>date|0s</StoredType>
+    </column>
+    <column id="388" parent="305" name="purchased_version">
+      <Position>8</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="389" parent="305" name="client_id">
+      <NotNull>1</NotNull>
+      <Position>9</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="390" parent="305" name="original_map_id">
+      <Position>10</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <foreign-key id="391" parent="305" name="FK8yyff7ql9cs4hntbd1qe5fwvb">
+      <ColNames>client_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>clients</RefTableName>
+    </foreign-key>
+    <foreign-key id="392" parent="305" name="FK9n0gfikmjgxrqxb8knnebuk4b">
+      <ColNames>original_map_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>maps</RefTableName>
+    </foreign-key>
+    <index id="393" parent="305" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="394" parent="305" name="FK8yyff7ql9cs4hntbd1qe5fwvb">
+      <ColNames>client_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="395" parent="305" name="FK9n0gfikmjgxrqxb8knnebuk4b">
+      <ColNames>original_map_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="396" parent="305" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="397" parent="306" name="purchase_type">
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>varchar(31)|0s</StoredType>
+    </column>
+    <column id="398" parent="306" name="id">
+      <AutoIncrement>1</AutoIncrement>
+      <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="318" parent="304" name="description">
+    <column id="399" parent="306" name="price">
       <Position>3</Position>
-      <StoredType>varchar(255)|0s</StoredType>
-    </column>
-    <column id="319" parent="304" name="version">
-      <DefaultExpression>1</DefaultExpression>
-      <Position>4</Position>
       <StoredType>double|0s</StoredType>
     </column>
-    <column id="320" parent="304" name="status">
-      <DefaultExpression>&apos;DRAFT&apos;</DefaultExpression>
-      <Position>5</Position>
-      <StoredType>enum(&apos;DRAFT&apos;, &apos;PENDING_APPROVAL&apos;, &apos;PUBLISHED&apos;, &apos;ARCHIVED&apos;)|0e</StoredType>
+    <column id="400" parent="306" name="purchase_date">
+      <Position>4</Position>
+      <StoredType>date|0s</StoredType>
     </column>
-    <foreign-key id="321" parent="304" name="maps_ibfk_1">
+    <column id="401" parent="306" name="expiration_date">
+      <Position>5</Position>
+      <StoredType>date|0s</StoredType>
+    </column>
+    <column id="402" parent="306" name="purchased_version">
+      <Position>6</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="403" parent="306" name="city_id">
+      <Position>7</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="404" parent="306" name="user_id">
+      <NotNull>1</NotNull>
+      <Position>8</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="405" parent="306" name="map_id">
+      <NotNull>1</NotNull>
+      <Position>9</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="406" parent="306" name="snapshot_id">
+      <Position>10</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <foreign-key id="407" parent="306" name="FKd2uop44xilh8ak9767jofcfnh">
       <ColNames>city_id</ColNames>
       <RefColNames>id</RefColNames>
       <RefTableName>cities</RefTableName>
     </foreign-key>
-    <index id="322" parent="304" name="PRIMARY">
+    <foreign-key id="408" parent="306" name="FKm0ndjymn9p747pfp4515pio8i">
+      <ColNames>user_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>users</RefTableName>
+    </foreign-key>
+    <foreign-key id="409" parent="306" name="FKf1gjtwyql5x9mvbjau7d571ob">
+      <ColNames>map_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>maps</RefTableName>
+    </foreign-key>
+    <foreign-key id="410" parent="306" name="FK14jb4k92ene3tl47jayc23aal">
+      <ColNames>snapshot_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>purchased_map_snapshots</RefTableName>
+    </foreign-key>
+    <index id="411" parent="306" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="323" parent="304" name="city_id">
+    <index id="412" parent="306" name="UK_lyvbx04x2je7rau75rawd5nvl">
+      <ColNames>snapshot_id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="413" parent="306" name="FKd2uop44xilh8ak9767jofcfnh">
       <ColNames>city_id</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="324" parent="304" name="PRIMARY">
+    <index id="414" parent="306" name="FKm0ndjymn9p747pfp4515pio8i">
+      <ColNames>user_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="415" parent="306" name="FKf1gjtwyql5x9mvbjau7d571ob">
+      <ColNames>map_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="416" parent="306" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="325" parent="305" name="id">
-      <AutoIncrement>2</AutoIncrement>
+    <key id="417" parent="306" name="UK_lyvbx04x2je7rau75rawd5nvl">
+      <UnderlyingIndexName>UK_lyvbx04x2je7rau75rawd5nvl</UnderlyingIndexName>
+    </key>
+    <column id="418" parent="307" name="id">
+      <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="326" parent="305" name="username">
-      <NotNull>1</NotNull>
+    <column id="419" parent="307" name="description">
       <Position>2</Position>
-      <StoredType>varchar(255)|0s</StoredType>
+      <StoredType>text|0s</StoredType>
     </column>
-    <column id="327" parent="305" name="password">
-      <NotNull>1</NotNull>
+    <column id="420" parent="307" name="name">
       <Position>3</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="328" parent="305" name="first_name">
+    <column id="421" parent="307" name="category">
       <Position>4</Position>
-      <StoredType>varchar(255)|0s</StoredType>
+      <StoredType>enum(&apos;MUSEUM&apos;, &apos;HISTORICAL&apos;, &apos;PARK&apos;, &apos;PUBLIC_INSTITUTION&apos;, &apos;RESTAURANT&apos;, &apos;HOTEL&apos;)|0e</StoredType>
     </column>
-    <column id="329" parent="305" name="last_name">
+    <column id="422" parent="307" name="is_accessible">
       <Position>5</Position>
-      <StoredType>varchar(255)|0s</StoredType>
+      <StoredType>bit(1)|0s</StoredType>
     </column>
-    <column id="330" parent="305" name="email">
+    <column id="423" parent="307" name="location">
       <Position>6</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="331" parent="305" name="role">
-      <NotNull>1</NotNull>
+    <column id="424" parent="307" name="recommended_visit_duration">
       <Position>7</Position>
-      <StoredType>enum(&apos;CLIENT&apos;, &apos;EMPLOYEE&apos;, &apos;CONTENT_MANAGER&apos;, &apos;COMPANY_MANAGER&apos;)|0e</StoredType>
+      <StoredType>double|0s</StoredType>
     </column>
-    <index id="332" parent="305" name="PRIMARY">
+    <column id="425" parent="307" name="city_id">
+      <NotNull>1</NotNull>
+      <Position>8</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <foreign-key id="426" parent="307" name="FKho81y7787kgpngjsnguci78wj">
+      <ColNames>city_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>cities</RefTableName>
+    </foreign-key>
+    <index id="427" parent="307" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="333" parent="305" name="username">
-      <ColNames>username</ColNames>
+    <index id="428" parent="307" name="FKho81y7787kgpngjsnguci78wj">
+      <ColNames>city_id</ColNames>
       <Type>btree</Type>
-      <Unique>1</Unique>
     </index>
-    <key id="334" parent="305" name="PRIMARY">
+    <key id="429" parent="307" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="335" parent="305" name="username">
-      <UnderlyingIndexName>username</UnderlyingIndexName>
+    <column id="430" parent="308" name="tour_id">
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="431" parent="308" name="site_id">
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <foreign-key id="432" parent="308" name="FKb6wll3j1qa9r1tx3us6v995ci">
+      <ColNames>tour_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>tours</RefTableName>
+    </foreign-key>
+    <foreign-key id="433" parent="308" name="FKexavx7dx3t095cwxtnchfgrv1">
+      <ColNames>site_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>sites</RefTableName>
+    </foreign-key>
+    <index id="434" parent="308" name="FKb6wll3j1qa9r1tx3us6v995ci">
+      <ColNames>tour_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <index id="435" parent="308" name="FKexavx7dx3t095cwxtnchfgrv1">
+      <ColNames>site_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <column id="436" parent="309" name="id">
+      <AutoIncrement>1</AutoIncrement>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="437" parent="309" name="description">
+      <Position>2</Position>
+      <StoredType>text|0s</StoredType>
+    </column>
+    <column id="438" parent="309" name="name">
+      <Position>3</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="439" parent="309" name="recommended_duration">
+      <Position>4</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="440" parent="309" name="city_id">
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <foreign-key id="441" parent="309" name="FKh9ndi8yxdgq89t7u1n6knna45">
+      <ColNames>city_id</ColNames>
+      <RefColNames>id</RefColNames>
+      <RefTableName>cities</RefTableName>
+    </foreign-key>
+    <index id="442" parent="309" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="443" parent="309" name="FKh9ndi8yxdgq89t7u1n6knna45">
+      <ColNames>city_id</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="444" parent="309" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="445" parent="310" name="user_type">
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <StoredType>varchar(31)|0s</StoredType>
+    </column>
+    <column id="446" parent="310" name="id">
+      <AutoIncrement>1</AutoIncrement>
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="447" parent="310" name="email">
+      <Position>3</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="448" parent="310" name="failed_attempts">
+      <Position>4</Position>
+      <StoredType>int|0s</StoredType>
+    </column>
+    <column id="449" parent="310" name="first_name">
+      <Position>5</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="450" parent="310" name="is_blocked">
+      <Position>6</Position>
+      <StoredType>bit(1)|0s</StoredType>
+    </column>
+    <column id="451" parent="310" name="last_name">
+      <Position>7</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="452" parent="310" name="password">
+      <Position>8</Position>
+      <StoredType>varchar(255)|0s</StoredType>
+    </column>
+    <column id="453" parent="310" name="username">
+      <Position>9</Position>
+      <StoredType>varchar(50)|0s</StoredType>
+    </column>
+    <index id="454" parent="310" name="PRIMARY">
+      <ColNames>id</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <key id="455" parent="310" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
   </database-model>
 </dataSource>

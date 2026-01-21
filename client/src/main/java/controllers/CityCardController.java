@@ -31,7 +31,7 @@ public class CityCardController {
             if (city.getImagePath() != null && !city.getImagePath().isEmpty()) {
                 try {
                     // Generates the path: /images/paris.png
-                    String path = "/images/cities/" + city.getImagePath() +".png/";
+                    String path = "/images/cities/" + city.getImagePath() +".png";
                     System.out.println("path: " + path);
                     Image img = new Image(getClass().getResourceAsStream(path));
                     imgCity.setImage(img);

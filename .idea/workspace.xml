@@ -4,10 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="עדכון שלא יופיע 3 פעמים חיפה - מופע אחד לכל עיר">
+    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="נסיונות כושלים לגרום לתמונה להופיע בכרטיס עיר">
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/729b47dd-fb31-4a2c-8d61-cdf5fbd692aa.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/729b47dd-fb31-4a2c-8d61-cdf5fbd692aa.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/module-info.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/module-info.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CityCardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CityCardController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/CityCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/CityCard.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/images/cities/Haifaimg.png" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/images/cities/Haifaimg.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CityCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/CityCard.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/images/cities/Haifaimg.png" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/images/cities/Haifaimg.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/legacy/gcm_db_cities.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/legacy/gcm_db_cities.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/server.iml" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,6 +70,7 @@
     "Maven.server [install].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/ronia/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Scene Builder/SceneBuilder.lnk",
@@ -258,7 +269,23 @@
       <option name="project" value="LOCAL‎" />
       <updated>1768926889804</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL‎-00015" summary="נסיונות כושלים לגרום לתמונה להופיע בכרטיס עיר">
+      <option name="closed" value="true" />
+      <created>1768942253135</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL‎-00015" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1768942253135</updated>
+    </task>
+    <task id="LOCAL‎-00016" summary="נסיונות כושלים לגרום לתמונה להופיע בכרטיס עיר">
+      <option name="closed" value="true" />
+      <created>1768942277034</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL‎-00016" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1768942277034</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -286,7 +313,8 @@
     <MESSAGE value="CityCard.fxml file creat" />
     <MESSAGE value="עדכון CITY וCONT של הצגת ערים בקטלוג" />
     <MESSAGE value="עדכון שלא יופיע 3 פעמים חיפה - מופע אחד לכל עיר" />
-    <option name="LAST_COMMIT_MESSAGE" value="עדכון שלא יופיע 3 פעמים חיפה - מופע אחד לכל עיר" />
+    <MESSAGE value="נסיונות כושלים לגרום לתמונה להופיע בכרטיס עיר" />
+    <option name="LAST_COMMIT_MESSAGE" value="נסיונות כושלים לגרום לתמונה להופיע בכרטיס עיר" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">

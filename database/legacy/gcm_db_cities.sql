@@ -46,6 +46,7 @@ INSERT INTO `cities` VALUES (1,'Haifa',9,25.9,75.9,-1,-1, 'Haifaimg')
                           ,(3,'Tel Aviv',3,35.9,100.9,-1,-1, NULL)
                           ,(4,'Carmiel',12,4.9,12.9,-1,-1, NULL)
                           ,(5,'Holon',2,13.9,35.9,-1,-1, NULL);
+UPDATE cities SET image_path = 'Haifaimg' WHERE id = 1;
 /*!40000 ALTER TABLE `cities` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
