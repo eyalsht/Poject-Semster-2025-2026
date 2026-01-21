@@ -26,14 +26,4 @@ public class SiteRepository extends BaseRepository<Site, Integer>
                         .getResultList()
         );
     }
-
-    public List<Site> findSitesByCityID(int cityID) {
-        return executeQuery(session ->
-                session.createQuery(
-                                "SELECT s FROM Site s " +
-                                        "WHERE s.city.id = :id", Site.class)
-                        .setParameter("id", cityID)
-                        .getResultList()
-        );
-    }
 }

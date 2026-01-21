@@ -5,16 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="CityUpdate-fix">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/729b47dd-fb31-4a2c-8d61-cdf5fbd692aa.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/729b47dd-fb31-4a2c-8d61-cdf5fbd692aa.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CatalogPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CatalogPageController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CityUpdatePageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CityUpdatePageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CityUpdatePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/CityUpdatePage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$2.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/content/Site.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/content/Site.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/server/handler/GetCitySitesHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/GetCitySitesHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/server/repository/SiteRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/repository/SiteRepository.java" afterDir="false" />
     </list>
@@ -284,7 +278,15 @@
       <option name="project" value="LOCAL‎" />
       <updated>1768942277034</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="CityUpdate-fix">
+      <option name="closed" value="true" />
+      <created>1768993449594</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1768993449595</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

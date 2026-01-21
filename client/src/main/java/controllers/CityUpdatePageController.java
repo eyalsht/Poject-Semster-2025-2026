@@ -98,7 +98,7 @@ public class CityUpdatePageController
                 }
                 else
                 {
-                    updateSitesList(newCity.getID());
+                    updateSitesList(newCity.getName());
                 }
             }
         });
@@ -313,12 +313,12 @@ public class CityUpdatePageController
         return allGood;
     }
 
-    private void updateSitesList(int cityID)
+    private void updateSitesList(String cityName)
     {
         availableSites.clear();
         new Thread(() -> {
             try {
-                Message request = new Message(ActionType.GET_CITY_SITES_REQUEST, cityID);
+                Message request = new Message(ActionType.GET_CITY_SITES_REQUEST, cityName);
                 Message response = (Message) GCMClient.getInstance().sendRequest(request);
 
                 Platform.runLater(() ->
