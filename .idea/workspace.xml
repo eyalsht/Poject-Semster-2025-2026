@@ -4,20 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="נסיונות כושלים לגרום לתמונה להופיע בכרטיס עיר">
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="הוספת תמונה לכרטיסי עיר - כרגע רק של חיפה.">
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/729b47dd-fb31-4a2c-8d61-cdf5fbd692aa.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/729b47dd-fb31-4a2c-8d61-cdf5fbd692aa.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CityCardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CityCardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/CityCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/CityCard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/images/cities/Haifaimg.png" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/images/cities/Haifaimg.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CityCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/CityCard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/images/cities/Haifaimg.png" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/images/cities/Haifaimg.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/legacy/gcm_db_cities.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/legacy/gcm_db_cities.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/server.iml" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -285,7 +274,15 @@
       <option name="project" value="LOCAL‎" />
       <updated>1768942277034</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL‎-00017" summary="הוספת תמונה לכרטיסי עיר - כרגע רק של חיפה.">
+      <option name="closed" value="true" />
+      <created>1768993222916</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL‎-00017" />
+      <option name="project" value="LOCAL‎" />
+      <updated>1768993222916</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -314,7 +311,8 @@
     <MESSAGE value="עדכון CITY וCONT של הצגת ערים בקטלוג" />
     <MESSAGE value="עדכון שלא יופיע 3 פעמים חיפה - מופע אחד לכל עיר" />
     <MESSAGE value="נסיונות כושלים לגרום לתמונה להופיע בכרטיס עיר" />
-    <option name="LAST_COMMIT_MESSAGE" value="נסיונות כושלים לגרום לתמונה להופיע בכרטיס עיר" />
+    <MESSAGE value="הוספת תמונה לכרטיסי עיר - כרגע רק של חיפה." />
+    <option name="LAST_COMMIT_MESSAGE" value="הוספת תמונה לכרטיסי עיר - כרגע רק של חיפה." />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
