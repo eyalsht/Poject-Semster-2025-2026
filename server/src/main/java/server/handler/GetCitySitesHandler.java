@@ -15,8 +15,8 @@ public class GetCitySitesHandler implements RequestHandler
     public Message handle(Message request) {
         try{
             List<Site> allCitySites = new ArrayList<>();
-            String city = (String )request.getMessage();
-            allCitySites = sp.findSitesByCityName(city);
+            int cityID = (int)request.getMessage();
+            allCitySites = sp.findSitesByCityID(cityID);
             return new Message(ActionType.GET_CITY_SITES_RESPONSE,allCitySites);
         }
         catch (Exception e) {

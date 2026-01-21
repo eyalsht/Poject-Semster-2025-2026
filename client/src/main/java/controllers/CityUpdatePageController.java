@@ -23,6 +23,7 @@ public class CityUpdatePageController
     private ObservableList<Site> availableSites = FXCollections.observableArrayList();
     private ObservableList<City> availableCities = FXCollections.observableArrayList();
     private ObservableList<Site> sitesToDelete = FXCollections.observableArrayList();
+    private List<Site> modifiedSites = new ArrayList<>();
     private String prevSiteName;
 
     //Labels
@@ -55,13 +56,13 @@ public class CityUpdatePageController
     @FXML
     public void initialize()
     {
+        System.out.println("Initializing CityUpdatePageController");
         for (SiteCategory category : SiteCategory.values())
             categoryComboBox.getItems().add(category);
 
         for (SiteDuration duration : SiteDuration.values())
             visitDuration.getItems().add(duration);
 
-        System.out.println("Initializing CityUpdatePageController");
         getCitiesComboBox();
         if (lvAvailableSites != null)
         {
@@ -97,7 +98,7 @@ public class CityUpdatePageController
                 }
                 else
                 {
-                    updateSitesList(newCity.getName());
+                    updateSitesList(newCity.getID());
                 }
             }
         });
@@ -125,6 +126,11 @@ public class CityUpdatePageController
             availableSites.add(newSite);
             lvAvailableSites.refresh();
             tfNewSite.clear();
+            categoryComboBox.getSelectionModel().clearSelection();
+            visitDuration.getSelectionModel().clearSelection();
+            Accessibility.setSelected(false);
+            taDescription.clear();
+            tfLocation.clear();
         }
         else
             showAlert("Invalid Name", "The site name entered is not legal.");
@@ -175,7 +181,7 @@ public class CityUpdatePageController
     private void onConfirmEdit()
     {
         String newName = tfNewSite.getText().trim();
-        if (newName.length() < 3 || isSiteDuplicate(newName)) {
+        if (newName.length() < 3) {
             showAlert("Invalid Name", "Name must be at least 3 characters.");
             return;
         }
@@ -186,14 +192,16 @@ public class CityUpdatePageController
                 .orElse(null);
 
         toEdit.setName(newName);
-        lvAvailableSites.refresh();
+        if (toEdit.getID() > 0 && !modifiedSites.contains(toEdit))
+            modifiedSites.add(toEdit);
+
         tfNewSite.clear();
         categoryComboBox.getSelectionModel().clearSelection();
         visitDuration.getSelectionModel().clearSelection();
         Accessibility.setSelected(false);
         tfLocation.clear();
         taDescription.clear();
-
+        lvAvailableSites.refresh();
         btnConfirmEdit.setVisible(false);
         btnAddSite.setDisable(false);
         btnEditSite.setDisable(false);
@@ -203,35 +211,52 @@ public class CityUpdatePageController
     @FXML
     private void onSubmit()
     {
+        btnSubmit.setDisable(true);
         new Thread(() -> {
-            try
-            {
-                onSubmitEdit();
-                onSubmitDelete();
+            try {
+                boolean editResult = onSubmitEdit();
+                boolean deleteResult = onSubmitDelete();
+
                 Platform.runLater(() -> {
-                    showAlert("Success", "All changes submitted for approval.");
-                    onClose();
+                    if (editResult && deleteResult) {
+                        showAlert("Success", "All changes submitted for approval.");
+                        onClose();
+                    } else {
+                        showAlert("Error", "Some changes failed to submit. Please check your connection and try again.");
+                        btnSubmit.setDisable(false);
+                    }
                 });
-            }
-            catch (Exception e) {
-                Platform.runLater(() -> showAlert("Error", "Submission failed: " + e.getMessage()));
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    showAlert("Error", "Fatal error during submission: " + e.getMessage());
+                    btnSubmit.setDisable(false);
+                });
             }
         }).start();
     }
-    private void onSubmitEdit()
+
+    private boolean onSubmitEdit()
     {
         User currentUser = GCMClient.getInstance().getCurrentUser();
         Integer requesterId = (currentUser != null) ? currentUser.getId() : null;
         City selectedCity = cbChooseCity.getSelectionModel().getSelectedItem();
+        boolean allGood = true;
+        List<Site> sitesToSubmit = new ArrayList<>();
+
+        for (Site s : availableSites)
+            if (s.getID() <= 0)
+                sitesToSubmit.add(s); // New sites
+
+        sitesToSubmit.addAll(modifiedSites);
         if (selectedCity == null || selectedCity.equals("--------Choose City--------"))
-            return;
+            return false;
         try
         {
-            for (Site site : availableSites)
+            for (Site site : sitesToSubmit)
             {
                 ContentActionType action = (site.getID() <= 0) ? ContentActionType.ADD : ContentActionType.EDIT;
                 String Json = buildSiteJson(site);
-                String targetName = site.getCityName() + " - " + site.getName();
+                String targetName = site.getCityName() +" - " + site.getName();
                 Integer targetId = (action == ContentActionType.ADD) ? selectedCity.getId(): site.getID();
                 ContentChangeRequest changeRequest = new ContentChangeRequest(
                         requesterId,
@@ -243,24 +268,33 @@ public class CityUpdatePageController
                 );
                 Message request = new Message(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, changeRequest);
                 Message response = (Message) client.sendRequest(request);
-                Platform.runLater(() -> handleContentChangeResponse(response, ContentActionType.EDIT));
+                //Platform.runLater(() -> handleContentChangeResponse(response, ContentActionType.EDIT));
+                if (response == null || response.getAction() == ActionType.ERROR) {
+                    allGood = false;
+                }
             }
         }
         catch (Exception e)
         {
             Platform.runLater(() -> showAlert("Error", "Error: " + e.getMessage()));
         }
-
+        if (allGood)
+            modifiedSites.clear();
+        return allGood;
     }
 
-    private void onSubmitDelete()
+    private boolean onSubmitDelete()
     {
         User currentUser = GCMClient.getInstance().getCurrentUser();
         Integer requesterId = (currentUser != null) ? currentUser.getId() : null;
-        for (Site site : sitesToDelete) {
+        boolean allGood = true;
+        List<Site> toDeleteCopy = new ArrayList<>(sitesToDelete);
+
+        for (Site site : toDeleteCopy)
+        {
             String json = buildSiteJson(site);
             String targetName = site.getCityName() + " - " + site.getName();
-            ContentChangeRequest req = new ContentChangeRequest(
+            ContentChangeRequest changeRequest = new ContentChangeRequest(
                     requesterId,
                     ContentActionType.DELETE,
                     ContentType.SITE,
@@ -268,17 +302,23 @@ public class CityUpdatePageController
                     targetName,
                     json
             );
-            client.sendRequest(new Message(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, req));
+            Message request = new Message(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, changeRequest);
+            Message response = (Message) client.sendRequest(request);
+            if (response != null && response.getAction() != ActionType.ERROR) {
+                sitesToDelete.remove(site);
+            } else {
+                allGood = false;
+            }
         }
-        sitesToDelete.clear();
+        return allGood;
     }
 
-    private void updateSitesList(String cityName)
+    private void updateSitesList(int cityID)
     {
         availableSites.clear();
         new Thread(() -> {
             try {
-                Message request = new Message(ActionType.GET_CITY_SITES_REQUEST, cityName);
+                Message request = new Message(ActionType.GET_CITY_SITES_REQUEST, cityID);
                 Message response = (Message) GCMClient.getInstance().sendRequest(request);
 
                 Platform.runLater(() ->
@@ -317,7 +357,6 @@ public class CityUpdatePageController
 
     public void getCitiesComboBox()
     {
-        System.out.println(">>> [CATALOG] Calling getCitiesComboBox()");
         new Thread(() ->
         {
             try {
@@ -331,7 +370,7 @@ public class CityUpdatePageController
                     {
                         List<City> cities = (List<City>) response.getMessage();
                         City createCityOption = new City();
-                        createCityOption.setName("----------Add city----------");
+                        createCityOption.setName("--------Choose City--------");
                         createCityOption.setId(-1);
                         this.availableCities.clear();
                         this.availableCities.add(createCityOption);

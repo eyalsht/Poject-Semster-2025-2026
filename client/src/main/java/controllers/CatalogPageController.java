@@ -649,5 +649,12 @@ public class CatalogPageController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    private String mode;
+
+    public void setMode(String mode) {
+        this.mode = mode;
+        System.out.println("CityUpdatePageController mode set to: " + mode);
+    }
 }
 

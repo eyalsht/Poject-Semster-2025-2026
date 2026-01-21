@@ -64,6 +64,8 @@ public class Site extends ContentItem implements Serializable {
                 SiteDuration recommendedVisitDuration,
                 String location) {
         super(id, name, description);
+        this.name = name;
+        this.description = description;
         this.city = city;
         this.category = category;
         this.isAccessible = isAccessible;
