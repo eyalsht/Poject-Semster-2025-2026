@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ApprovalPendingPageController">
+   <children>
+      <!-- Title -->
+      <HBox alignment="CENTER" prefHeight="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
+         <children>
+            <Label text="Pending Approvals">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      
+      <!-- Table -->
+      <VBox AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="70.0" AnchorPane.bottomAnchor="100.0">
+         <children>
+             <TableView fx:id="tblPending" VBox.vgrow="ALWAYS">
+                 <columns>
+                     <TableColumn fx:id="colType" prefWidth="80.0" text="Type"/>
+                     <TableColumn fx:id="colTarget" prefWidth="250.0" text="Target"/>
+                     <TableColumn fx:id="colInfo" prefWidth="150.0" text="Info"/>
+                 </columns>
+             </TableView>
+         </children>
+      </VBox>
+      
+      <!-- Status Label -->
+      <Label fx:id="lblStatus" layoutY="320.0" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="20.0"/>
+      
+      <!-- Buttons -->
+      <HBox alignment="CENTER_RIGHT" spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0">
+         <children>
+            <Button fx:id="btnApprove" mnemonicParsing="false" onAction="#onApprove" prefWidth="100.0" 
+                    style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Approve"/>
+            <Button fx:id="btnDeny" mnemonicParsing="false" onAction="#onDeny" prefWidth="100.0" 
+                    style="-fx-background-color: #f44336; -fx-text-fill: white;" text="Deny"/>
+            <Button mnemonicParsing="false" onAction="#onClose" prefWidth="100.0" text="Close">
+               <HBox.margin>
+                  <Insets left="20.0"/>
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

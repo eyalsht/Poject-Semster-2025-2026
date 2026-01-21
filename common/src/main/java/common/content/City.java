@@ -17,6 +17,12 @@ public class City extends ContentItem implements Serializable {
     @Transient  // Not persisted - only for pending workflow
     private double pendingPriceSub;
 
+    @Column(name = "image_path")
+    private String imagePath;
+
+    public String getImagePath() { return imagePath; }
+    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+
     // ONE City has MANY Maps
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<GCMMap> maps = new ArrayList<>();
@@ -66,8 +72,6 @@ public class City extends ContentItem implements Serializable {
 
     public double getPendingPriceSub() { return pendingPriceSub; }
     public void setPendingPriceSub(double pendingPriceSub) { this.pendingPriceSub = pendingPriceSub; }
-
-    // REMOVED: getPriceOneTime(), setPriceOneTime(), getPendingPriceOneTime(), setPendingPriceOneTime()
 
     // ==================== MAP RELATIONSHIP ====================
     

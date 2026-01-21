@@ -13,27 +13,25 @@ public class GCMMap extends ContentItem implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
-    @Lob
-    @Column(name = "image", columnDefinition = "LONGBLOB")
-    private byte[] image;
-
     @Column(name = "version")
     private String version;  // Changed from double to String - versions like "1.0", "2.1" are better as strings
+
+    @Column(name = "price")
+    private double price;
+
+    @Column(name = "image_path")
+    private String imagePath;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private MapStatus status;
-
-    @Column(name = "price")
-    private double price;
 
     // MANY Maps belong to ONE City
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id", nullable = false)
     private City city;
 
-    // MANY Maps can DISPLAY MANY Sites (Many-to-Many)
-    // This is NOT ownership - it's "which sites appear on this map"
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "map_sites",
@@ -49,10 +47,11 @@ public class GCMMap extends ContentItem implements Serializable {
         this.sites = new ArrayList<>();
     }
 
-    public GCMMap(int id, String name, String description, String version, byte[] image, MapStatus status) {
+    public GCMMap(int id, String name, String description, String version,double price, String imagePath, MapStatus status) {
         super(id, name, description);
         this.version = version;
-        this.image = image;
+        this.price = price;
+        this.imagePath = imagePath;
         this.status = status;
         this.sites = new ArrayList<>();
     }
@@ -66,9 +65,9 @@ public class GCMMap extends ContentItem implements Serializable {
     }
 
     // ==================== GETTERS & SETTERS ====================
-    
-    public byte[] getImage() { return image; }
-    public void setImage(byte[] image) { this.image = image; }
+
+    public String getImagePath() { return imagePath; }
+    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
 
     public String getVersion() { return version; }
     public void setVersion(String version) { this.version = version; }

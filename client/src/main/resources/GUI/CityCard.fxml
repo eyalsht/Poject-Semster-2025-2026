@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.paint.Color?>
+
+<VBox fx:id="cardRoot" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
+      minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="200.0"
+      spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: #e0e0e0;"
+      xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.CityCardController">
+    <children>
+        <ImageView fx:id="imgCity" fitHeight="140.0" fitWidth="180.0" pickOnBounds="true">
+            <VBox.margin>
+                <Insets top="10.0" />
+            </VBox.margin>
+        </ImageView>
+
+        <Label fx:id="lblCityName" text="City Name" textFill="#2c3e50">
+            <font>
+                <Font name="System Bold" size="18.0" />
+            </font>
+        </Label>
+
+        <Label fx:id="lblPrice" text="Sub: $0.00" textFill="#27ae60">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Label>
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
+    </padding>
+    <effect>
+        <DropShadow blurType="GAUSSIAN" height="15.0" radius="7.0" width="15.0">
+            <color>
+                <Color opacity="0.15" />
+            </color>
+        </DropShadow>
+    </effect>
+</VBox>
