@@ -2,10 +2,8 @@ package server.repository;
 
 import common.content.City;
 import common.content.GCMMap;
-import common.enums.ContentActionType;
-import common.enums.ContentType;
-import common.enums.MapStatus;
-import common.enums.RequestStatus;
+import common.content.Site;
+import common.enums.*;
 import common.user.User;
 import common.workflow.PendingContentRequest;
 import org.hibernate.Session;
@@ -242,7 +240,6 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
         session.merge(map);
         System.out.println("Map update applied for ID: " + mapId);
     }
-
     /**
      * Delete a map by ID.
      */
@@ -322,11 +319,63 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
         }
     }
 
-    private void applySiteChange(org.hibernate.Session session, PendingContentRequest pending) {
-        // TODO: Implement site changes
-        System.out.println("Site changes not yet implemented");
+    private void applySiteChange(org.hibernate.Session session, PendingContentRequest pending)
+    {
+        switch (pending.getActionType()) {
+            case ADD:
+                createNewSite(session, pending);
+                break;
+            case EDIT:
+                updateExistingSite(session, pending.getTargetId(), pending);
+                break;
+            case DELETE:
+                deleteMap(session, pending.getTargetId());
+                break;
+        }
     }
+    private void createNewSite(org.hibernate.Session session, PendingContentRequest pending) {
+        String json = pending.getContentDetails();
+        CityRepository cp = CityRepository.getInstance();
+        int cityId = pending.getTargetId();
+        City city = session.createQuery("FROM City c WHERE c.id = :id", City.class)
+                .setParameter("id", cityId)
+                .uniqueResultOptional()
+                .orElse(null);
 
+        Site site = new Site(
+                Integer.parseInt(extractJsonValue(json,"id")),
+                extractJsonValue(json,"name"),
+                extractJsonValue(json,"description"),
+                city,
+                SiteCategory.valueOf(extractJsonValue(json,"category")),
+                Boolean.parseBoolean(extractJsonValue(json,"isAccessible")),
+                SiteDuration.fromLabel(extractJsonValue(json,"recommendedVisitDuration")),
+                extractJsonValue(json,"location"));
+
+        city.addSite(site);
+        session.persist(site);
+        System.out.println("Created new site: " + extractJsonValue(json,"name") + " in city: " + city.getName());
+    }
+    private void updateExistingSite(org.hibernate.Session session, int siteID, PendingContentRequest pending) {
+        String json = pending.getContentDetails();
+        Site existingSite = session.get(Site.class, siteID);
+
+        if (existingSite != null)
+        {
+            existingSite.setName(extractJsonValue(json, "name"));
+            existingSite.setDescription(extractJsonValue(json, "description"));
+            existingSite.setLocation(extractJsonValue(json, "location"));
+            existingSite.setCategory(SiteCategory.valueOf(extractJsonValue(json, "category")));
+
+            existingSite.setAccessible(Boolean.parseBoolean(extractJsonValue(json, "isAccessible")));
+            existingSite.setRecommendedVisitDuration(
+                    SiteDuration.fromLabel(extractJsonValue(json, "recommendedVisitDuration"))
+            );
+            System.out.println("Updated existing site: " + existingSite.getName() + " (ID: " + siteID + ")");
+        } else {
+            System.err.println("Error: Could not find site with ID " + siteID + " to update.");
+        }
+    }
     private void applyTourChange(org.hibernate.Session session, PendingContentRequest pending) {
         // TODO: Implement tour changes
         System.out.println("Tour changes not yet implemented");

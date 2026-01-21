@@ -595,7 +595,6 @@ public class CatalogPageController {
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
 
-            controller.setMode(mode);
             stage.setOnHidden(event -> {
                 if (GCMClient.isClientConnected()) {
                     refreshCatalog();
@@ -649,6 +648,13 @@ public class CatalogPageController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private String mode;
+
+    public void setMode(String mode) {
+        this.mode = mode;
+        System.out.println("CityUpdatePageController mode set to: " + mode);
     }
 }
 

@@ -1,6 +1,7 @@
 package common.content;
 
 import common.enums.SiteCategory;
+import common.enums.SiteDuration;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -27,7 +28,7 @@ public class Site extends ContentItem implements Serializable {
     private boolean isAccessible;
 
     @Column(name = "recommended_visit_duration")
-    private double recommendedVisitDuration;
+    private SiteDuration recommendedVisitDuration;
 
     @Column(name = "location")
     private String location;
@@ -45,6 +46,7 @@ public class Site extends ContentItem implements Serializable {
     @ManyToMany(mappedBy = "sites", fetch = FetchType.LAZY)
     private List<Tour> tours = new ArrayList<>();
 
+
     // ==================== CONSTRUCTORS ====================
 
     public Site() {
@@ -56,11 +58,15 @@ public class Site extends ContentItem implements Serializable {
     public Site(int id,
                 String name,
                 String description,
+                City city,
                 SiteCategory category,
                 boolean isAccessible,
-                double recommendedVisitDuration,
+                SiteDuration recommendedVisitDuration,
                 String location) {
         super(id, name, description);
+        this.name = name;
+        this.description = description;
+        this.city = city;
         this.category = category;
         this.isAccessible = isAccessible;
         this.recommendedVisitDuration = recommendedVisitDuration;
@@ -69,11 +75,6 @@ public class Site extends ContentItem implements Serializable {
         this.tours = new ArrayList<>();
     }
 
-    public Site(String name, City city)
-    {
-        this.name = name;
-        this.city = city;
-    }
 
     // ==================== GETTERS & SETTERS ====================
 
@@ -109,11 +110,11 @@ public class Site extends ContentItem implements Serializable {
         isAccessible = accessible;
     }
 
-    public double getRecommendedVisitDuration() {
+    public SiteDuration getRecommendedVisitDuration() {
         return recommendedVisitDuration;
     }
 
-    public void setRecommendedVisitDuration(double duration) {
+    public void setRecommendedVisitDuration(SiteDuration duration) {
         this.recommendedVisitDuration = duration;
     }
 
