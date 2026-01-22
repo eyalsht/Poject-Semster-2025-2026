@@ -4,9 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="cityupdatefix2">
+    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="cityupdatefix3">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_15_01_2026_13_07_[Changes]1/module-info.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_15_01_2026_13_07_[Changes]1/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_15_01_2026_13_07__Changes_1.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/enums/SiteCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/enums/SiteCategory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CityUpdatePageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CityUpdatePageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/CityUpdatePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/CityUpdatePage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CityUpdatePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/CityUpdatePage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/module-info.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/enums/ActionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/enums/ActionType.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +34,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -32,8 +44,8 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/eyalsht/Poject-Semster-2025-2026.git&quot;,
-    &quot;accountId&quot;: &quot;0ed4a794-3927-408d-9e1c-f49064f5821c&quot;
+    &quot;url&quot;: &quot;https://github.com/eyalsht/Poject-Semster-2025-2026&quot;,
+    &quot;accountId&quot;: &quot;dde4a094-7c07-447b-8c59-4081934ca766&quot;
   }
 }</component>
   <component name="ProblemsViewState">
@@ -48,42 +60,44 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.ClientLauncher.executor": "Run",
-    "Application.appServer.executor": "Run",
-    "Maven.client [clean].executor": "Run",
-    "Maven.client [install].executor": "Run",
-    "Maven.common [install].executor": "Run",
-    "Maven.project-semester-2025-2026 [install].executor": "Run",
-    "Maven.server [install].executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/ronia/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Scene Builder/SceneBuilder.lnk",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "database.query.execution",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.ClientLauncher.executor&quot;: &quot;Run&quot;,
+    &quot;Application.MainApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.appServer.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.client [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.client [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.common [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.project-semester-2025-2026 [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.server [install].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/ronia/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Scene Builder/SceneBuilder.lnk&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;database.query.execution&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql_aurora"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql_aurora&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\ronia\IdeaProjects\Poject-Semster-2025-2026\client\src\main\resources\images\cities" />
       <recent name="C:\Users\ronia\IdeaProjects\Poject-Semster-2025-2026\client\src\main\resources\images" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.ClientLauncher">
+  <component name="RunManager" selected="Application.Unnamed">
     <configuration name="ClientLauncher" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="client.ClientLauncher" />
       <module name="client" />
@@ -93,6 +107,13 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Unnamed" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.MainApplication" />
+      <module name="client" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -115,10 +136,16 @@
       <script-mode>FILE</script-mode>
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Application.Unnamed" />
+      <item itemvalue="Application.appServer" />
+      <item itemvalue="Application.ClientLauncher" />
+      <item itemvalue="Database Script.gcm_db_cities.sql" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.ClientLauncher" />
         <item itemvalue="Application.appServer" />
+        <item itemvalue="Application.ClientLauncher" />
         <item itemvalue="Database Script.gcm_db_cities.sql" />
       </list>
     </recent_temporary>
@@ -126,8 +153,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
+        <option value="bundled-jdk-30f59d01ecdd-26cb7f24e5b0-intellij.indexing.shared.core-IU-253.29346.240" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.29346.240" />
       </set>
     </attachedChunks>
   </component>
@@ -145,6 +172,9 @@
       <workItem from="1768317433522" duration="767000" />
       <workItem from="1768475231119" duration="15893000" />
       <workItem from="1768922350781" duration="10126000" />
+      <workItem from="1769010997114" duration="11543000" />
+      <workItem from="1769080618615" duration="8000" />
+      <workItem from="1769106157529" duration="65000" />
     </task>
     <task id="LOCAL‎-00001" summary="Delete of SRC folder in general project">
       <option name="closed" value="true" />
@@ -298,7 +328,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768994210325</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="cityupdatefix3">
+      <option name="closed" value="true" />
+      <created>1768995610674</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1768995610674</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -329,16 +367,17 @@
     <MESSAGE value="נסיונות כושלים לגרום לתמונה להופיע בכרטיס עיר" />
     <MESSAGE value="CityUpdate-fix" />
     <MESSAGE value="cityupdatefix2" />
-    <option name="LAST_COMMIT_MESSAGE" value="cityupdatefix2" />
+    <MESSAGE value="cityupdatefix3" />
+    <option name="LAST_COMMIT_MESSAGE" value="cityupdatefix3" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/client/src/main/java/controllers/CityUpdatePageController.java</url>
-          <line>216</line>
-          <option name="timeStamp" value="5" />
+          <url>file://$PROJECT_DIR$/client/src/main/java/controllers/CatalogPageController.java</url>
+          <line>584</line>
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

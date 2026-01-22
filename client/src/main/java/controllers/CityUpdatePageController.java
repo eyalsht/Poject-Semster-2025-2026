@@ -3,6 +3,7 @@ package controllers;
 import client.GCMClient;
 import common.content.City;
 import common.content.Site;
+import common.content.Tour;
 import common.dto.ContentChangeRequest;
 import common.enums.*;
 import common.messaging.Message;
@@ -14,6 +15,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +27,11 @@ public class CityUpdatePageController
     private ObservableList<City> availableCities = FXCollections.observableArrayList();
     private ObservableList<Site> sitesToDelete = FXCollections.observableArrayList();
     private List<Site> modifiedSites = new ArrayList<>();
+
+    private ObservableList<Tour> availableTours = FXCollections.observableArrayList();
+    private ObservableList<Tour> toursToDelete = FXCollections.observableArrayList();
+    private List<Tour> modifiedTours = new ArrayList<>();
+
     private String prevSiteName;
 
     //Labels
@@ -41,8 +49,21 @@ public class CityUpdatePageController
     @FXML private ComboBox <SiteDuration> visitDuration;
     @FXML private TextField tfLocation;
     @FXML private TextArea taDescription;
-
     @FXML private ListView<Site> lvAvailableSites;
+
+    //Tours Section
+    @FXML private ListView<Tour> lvTours;
+    @FXML private TextField tfNewTour;
+    @FXML private ComboBox<Tour> cbChooseTour;
+    @FXML private Button btnAddToTour;
+    @FXML private Button btnRemoveFromTour;
+    @FXML private Button btnConfirmEditTour;
+    @FXML private Button btnAddTour;
+    @FXML private Button btnEditTour;
+    @FXML private Button btnDeleteTour;
+
+    @FXML private Label lblNewTour;
+    @FXML private Label lblTours;
 
     @FXML private Button btnEditSite;
     @FXML private Button btnDeleteSite;
@@ -56,7 +77,6 @@ public class CityUpdatePageController
     @FXML
     public void initialize()
     {
-        System.out.println("Initializing CityUpdatePageController");
         for (SiteCategory category : SiteCategory.values())
             categoryComboBox.getItems().add(category);
 
@@ -99,9 +119,33 @@ public class CityUpdatePageController
                 else
                 {
                     updateSitesList(newCity.getName());
+                    updateToursList(newCity.getName());
                 }
             }
         });
+    }
+
+    private void updateToursList(String cityName) {
+        new Thread(() -> {
+            try {
+                Message request = new Message(ActionType.GET_CITY_TOURS_REQUEST, cityName);
+                Message response = (Message) GCMClient.getInstance().sendRequest(request);
+
+                Platform.runLater(() -> {
+                    if (response != null && response.getAction() == ActionType.GET_CITY_TOURS_RESPONSE) {
+                        List<Tour> tours = (List<Tour>) response.getMessage();
+                        cbChooseTour.getItems().clear();
+                        if (tours != null) {
+                            cbChooseTour.getItems().addAll(tours);
+                        }
+                    } else {
+                        showAlert("Error", "Failed to retrieve tours for " + cityName);
+                    }
+                });
+            } catch (Exception e) {
+                Platform.runLater(() -> showAlert("Network Error", "Could not fetch tours: " + e.getMessage()));
+            }
+        }).start();
     }
 
     @FXML
@@ -125,12 +169,8 @@ public class CityUpdatePageController
             Site newSite = new Site(0,siteName, description,selectedCity,category,isAccessible,duration,siteLocation);
             availableSites.add(newSite);
             lvAvailableSites.refresh();
-            tfNewSite.clear();
-            categoryComboBox.getSelectionModel().clearSelection();
-            visitDuration.getSelectionModel().clearSelection();
-            Accessibility.setSelected(false);
-            taDescription.clear();
-            tfLocation.clear();
+            boolean allgood = onSubmitEdit();
+
         }
         else
             showAlert("Invalid Name", "The site name entered is not legal.");
@@ -195,13 +235,7 @@ public class CityUpdatePageController
         if (toEdit.getID() > 0 && !modifiedSites.contains(toEdit))
             modifiedSites.add(toEdit);
 
-        tfNewSite.clear();
-        categoryComboBox.getSelectionModel().clearSelection();
-        visitDuration.getSelectionModel().clearSelection();
-        Accessibility.setSelected(false);
-        tfLocation.clear();
-        taDescription.clear();
-        lvAvailableSites.refresh();
+        resetFields();
         btnConfirmEdit.setVisible(false);
         btnAddSite.setDisable(false);
         btnEditSite.setDisable(false);
@@ -220,7 +254,6 @@ public class CityUpdatePageController
                 Platform.runLater(() -> {
                     if (editResult && deleteResult) {
                         showAlert("Success", "All changes submitted for approval.");
-                        onClose();
                     } else {
                         showAlert("Error", "Some changes failed to submit. Please check your connection and try again.");
                         btnSubmit.setDisable(false);
@@ -444,5 +477,16 @@ public class CityUpdatePageController
     private void onClose() {
         Stage stage = (Stage) btnSubmit.getScene().getWindow();
         stage.close();
+    }
+
+    private void resetFields()
+    {
+        Accessibility.setSelected(false);
+        tfNewTour.clear();
+        tfNewSite.clear();
+        tfLocation.clear();
+        taDescription.clear();
+        categoryComboBox.getSelectionModel().clearSelection();
+        visitDuration.getSelectionModel().clearSelection();
     }
 }
