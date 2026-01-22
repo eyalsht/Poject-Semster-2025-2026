@@ -10,9 +10,12 @@
         <property name="connection.password">123123</property>
 
         <!-- HikariCP Connection Pool (recommended for production) -->
-        <property name="hibernate.hikari.minimumIdle">5</property>
-        <property name="hibernate.hikari.maximumPoolSize">20</property>
+        <property name="hibernate.hikari.minimumIdle">10</property>
+        <property name="hibernate.hikari.maximumPoolSize">50</property>
         <property name="hibernate.hikari.idleTimeout">30000</property>
+        <property name="hibernate.hikari.maxLifetime">600000</property>
+        <property name="hibernate.hikari.connectionTestQuery">SELECT 1</property>
+
 
         <!-- Hibernate Settings -->
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
@@ -25,6 +28,7 @@
 
         <!-- Current Session Context (for session-per-request pattern) -->
         <property name="hibernate.current_session_context_class">thread</property>
+
 
         <!-- User hierarchy (Single Table and separate tables) -->
         <mapping class="common.user.User"/>
