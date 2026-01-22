@@ -18,11 +18,12 @@ public class SiteRepository extends BaseRepository<Site, Integer>
         return instance;
     }
     public List<Site> findSitesByCityName(String cityName) {
+        System.out.println("DEBUG: Searching for sites in city: " + cityName);
         return executeQuery(session ->
                 session.createQuery(
-                                "SELECT s FROM Site s " +
-                                        "WHERE s.city.name = :name", Site.class)
-                        .setParameter("name", cityName)
+                                "SELECT s FROM Site s JOIN s.city c " +
+                                        "WHERE c.name = :cityName", Site.class)
+                        .setParameter("cityName", cityName)
                         .getResultList()
         );
     }
