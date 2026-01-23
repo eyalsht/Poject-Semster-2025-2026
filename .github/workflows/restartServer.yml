@@ -1,0 +1,25 @@
+name: Restart Service
+
+on:
+  # This makes it "easy to run" via a button in the GitHub UI
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and Restart Service
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          # script_stop: true means the workflow fails if any command fails
+          script_stop: true
+          script: |
+            echo "Connecting to server..."
+            
+            #Restart a systemd server
+            # sudo systemctl restart myserver
+            
+            echo "Service restarted successfully!"
