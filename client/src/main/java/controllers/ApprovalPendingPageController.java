@@ -213,14 +213,17 @@ public class ApprovalPendingPageController {
             success = (Boolean) response.getMessage();
         }
         
-        if (success) {
+        if (success)
+        {
             setStatus(wasApprove ? "Approved successfully!" : "Denied successfully!");
             loadPendingApprovals();
             
             if (catalogController != null) {
                 catalogController.refreshPendingApprovalsCount();
             }
-        } else {
+        }
+        else
+        {
             setStatus("Operation failed. Please try again.");
         }
     }

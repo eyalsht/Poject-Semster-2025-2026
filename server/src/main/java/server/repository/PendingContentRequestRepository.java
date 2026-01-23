@@ -147,14 +147,9 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
                 applyTourChange(session, pending);
                 break;
             case CITY:
-                applyCityChanges(session,pending);
+                //applyCityChanges(session,pending);
                 break;
         }
-    }
-
-    private void applyCityChanges(org.hibernate.Session session, PendingContentRequest pending)
-    {
-
     }
 
     private void applyMapChange(org.hibernate.Session session, PendingContentRequest pending) {
@@ -329,7 +324,7 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
                 updateExistingSite(session, pending.getTargetId(), pending);
                 break;
             case DELETE:
-                deleteMap(session, pending.getTargetId());
+                deleteSite(session, pending.getTargetId(), pending);
                 break;
         }
     }
@@ -337,20 +332,20 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
         String json = pending.getContentDetails();
         CityRepository cp = CityRepository.getInstance();
         int cityId = pending.getTargetId();
-        City city = session.createQuery("FROM City c WHERE c.id = :id", City.class)
-                .setParameter("id", cityId)
-                .uniqueResultOptional()
-                .orElse(null);
+        City city = session.get(City.class, cityId);
+        if (city == null) {
+            System.err.println("CRITICAL: City ID " + cityId + " not found in DB!");
+            return;
+        }
 
-        Site site = new Site(
-                Integer.parseInt(extractJsonValue(json,"id")),
-                extractJsonValue(json,"name"),
-                extractJsonValue(json,"description"),
-                city,
-                SiteCategory.valueOf(extractJsonValue(json,"category")),
-                Boolean.parseBoolean(extractJsonValue(json,"isAccessible")),
-                SiteDuration.fromLabel(extractJsonValue(json,"recommendedVisitDuration")),
-                extractJsonValue(json,"location"));
+        Site site = new Site();
+        site.setName(extractJsonValue(json, "name"));
+        site.setDescription(extractJsonValue(json, "description"));
+        site.setLocation(extractJsonValue(json, "location"));
+        site.setCity(city);
+        site.setCategory(SiteCategory.valueOf(extractJsonValue(json, "category")));
+        site.setRecommendedVisitDuration(SiteDuration.fromLabel(extractJsonValue(json, "recommendedVisitDuration")));
+        site.setAccessible(Boolean.parseBoolean(extractJsonValue(json, "isAccessible")));
 
         city.addSite(site);
         session.persist(site);
@@ -366,7 +361,6 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
             existingSite.setDescription(extractJsonValue(json, "description"));
             existingSite.setLocation(extractJsonValue(json, "location"));
             existingSite.setCategory(SiteCategory.valueOf(extractJsonValue(json, "category")));
-
             existingSite.setAccessible(Boolean.parseBoolean(extractJsonValue(json, "isAccessible")));
             existingSite.setRecommendedVisitDuration(
                     SiteDuration.fromLabel(extractJsonValue(json, "recommendedVisitDuration"))
@@ -376,6 +370,11 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
             System.err.println("Error: Could not find site with ID " + siteID + " to update.");
         }
     }
+    private void deleteSite(org.hibernate.Session session, int siteID, PendingContentRequest pending)
+    {
+
+    }
+
     private void applyTourChange(org.hibernate.Session session, PendingContentRequest pending) {
         // TODO: Implement tour changes
         System.out.println("Tour changes not yet implemented");

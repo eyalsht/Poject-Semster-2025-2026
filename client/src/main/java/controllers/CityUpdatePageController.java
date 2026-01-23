@@ -169,7 +169,7 @@ public class CityUpdatePageController
             Site newSite = new Site(0,siteName, description,selectedCity,category,isAccessible,duration,siteLocation);
             availableSites.add(newSite);
             lvAvailableSites.refresh();
-            boolean allgood = onSubmitEdit();
+            boolean allgood;
 
         }
         else
