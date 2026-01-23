@@ -2,7 +2,9 @@ package server.handler;
 
 import common.enums.ActionType;
 import common.messaging.Message;
+import common.user.User;
 import server.repository.PendingContentRequestRepository;
+import server.repository.UserRepository;
 
 /**
  * Handler for approving content change requests.

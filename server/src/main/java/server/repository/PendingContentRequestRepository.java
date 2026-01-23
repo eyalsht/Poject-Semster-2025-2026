@@ -96,7 +96,7 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
                 // Mark as approved
                 pending.setStatus(RequestStatus.APPROVED);
                 pending.setProcessedAt(LocalDateTime.now());
-                pending.setProcessedBy(approver);
+                //TODO implent the approver pending.setProcessedBy(approver);
                 session.merge(pending);
             });
             return true;
