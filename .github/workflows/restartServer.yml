@@ -20,6 +20,6 @@ jobs:
             echo "Connecting to server..."
             
             #Restart a systemd server
-            # sudo systemctl restart myserver
+            sudo systemctl restart myserver
             
             echo "Service restarted successfully!"
