@@ -20,13 +20,12 @@ public class RegisterHandler implements RequestHandler {
 
             String firstName = (String) data.get(0);
             String lastName = (String) data.get(1);
-            String idNumber = (String) data.get(2);
-            String email = (String) data.get(3);
-            String phone = (String) data.get(4);
-            String username = (String) data.get(5); // Added username
-            String password = (String) data.get(6);
+            String email = (String) data.get(2);
+            String phone = (String) data.get(3);
+            String username = (String) data.get(4);
+            String password = (String) data.get(5);
 
-            PaymentDetails payment = (PaymentDetails) data.get(7);
+            PaymentDetails payment = (PaymentDetails) data.get(6);
 
             // 1. Check if user exists (User Validation)
             if (userRepository.isUsernameTaken(username)) {
@@ -47,7 +46,7 @@ public class RegisterHandler implements RequestHandler {
 
             // 3. Save client to DB
             boolean success = userRepository.registerClient(
-                    firstName, lastName, idNumber, email, phone, username, password, payment
+                    firstName, lastName, email, phone, username, password, payment
             );
 
             if (success) {

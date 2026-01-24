@@ -78,19 +78,19 @@ public class UserRepository extends BaseRepository<User, Integer> {
      * Register a new client
      * @return true if registration successful
      */
-    public boolean registerClient(String firstName, String lastName, String idNumber,
+    public boolean registerClient(String firstName, String lastName,
                                   String email, String phone, String username, String password, PaymentDetails payment) {
-        // Check if user already exists
+
         if (isUsernameTaken(username) || isEmailTaken(email)) {
             return false;
         }
 
-        // Create a new Client entity
         Client client = new Client();
         client.setFirstName(firstName);
         client.setLastName(lastName);
-        client.setUsername(username);  // Username = email
+        client.setUsername(username);
         client.setEmail(email);
+        client.setPhoneNumber(phone);
         client.setPassword(password);
         client.setPaymentDetails(payment);
 
