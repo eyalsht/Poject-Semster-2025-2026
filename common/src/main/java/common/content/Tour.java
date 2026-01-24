@@ -49,6 +49,7 @@ public class Tour extends ContentItem implements Serializable {
     // ==================== RELATIONSHIP METHODS ====================
     
     public City getCity() { return city; }
+
     public void setCity(City city) { this.city = city; }
 
     public String getCityName() {
@@ -57,6 +58,8 @@ public class Tour extends ContentItem implements Serializable {
 
     public List<Site> getSites() { return sites; }
     public void setSites(List<Site> sites) { this.sites = sites; }
+
+    public boolean doesSiteExist(Site site) {return this.sites != null && this.sites.contains(site);}
 
     public void addSite(Site site) {
         if (this.sites == null) this.sites = new ArrayList<>();

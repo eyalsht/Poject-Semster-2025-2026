@@ -10,7 +10,6 @@ import java.util.Optional;
  */
 public class CityRepository extends BaseRepository<City, Integer> {
 
-    // Singleton instance
     private static CityRepository instance;
 
     private CityRepository() {

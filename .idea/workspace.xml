@@ -4,13 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="fixing my mess">
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" />
+    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="cityupdatefix4">
+      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/GetCityToursHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/repository/TourRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/ApprovalPendingPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/ApprovalPendingPageController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CityUpdatePageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CityUpdatePageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ApprovalPendingPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ApprovalPendingPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/CityUpdatePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/CityUpdatePage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CityUpdatePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/CityUpdatePage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$2.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/content/Tour.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/content/Tour.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/repository/CityRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/repository/CityRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/server/repository/PendingContentRequestRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/repository/PendingContentRequestRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -21,8 +25,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="FxmlFile" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -54,38 +58,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.ClientLauncher.executor": "Run",
-    "Application.MainApplication.executor": "Run",
-    "Application.Unnamed.executor": "Run",
-    "Application.appServer.executor": "Run",
-    "Maven.client [clean].executor": "Run",
-    "Maven.client [install].executor": "Run",
-    "Maven.common [install].executor": "Run",
-    "Maven.project-semester-2025-2026 [install].executor": "Run",
-    "Maven.server [install].executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/ronia/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Scene Builder/SceneBuilder.lnk",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "database.query.execution",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.ClientLauncher.executor&quot;: &quot;Run&quot;,
+    &quot;Application.MainApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Unnamed.executor&quot;: &quot;Run&quot;,
+    &quot;Application.appServer.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.client [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.client [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.common [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.project-semester-2025-2026 [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.server [install].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/ronia/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Scene Builder/SceneBuilder.lnk&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;database.query.execution&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql_aurora"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql_aurora&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\ronia\IdeaProjects\Poject-Semster-2025-2026\client\src\main\resources\images\cities" />
@@ -171,7 +175,9 @@
       <workItem from="1769080618615" duration="8000" />
       <workItem from="1769106157529" duration="65000" />
       <workItem from="1769132092804" duration="7000" />
-      <workItem from="1769164277049" duration="1779000" />
+      <workItem from="1769164277049" duration="10835000" />
+      <workItem from="1769204496217" duration="691000" />
+      <workItem from="1769206081504" duration="3885000" />
     </task>
     <task id="LOCAL‎-00001" summary="Delete of SRC folder in general project">
       <option name="closed" value="true" />
@@ -333,7 +339,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768995610674</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="cityupdatefix4">
+      <option name="closed" value="true" />
+      <created>1769166124805</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1769166124805</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -365,7 +379,8 @@
     <MESSAGE value="CityUpdate-fix" />
     <MESSAGE value="cityupdatefix2" />
     <MESSAGE value="cityupdatefix3" />
-    <option name="LAST_COMMIT_MESSAGE" value="cityupdatefix3" />
+    <MESSAGE value="cityupdatefix4" />
+    <option name="LAST_COMMIT_MESSAGE" value="cityupdatefix4" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">

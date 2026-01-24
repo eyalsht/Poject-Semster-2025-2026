@@ -3,6 +3,7 @@ package server.repository;
 import common.content.City;
 import common.content.GCMMap;
 import common.content.Site;
+import common.content.Tour;
 import common.enums.*;
 import common.user.User;
 import common.workflow.PendingContentRequest;
@@ -51,7 +52,8 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
     /**
      * Get all pending content requests.
      */
-    public List<PendingContentRequest> findAllPending() {
+    public List<PendingContentRequest> findAllPending()
+    {
         return executeQuery(session ->
             session.createQuery(
                 "FROM PendingContentRequest p " +
@@ -81,7 +83,8 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
     /**
      * Approve a pending content request.
      */
-    public boolean approve(int pendingId, User approver) {
+    public boolean approve(int pendingId, User approver)
+    {
         try {
             executeInTransaction(session -> {
                 PendingContentRequest pending = session.get(PendingContentRequest.class, pendingId);
@@ -109,7 +112,8 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
     /**
      * Deny a pending content request.
      */
-    public boolean deny(int pendingId, User denier) {
+    public boolean deny(int pendingId, User denier)
+    {
         try {
             executeInTransaction(session -> {
                 PendingContentRequest pending = session.get(PendingContentRequest.class, pendingId);
@@ -133,7 +137,8 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
     /**
      * Apply the actual content change when approved.
      */
-    private void applyContentChange(org.hibernate.Session session, PendingContentRequest pending) {
+    private void applyContentChange(org.hibernate.Session session, PendingContentRequest pending)
+    {
         ContentType contentType = pending.getContentType();
         
         switch (contentType) {
@@ -152,7 +157,8 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
         }
     }
 
-    private void applyMapChange(org.hibernate.Session session, PendingContentRequest pending) {
+    private void applyMapChange(org.hibernate.Session session, PendingContentRequest pending)
+    {
         String json = pending.getContentDetails();
         
         switch (pending.getActionType()) {
@@ -168,10 +174,8 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
         }
     }
 
-    /**
-     * Create a new map from JSON content details.
-     */
-    private void createNewMap(org.hibernate.Session session, String json) {
+    private void createNewMap(org.hibernate.Session session, String json)
+    {
         String cityName = extractJsonValue(json, "cityName");
         String mapName = extractJsonValue(json, "mapName");
         String description = extractJsonValue(json, "description");
@@ -203,10 +207,8 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
         System.out.println("Created new map: " + mapName + " in city: " + cityName);
     }
 
-    /**
-     * Update an existing map with new values from JSON.
-     */
-    private void updateExistingMap(org.hibernate.Session session, Integer mapId, String json) {
+    private void updateExistingMap(org.hibernate.Session session, Integer mapId, String json)
+    {
         if (mapId == null) {
             throw new RuntimeException("Cannot update map: targetId is null");
         }
@@ -235,10 +237,9 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
         session.merge(map);
         System.out.println("Map update applied for ID: " + mapId);
     }
-    /**
-     * Delete a map by ID.
-     */
-    private void deleteMap(org.hibernate.Session session, Integer mapId) {
+
+    private void deleteMap(org.hibernate.Session session, Integer mapId)
+    {
         if (mapId == null) {
             throw new RuntimeException("Cannot delete map: targetId is null");
         }
@@ -250,67 +251,6 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
             System.out.println("Deleted map: " + mapName + " (ID: " + mapId + ")");
         } else {
             System.out.println("Map not found for deletion, ID: " + mapId);
-        }
-    }
-
-    /**
-     * Simple JSON value extractor.
-     * Extracts the value for a given key from a JSON string.
-     * Note: This is a basic implementation. Consider using a proper JSON library (Gson, Jackson) for production.
-     */
-    private String extractJsonValue(String json, String key) {
-        if (json == null || key == null) return null;
-        
-        String searchKey = "\"" + key + "\":";
-        int keyIndex = json.indexOf(searchKey);
-        if (keyIndex == -1) return null;
-        
-        int valueStart = keyIndex + searchKey.length();
-        
-        // Skip whitespace
-        while (valueStart < json.length() && Character.isWhitespace(json.charAt(valueStart))) {
-            valueStart++;
-        }
-        
-        if (valueStart >= json.length()) return null;
-        
-        char firstChar = json.charAt(valueStart);
-        
-        if (firstChar == '"') {
-            // String value
-            int valueEnd = valueStart + 1;
-            while (valueEnd < json.length()) {
-                char c = json.charAt(valueEnd);
-                if (c == '"' && json.charAt(valueEnd - 1) != '\\') {
-                    break;
-                }
-                valueEnd++;
-            }
-            String value = json.substring(valueStart + 1, valueEnd);
-            // Unescape basic sequences
-            return value.replace("\\\"", "\"")
-                       .replace("\\n", "\n")
-                       .replace("\\r", "\r")
-                       .replace("\\\\", "\\");
-        } else if (firstChar == '[') {
-            // Array value - find matching bracket
-            int bracketCount = 1;
-            int valueEnd = valueStart + 1;
-            while (valueEnd < json.length() && bracketCount > 0) {
-                if (json.charAt(valueEnd) == '[') bracketCount++;
-                if (json.charAt(valueEnd) == ']') bracketCount--;
-                valueEnd++;
-            }
-            return json.substring(valueStart, valueEnd);
-        } else {
-            // Number or other value
-            int valueEnd = valueStart;
-            while (valueEnd < json.length() && 
-                   json.charAt(valueEnd) != ',' && 
-                   json.charAt(valueEnd) != '}') {
-                valueEnd++;
-            }
-            return json.substring(valueStart, valueEnd).trim();
         }
     }
 
@@ -328,7 +268,9 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
                 break;
         }
     }
-    private void createNewSite(org.hibernate.Session session, PendingContentRequest pending) {
+
+    private void createNewSite(org.hibernate.Session session, PendingContentRequest pending)
+    {
         String json = pending.getContentDetails();
         CityRepository cp = CityRepository.getInstance();
         int cityId = pending.getTargetId();
@@ -351,7 +293,9 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
         session.persist(site);
         System.out.println("Created new site: " + extractJsonValue(json,"name") + " in city: " + city.getName());
     }
-    private void updateExistingSite(org.hibernate.Session session, int siteID, PendingContentRequest pending) {
+
+    private void updateExistingSite(org.hibernate.Session session, int siteID, PendingContentRequest pending)
+    {
         String json = pending.getContentDetails();
         Site existingSite = session.get(Site.class, siteID);
 
@@ -370,13 +314,118 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
             System.err.println("Error: Could not find site with ID " + siteID + " to update.");
         }
     }
+
     private void deleteSite(org.hibernate.Session session, int siteID, PendingContentRequest pending)
+    {
+        Site siteToDelete = session.get(Site.class, siteID);
+        if (siteToDelete != null)
+        {
+            City city = siteToDelete.getCity();
+            if (city != null) {
+                city.getSites().remove(siteToDelete);
+            }
+            for (Tour tour : siteToDelete.getTours()) {
+                tour.getSites().remove(siteToDelete);
+            }
+
+            for (GCMMap map : siteToDelete.getMaps()) {
+                map.getSites().remove(siteToDelete);
+            }
+            session.remove(siteToDelete);
+            System.out.println("Successfully deleted site: " + siteToDelete.getName() + " (ID: " + siteID + ")");
+        } else {
+            System.err.println("Error: Could not find site with ID " + siteID + " to delete.");
+        }
+    }
+
+    private void applyTourChange(org.hibernate.Session session, PendingContentRequest pending)
+    {
+        switch (pending.getActionType()) {
+            case ADD:
+                createNewTour(session, pending);
+                break;
+            case EDIT:
+                updateExistingTour(session, pending.getTargetId(), pending);
+                break;
+            case DELETE:
+                deleteTour(session, pending.getTargetId(), pending);
+                break;
+        }
+    }
+
+    private void createNewTour(Session session, PendingContentRequest pending)
     {
 
     }
 
-    private void applyTourChange(org.hibernate.Session session, PendingContentRequest pending) {
-        // TODO: Implement tour changes
-        System.out.println("Tour changes not yet implemented");
+    private void updateExistingTour(Session session, Integer targetId, PendingContentRequest pending)
+    {
+
+    }
+
+    private void deleteTour(Session session, Integer targetId, PendingContentRequest pending)
+    {
+
+    }
+
+    /**
+     * Simple JSON value extractor.
+     * Extracts the value for a given key from a JSON string.
+     * Note: This is a basic implementation. Consider using a proper JSON library (Gson, Jackson) for production.
+     */
+    private String extractJsonValue(String json, String key) {
+        if (json == null || key == null) return null;
+
+        String searchKey = "\"" + key + "\":";
+        int keyIndex = json.indexOf(searchKey);
+        if (keyIndex == -1) return null;
+
+        int valueStart = keyIndex + searchKey.length();
+
+        // Skip whitespace
+        while (valueStart < json.length() && Character.isWhitespace(json.charAt(valueStart))) {
+            valueStart++;
+        }
+
+        if (valueStart >= json.length()) return null;
+
+        char firstChar = json.charAt(valueStart);
+
+        if (firstChar == '"') {
+            // String value
+            int valueEnd = valueStart + 1;
+            while (valueEnd < json.length()) {
+                char c = json.charAt(valueEnd);
+                if (c == '"' && json.charAt(valueEnd - 1) != '\\') {
+                    break;
+                }
+                valueEnd++;
+            }
+            String value = json.substring(valueStart + 1, valueEnd);
+            // Unescape basic sequences
+            return value.replace("\\\"", "\"")
+                    .replace("\\n", "\n")
+                    .replace("\\r", "\r")
+                    .replace("\\\\", "\\");
+        } else if (firstChar == '[') {
+            // Array value - find matching bracket
+            int bracketCount = 1;
+            int valueEnd = valueStart + 1;
+            while (valueEnd < json.length() && bracketCount > 0) {
+                if (json.charAt(valueEnd) == '[') bracketCount++;
+                if (json.charAt(valueEnd) == ']') bracketCount--;
+                valueEnd++;
+            }
+            return json.substring(valueStart, valueEnd);
+        } else {
+            // Number or other value
+            int valueEnd = valueStart;
+            while (valueEnd < json.length() &&
+                    json.charAt(valueEnd) != ',' &&
+                    json.charAt(valueEnd) != '}') {
+                valueEnd++;
+            }
+            return json.substring(valueStart, valueEnd).trim();
+        }
     }
 }

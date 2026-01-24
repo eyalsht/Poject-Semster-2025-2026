@@ -16,7 +16,6 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +25,13 @@ public class CityUpdatePageController
     private ObservableList<Site> availableSites = FXCollections.observableArrayList();
     private ObservableList<City> availableCities = FXCollections.observableArrayList();
     private ObservableList<Site> sitesToDelete = FXCollections.observableArrayList();
+    private ObservableList<Site> tourSitesToDelete = FXCollections.observableArrayList();
     private List<Site> modifiedSites = new ArrayList<>();
+
 
     private ObservableList<Tour> availableTours = FXCollections.observableArrayList();
     private ObservableList<Tour> toursToDelete = FXCollections.observableArrayList();
+    private ObservableList<Site> allTourSites = FXCollections.observableArrayList();
     private List<Tour> modifiedTours = new ArrayList<>();
 
     private String prevSiteName;
@@ -52,8 +54,9 @@ public class CityUpdatePageController
     @FXML private ListView<Site> lvAvailableSites;
 
     //Tours Section
-    @FXML private ListView<Tour> lvTours;
+    @FXML private ListView<Site> lvTours;
     @FXML private TextField tfNewTour;
+    @FXML private TextArea taDescriptionTour;
     @FXML private ComboBox<Tour> cbChooseTour;
     @FXML private Button btnAddToTour;
     @FXML private Button btnRemoveFromTour;
@@ -61,6 +64,7 @@ public class CityUpdatePageController
     @FXML private Button btnAddTour;
     @FXML private Button btnEditTour;
     @FXML private Button btnDeleteTour;
+    @FXML private Button btnCreateTour;
 
     @FXML private Label lblNewTour;
     @FXML private Label lblTours;
@@ -77,6 +81,8 @@ public class CityUpdatePageController
     @FXML
     public void initialize()
     {
+        btnAddToTour.setDisable(true);
+        btnRemoveFromTour.setDisable(true);
         for (SiteCategory category : SiteCategory.values())
             categoryComboBox.getItems().add(category);
 
@@ -99,6 +105,20 @@ public class CityUpdatePageController
             });
         }
         lvAvailableSites.setItems(availableSites);
+        if (lvTours != null) {
+            lvTours.setCellFactory(lv -> new ListCell<Site>() {
+                @Override
+                protected void updateItem(Site item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null || item.getName() == null) {
+                        setText(null);
+                    } else {
+                        setText(item.getName());
+                    }
+                }
+            });
+            lvTours.setItems(allTourSites);
+        }
         cbChooseCity.setConverter(new StringConverter<City>()
         {
             @Override
@@ -123,31 +143,24 @@ public class CityUpdatePageController
                 }
             }
         });
-    }
-
-    private void updateToursList(String cityName) {
-        new Thread(() -> {
-            try {
-                Message request = new Message(ActionType.GET_CITY_TOURS_REQUEST, cityName);
-                Message response = (Message) GCMClient.getInstance().sendRequest(request);
-
-                Platform.runLater(() -> {
-                    if (response != null && response.getAction() == ActionType.GET_CITY_TOURS_RESPONSE) {
-                        List<Tour> tours = (List<Tour>) response.getMessage();
-                        cbChooseTour.getItems().clear();
-                        if (tours != null) {
-                            cbChooseTour.getItems().addAll(tours);
-                        }
-                    } else {
-                        showAlert("Error", "Failed to retrieve tours for " + cityName);
-                    }
-                });
-            } catch (Exception e) {
-                Platform.runLater(() -> showAlert("Network Error", "Could not fetch tours: " + e.getMessage()));
+        cbChooseTour.getSelectionModel().selectedItemProperty().addListener((obs, oldTour, newTour) -> {
+            if (newTour != null) {
+                btnAddToTour.setDisable(false);
+                btnRemoveFromTour.setDisable(false);
+                tfNewTour.clear();
+                taDescriptionTour.clear();
+                updateTourSitesList(newTour);
+                allTourSites.clear();
             }
-        }).start();
+            else
+            {
+                btnAddToTour.setDisable(true);
+                btnRemoveFromTour.setDisable(true);
+                tfNewTour.clear();
+                taDescriptionTour.clear();
+            }
+        });
     }
-
     @FXML
     private void onAddSite()
     {
@@ -216,7 +229,6 @@ public class CityUpdatePageController
         else
             showAlert("Error", "Select a site to edit.");
     }
-
     @FXML
     private void onConfirmEdit()
     {
@@ -241,7 +253,6 @@ public class CityUpdatePageController
         btnEditSite.setDisable(false);
         btnDeleteSite.setDisable(false);
     }
-
     @FXML
     private void onSubmit()
     {
@@ -258,6 +269,7 @@ public class CityUpdatePageController
                         showAlert("Error", "Some changes failed to submit. Please check your connection and try again.");
                         btnSubmit.setDisable(false);
                     }
+                    onClose();
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> {
@@ -266,6 +278,100 @@ public class CityUpdatePageController
                 });
             }
         }).start();
+    }
+    @FXML
+    private void onClose()
+    {
+        Stage stage = (Stage) btnSubmit.getScene().getWindow();
+        stage.close();
+    }
+    @FXML
+    private void onAddToTour()
+    {
+
+        Site site = lvAvailableSites.getSelectionModel().getSelectedItem();
+        if(site != null)
+        {
+            Tour currentTour = cbChooseTour.getSelectionModel().getSelectedItem();
+            if(currentTour == null)
+            {
+                showAlert("Error","First choose tour or add a new tour to the list");
+                return;
+            }
+            if(currentTour.doesSiteExist(site))
+            {
+                showAlert("Error","Chosen site is already part of the tour");
+                return;
+            }
+            allTourSites.add(site);
+            lvTours.refresh();
+
+        }
+        else
+        {
+            showAlert("Error","Choose a site to add to tour");
+        }
+    }
+    @FXML
+    private void onRemoveFromTour()
+    {
+        Site site = lvTours.getSelectionModel().getSelectedItem();
+        if(site != null)
+        {
+            Tour currentTour = cbChooseTour.getSelectionModel().getSelectedItem();
+            if(currentTour == null)
+            {
+                showAlert("Error", "First choose tour or add a new tour to the list");
+                return;
+            }
+            allTourSites.remove(site);
+            if(site.getID() > 0)
+            {
+                tourSitesToDelete.add(site);//TODO- when submiting remember to delete sites from the current tour
+            }
+        }
+    }
+    @FXML
+    private void onCreateTour()
+    {
+        if(tfNewTour.getText().trim().length() < 3 || taDescriptionTour.getText().length() < 3
+                || cbChooseCity.getSelectionModel().getSelectedItem().getTours().stream().anyMatch(s-> s.getName().equalsIgnoreCase(tfNewTour.getText().trim())))
+        {
+            showAlert("Error","illegal Tour name");
+            return;
+        }
+        String tourName = tfNewTour.getText().trim();
+        String tourDescription = taDescriptionTour.getText().trim();
+        City selectedCity = cbChooseCity.getSelectionModel().getSelectedItem();
+        Tour newTour = new Tour();
+        newTour.setName(tourName);
+        newTour.setDescription(tourDescription);
+        newTour.setCity(selectedCity);
+        availableTours.add(newTour);
+        cbChooseTour.getItems().add(newTour);
+        cbChooseTour.getSelectionModel().select(newTour);
+        clearTourSwitch();
+        System.out.println("Local Tour Created: " + tourName);
+    }
+    @FXML
+    private void onAddTour()
+    {
+
+    }
+    @FXML
+    private void onDeleteTour()
+    {
+
+    }
+    @FXML
+    private void onEditTour()
+    {
+
+    }
+    @FXML
+    private void onConfirmEditTour()
+    {
+
     }
 
     private boolean onSubmitEdit()
@@ -373,6 +479,40 @@ public class CityUpdatePageController
         }).start();
     }
 
+    private void updateToursList(String cityName)
+    {
+        new Thread(() -> {
+            try {
+                Message request = new Message(ActionType.GET_CITY_TOURS_REQUEST, cityName);
+                Message response = (Message) GCMClient.getInstance().sendRequest(request);
+
+                Platform.runLater(() -> {
+                    if (response != null && response.getAction() == ActionType.GET_CITY_TOURS_RESPONSE) {
+                        List<Tour> tours = (List<Tour>) response.getMessage();
+                        cbChooseTour.getItems().clear();
+                        if (tours != null)
+                        {
+                            cbChooseTour.getItems().addAll(tours);
+                        }
+                        cbChooseTour.setValue(null);
+                    } else {
+                        showAlert("Error", "Failed to retrieve tours for " + cityName);
+                    }
+                });
+            } catch (Exception e) {
+                Platform.runLater(() -> showAlert("Network Error", "Could not fetch tours: " + e.getMessage()));
+            }
+        }).start();
+    }
+
+    private void updateTourSitesList(Tour newTour)
+    {
+        if(newTour.getSites()!=null)
+            allTourSites.addAll(newTour.getSites());
+
+        lvTours.setItems(allTourSites);
+    }
+
     private boolean isSiteDuplicate(String newName)
     {
         return availableSites.stream()
@@ -447,36 +587,10 @@ public class CityUpdatePageController
         return json.toString();
     }
 
-    private String escapeJson(String input) {
+    private String escapeJson(String input)
+    {
         if (input == null) return "";
         return input.replace("\\", "\\\\").replace("\"", "\\\"");
-    }
-
-    private void handleContentChangeResponse(Message response, ContentActionType actionType) {
-        if (response == null) {
-            showAlert("Error", "No response from server.");
-            return;
-        }
-
-        if (response.getAction() == ActionType.SUBMIT_CONTENT_CHANGE_RESPONSE) {
-            boolean success = (Boolean) response.getMessage();
-            if (success) {
-                String actionName = actionType == ContentActionType.ADD ? "addition" : "update";
-                showAlert("Success", "Map " + actionName + " submitted for approval!");
-                onClose();
-            } else {
-                showAlert("Error", "Failed to submit content change.");
-            }
-        } else if (response.getAction() == ActionType.ERROR) {
-            showAlert("Error", response.getMessage().toString());
-        } else {
-            showAlert("Error", "Unexpected response from server.");
-        }
-    }
-    @FXML
-    private void onClose() {
-        Stage stage = (Stage) btnSubmit.getScene().getWindow();
-        stage.close();
     }
 
     private void resetFields()
@@ -488,5 +602,24 @@ public class CityUpdatePageController
         taDescription.clear();
         categoryComboBox.getSelectionModel().clearSelection();
         visitDuration.getSelectionModel().clearSelection();
+        tfNewTour.clear();
+        taDescriptionTour.clear();
+        cbChooseTour.getSelectionModel().clearSelection();
+    }
+
+    private void clearCitySwitch()
+    {
+        availableSites.clear();
+        availableTours.clear();
+        resetFields();
+    }
+
+    private void clearTourSwitch()
+    {
+        allTourSites.clear();
+        toursToDelete.clear();
+        modifiedTours.clear();
+        taDescriptionTour.clear();
+        tfNewTour.clear();
     }
 }
