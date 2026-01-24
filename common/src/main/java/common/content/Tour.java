@@ -20,7 +20,7 @@ public class Tour extends ContentItem implements Serializable {
     private City city;
 
     // MANY Tours have MANY Sites (owning side)
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "tour_sites",
         joinColumns = @JoinColumn(name = "tour_id"),
