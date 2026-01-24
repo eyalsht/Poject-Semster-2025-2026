@@ -1,0 +1,38 @@
+Index: client/src/main/java/controllers/ProfilePageController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package controllers;\r\n\r\nimport main.java.common.User;\r\nimport javafx.fxml.FXML;\r\nimport javafx.scene.control.Label;\r\n\r\npublic class ProfilePageController {\r\n\r\n    @FXML\r\n    private Label lblWelcome;\r\n\r\n    public void setUser(User user) {\r\n        if (user == null) return;\r\n\r\n        lblWelcome.setText(\"Welcome \" + user.getFirstName());\r\n\r\n        /*lblName.setText(user.getFirstName());\r\n        lblEmail.setText(user.getEmail());\r\n\r\n        lblPayment.setText(\"Not set\");\r\n        lblInbox.setText(\"You have 0 new messages\");\r\n        lblHistory.setText(\"(coming soon)\");*/\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/client/src/main/java/controllers/ProfilePageController.java b/client/src/main/java/controllers/ProfilePageController.java
+--- a/client/src/main/java/controllers/ProfilePageController.java	(revision 4292e9299f9d6a7ba880d27eefe875a2d62ec932)
++++ b/client/src/main/java/controllers/ProfilePageController.java	(date 1767267310090)
+@@ -1,6 +1,6 @@
+ package controllers;
+ 
+-import main.java.common.User;
++import main.common.User;
+ import javafx.fxml.FXML;
+ import javafx.scene.control.Label;
+ 
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ExternalStorageConfigurationManager\" enabled=\"true\" />\r\n  <component name=\"MavenProjectsManager\">\r\n    <option name=\"originalFiles\">\r\n      <list>\r\n        <option value=\"$PROJECT_DIR$/pom.xml\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_25\" default=\"true\" project-jdk-name=\"openjdk-25\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/out\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 4292e9299f9d6a7ba880d27eefe875a2d62ec932)
++++ b/.idea/misc.xml	(date 1767267172806)
+@@ -8,7 +8,7 @@
+       </list>
+     </option>
+   </component>
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_25" default="true" project-jdk-name="openjdk-25" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" default="true" project-jdk-name="openjdk-25" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/out" />
+   </component>
+ </project>
+\ No newline at end of file
