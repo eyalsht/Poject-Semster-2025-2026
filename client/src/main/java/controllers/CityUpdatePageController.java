@@ -390,12 +390,13 @@ public class CityUpdatePageController
                 showAlert("Error", "First choose tour or add a new tour to the list");
                 return;
             }
+            if(currentTour.getSites().stream().count() == 1)
+            {
+                showAlert("Error", "Tour must have at least 1 site.");
+                return;
+            }
             allTourSites.remove(site);
             currentTour.removeSite(site);
-            if(site.getID() > 0)
-            {
-                //tourSitesToDelete.add(site);//TODO- when submiting remember to delete sites from the current tour
-            }
         }
     }
     @FXML
@@ -458,7 +459,36 @@ public class CityUpdatePageController
     @FXML
     private void onDeleteTour()
     {
-
+        Tour selectedTour = cbChooseTour.getSelectionModel().getSelectedItem();
+        if (selectedTour != null)
+        {
+            String tourJson = buildTourJson(selectedTour);
+            if(selectedTour.getID() > 0)
+            {
+                new Thread(() -> {
+                    try
+                    {
+                        boolean deleteResult = onSubmitDeleteTour(selectedTour,tourJson);
+                        Platform.runLater(() -> {
+                            if (deleteResult) {
+                                showAlert("Success", "All changes submitted for approval.");
+                            } else {
+                                showAlert("Error", "Some changes failed to submit. Please check your connection and try again.");
+                            }
+                        });
+                    } catch (Exception e) {
+                        Platform.runLater(() -> {
+                            showAlert("Error", "Fatal error during submission: " + e.getMessage());
+                        });
+                    }
+                }).start();
+            }
+            availableTours.remove(selectedTour);
+            cbChooseTour.getSelectionModel().clearSelection();
+        }
+        else {
+            showAlert("Error", "Select a site to remove.");
+        }
     }
     
     @FXML
@@ -580,6 +610,33 @@ public class CityUpdatePageController
         catch (Exception e)
         {
             Platform.runLater(() -> showAlert("Error", "Error: " + e.getMessage()));
+        }
+        return allGood;
+    }
+
+    private boolean onSubmitDeleteTour(Tour tour, String json)
+    {
+        User currentUser = GCMClient.getInstance().getCurrentUser();
+        Integer requesterId = (currentUser != null) ? currentUser.getId() : null;
+        boolean allGood = true;
+        City selectedCity = cbChooseCity.getSelectionModel().getSelectedItem();
+        String targetName = selectedCity.getName() + " - " + tour.getName();
+        ContentChangeRequest changeRequest = new ContentChangeRequest(
+                requesterId,
+                ContentActionType.DELETE,
+                ContentType.TOUR,
+                tour.getID(),
+                targetName,
+                json
+        );
+        Message request = new Message(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, changeRequest);
+        Message response = (Message) client.sendRequest(request);
+        if (response != null && response.getAction() != ActionType.ERROR) {
+
+        }
+        else
+        {
+            allGood = false;
         }
         return allGood;
     }
@@ -728,7 +785,8 @@ public class CityUpdatePageController
         return json.toString();
     }
 
-    private String buildTourJson(Tour tour) {
+    private String buildTourJson(Tour tour)
+    {
         StringBuilder json = new StringBuilder("{");
         json.append("\"id\":").append(tour.getID()).append(",");
         json.append("\"name\":\"").append(escapeJson(tour.getName())).append("\",");
@@ -750,6 +808,7 @@ public class CityUpdatePageController
         json.append("}");
         return json.toString();
     }
+
     private String escapeJson(String input)
     {
         if (input == null) return "";
