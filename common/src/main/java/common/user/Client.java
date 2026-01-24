@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import common.purchase.PaymentDetails;
 
 @Entity
 @Table(name = "clients") // Creates a separate table for clients (besides the user's table)
@@ -17,35 +18,32 @@ public class Client extends User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "credit_card")
-    private String creditCardInfo;
-
-    @Column(name = "credit_card_token")
-    private String creditCardToken;
-
     @Column(name = "subscription_expiry")
     private LocalDate subscriptionExpiry;
+
+    @Embedded
+    private PaymentDetails paymentDetails;
 
     // List of permanently purchased maps (snapshots at time of purchase)
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PurchasedMapSnapshot> purchasedMaps = new ArrayList<>();
 
-    // JPA no-arg constructor
     public Client() {
         super();
     }
 
     public Client(int id, String firstName, String lastName, String username, String email, String password,
-                  String phoneNumber, String creditCardInfo, String creditCardToken, LocalDate subscriptionExpiry) {
+                  String phoneNumber, PaymentDetails paymentDetails, LocalDate subscriptionExpiry) {
         super(id, username, password, firstName, lastName, email);
         this.phoneNumber = phoneNumber;
-        this.creditCardInfo = creditCardInfo;
-        this.creditCardToken = creditCardToken;
+        this.paymentDetails = paymentDetails;
         this.subscriptionExpiry = subscriptionExpiry;
     }
 
-    public Client(int id, String username, String password, String email) {
+    public Client(int id, String username, String password, String email, PaymentDetails paymentDetails, String phoneNumber) {
         super(id, username, password, email);
+        this.paymentDetails = paymentDetails;
+        this.phoneNumber = phoneNumber;
     }
 
     // ==================== GETTERS & SETTERS ====================
@@ -53,11 +51,8 @@ public class Client extends User {
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
-    public String getCreditCardInfo() { return creditCardInfo; }
-    public void setCreditCardInfo(String creditCardInfo) { this.creditCardInfo = creditCardInfo; }
-
-    public String getCreditCardToken() { return creditCardToken; }
-    public void setCreditCardToken(String creditCardToken) { this.creditCardToken = creditCardToken; }
+    public PaymentDetails getPaymentDetails() { return paymentDetails; }
+    public void setPaymentDetails(PaymentDetails paymentDetails) { this.paymentDetails = paymentDetails; }
 
     public LocalDate getSubscriptionExpiry() { return subscriptionExpiry; }
     public void setSubscriptionExpiry(LocalDate subscriptionExpiry) { this.subscriptionExpiry = subscriptionExpiry; }

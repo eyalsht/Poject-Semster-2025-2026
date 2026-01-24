@@ -3,6 +3,7 @@ package server.handler;
 import common.dto.AuthResponse;
 import common.enums.ActionType;
 import common.messaging.Message;
+import common.purchase.PaymentDetails;
 import server.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -14,31 +15,59 @@ public class RegisterHandler implements RequestHandler {
     @Override
     public Message handle(Message request) {
         try {
-            ArrayList<String> data = (ArrayList<String>) request.getMessage();
+            // Assumption is that client sends a list: indices 0-4 are personal details, index 5 is PaymentDetails object
+            ArrayList<Object> data = (ArrayList<Object>) request.getMessage();
 
-            String firstName = data.get(0);
-            String lastName = data.get(1);
-            String idNumber = data.get(2);
-            String email = data.get(3);
-            String password = data.get(4);
-            String card = data.get(5);
+            String firstName = (String) data.get(0);
+            String lastName = (String) data.get(1);
+            String idNumber = (String) data.get(2);
+            String email = (String) data.get(3);
+            String phone = (String) data.get(4);
+            String username = (String) data.get(5); // Added username
+            String password = (String) data.get(6);
 
+            PaymentDetails payment = (PaymentDetails) data.get(7);
+
+            // 1. Check if user exists (User Validation)
+            if (userRepository.isUsernameTaken(username)) {
+                return new Message(ActionType.REGISTER_RESPONSE,
+                        AuthResponse.failure("Username already exists. Please choose another."));
+            }
+
+            if (userRepository.isEmailTaken(email)) {
+                return new Message(ActionType.REGISTER_RESPONSE,
+                        AuthResponse.failure("Email already registered."));
+            }
+
+            // 2. Validate against external credit system (Mock)
+            if (!validatePaymentWithExternalSystem(payment)) {
+                return new Message(ActionType.REGISTER_RESPONSE,
+                        AuthResponse.failure("Credit card authorization failed."));
+            }
+
+            // 3. Save client to DB
             boolean success = userRepository.registerClient(
-                firstName, lastName, idNumber, email, password, card
+                    firstName, lastName, idNumber, email, phone, username, password, payment
             );
 
             if (success) {
                 return new Message(ActionType.REGISTER_RESPONSE,
-                    AuthResponse.success("Registration successful! You can now log in."));
+                        AuthResponse.success("Registration successful! You can now log in."));
             } else {
                 return new Message(ActionType.REGISTER_RESPONSE,
-                    AuthResponse.failure("User already exists with this email or ID."));
+                        AuthResponse.failure("Database error during registration."));
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             return new Message(ActionType.REGISTER_RESPONSE,
-                AuthResponse.failure("Server error during registration."));
+                    AuthResponse.failure("Server error: " + e.getMessage()));
         }
+    }
+
+    // Simulation of external credit check
+    private boolean validatePaymentWithExternalSystem(PaymentDetails payment) {
+        // "external system", just check the valid length
+        return payment.getCreditCardNumber().length() == 16 && payment.getCvv().length() == 3;
     }
 }

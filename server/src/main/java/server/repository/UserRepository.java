@@ -1,5 +1,6 @@
 package server.repository;
 
+import common.purchase.PaymentDetails;
 import common.user.Client;
 import common.user.User;
 
@@ -51,42 +52,47 @@ public class UserRepository extends BaseRepository<User, Integer> {
     }
 
     /**
-     * Check if a user exists with given email or ID number.
-     * Used for registration validation.
+     * Check if email is already registered.
      */
-    public boolean existsByEmailOrIdNumber(String email, String idNumber) {
+    public boolean isEmailTaken(String email) {
         return executeQuery(session -> {
             Long count = session.createQuery(
-                "SELECT COUNT(c) FROM Client c WHERE c.email = :email OR c.creditCardInfo = :idNumber", 
-                Long.class)
-                .setParameter("email", email)
-                .setParameter("idNumber", idNumber)
-                .uniqueResult();
+                            "SELECT COUNT(u) FROM User u WHERE u.email = :email", Long.class)
+                    .setParameter("email", email)
+                    .uniqueResult();
+            return count != null && count > 0;
+        });
+    }
+
+    public boolean isUsernameTaken(String username) {
+        return executeQuery(session -> {
+            Long count = session.createQuery(
+                            "SELECT COUNT(u) FROM User u WHERE u.username = :username", Long.class)
+                    .setParameter("username", username)
+                    .uniqueResult();
             return count != null && count > 0;
         });
     }
 
     /**
-     * Register a new client.
-     * This replaces DBController.registerUser()
-     *
-     * @return true if registration successful, false if user already exists
+     * Register a new client
+     * @return true if registration successful
      */
     public boolean registerClient(String firstName, String lastName, String idNumber,
-                                   String email, String password, String cardNumber) {
+                                  String email, String phone, String username, String password, PaymentDetails payment) {
         // Check if user already exists
-        if (existsByEmailOrIdNumber(email, idNumber)) {
+        if (isUsernameTaken(username) || isEmailTaken(email)) {
             return false;
         }
 
-        // Create new Client entity
+        // Create a new Client entity
         Client client = new Client();
         client.setFirstName(firstName);
         client.setLastName(lastName);
-        client.setUsername(email);  // Username = email
+        client.setUsername(username);  // Username = email
         client.setEmail(email);
         client.setPassword(password);
-        client.setCreditCardInfo(cardNumber);
+        client.setPaymentDetails(payment);
 
         try {
             save(client);
