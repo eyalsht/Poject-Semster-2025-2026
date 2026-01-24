@@ -4,10 +4,47 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="Registration logic implementation, first try">
+    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="small changes +Reports">
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]/MainApplication.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]/module-info.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]/module-info1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]/shelved.patch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]1/MainApplication.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]1/module-info.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]1/shelved.patch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM__Changes_.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM__Changes_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_1_2026_2_04_PM_[Changes]/shelved.patch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_1_2026_2_04_PM_[Changes]1/shelved.patch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_1_2026_2_04_PM__Changes_.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_11_57_AM_[Changes]/module-info.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_11_57_AM_[Changes]/shelved.patch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_11_57_AM__Changes_.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_1_19_PM_[Changes]/shelved.patch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_1_19_PM__Changes_.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/src/main/java/common/report/AllClientsReport.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/GetAllClientsReportHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/RegisterPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/RegisterPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/client/MainApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/client/MainApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ApprovalPendingPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ApprovalPendingPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/LoginPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/LoginPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/MapUpdatePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/MapUpdatePageController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/RegisterPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/RegisterPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/module-info.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/common/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/enums/ActionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/enums/ActionType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/user/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/user/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/handler/HandlerRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/HandlerRegistry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/AbstractServer.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/server/ocsf/AbstractServer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/ConnectionToClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/server/ocsf/ConnectionToClient.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,391 +54,468 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Enum" />
         <option value="FxmlFile" />
         <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="Hibernate-Migration-test" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
     &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;roniamir&quot;
+    &quot;assignee&quot;: &quot;RenatKarimovBMF&quot;
   }
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/eyalsht/Poject-Semster-2025-2026&quot;,
-    &quot;accountId&quot;: &quot;dde4a094-7c07-447b-8c59-4081934ca766&quot;
+    &quot;accountId&quot;: &quot;3026cd65-7d78-40ac-b65e-b832075f1496&quot;
   }
 }</component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
   <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 3
 }</component>
-  <component name="ProjectId" id="37phW3Dn7v0G49g6EI1TforVoJg" />
+  <component name="ProjectId" id="37ToWR8LpA9gveJGblReXnKDUBv" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;Application.ClientLauncher.executor&quot;: &quot;Run&quot;,
     &quot;Application.MainApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Unnamed.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ServerUI.executor&quot;: &quot;Run&quot;,
     &quot;Application.appServer.executor&quot;: &quot;Run&quot;,
-    &quot;Maven.client [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.client [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.common [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.project-semester-2025-2026 [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.server [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.Client [javafx:run].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.OCSF [clean install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.Server [clean,install,exec:java].executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/ronia/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Scene Builder/SceneBuilder.lnk&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Software dev labs/Lab7&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;database.query.execution&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
-  },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;mysql_aurora&quot;
-    ]
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Software dev labs\Lab3\Poject-Semster-2025-2026\database" />
+      <recent name="C:\Software dev labs\Lab3\Poject-Semster-2025-2026\src\resources\org\example\homepage\images" />
+      <recent name="C:\Software dev labs\Lab3\Poject-Semster-2025-2026\src\HomePage" />
+      <recent name="C:\Software dev labs\Lab3\Poject-Semster-2025-2026\Entities\src" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\ronia\IdeaProjects\Poject-Semster-2025-2026\client\src\main\resources\images\cities" />
-      <recent name="C:\Users\ronia\IdeaProjects\Poject-Semster-2025-2026\client\src\main\resources\images" />
+      <recent name="C:\Software dev labs\Lab3\Poject-Semster-2025-2026\src\resources" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.ClientLauncher">
-    <configuration name="ClientLauncher" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="client.ClientLauncher" />
-      <module name="client" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="client.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Unnamed" type="Application" factoryName="Application" nameIsGenerated="true">
+  <component name="RunManager" selected="Maven.Client [javafx:run]">
+    <configuration name="MainApplication" type="Application" factoryName="Application" singleton="false">
+      <option name="ALTERNATIVE_JRE_PATH" value="$PROJECT_DIR$/../../../Program Files/Java/jdk-21" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="client.MainApplication" />
       <module name="client" />
+      <option name="VM_PARAMETERS" value="--enable-native-access=javafx.graphics" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="appServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="server.appServer" />
-      <module name="server" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="server.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
+    <configuration name="Client [javafx:run]" type="MavenRunConfiguration" factoryName="Maven" singleton="false">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="cmdOptions" />
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="javafx:run" />
+              </list>
+            </option>
+            <option name="multimoduleDir" />
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="projectsCmdOptionValues">
+              <list />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$/client" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
     </configuration>
-    <configuration name="gcm_db_cities.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
-      <script-file value="$PROJECT_DIR$/database/legacy/gcm_db_cities.sql" />
-      <script-mode>FILE</script-mode>
+    <configuration name="OCSF [clean install]" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="cmdOptions" />
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="clean" />
+                <option value="install" />
+              </list>
+            </option>
+            <option name="multimoduleDir" />
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="projectsCmdOptionValues">
+              <list />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+    <configuration name="Server [clean,install,exec:java]" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="cmdOptions" />
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="exec:java" />
+              </list>
+            </option>
+            <option name="multimoduleDir" />
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="projectsCmdOptionValues">
+              <list />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$/server" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Application.Unnamed" />
-      <item itemvalue="Application.appServer" />
-      <item itemvalue="Application.ClientLauncher" />
-      <item itemvalue="Database Script.gcm_db_cities.sql" />
+      <item itemvalue="Application.MainApplication" />
+      <item itemvalue="Maven.Server [clean,install,exec:java]" />
+      <item itemvalue="Maven.Client [javafx:run]" />
+      <item itemvalue="Maven.OCSF [clean install]" />
     </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Application.ClientLauncher" />
-        <item itemvalue="Application.appServer" />
-        <item itemvalue="Database Script.gcm_db_cities.sql" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-26cb7f24e5b0-intellij.indexing.shared.core-IU-253.29346.240" />
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.29346.240" />
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
       </set>
     </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="" />
-      <created>1767605947851</created>
+      <changelist id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="" />
+      <created>1766936452369</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1767605947851</updated>
-      <workItem from="1767605949128" duration="4399000" />
-      <workItem from="1767645874765" duration="24134000" />
-      <workItem from="1768210884883" duration="217000" />
-      <workItem from="1768317433522" duration="767000" />
-      <workItem from="1768475231119" duration="15893000" />
-      <workItem from="1768922350781" duration="10126000" />
-      <workItem from="1769010997114" duration="11543000" />
-      <workItem from="1769080618615" duration="8000" />
-      <workItem from="1769106157529" duration="65000" />
-      <workItem from="1769132092804" duration="7000" />
-      <workItem from="1769164277049" duration="10835000" />
-      <workItem from="1769204496217" duration="691000" />
-      <workItem from="1769206081504" duration="5327000" />
-      <workItem from="1769214867942" duration="440000" />
-      <workItem from="1769215380044" duration="528000" />
-      <workItem from="1769254316834" duration="426000" />
-      <workItem from="1769254803845" duration="13696000" />
+      <updated>1766936452369</updated>
+      <workItem from="1766936453604" duration="2262000" />
+      <workItem from="1767092453780" duration="12501000" />
+      <workItem from="1767162636045" duration="41940000" />
+      <workItem from="1767477875684" duration="55119000" />
+      <workItem from="1767606511626" duration="5282000" />
+      <workItem from="1767698606515" duration="31440000" />
+      <workItem from="1768141099302" duration="18563000" />
+      <workItem from="1768902974675" duration="8851000" />
+      <workItem from="1769289038709" duration="7298000" />
     </task>
-    <task id="LOCAL‎-00001" summary="Delete of SRC folder in general project">
+    <task id="LOCAL-00001" summary="Enteties from Renat">
       <option name="closed" value="true" />
-      <created>1767606042609</created>
+      <created>1766936651592</created>
       <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL‎-00001" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1767606042609</updated>
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1766936651592</updated>
     </task>
-    <task id="LOCAL‎-00002" summary="Tour class">
+    <task id="LOCAL-00002" summary="Enteties from Renat">
       <option name="closed" value="true" />
-      <created>1767607350150</created>
+      <created>1767093301114</created>
       <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL‎-00002" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1767607350150</updated>
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1767093301114</updated>
     </task>
-    <task id="LOCAL‎-00003" summary="עריכת USER ןEMPLOYEE שהבנאים יהיו תקינים. הסרת כפילות של USERROLE בEMPLOYEE">
+    <task id="LOCAL-00003" summary="New image fromRenat">
       <option name="closed" value="true" />
-      <created>1767704574557</created>
+      <created>1767106269242</created>
       <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL‎-00003" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1767704574557</updated>
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1767106269242</updated>
     </task>
-    <task id="LOCAL‎-00004" summary="change 'map' to 'mapName'">
+    <task id="LOCAL-00004" summary="Close button">
       <option name="closed" value="true" />
-      <created>1767705483656</created>
+      <created>1767108622927</created>
       <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL‎-00004" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1767705483656</updated>
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1767108622927</updated>
     </task>
-    <task id="LOCAL‎-00005" summary="עריכת הקטלוג מטבלה לתצוגת כרטיסים, מבלי לערוך את המופע של כרטיס עיר. עריכת CITY שתכיל מפה">
+    <task id="LOCAL-00005" summary="New catalog draft">
       <option name="closed" value="true" />
-      <created>1768910343437</created>
+      <created>1767109316171</created>
       <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL‎-00005" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768910343437</updated>
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1767109316171</updated>
     </task>
-    <task id="LOCAL‎-00006" summary="עריכת הקטלוג מטבלה לתצוגת כרטיסים, מבלי לערוך את המופע של כרטיס עיר. עריכת CITY שתכיל מפה">
+    <task id="LOCAL-00006" summary="New image">
       <option name="closed" value="true" />
-      <created>1768910586909</created>
+      <created>1767162931929</created>
       <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL‎-00006" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768910586909</updated>
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1767162931929</updated>
     </task>
-    <task id="LOCAL‎-00007" summary="עריכת הקטלוג מטבלה לתצוגת כרטיסים, מבלי לערוך את המופע של כרטיס עיר. עריכת CITY שתכיל מפה">
+    <task id="LOCAL-00007" summary="Login change">
       <option name="closed" value="true" />
-      <created>1768910639323</created>
+      <created>1767165302761</created>
       <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL‎-00007" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768910639323</updated>
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1767165302761</updated>
     </task>
-    <task id="LOCAL‎-00008" summary="תיקון למתודה onUpdateMap">
+    <task id="LOCAL-00008" summary="Home page change buttons">
       <option name="closed" value="true" />
-      <created>1768911118574</created>
+      <created>1767167274314</created>
       <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL‎-00008" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768911118574</updated>
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1767167274314</updated>
     </task>
-    <task id="LOCAL‎-00009" summary="CityCard.fxml file creat">
+    <task id="LOCAL-00009" summary="Home page change buttons">
       <option name="closed" value="true" />
-      <created>1768922278513</created>
+      <created>1767168154291</created>
       <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL‎-00009" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768922278513</updated>
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1767168154291</updated>
     </task>
-    <task id="LOCAL‎-00010" summary="CityCard.fxml file creat">
+    <task id="LOCAL-00010" summary="Server + DB update and close button closes both main and server">
       <option name="closed" value="true" />
-      <created>1768922334095</created>
+      <created>1767188480490</created>
       <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL‎-00010" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768922334095</updated>
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1767188480490</updated>
     </task>
-    <task id="LOCAL‎-00011" summary="CityCard.fxml file creat">
+    <task id="LOCAL-00011" summary="Server + DB update and close button closes both main and server">
       <option name="closed" value="true" />
-      <created>1768922432657</created>
+      <created>1767188751116</created>
       <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL‎-00011" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768922432657</updated>
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1767188751116</updated>
     </task>
-    <task id="LOCAL‎-00012" summary="עדכון CITY וCONT של הצגת ערים בקטלוג">
+    <task id="LOCAL-00012" summary="Server + DB update and close button closes both main and server">
       <option name="closed" value="true" />
-      <created>1768925775774</created>
+      <created>1767188800152</created>
       <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL‎-00012" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768925775774</updated>
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1767188800152</updated>
     </task>
-    <task id="LOCAL‎-00013" summary="עדכון שלא יופיע 3 פעמים חיפה - מופע אחד לכל עיר">
+    <task id="LOCAL-00013" summary="Server + DB update and close button closes both main and server">
       <option name="closed" value="true" />
-      <created>1768926873783</created>
+      <created>1767262518662</created>
       <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL‎-00013" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768926873783</updated>
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1767262518662</updated>
     </task>
-    <task id="LOCAL‎-00014" summary="עדכון שלא יופיע 3 פעמים חיפה - מופע אחד לכל עיר">
+    <task id="LOCAL-00014" summary="User Role file">
       <option name="closed" value="true" />
-      <created>1768926889804</created>
+      <created>1767262751104</created>
       <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL‎-00014" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768926889804</updated>
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1767262751104</updated>
     </task>
-    <task id="LOCAL‎-00015" summary="נסיונות כושלים לגרום לתמונה להופיע בכרטיס עיר">
+    <task id="LOCAL-00015" summary="Add map page">
       <option name="closed" value="true" />
-      <created>1768942253135</created>
+      <created>1767262863410</created>
       <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL‎-00015" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768942253135</updated>
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1767262863410</updated>
     </task>
-    <task id="LOCAL‎-00016" summary="נסיונות כושלים לגרום לתמונה להופיע בכרטיס עיר">
+    <task id="LOCAL-00016" summary="Additional windowses+login+profile+catalog">
       <option name="closed" value="true" />
-      <created>1768942277034</created>
+      <created>1767533389757</created>
       <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL‎-00016" />
-      <option name="project" value="LOCAL‎" />
-      <updated>1768942277034</updated>
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1767533389757</updated>
     </task>
-    <task id="LOCAL-00017" summary="CityUpdate-fix">
+    <task id="LOCAL-00017" summary="Additional windowses+login+profile+catalog">
       <option name="closed" value="true" />
-      <created>1768993449594</created>
+      <created>1767533436615</created>
       <option name="number" value="00017" />
       <option name="presentableId" value="LOCAL-00017" />
       <option name="project" value="LOCAL" />
-      <updated>1768993449595</updated>
+      <updated>1767533436615</updated>
     </task>
-    <task id="LOCAL-00018" summary="CityUpdate-fix">
+    <task id="LOCAL-00018" summary="Additional windowses+login+profile+catalog">
       <option name="closed" value="true" />
-      <created>1768993878819</created>
+      <created>1767533480838</created>
       <option name="number" value="00018" />
       <option name="presentableId" value="LOCAL-00018" />
       <option name="project" value="LOCAL" />
-      <updated>1768993878819</updated>
+      <updated>1767533480838</updated>
     </task>
-    <task id="LOCAL-00019" summary="cityupdatefix2">
+    <task id="LOCAL-00019" summary="new data">
       <option name="closed" value="true" />
-      <created>1768994210325</created>
+      <created>1767533770379</created>
       <option name="number" value="00019" />
       <option name="presentableId" value="LOCAL-00019" />
       <option name="project" value="LOCAL" />
-      <updated>1768994210325</updated>
+      <updated>1767533770379</updated>
     </task>
-    <task id="LOCAL-00020" summary="cityupdatefix3">
+    <task id="LOCAL-00020" summary="new windows">
       <option name="closed" value="true" />
-      <created>1768995610674</created>
+      <created>1767541647911</created>
       <option name="number" value="00020" />
       <option name="presentableId" value="LOCAL-00020" />
       <option name="project" value="LOCAL" />
-      <updated>1768995610674</updated>
+      <updated>1767541647911</updated>
     </task>
-    <task id="LOCAL-00021" summary="cityupdatefix4">
+    <task id="LOCAL-00021" summary="new">
       <option name="closed" value="true" />
-      <created>1769166124805</created>
+      <created>1767604476108</created>
       <option name="number" value="00021" />
       <option name="presentableId" value="LOCAL-00021" />
       <option name="project" value="LOCAL" />
-      <updated>1769166124805</updated>
+      <updated>1767604476108</updated>
     </task>
-    <task id="LOCAL-00022" summary="createTour1">
+    <task id="LOCAL-00022" summary="new">
       <option name="closed" value="true" />
-      <created>1769213504373</created>
+      <created>1767604719792</created>
       <option name="number" value="00022" />
       <option name="presentableId" value="LOCAL-00022" />
       <option name="project" value="LOCAL" />
-      <updated>1769213504373</updated>
+      <updated>1767604719792</updated>
     </task>
-    <task id="LOCAL-00023" summary="createTour2">
+    <task id="LOCAL-00023" summary="new">
       <option name="closed" value="true" />
-      <created>1769265259309</created>
+      <created>1767604749042</created>
       <option name="number" value="00023" />
       <option name="presentableId" value="LOCAL-00023" />
       <option name="project" value="LOCAL" />
-      <updated>1769265259310</updated>
+      <updated>1767604749042</updated>
     </task>
-    <task id="LOCAL-00024" summary="createTour3">
+    <task id="LOCAL-00024" summary="new">
       <option name="closed" value="true" />
-      <created>1769269800868</created>
+      <created>1767606797436</created>
       <option name="number" value="00024" />
       <option name="presentableId" value="LOCAL-00024" />
       <option name="project" value="LOCAL" />
-      <updated>1769269800868</updated>
+      <updated>1767606797436</updated>
     </task>
-    <task id="LOCAL-00025" summary="createTour4">
+    <task id="LOCAL-00025" summary="small changes">
       <option name="closed" value="true" />
-      <created>1769270123217</created>
+      <created>1768301413951</created>
       <option name="number" value="00025" />
       <option name="presentableId" value="LOCAL-00025" />
       <option name="project" value="LOCAL" />
-      <updated>1769270123217</updated>
+      <updated>1768301413951</updated>
     </task>
-    <task id="LOCAL-00026" summary="Registration logic implementation, first try">
+    <task id="LOCAL-00026" summary="small changes">
       <option name="closed" value="true" />
-      <created>1769281983488</created>
+      <created>1768302915257</created>
       <option name="number" value="00026" />
       <option name="presentableId" value="LOCAL-00026" />
       <option name="project" value="LOCAL" />
-      <updated>1769281983488</updated>
+      <updated>1768302915257</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="small changes +Reports">
+      <option name="closed" value="true" />
+      <created>1768307644814</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1768307644814</updated>
+    </task>
+    <task id="LOCAL-00028" summary="small changes +Reports">
+      <option name="closed" value="true" />
+      <created>1768307728251</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1768307728251</updated>
+    </task>
+    <task id="LOCAL-00029" summary="small changes +Reports">
+      <option name="closed" value="true" />
+      <created>1768907569552</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1768907569553</updated>
+    </task>
+    <task id="LOCAL-00030" summary="small changes +Reports">
+      <option name="closed" value="true" />
+      <created>1768909169045</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1768909169045</updated>
+    </task>
+    <task id="LOCAL-00031" summary="small changes +Reports">
+      <option name="closed" value="true" />
+      <created>1768909469273</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1768909469273</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
-    <option name="OPEN_GENERIC_TABS">
-      <map>
-        <entry key="76c37f72-82e0-4e47-b5b6-3bdebd38c08d" value="TOOL_WINDOW" />
-      </map>
-    </option>
     <option name="TAB_STATES">
       <map>
-        <entry key="76c37f72-82e0-4e47-b5b6-3bdebd38c08d">
-          <value>
-            <State />
-          </value>
-        </entry>
         <entry key="MAIN">
           <value>
             <State />
@@ -411,31 +525,22 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Delete of SRC folder in general project" />
-    <MESSAGE value="Tour Class" />
-    <MESSAGE value="Tour class" />
-    <MESSAGE value="עריכת USER ןEMPLOYEE שהבנאים יהיו תקינים. הסרת כפילות של USERROLE בEMPLOYEE" />
-    <MESSAGE value="change 'map' to 'mapName'" />
-    <MESSAGE value="עריכת הקטלוג מטבלה לתצוגת כרטיסים, מבלי לערוך את המופע של כרטיס עיר. עריכת CITY שתכיל מפה" />
-    <MESSAGE value="תיקון למתודה onUpdateMap" />
-    <MESSAGE value="CityCard.fxml file creat" />
-    <MESSAGE value="עדכון CITY וCONT של הצגת ערים בקטלוג" />
-    <MESSAGE value="עדכון שלא יופיע 3 פעמים חיפה - מופע אחד לכל עיר" />
-    <MESSAGE value="נסיונות כושלים לגרום לתמונה להופיע בכרטיס עיר" />
-    <MESSAGE value="CityUpdate-fix" />
-    <MESSAGE value="cityupdatefix2" />
-    <MESSAGE value="cityupdatefix3" />
-    <MESSAGE value="cityupdatefix4" />
-    <MESSAGE value="createTour1" />
-    <MESSAGE value="createTour2" />
-    <MESSAGE value="createTour3" />
-    <MESSAGE value="createTour4" />
-    <MESSAGE value="Registration logic implementation, first try" />
-    <option name="LAST_COMMIT_MESSAGE" value="Registration logic implementation, first try" />
-    <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
+    <MESSAGE value="Enteties from Renat" />
+    <MESSAGE value="New image fromRenat" />
+    <MESSAGE value="Close button" />
+    <MESSAGE value="New catalog draft" />
+    <MESSAGE value="New image" />
+    <MESSAGE value="Login change" />
+    <MESSAGE value="Home page change buttons" />
+    <MESSAGE value="Server + DB update and close button closes both main and server" />
+    <MESSAGE value="User Role file" />
+    <MESSAGE value="Add map page" />
+    <MESSAGE value="Additional windowses+login+profile+catalog" />
+    <MESSAGE value="new data" />
+    <MESSAGE value="new windows" />
+    <MESSAGE value="new" />
+    <MESSAGE value="small changes" />
+    <MESSAGE value="small changes +Reports" />
+    <option name="LAST_COMMIT_MESSAGE" value="small changes +Reports" />
   </component>
 </project>

@@ -5,6 +5,7 @@ import common.enums.ActionType;
 
 import java.util.EnumMap;
 import java.util.Map;
+import server.HibernateUtil;
 
 /**
  * Registry that maps action types to their handlers.
@@ -56,6 +57,11 @@ public class HandlerRegistry {
 
         // Purchases
         register(ActionType.PURCHASE_REQUEST, new PurchaseHandler());
+
+        // Reports
+        register(ActionType.GET_ALL_CLIENTS_REPORT_REQUEST,
+                new GetAllClientsReportHandler(HibernateUtil.getSessionFactory()));
+
     }
 
     public void register(ActionType action, RequestHandler handler) {

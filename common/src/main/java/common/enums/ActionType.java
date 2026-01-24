@@ -80,6 +80,10 @@ public enum ActionType {
     PURCHASE_RESPONSE,
     
     // ==================== GENERIC ====================
-    ERROR;
+    ERROR,
 
+    //For reports added by renat
+    GET_ALL_CLIENTS_REPORT,
+    GET_ALL_CLIENTS_REPORT_REQUEST,
+    GET_ALL_CLIENTS_REPORT_RESPONSE;
 }

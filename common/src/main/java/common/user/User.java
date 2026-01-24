@@ -2,6 +2,8 @@ package common.user;
 
 import java.io.Serializable;
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 @Entity
@@ -29,6 +31,14 @@ public abstract class User implements Serializable {
 
     @Column(name = "email")
     protected String email;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) createdAt = LocalDateTime.now();
+    }
+
 
     @Transient  // Not persisted - runtime state only
     protected boolean isLoggedIn;
