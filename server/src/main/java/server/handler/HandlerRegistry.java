@@ -40,6 +40,7 @@ public class HandlerRegistry {
         register(ActionType.GET_CITY_DETAILS_REQUEST, new GetCityDetailsHandler());
         register(ActionType.GET_CITIES_REQUEST,new GetCitiesHandler());
         register(ActionType.GET_CITY_SITES_REQUEST, new GetCitySitesHandler());
+        register(ActionType.GET_CITY_TOURS_REQUEST, new GetCityToursHandler());
 
         // Price Management
         register(ActionType.UPDATE_PRICE_REQUEST, new UpdatePriceHandler());

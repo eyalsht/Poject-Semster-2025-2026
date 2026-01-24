@@ -34,7 +34,7 @@ public class Site extends ContentItem implements Serializable {
     private String location;
 
     // MANY Sites belong to ONE City
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "city_id", nullable = false)
     private City city;
 
