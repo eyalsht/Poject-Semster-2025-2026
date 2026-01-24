@@ -24,13 +24,10 @@ public class CityUpdatePageController
     private final GCMClient client = GCMClient.getInstance();
     private ObservableList<Site> availableSites = FXCollections.observableArrayList();
     private ObservableList<City> availableCities = FXCollections.observableArrayList();
-    private ObservableList<Site> sitesToDelete = FXCollections.observableArrayList();
-    private ObservableList<Site> tourSitesToDelete = FXCollections.observableArrayList();
     private List<Site> modifiedSites = new ArrayList<>();
 
 
     private ObservableList<Tour> availableTours = FXCollections.observableArrayList();
-    private ObservableList<Tour> toursToDelete = FXCollections.observableArrayList();
     private ObservableList<Site> allTourSites = FXCollections.observableArrayList();
     private List<Tour> modifiedTours = new ArrayList<>();
 
@@ -83,6 +80,13 @@ public class CityUpdatePageController
     {
         btnAddToTour.setDisable(true);
         btnRemoveFromTour.setDisable(true);
+        btnAddTour.setDisable(true);
+        btnDeleteTour.setDisable(true);
+        btnCreateTour.setDisable(true);
+        btnDeleteSite.setDisable(true);
+        btnEditSite.setDisable(true);
+        btnConfirmEdit.setDisable(true);
+
         for (SiteCategory category : SiteCategory.values())
             categoryComboBox.getItems().add(category);
 
@@ -135,11 +139,19 @@ public class CityUpdatePageController
             if (newCity != null){
                 if(newCity.getName().equals("--------Choose City--------")) {
                     availableSites.clear();
+                    btnCreateTour.setDisable(true);
+                    btnDeleteSite.setDisable(true);
+                    btnEditSite.setDisable(true);
+                    btnConfirmEdit.setDisable(true);
                 }
                 else
                 {
                     updateSitesList(newCity.getName());
                     getToursComboBox(newCity.getName());
+                    btnEditSite.setDisable(false);
+                    btnConfirmEdit.setDisable(false);
+                    btnCreateTour.setDisable(false);
+                    btnDeleteSite.setDisable(false);
                 }
             }
         });
@@ -200,7 +212,7 @@ public class CityUpdatePageController
         {
             try
             {
-                boolean editResult = onSubmitEdit();
+                boolean editResult = onSubmitEditSite();
                 Platform.runLater(() -> {
                     if (editResult) {
                         showAlert("Success", "All changes submitted for approval.");
@@ -232,7 +244,7 @@ public class CityUpdatePageController
                 new Thread(() -> {
                     try
                     {
-                        boolean deleteResult = onSubmitDelete(selectedSite,siteJson);
+                        boolean deleteResult = onSubmitDeleteSite(selectedSite,siteJson);
                         Platform.runLater(() -> {
                             if (deleteResult) {
                                 showAlert("Success", "All changes submitted for approval.");
@@ -358,9 +370,8 @@ public class CityUpdatePageController
                 showAlert("Error","Chosen site is already part of the tour");
                 return;
             }
+            currentTour.addSite(site);
             allTourSites.add(site);
-            lvTours.refresh();
-
         }
         else
         {
@@ -380,9 +391,10 @@ public class CityUpdatePageController
                 return;
             }
             allTourSites.remove(site);
+            currentTour.removeSite(site);
             if(site.getID() > 0)
             {
-                tourSitesToDelete.add(site);//TODO- when submiting remember to delete sites from the current tour
+                //tourSitesToDelete.add(site);//TODO- when submiting remember to delete sites from the current tour
             }
         }
     }
@@ -415,13 +427,40 @@ public class CityUpdatePageController
     @FXML
     private void onAddTour()
     {
-
+        if(allTourSites.stream().count() < 1)
+        {
+            showAlert("Error","Tour must contain at least 1 site!");
+            return;
+        }
+        new Thread(() ->
+        {
+            try
+            {
+                boolean editResult = onSubmitEditTour();
+                Platform.runLater(() -> {
+                    if (editResult) {
+                        showAlert("Success", "All changes submitted for approval.");
+                    } else {
+                        showAlert("Error", "Some changes failed to submit. Please check your connection and try again.");
+                        btnSubmit.setDisable(false);
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                Platform.runLater(() -> {
+                    showAlert("Error", "Fatal error during submission: " + e.getMessage());
+                });
+            }
+        }).start();
     }
+
     @FXML
     private void onDeleteTour()
     {
 
     }
+    
     @FXML
     private void onEditTour()
     {
@@ -432,8 +471,8 @@ public class CityUpdatePageController
     {
 
     }
-
-    private boolean onSubmitEdit()
+    
+    private boolean onSubmitEditSite()
     {
         User currentUser = GCMClient.getInstance().getCurrentUser();
         Integer requesterId = (currentUser != null) ? currentUser.getId() : null;
@@ -481,7 +520,7 @@ public class CityUpdatePageController
         return allGood;
     }
 
-    private boolean onSubmitDelete(Site site, String json)
+    private boolean onSubmitDeleteSite(Site site, String json)
     {
         User currentUser = GCMClient.getInstance().getCurrentUser();
         Integer requesterId = (currentUser != null) ? currentUser.getId() : null;
@@ -504,6 +543,43 @@ public class CityUpdatePageController
         else
         {
             allGood = false;
+        }
+        return allGood;
+    }
+
+    private boolean onSubmitEditTour()
+    {
+        User currentUser = GCMClient.getInstance().getCurrentUser();
+        Integer requesterId = (currentUser != null) ? currentUser.getId() : null;
+        City selectedCity = cbChooseCity.getSelectionModel().getSelectedItem();
+        Tour selectedTour = cbChooseTour.getSelectionModel().getSelectedItem();
+        boolean allGood = true;
+        if (selectedCity == null || selectedCity.equals("--------Choose City--------") || selectedTour == null || selectedTour.getName().equals("----Create Tour----"))
+            return false;
+
+        try
+        {
+            ContentActionType action = (selectedTour.getID() <= 0) ? ContentActionType.ADD : ContentActionType.EDIT;
+            String Json = buildTourJson(selectedTour);
+            String targetName = selectedCity.getName() +" - " + selectedTour.getName();
+            Integer targetId = (action == ContentActionType.ADD) ? selectedCity.getId(): selectedTour.getID();
+            ContentChangeRequest changeRequest = new ContentChangeRequest(
+                    requesterId,
+                    action,
+                    ContentType.TOUR,
+                    targetId,
+                    targetName,
+                    Json
+            );
+            Message request = new Message(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, changeRequest);
+            Message response = (Message) client.sendRequest(request);
+            if (response == null || response.getAction() == ActionType.ERROR) {
+                allGood = false;
+            }
+        }
+        catch (Exception e)
+        {
+            Platform.runLater(() -> showAlert("Error", "Error: " + e.getMessage()));
         }
         return allGood;
     }
@@ -652,6 +728,28 @@ public class CityUpdatePageController
         return json.toString();
     }
 
+    private String buildTourJson(Tour tour) {
+        StringBuilder json = new StringBuilder("{");
+        json.append("\"id\":").append(tour.getID()).append(",");
+        json.append("\"name\":\"").append(escapeJson(tour.getName())).append("\",");
+        json.append("\"description\":\"").append(escapeJson(tour.getDescription())).append("\",");
+        City selectedCity = cbChooseCity.getSelectionModel().getSelectedItem();
+        if (selectedCity != null) {
+            json.append("\"cityId\":").append(selectedCity.getId()).append(",");
+            json.append("\"cityName\":\"").append(selectedCity.getName()).append("\",");
+        } else {
+            json.append("\"cityId\":0,");
+            json.append("\"cityName\":\"Unknown\",");
+        }
+        String siteIds = allTourSites.stream()
+                .map(s -> String.valueOf(s.getID()))
+                .reduce((id1, id2) -> id1 + "," + id2)
+                .orElse("");
+
+        json.append("\"siteIds\":\"").append(siteIds).append("\"");
+        json.append("}");
+        return json.toString();
+    }
     private String escapeJson(String input)
     {
         if (input == null) return "";
@@ -682,8 +780,6 @@ public class CityUpdatePageController
     private void clearTourSwitch()
     {
         allTourSites.clear();
-        toursToDelete.clear();
-        modifiedTours.clear();
         taDescriptionTour.clear();
         tfNewTour.clear();
     }

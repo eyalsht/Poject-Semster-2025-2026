@@ -4,16 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="createTour1">
+    <list default="true" id="a5cd29c3-324f-4bfe-aa50-717acde5a9e7" name="Changes" comment="createTour2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/CityUpdatePageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/CityUpdatePageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/CityUpdatePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/CityUpdatePage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CityUpdatePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/CityUpdatePage.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController$2.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/content/Site.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/content/Site.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/handler/HandlerRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/HandlerRegistry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/enums/SiteDuration.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/enums/SiteDuration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/repository/PendingContentRequestRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/repository/PendingContentRequestRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -179,7 +177,7 @@
       <workItem from="1769214867942" duration="440000" />
       <workItem from="1769215380044" duration="528000" />
       <workItem from="1769254316834" duration="426000" />
-      <workItem from="1769254803845" duration="7523000" />
+      <workItem from="1769254803845" duration="12046000" />
     </task>
     <task id="LOCAL‎-00001" summary="Delete of SRC folder in general project">
       <option name="closed" value="true" />
@@ -357,7 +355,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769213504373</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="createTour2">
+      <option name="closed" value="true" />
+      <created>1769265259309</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1769265259310</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -391,7 +397,8 @@
     <MESSAGE value="cityupdatefix3" />
     <MESSAGE value="cityupdatefix4" />
     <MESSAGE value="createTour1" />
-    <option name="LAST_COMMIT_MESSAGE" value="createTour1" />
+    <MESSAGE value="createTour2" />
+    <option name="LAST_COMMIT_MESSAGE" value="createTour2" />
     <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">

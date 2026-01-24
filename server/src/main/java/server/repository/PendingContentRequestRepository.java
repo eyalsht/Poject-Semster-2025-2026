@@ -10,8 +10,11 @@ import common.workflow.PendingContentRequest;
 import org.hibernate.Session;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Repository for PendingContentRequest entity operations.
@@ -355,25 +358,132 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
 
     private void createNewTour(Session session, PendingContentRequest pending)
     {
+        String json = pending.getContentDetails();
+        CityRepository cp = CityRepository.getInstance();
+        int cityId = pending.getTargetId();
+        City city = session.get(City.class, cityId);
+        if (city == null) {
+            System.err.println("CRITICAL: City ID " + cityId + " not found in DB!");
+            return;
+        }
 
+        Tour tour = new Tour();
+        tour.setName(extractJsonValue(json, "name"));
+        tour.setDescription(extractJsonValue(json, "description"));
+        tour.setCity(city);
+        String siteIdsRaw = extractJsonValue(json, "siteIds");
+        List<Integer> siteIds = new ArrayList<>();
+        if (siteIdsRaw != null && !siteIdsRaw.trim().isEmpty())
+        {
+            siteIds = Arrays.stream(siteIdsRaw.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toList());
+        }
+        for (Integer siteId : siteIds)
+        {
+            Site site = session.get(Site.class, siteId);
+            if (site != null) {
+                tour.addSite(site);
+            }
+        }
+        city.addTour(tour);
+
+        session.persist(tour);
+        System.out.println("Created new site: " + extractJsonValue(json,"name") + " in city: " + city.getName());
     }
 
-    private void updateExistingTour(Session session, Integer targetId, PendingContentRequest pending)
+    private void updateExistingTour(Session session, Integer targetId, PendingContentRequest pending) {
+        if (targetId == null)
+        {
+            System.err.println("Error: Cannot update tour without targetId.");
+            return;
+        }
+        String json = pending.getContentDetails();
+        Tour existingTour = session.get(Tour.class, targetId);
+
+        if (existingTour != null)
+        {
+            existingTour.setName(extractJsonValue(json, "name"));
+            existingTour.setDescription(extractJsonValue(json, "description"));
+
+            String siteIdsRaw = extractJsonValue(json, "siteIds");
+            List<Integer> newSiteIds = new ArrayList<>();
+            if (siteIdsRaw != null && !siteIdsRaw.trim().isEmpty())
+            {
+                newSiteIds = Arrays.stream(siteIdsRaw.split(","))
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .map(Integer::parseInt)
+                        .collect(Collectors.toList());
+            }
+
+            existingTour.getSites().clear();
+            for (Integer sId : newSiteIds)
+            {
+                Site site = session.get(Site.class, sId);
+                if (site != null) {
+                    existingTour.addSite(site);
+                }
+            }
+
+            updateTourDuration(existingTour);
+            session.merge(existingTour);
+            session.merge(existingTour);
+            System.out.println("Approved Update: Tour " + existingTour.getName() + " (ID: " + targetId + ")");
+        }
+        else
+        {
+            System.err.println("Error: Could not find Tour with ID " + targetId + " to update.");
+        }
+    }
+
+    private void deleteTour(Session session, Integer targetId, PendingContentRequest pending) {
+        if (targetId == null)
+            return;
+        Tour tourToDelete = session.get(Tour.class, targetId);
+        if (tourToDelete != null)
+        {
+            City city = tourToDelete.getCity();
+            if (city != null)
+            {
+                city.getTours().remove(tourToDelete);
+            }
+            tourToDelete.getSites().clear();
+            session.remove(tourToDelete);
+            System.out.println("Approved Delete: Tour ID " + targetId);
+        } else {
+            System.err.println("Error: Could not find Tour with ID " + targetId + " to delete.");
+        }
+    }
+
+    private void updateTourDuration(Tour tour)
     {
+        double totalHours = 0.0;
+        for (Site site : tour.getSites()) {
+            if (site.getRecommendedVisitDuration() != null) {
+                totalHours += site.getRecommendedVisitDuration().getHours();
+            }
+        }
+        String finalDuration;
+        if (totalHours == 0) {
+            finalDuration = "0 hours";
+        } else {
+            // Use "hour" for exactly 1, "hours" for everything else
+            String unit = (totalHours == 1.0) ? " hour" : " hours";
 
+            // Remove trailing .0 for whole numbers (e.g., "3 hours" instead of "3.0 hours")
+            if (totalHours == (long) totalHours) {
+                finalDuration = String.format("%d%s", (long)totalHours, unit);
+            } else {
+                finalDuration = String.format("%.1f%s", totalHours, unit);
+            }
+        }
+        tour.setRecommendedDuration(finalDuration);
     }
-
-    private void deleteTour(Session session, Integer targetId, PendingContentRequest pending)
+    private String extractJsonValue(String json, String key)
     {
-
-    }
-
-    /**
-     * Simple JSON value extractor.
-     * Extracts the value for a given key from a JSON string.
-     * Note: This is a basic implementation. Consider using a proper JSON library (Gson, Jackson) for production.
-     */
-    private String extractJsonValue(String json, String key) {
         if (json == null || key == null) return null;
 
         String searchKey = "\"" + key + "\":";
