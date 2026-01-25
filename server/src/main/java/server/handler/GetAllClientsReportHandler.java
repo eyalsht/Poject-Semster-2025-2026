@@ -28,7 +28,7 @@ public class GetAllClientsReportHandler implements RequestHandler {
 
             List<AllClientsReport.ClientRow> rows = session.createQuery("""
     select new common.report.AllClientsReport$ClientRow(
-        c.id, c.username, c.email, c.firstName, c.lastName, null
+        c.id, c.username, c.email, c.firstName, c.lastName, c.createdAt
     )
     from Client c
     order by c.id desc

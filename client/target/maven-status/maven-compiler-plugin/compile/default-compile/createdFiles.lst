@@ -7,6 +7,7 @@ oscf\AbstractClient.class
 oscf\AdaptableClient.class
 controllers\CatalogPageController.class
 controllers\ReportPageController.class
+controllers\ReportPageController$1.class
 controllers\CityCardController.class
 client\ClientLauncher.class
 controllers\CityUpdatePageController$1.class

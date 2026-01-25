@@ -5,46 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="small changes +Reports">
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]/MainApplication.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]/module-info.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]/module-info1.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]1/MainApplication.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]1/module-info.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]1/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM__Changes_.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM__Changes_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_1_2026_2_04_PM_[Changes]/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_1_2026_2_04_PM_[Changes]1/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_1_2026_2_04_PM__Changes_.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_11_57_AM_[Changes]/module-info.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_11_57_AM_[Changes]/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_11_57_AM__Changes_.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_1_19_PM_[Changes]/shelved.patch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_1_19_PM__Changes_.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/common/src/main/java/common/report/AllClientsReport.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/GetAllClientsReportHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/AddMapPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/AddMapPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/client/MainApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/client/MainApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ApprovalPendingPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ApprovalPendingPageController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityUpdatePageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/LoginPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/LoginPageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/MapUpdatePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/MapUpdatePageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/RegisterPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/RegisterPageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/module-info.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/common/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/enums/ActionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/enums/ActionType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/user/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/user/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/handler/HandlerRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/HandlerRegistry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/AbstractServer.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/server/ocsf/AbstractServer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/ConnectionToClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/server/ocsf/ConnectionToClient.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/handler/GetAllClientsReportHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/GetAllClientsReportHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/module-info.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/AbstractServer$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/AdaptableServer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/ObservableOriginatorServer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/ObservableServer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/OriginatorMessage.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
