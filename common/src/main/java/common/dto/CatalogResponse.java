@@ -26,7 +26,40 @@ public class CatalogResponse implements Serializable {
     // Optional: full city data if needed
     private List<City> cities = new ArrayList<>();
 
+    // Search results for search mode
+    private List<CitySearchResult> searchResults = new ArrayList<>();
+
     public CatalogResponse() {}
+
+    /**
+     * Inner class to hold search result data with counts.
+     */
+    public static class CitySearchResult implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private City city;
+        private int mapCount;
+        private int siteCount;
+        private int tourCount;
+        private List<String> mapDescriptions;
+
+        public CitySearchResult() {}
+
+        public City getCity() { return city; }
+        public void setCity(City city) { this.city = city; }
+
+        public int getMapCount() { return mapCount; }
+        public void setMapCount(int mapCount) { this.mapCount = mapCount; }
+
+        public int getSiteCount() { return siteCount; }
+        public void setSiteCount(int siteCount) { this.siteCount = siteCount; }
+
+        public int getTourCount() { return tourCount; }
+        public void setTourCount(int tourCount) { this.tourCount = tourCount; }
+
+        public List<String> getMapDescriptions() { return mapDescriptions; }
+        public void setMapDescriptions(List<String> mapDescriptions) { this.mapDescriptions = mapDescriptions; }
+    }
 
     // ==================== GETTERS & SETTERS ====================
     
@@ -44,9 +77,19 @@ public class CatalogResponse implements Serializable {
 
     public List<City> getCities() { return cities; }
     public void setCities(List<City> cities) { this.cities = cities; }
-    
+
+    public List<CitySearchResult> getSearchResults() { return searchResults; }
+    public void setSearchResults(List<CitySearchResult> searchResults) { this.searchResults = searchResults; }
+
     // Convenience method
     public int getMapCount() {
         return maps != null ? maps.size() : 0;
+    }
+
+    /**
+     * Check if this response contains search results.
+     */
+    public boolean isSearchMode() {
+        return searchResults != null && !searchResults.isEmpty();
     }
 }

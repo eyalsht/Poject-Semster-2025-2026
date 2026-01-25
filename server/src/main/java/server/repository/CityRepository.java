@@ -87,4 +87,42 @@ public class CityRepository extends BaseRepository<City, Integer> {
                    .uniqueResultOptional()
         );
     }
+
+    /**
+     * Search cities with counts - returns Object[] containing:
+     * [0] = City, [1] = mapCount (Long), [2] = siteCount (Long), [3] = tourCount (Long)
+     */
+    public List<Object[]> searchWithCounts(String searchQuery) {
+        return executeQuery(session -> {
+            String pattern = "%" + searchQuery.toLowerCase() + "%";
+            String hql = """
+                SELECT DISTINCT c,
+                       (SELECT COUNT(m) FROM GCMMap m WHERE m.city = c),
+                       (SELECT COUNT(s) FROM Site s WHERE s.city = c),
+                       (SELECT COUNT(t) FROM Tour t WHERE t.city = c)
+                FROM City c
+                LEFT JOIN c.sites s
+                WHERE LOWER(c.name) LIKE :pattern
+                   OR LOWER(c.description) LIKE :pattern
+                   OR LOWER(s.name) LIKE :pattern
+                   OR LOWER(s.description) LIKE :pattern
+                ORDER BY c.name
+                """;
+            return session.createQuery(hql, Object[].class)
+                .setParameter("pattern", pattern)
+                .getResultList();
+        });
+    }
+
+    /**
+     * Get map descriptions for a given city.
+     */
+    public List<String> getMapDescriptionsForCity(int cityId) {
+        return executeQuery(session -> {
+            String hql = "SELECT m.description FROM GCMMap m WHERE m.city.id = :cityId";
+            return session.createQuery(hql, String.class)
+                .setParameter("cityId", cityId)
+                .getResultList();
+        });
+    }
 }

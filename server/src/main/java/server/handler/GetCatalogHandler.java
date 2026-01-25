@@ -1,5 +1,6 @@
 package server.handler;
 
+import common.content.City;
 import common.content.GCMMap;
 import common.dto.CatalogFilter;
 import common.dto.CatalogResponse;
@@ -25,14 +26,20 @@ public class GetCatalogHandler implements RequestHandler {
         try {
             // Parse filter from request
             CatalogFilter filter = parseFilter(request.getMessage());
-            
+
             // Build response
             CatalogResponse response = new CatalogResponse();
-            
+
+            // Check if this is a search request
+            if (filter.isSearchMode()) {
+                return handleSearchRequest(filter, response);
+            }
+
+            // Regular catalog mode
             // Always include all city names for the dropdown
             List<String> allCityNames = cityRepository.findAllCityNames();
             response.setAvailableCities(new ArrayList<>(allCityNames));
-            
+
             // Get filtered maps
             List<GCMMap> maps = mapRepository.findByCriteria(
                 filter.getCityName(),
@@ -40,12 +47,12 @@ public class GetCatalogHandler implements RequestHandler {
                 filter.getVersion()
             );
             response.setMaps(new ArrayList<>(maps));
-            
+
             // Populate available map names (for selected city, or all if no city selected)
             if (filter.getCityName() != null) {
                 List<String> mapNames = mapRepository.findMapNamesByCity(filter.getCityName());
                 response.setAvailableMapNames(new ArrayList<>(mapNames));
-                
+
                 // Populate available versions (for selected city+map)
                 if (filter.getMapName() != null) {
                     List<String> versions = mapRepository.findVersionsByCityAndMapName(
@@ -54,13 +61,46 @@ public class GetCatalogHandler implements RequestHandler {
                     response.setAvailableVersions(new ArrayList<>(versions));
                 }
             }
-            
+
             return new Message(ActionType.GET_CATALOG_RESPONSE, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             return new Message(ActionType.ERROR, "Error fetching catalog: " + e.getMessage());
         }
+    }
+
+    /**
+     * Handle search mode request - returns cities matching query with counts.
+     */
+    private Message handleSearchRequest(CatalogFilter filter, CatalogResponse response) {
+        String searchQuery = filter.getSearchQuery();
+
+        // Get search results with counts
+        List<Object[]> results = cityRepository.searchWithCounts(searchQuery);
+
+        List<CatalogResponse.CitySearchResult> searchResults = new ArrayList<>();
+        for (Object[] row : results) {
+            City city = (City) row[0];
+            Long mapCount = (Long) row[1];
+            Long siteCount = (Long) row[2];
+            Long tourCount = (Long) row[3];
+
+            CatalogResponse.CitySearchResult result = new CatalogResponse.CitySearchResult();
+            result.setCity(city);
+            result.setMapCount(mapCount.intValue());
+            result.setSiteCount(siteCount.intValue());
+            result.setTourCount(tourCount.intValue());
+
+            // Get map descriptions for this city
+            List<String> mapDescriptions = cityRepository.getMapDescriptionsForCity(city.getId());
+            result.setMapDescriptions(new ArrayList<>(mapDescriptions));
+
+            searchResults.add(result);
+        }
+
+        response.setSearchResults(searchResults);
+        return new Message(ActionType.GET_CATALOG_RESPONSE, response);
     }
 
     /**

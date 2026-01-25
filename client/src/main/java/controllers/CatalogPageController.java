@@ -46,6 +46,11 @@ public class CatalogPageController {
     @FXML private ScrollPane scrollPaneCities;
     @FXML private FlowPane flowPaneCities;
 
+    // Search components
+    @FXML private TextField txtSearch;
+    @FXML private Button btnSearch;
+    @FXML private Button btnClearSearch;
+
     @FXML private Button btnUpdateMap;
     @FXML private Button btnAddMap;
     @FXML private Button btnDeleteMap;
@@ -205,7 +210,13 @@ public class CatalogPageController {
             CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
             this.lastCatalogResponse = catalogResponse;
 
-            // Using updateCityCards instead of TableView.setItems
+            // Check if this is a search response
+            if (catalogResponse.isSearchMode()) {
+                updateCityCardsFromSearch(catalogResponse.getSearchResults());
+                return;
+            }
+
+            // Regular catalog mode - Using updateCityCards instead of TableView.setItems
             updateCityCards(catalogResponse.getMaps());
 
             // Set flag to prevent listener recursion
@@ -232,6 +243,37 @@ public class CatalogPageController {
                 isUpdatingComboBoxes = false;
             }
         }
+    }
+
+    /**
+     * Update city cards from search results.
+     */
+    private void updateCityCardsFromSearch(List<CatalogResponse.CitySearchResult> searchResults) {
+        Platform.runLater(() -> {
+            flowPaneCities.getChildren().clear();
+
+            if (searchResults.isEmpty()) {
+                Label noResults = new Label("No results found.");
+                noResults.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
+                flowPaneCities.getChildren().add(noResults);
+                return;
+            }
+
+            for (CatalogResponse.CitySearchResult result : searchResults) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityCard.fxml"));
+                    Parent card = loader.load();
+
+                    CityCardController controller = loader.getController();
+                    controller.setSearchData(result, this);
+
+                    flowPaneCities.getChildren().add(card);
+                } catch (Exception e) {
+                    System.err.println("Error loading city card for search: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public CatalogResponse getLastCatalogResponse() {return this.lastCatalogResponse;}
@@ -345,6 +387,36 @@ public class CatalogPageController {
                 }
             }
         }
+    }
+
+    // ==================== SEARCH HANDLERS ====================
+
+    @FXML
+    private void onSearch() {
+        String searchText = txtSearch.getText();
+        if (searchText == null || searchText.trim().isEmpty()) {
+            showAlert("Search", "Please enter a search term.");
+            return;
+        }
+
+        new Thread(() -> {
+            try {
+                CatalogFilter filter = new CatalogFilter(null, null, null, searchText.trim());
+                Message request = new Message(ActionType.GET_CATALOG_REQUEST, filter);
+                Message response = (Message) client.sendRequest(request);
+
+                Platform.runLater(() -> handleCatalogResponse(response));
+
+            } catch (Exception e) {
+                Platform.runLater(() -> showAlert("Error", "Search failed: " + e.getMessage()));
+            }
+        }).start();
+    }
+
+    @FXML
+    private void onClearSearch() {
+        txtSearch.clear();
+        loadCatalog(null, null, null);
     }
 
     // ==================== BUTTON HANDLERS ====================
