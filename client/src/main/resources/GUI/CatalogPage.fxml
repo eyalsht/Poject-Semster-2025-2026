@@ -19,7 +19,7 @@
     <children>
 
         <!-- Top selection area -->
-        <GridPane hgap="20.0" layoutX="30.0" layoutY="26.0" prefHeight="134.0" prefWidth="361.0" vgap="12.0">
+        <GridPane hgap="20.0" layoutX="30.0" layoutY="26.0" prefHeight="134.0" prefWidth="406.0" vgap="12.0">
             <columnConstraints>
                 <ColumnConstraints prefWidth="120.0" />
                 <ColumnConstraints prefWidth="200.0" />
@@ -37,27 +37,19 @@
                 <Label text="Choose Map" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                 <ComboBox fx:id="cbMap" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                <Label text="Choose Version" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <ComboBox fx:id="cbVersion" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                    <GridPane.margin>
-                        <Insets top="2.0" />
-                    </GridPane.margin>
-                </ComboBox>
+                <Label text="Search" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <HBox prefHeight="30.0" prefWidth="258.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <children>
+                        <TextField fx:id="txtSearch" prefHeight="26.0" prefWidth="85.0" promptText="Search cities, sites..." />
+                        <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="27.0" prefWidth="75.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" />
+                        <Button fx:id="btnClearSearch" mnemonicParsing="false" onAction="#onClearSearch" prefHeight="28.0" prefWidth="63.0" text="Clear" />
+                    </children>
+                </HBox>
             </children>
             <opaqueInsets>
                 <Insets />
             </opaqueInsets>
         </GridPane>
-
-        <!-- Search bar - top right -->
-        <HBox alignment="CENTER_RIGHT" layoutY="30.0" spacing="10.0" AnchorPane.rightAnchor="30.0">
-            <children>
-                <Label text="Search:" />
-                <TextField fx:id="txtSearch" prefWidth="180.0" promptText="Search cities, sites..." />
-                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" />
-                <Button fx:id="btnClearSearch" mnemonicParsing="false" onAction="#onClearSearch" text="Clear" />
-            </children>
-        </HBox>
 
         <!-- Table below (scrolls automatically) -->
         <!--       <TableView fx:id="tblCatalog" layoutX="70.0" layoutY="210.0" prefHeight="170.0" prefWidth="550.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">

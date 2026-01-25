@@ -41,7 +41,6 @@ public class CatalogPageController {
 
     @FXML private ComboBox<String> cbCity;
     @FXML private ComboBox<String> cbMap;
-    @FXML private ComboBox<String> cbVersion;
 
     @FXML private ScrollPane scrollPaneCities;
     @FXML private FlowPane flowPaneCities;
@@ -160,7 +159,6 @@ public class CatalogPageController {
             if (isUpdatingComboBoxes) return;  // Prevent recursive calls
             String selectedCity = cbCity.getValue();
             updateMapComboBox(selectedCity);
-            cbVersion.getItems().clear();
             loadCatalog(selectedCity, null, null);
         });
 
@@ -168,13 +166,7 @@ public class CatalogPageController {
             if (isUpdatingComboBoxes) return;  // Prevent recursive calls
             String selectedCity = cbCity.getValue();
             String selectedMap = cbMap.getValue();
-            updateVersionComboBox(selectedCity, selectedMap);
             loadCatalog(selectedCity, selectedMap, null);
-        });
-
-        cbVersion.setOnAction(e -> {
-            if (isUpdatingComboBoxes) return;  // Prevent recursive calls
-            loadCatalog(cbCity.getValue(), cbMap.getValue(), cbVersion.getValue());
         });
     }
 
@@ -234,11 +226,6 @@ public class CatalogPageController {
                 if (!catalogResponse.getAvailableMapNames().isEmpty()) {
                     updateMapComboBoxFromResponse(catalogResponse.getAvailableMapNames());
                 }
-
-                // Update version dropdown if available
-                if (!catalogResponse.getAvailableVersions().isEmpty()) {
-                    updateVersionComboBoxFromResponse(catalogResponse.getAvailableVersions());
-                }
             } finally {
                 isUpdatingComboBoxes = false;
             }
@@ -297,28 +284,6 @@ public class CatalogPageController {
         maps.add("");  // Empty option for "All"
         maps.addAll(mapNames);
         cbMap.setItems(FXCollections.observableArrayList(maps));
-    }
-
-    /**
-     * Update version combo box based on selected city and map.
-     */
-    private void updateVersionComboBox(String selectedCity, String selectedMap) {
-        cbVersion.getItems().clear();
-        if (selectedCity == null || selectedMap == null ||
-                selectedCity.isEmpty() || selectedMap.isEmpty()) {
-            return;
-        }
-
-        if (lastCatalogResponse != null && lastCatalogResponse.getAvailableVersions() != null) {
-            updateVersionComboBoxFromResponse(lastCatalogResponse.getAvailableVersions());
-        }
-    }
-
-    private void updateVersionComboBoxFromResponse(List<String> versions) {
-        List<String> versionList = new ArrayList<>();
-        versionList.add("");  // Empty option for "All"
-        versionList.addAll(versions);
-        cbVersion.setItems(FXCollections.observableArrayList(versionList));
     }
 
     /**
@@ -644,7 +609,7 @@ public class CatalogPageController {
             stage.showAndWait();
 
             // Refresh after closing
-            loadCatalog(cbCity.getValue(), cbMap.getValue(), cbVersion.getValue());
+            loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -699,7 +664,7 @@ public class CatalogPageController {
             stage.show();
 
             // Refresh after closing
-            loadCatalog(cbCity.getValue(), cbMap.getValue(), cbVersion.getValue());
+            loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -711,7 +676,7 @@ public class CatalogPageController {
      * Public method to refresh catalog (called from other controllers).
      */
     public void refreshCatalog() {
-        loadCatalog(cbCity.getValue(), cbMap.getValue(), cbVersion.getValue());
+        loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
     }
 
     private void showAlert(String title, String message) {
