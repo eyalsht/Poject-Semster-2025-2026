@@ -29,9 +29,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-hikaricp</artifactId>
+            <version>6.4.4.Final</version>
         </dependency>
+
     </dependencies>
 
     <build>
