@@ -4,26 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="small changes +Reports">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Client report ver 0.1 - Reports">
       <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/AddMapPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/AddMapPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/handler/GetAllClientsReportHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/GetAllClientsReportHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/classes/module-info.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/AbstractServer$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/AdaptableServer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/ObservableOriginatorServer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/ObservableServer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/OriginatorMessage.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CatalogPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/CatalogPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CityCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/CityCard.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -486,7 +473,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768909469273</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Client report ver 0.1 - Reports">
+      <option name="closed" value="true" />
+      <created>1769364591253</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1769364591253</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -520,6 +515,7 @@
     <MESSAGE value="new" />
     <MESSAGE value="small changes" />
     <MESSAGE value="small changes +Reports" />
-    <option name="LAST_COMMIT_MESSAGE" value="small changes +Reports" />
+    <MESSAGE value="Client report ver 0.1 - Reports" />
+    <option name="LAST_COMMIT_MESSAGE" value="Client report ver 0.1 - Reports" />
   </component>
 </project>

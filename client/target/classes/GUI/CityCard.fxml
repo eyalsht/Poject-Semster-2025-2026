@@ -4,11 +4,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="cardRoot" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: #e0e0e0;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CityCardController">
+<VBox fx:id="cardRoot" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="200.0" spacing="8.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: #e0e0e0;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CityCardController">
     <children>
         <ImageView fx:id="imgCity" fitHeight="140.0" fitWidth="180.0" pickOnBounds="true">
             <VBox.margin>
@@ -32,6 +33,37 @@
          <VBox.margin>
             <Insets top="-3.0" />
          </VBox.margin>
+        </Label>
+
+        <!-- Count labels for search mode -->
+        <HBox fx:id="countsBox" alignment="CENTER" spacing="10.0" visible="false" managed="false">
+            <children>
+                <Label fx:id="lblMapCount" text="Maps: 0" textFill="#3498db">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
+                <Label fx:id="lblSiteCount" text="Sites: 0" textFill="#e67e22">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
+                <Label fx:id="lblTourCount" text="Tours: 0" textFill="#9b59b6">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
+            </children>
+        </HBox>
+
+        <!-- Map descriptions for search mode -->
+        <Label fx:id="lblMapDesc" alignment="TOP_LEFT" maxWidth="180.0" text="" textFill="#7f8c8d" visible="false" managed="false" wrapText="true">
+            <font>
+                <Font size="10.0" />
+            </font>
+            <VBox.margin>
+                <Insets left="5.0" right="5.0" />
+            </VBox.margin>
         </Label>
     </children>
     <padding>

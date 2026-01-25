@@ -37,13 +37,20 @@ public class ReportPageController {
 
     @FXML
     public void initialize() {
-        // keep report names simple for now, but only "Clients report" will actually work
+
+        // report options stay the same
         cmbReportType.setItems(FXCollections.observableArrayList(
                 "Clients report", "Sales report", "Purchases report", "Users report"
         ));
-        cmbReportType.getSelectionModel().select("Clients report");
 
-        // show City objects nicely in ComboBox
+        // ✅ Start state: only report enabled
+        cmbReportType.getSelectionModel().clearSelection();
+        cmbReportType.setDisable(false);
+
+        cmbCity.setDisable(true);
+        btnGenerate.setDisable(true);
+
+        // converter stays
         cmbCity.setConverter(new StringConverter<>() {
             @Override public String toString(City city) {
                 return (city == null) ? "" : city.getName();
@@ -53,8 +60,14 @@ public class ReportPageController {
 
         setupClientsTableColumns();
 
-        loadCitiesFromServer();   // ✅ this fills the city combo from DB using Hibernate (server side)
+        // ✅ listeners that enable/disable controls based on selection
+        wireUiStateListeners();
+        applyUiState();
+
+        // keep your existing city loading
+        loadCitiesFromServer();
     }
+
 
     private void setupClientsTableColumns() {
         colId.setCellValueFactory(data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().userId));
@@ -134,6 +147,7 @@ public class ReportPageController {
 
     private void fillClientsBarChart(AllClientsReport report) {
         barChart.getData().clear();
+        barChart.setAnimated(false);
 
         if (report == null || report.last5Months == null) return;
 
@@ -141,7 +155,7 @@ public class ReportPageController {
         series.setName("New clients");
 
         for (AllClientsReport.MonthCount mc : report.last5Months) {
-            String label = (mc.month == null) ? "" : mc.month.toString(); // e.g. 2026-01
+            String label = mc.month.getMonthValue() + "/" + mc.month.getYear(); // e.g. 2026-01
             series.getData().add(new XYChart.Data<>(label, mc.count));
         }
 
@@ -155,4 +169,34 @@ public class ReportPageController {
         a.setContentText(msg);
         a.showAndWait();
     }
+
+    private void applyUiState() {
+        // Default: only report enabled
+        String report = cmbReportType.getValue();
+
+        boolean hasReport = report != null && !report.isBlank();
+        boolean isClients = "Clients report".equals(report);
+
+        // City enabled only for non-clients reports (future reports)
+        cmbCity.setDisable(!hasReport || isClients);
+
+        // Generate enabled:
+        // - Clients report: enabled as soon as selected
+        // - Others: enabled only when city is selected
+        boolean cityChosen = cmbCity.getValue() != null;
+        btnGenerate.setDisable(!hasReport || (!isClients && !cityChosen));
+    }
+
+    private void wireUiStateListeners() {
+        cmbReportType.valueProperty().addListener((obs, oldV, newV) -> {
+            // if switching to Clients report, clear city selection (optional but clean)
+            if ("Clients report".equals(newV)) {
+                cmbCity.getSelectionModel().clearSelection();
+            }
+            applyUiState();
+        });
+
+        cmbCity.valueProperty().addListener((obs, oldV, newV) -> applyUiState());
+    }
+
 }
