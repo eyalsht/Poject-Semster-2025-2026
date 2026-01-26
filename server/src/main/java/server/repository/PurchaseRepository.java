@@ -9,8 +9,10 @@ import common.purchase.Subscription;
 import common.user.Client;
 import common.user.User;
 
+
 import java.time.LocalDate;
 import java.util.List;
+
 
 /**
  * Repository for Purchase entity operations.
@@ -35,7 +37,26 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
     /**
      * Log a new subscription purchase.
      */
-    public Subscription createSubscription(User user, City city, double price, int months) {
+    public Subscription createSubscription(User user, City city, double price, int months)
+    {
+        LocalDate today = LocalDate.now();
+
+        // Find the latest expiration date of any subscription for this user+city
+        LocalDate latestExpiration = executeQuery(session ->
+                session.createQuery(
+                                "select max(s.expirationDate) " +
+                                        "from Subscription s " +
+                                        "where s.user.id = :userId and s.city.id = :cityId",
+                                LocalDate.class)
+                        .setParameter("userId", user.getId())
+                        .setParameter("cityId", city.getId())
+                        .getSingleResult()
+        );
+
+        boolean renewal = (latestExpiration != null && !latestExpiration.isBefore(today));
+
+        LocalDate base = (renewal ? latestExpiration : today);
+        LocalDate newExpiration = base.plusMonths(months);
         Subscription subscription = new Subscription();
         subscription.setUser(user);
         subscription.setCity(city);

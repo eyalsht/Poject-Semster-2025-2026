@@ -6,9 +6,17 @@ import java.time.LocalDate;
 
 @Entity
 @DiscriminatorValue("SUBSCRIPTION")
-public class Subscription extends Purchase implements Serializable {
+public class Subscription extends Purchase implements Serializable
+{
     
     private static final long serialVersionUID = 1L;
+
+    @Column(name = "is_renewal")
+    private boolean renewal;
+
+    public boolean isRenewal() { return renewal; }
+    public void setRenewal(boolean renewal) { this.renewal = renewal; }
+
 
     @Column(name = "expiration_date")
     private LocalDate expirationDate;

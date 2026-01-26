@@ -1,22 +1,41 @@
 package common.report;
 
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
-public class ActivityReport extends Report {
+public class ActivityReport implements Serializable {
+    public LocalDate fromDate;
+    public LocalDate toDate;
+    public List<CityRow> rows;
 
-    private int totalPurchases;
-    private int totalRenewals;
-
-    public ActivityReport(int reportId, LocalDate startDate, LocalDate endDate,
-                          int totalPurchases, int totalRenewals) {
-        super(reportId, startDate, endDate);
-        this.totalPurchases = totalPurchases;
-        this.totalRenewals = totalRenewals;
+    public ActivityReport(LocalDate fromDate, LocalDate toDate, List<CityRow> rows) {
+        this.fromDate = fromDate;
+        this.toDate = toDate;
+        this.rows = rows;
     }
 
-    public int getTotalPurchases() { return totalPurchases; }
-    public void setTotalPurchases(int totalPurchases) { this.totalPurchases = totalPurchases; }
+    public static class CityRow implements Serializable {
+        public int cityId;
+        public String cityName;
 
-    public int getTotalRenewals() { return totalRenewals; }
-    public void setTotalRenewals(int totalRenewals) { this.totalRenewals = totalRenewals; }
+        public int maps;
+        public int oneTimePurchases;
+        public int subscriptions;
+        public int renewals;
+        public int views;
+        public int downloads;
+
+        public CityRow(int cityId, String cityName, int maps, int oneTimePurchases,
+                       int subscriptions, int renewals, int views, int downloads) {
+            this.cityId = cityId;
+            this.cityName = cityName;
+            this.maps = maps;
+            this.oneTimePurchases = oneTimePurchases;
+            this.subscriptions = subscriptions;
+            this.renewals = renewals;
+            this.views = views;
+            this.downloads = downloads;
+        }
+    }
 }

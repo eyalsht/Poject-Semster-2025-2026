@@ -78,12 +78,21 @@ public enum ActionType {
     // ==================== PURCHASES ====================
     PURCHASE_REQUEST,
     PURCHASE_RESPONSE,
-    
-    // ==================== GENERIC ====================
-    ERROR,
 
     //For reports added by renat
     GET_ALL_CLIENTS_REPORT,
     GET_ALL_CLIENTS_REPORT_REQUEST,
-    GET_ALL_CLIENTS_REPORT_RESPONSE;
+    GET_ALL_CLIENTS_REPORT_RESPONSE,
+
+    // Activity report + stats logging
+    LOG_MAP_VIEW_REQUEST,
+    LOG_MAP_VIEW_RESPONSE,
+
+    LOG_MAP_DOWNLOAD_REQUEST,
+    LOG_MAP_DOWNLOAD_RESPONSE,
+
+    GET_ACTIVITY_REPORT_REQUEST,
+    GET_ACTIVITY_REPORT_RESPONSE,
+    // ==================== GENERIC ====================
+    ERROR
 }

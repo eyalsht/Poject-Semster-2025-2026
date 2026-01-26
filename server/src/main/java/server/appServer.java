@@ -1,5 +1,7 @@
 package server;
 
+import server.report.ActivityStatsScheduler;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 
@@ -18,6 +20,7 @@ public class appServer {
         gcmServer = new GcmServer(5555);
         System.out.println("Server Started and Listening on port 5555");
         gcmServer.listen();
+        ActivityStatsScheduler.start(HibernateUtil.getSessionFactory());
     }
 
 }

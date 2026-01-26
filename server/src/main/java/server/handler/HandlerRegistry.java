@@ -62,6 +62,17 @@ public class HandlerRegistry {
         register(ActionType.GET_ALL_CLIENTS_REPORT_REQUEST,
                 new GetAllClientsReportHandler(HibernateUtil.getSessionFactory()));
 
+        register(ActionType.GET_ACTIVITY_REPORT_REQUEST,
+                new GetActivityReportHandler(HibernateUtil.getSessionFactory()));
+
+
+        register(ActionType.LOG_MAP_VIEW_REQUEST,
+                new LogMapViewHandler(HibernateUtil.getSessionFactory()));
+
+        register(ActionType.LOG_MAP_DOWNLOAD_REQUEST,
+                new LogMapDownloadHandler(HibernateUtil.getSessionFactory()));
+
+
     }
 
     public void register(ActionType action, RequestHandler handler) {

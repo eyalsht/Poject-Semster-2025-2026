@@ -12,6 +12,10 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.util.StringConverter;
+import common.report.ActivityReport;
+import java.time.LocalDate;
+import java.util.ArrayList;
+
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -40,7 +44,11 @@ public class ReportPageController {
 
         // report options stay the same
         cmbReportType.setItems(FXCollections.observableArrayList(
-                "Clients report", "Sales report", "Purchases report", "Users report"
+                "Clients report",
+                "Sales report",
+                "Purchases report",
+                "Users report",
+                "Activity report"
         ));
 
         // ✅ Start state: only report enabled
@@ -104,25 +112,34 @@ public class ReportPageController {
     }
 
     @FXML
-    private void onGenerate() {
+    private void onGenerate()
+    {
+        System.out.println(">>> Generate clicked. Report=" + cmbReportType.getValue() + " city=" + cmbCity.getValue());
+        showAlert("DEBUG", "Generate clicked!");
         String selected = cmbReportType.getValue();
-        if (!"Clients report".equals(selected)) {
-            showAlert("Not implemented yet", "Only 'Clients report' is implemented right now.");
-            return;
-        }
+        if (selected == null) return;
 
-        generateClientsReport();
+        switch (selected) {
+            case "Clients report" -> generateClientsReport();
+            case "Activity report" -> generateActivityReport();
+            default -> showAlert("Not implemented yet", "Only 'Clients report' and 'Activity report' are implemented right now.");
+        }
     }
 
-    private void generateClientsReport() {
+
+    private void generateClientsReport()
+    {
         // (City not used for this report right now, but we already load it for later)
         new Thread(() -> {
             try {
                 Message req = new Message(ActionType.GET_ALL_CLIENTS_REPORT_REQUEST, null);
                 Message res = (Message) GCMClient.getInstance().sendRequest(req);
+                System.out.println(">>> Clients report response: " + (res == null ? "NULL" : res.getAction()));
+
 
                 Platform.runLater(() -> {
-                    if (res != null && res.getAction() == ActionType.GET_ALL_CLIENTS_REPORT_RESPONSE) {
+                    if (res != null && res.getAction() == ActionType.GET_ALL_CLIENTS_REPORT_RESPONSE)
+                    {
                         AllClientsReport report = (AllClientsReport) res.getMessage();
                         fillClientsTable(report);
                         fillClientsBarChart(report);
@@ -189,14 +206,87 @@ public class ReportPageController {
 
     private void wireUiStateListeners() {
         cmbReportType.valueProperty().addListener((obs, oldV, newV) -> {
-            // if switching to Clients report, clear city selection (optional but clean)
+
             if ("Clients report".equals(newV)) {
                 cmbCity.getSelectionModel().clearSelection();
+            } else {
+                // For Activity (and future city reports), auto-select first city if none selected
+                if (cmbCity.getValue() == null && cmbCity.getItems() != null && !cmbCity.getItems().isEmpty()) {
+                    cmbCity.getSelectionModel().select(0);
+                }
             }
+
             applyUiState();
         });
 
         cmbCity.valueProperty().addListener((obs, oldV, newV) -> applyUiState());
     }
+
+
+    private void generateActivityReport()
+    {
+        City city = cmbCity.getValue();
+        if (city == null) {
+            showAlert("Missing city", "Please choose a city for Activity report.");
+            return;
+        }
+
+        // TEMP: last 7 days (until you add DatePickers)
+        LocalDate to = LocalDate.now();
+        LocalDate from = to.minusDays(6);
+
+        new Thread(() -> {
+            try {
+                ArrayList<Object> payload = new ArrayList<>();
+                payload.add(from);
+                payload.add(to);
+                payload.add(city.getId()); // later can be null for "all cities"
+
+                Message req = new Message(ActionType.GET_ACTIVITY_REPORT_REQUEST, payload);
+                System.out.println(">>> Sending activity request payload: from=" + from + " to=" + to + " cityId=" + city.getId());
+
+                Message res = (Message) GCMClient.getInstance().sendRequest(req);
+                System.out.println(">>> Activity report response: " + (res == null ? "NULL" : res.getAction()));
+
+
+                Platform.runLater(() -> {
+                    if (res != null && res.getAction() == ActionType.GET_ACTIVITY_REPORT_RESPONSE) {
+                        ActivityReport report = (ActivityReport) res.getMessage();
+                        fillActivityBarChart(report);
+                        showAlert("Activity report", "Chart updated. (Next step: add Activity table below.)");
+                    } else {
+                        showAlert("Error", "Failed to generate activity report.");
+                    }
+                });
+
+            } catch (Exception e) {
+                Platform.runLater(() -> showAlert("Network Error", "Could not generate activity report: " + e.getMessage()));
+            }
+        }).start();
+    }
+
+    private void fillActivityBarChart(ActivityReport report) {
+        barChart.getData().clear();
+        barChart.setAnimated(false);
+
+        if (report == null || report.rows == null || report.rows.isEmpty()) return;
+
+        // For single city request: one row
+        ActivityReport.CityRow row = report.rows.get(0);
+
+        XYChart.Series<String, Number> s = new XYChart.Series<>();
+        s.setName("Activity (" + row.cityName + ")");
+
+        s.getData().add(new XYChart.Data<>("Maps", row.maps));
+        s.getData().add(new XYChart.Data<>("One-time", row.oneTimePurchases));
+        s.getData().add(new XYChart.Data<>("Subscriptions", row.subscriptions));
+        s.getData().add(new XYChart.Data<>("Renewals", row.renewals));
+        s.getData().add(new XYChart.Data<>("Views", row.views));
+        s.getData().add(new XYChart.Data<>("Downloads", row.downloads));
+
+        barChart.getData().add(s);
+    }
+
+
 
 }

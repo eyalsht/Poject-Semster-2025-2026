@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+
 @Entity
 @Table(name = "purchases")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -33,6 +34,9 @@ public abstract class Purchase implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id")
     protected City city;
+
+    @Column(name = "is_renewal", nullable = false)
+    protected boolean isRenewal = false;
 
     // ==================== CONSTRUCTORS ====================
     
@@ -64,4 +68,8 @@ public abstract class Purchase implements Serializable {
 
     public City getCity() { return city; }
     public void setCity(City city) { this.city = city; }
+
+    public boolean isRenewal() { return isRenewal; }
+    public void setRenewal(boolean renewal) { this.isRenewal = renewal; }
+
 }
