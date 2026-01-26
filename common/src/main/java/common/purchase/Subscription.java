@@ -11,11 +11,9 @@ public class Subscription extends Purchase implements Serializable
     
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "is_renewal")
-    private boolean renewal;
 
-    public boolean isRenewal() { return renewal; }
-    public void setRenewal(boolean renewal) { this.renewal = renewal; }
+    //public boolean isRenewal() { return renewal; }
+    //public void setRenewal(boolean renewal) { this.renewal = renewal; }
 
 
     @Column(name = "expiration_date")
@@ -44,7 +42,10 @@ public class Subscription extends Purchase implements Serializable
 
     public LocalDate getExpirationDate() { return expirationDate; }
     public void setExpirationDate(LocalDate expirationDate) { this.expirationDate = expirationDate; }
-
+    @Override
+    public boolean isRenewal() { return isRenewal; }
+    @Override
+    public void setRenewal(boolean renewal) { this.isRenewal = renewal; }
     @Override
     public boolean isValid() {
         return expirationDate != null && LocalDate.now().isBefore(expirationDate);
