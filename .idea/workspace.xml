@@ -4,29 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Client report ver 0.2 - Reports">
-      <change afterPath="$PROJECT_DIR$/database/legacy/daily_activity_stats.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/GetActivityReportHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/LogMapDownloadHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/LogMapViewHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/report/ActivityStatsScheduler.java" afterDir="false" />
+    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Activity report ver 0.1 - Reports">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CatalogPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/CatalogPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/enums/ActionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/enums/ActionType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/purchase/Purchase.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/purchase/Purchase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/purchase/Subscription.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/purchase/Subscription.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/report/ActivityReport.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/report/ActivityReport.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/appServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/appServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/handler/HandlerRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/HandlerRegistry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/repository/PurchaseRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/repository/PurchaseRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +87,7 @@
       <recent name="C:\Software dev labs\Lab3\Poject-Semster-2025-2026\src\resources" />
     </key>
   </component>
-  <component name="RunManager" selected="Maven.Client [javafx:run]">
+  <component name="RunManager" selected="Maven.OCSF [clean install]">
     <configuration name="MainApplication" type="Application" factoryName="Application" singleton="false">
       <option name="ALTERNATIVE_JRE_PATH" value="$PROJECT_DIR$/../../../Program Files/Java/jdk-21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -505,7 +486,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769365134373</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="Activity report ver 0.1 - Reports">
+      <option name="closed" value="true" />
+      <created>1769434238321</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1769434238321</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -541,6 +530,7 @@
     <MESSAGE value="small changes +Reports" />
     <MESSAGE value="Client report ver 0.1 - Reports" />
     <MESSAGE value="Client report ver 0.2 - Reports" />
-    <option name="LAST_COMMIT_MESSAGE" value="Client report ver 0.2 - Reports" />
+    <MESSAGE value="Activity report ver 0.1 - Reports" />
+    <option name="LAST_COMMIT_MESSAGE" value="Activity report ver 0.1 - Reports" />
   </component>
 </project>
