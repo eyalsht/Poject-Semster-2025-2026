@@ -75,32 +75,42 @@ public class CatalogPageController {
     }
 
     public void showCityMaps(City city) {
-        Platform.runLater(() -> {
-            flowPaneCities.getChildren().clear(); // Clear city cards
 
-            // Add a "Back" button to return to City Catalog
-            Button btnBack = new Button("← Back to Catalog");
-            btnBack.setOnAction(e -> loadCatalog(null, null, null));
-            flowPaneCities.getChildren().add(btnBack);
+        new Thread(() -> {
+            try {
+                CatalogFilter filter = new CatalogFilter(city.getName(), null, null);
+                Message request = new Message(ActionType.GET_CATALOG_REQUEST, filter);
+                Message response = (Message) client.sendRequest(request);
 
-            // Display maps of the selected city
-            if (city.getMaps() != null) {
-                for (GCMMap gcmMap : city.getMaps()) {
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
-                        Parent mapCard = loader.load();
+                Platform.runLater(() -> {
+                    if (response != null && response.getAction() == ActionType.GET_CATALOG_RESPONSE) {
+                        CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
+                        // Clean screeen and update view
+                        flowPaneCities.getChildren().clear();
 
-                        // You will need a MapCardController for this
-                        MapCardController controller = loader.getController();
-                        controller.setData(gcmMap);
+                        Button btnBack = new Button("← Back to Catalog");
+                        btnBack.setOnAction(e -> loadCatalog(null, null, null));
+                        flowPaneCities.getChildren().add(btnBack);
 
-                        flowPaneCities.getChildren().add(mapCard);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        for (GCMMap gcmMap : catalogResponse.getMaps()) {
+                            if (gcmMap.getName() != null && !gcmMap.getName().isEmpty()) {
+                                try {
+                                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
+                                    Parent mapCard = loader.load();
+                                    MapCardController controller = loader.getController();
+                                    controller.setData(gcmMap);
+                                    flowPaneCities.getChildren().add(mapCard);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
                     }
-                }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
+        }).start();
     }
 
     private void updateCityCards(List<GCMMap> maps) {

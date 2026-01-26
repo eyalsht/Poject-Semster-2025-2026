@@ -98,6 +98,8 @@ public class CityCardController {
     private void onCardClicked() {
         if (mainController != null && city != null) {
             mainController.showCityMaps(city);
+        }else{
+            System.out.println("Error: City or MainController is not initialized for this card.");
         }
     }
 }

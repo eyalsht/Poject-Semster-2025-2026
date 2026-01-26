@@ -16,6 +16,7 @@ controllers\HomePageController.class
 controllers\WelcomePageController.class
 module-info.class
 controllers\CityUpdatePageController.class
+controllers\CityMapsPageController.class
 controllers\MapCardController.class
 controllers\RegisterPageController.class
 controllers\ProfilePageController.class

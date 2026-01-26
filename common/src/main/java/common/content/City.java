@@ -24,15 +24,15 @@ public class City extends ContentItem implements Serializable {
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
 
     // ONE City has MANY Maps
-    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<GCMMap> maps = new ArrayList<>();
 
     // ONE City has MANY Sites
-    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Site> sites = new ArrayList<>();
 
     // ONE City has MANY Tours
-    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Tour> tours = new ArrayList<>();
 
     // ==================== CONSTRUCTORS ====================
