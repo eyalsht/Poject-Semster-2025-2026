@@ -44,7 +44,10 @@ public class Subscription extends Purchase implements Serializable
 
     public LocalDate getExpirationDate() { return expirationDate; }
     public void setExpirationDate(LocalDate expirationDate) { this.expirationDate = expirationDate; }
-
+    @Override
+    public void setRenewal(boolean renewal) { this.isRenewal = renewal; }
+    @Override
+    public boolean isRenewal() { return isRenewal; }
     @Override
     public boolean isValid() {
         return expirationDate != null && LocalDate.now().isBefore(expirationDate);
