@@ -29,6 +29,9 @@ public class ReportPageController {
     @FXML private Label lblChooseReport;
     @FXML private HBox reportContent;
 
+    @FXML private DatePicker dpFrom;
+    @FXML private DatePicker dpTo;
+
     @FXML private BarChart<String, Number> barChart;
 
     @FXML private TableView<AllClientsReport.ClientRow> tableView;
@@ -46,7 +49,8 @@ public class ReportPageController {
     private String displayedReport = null;
 
     @FXML
-    public void initialize() {
+    public void initialize()
+    {
 
         cmbReportType.setItems(FXCollections.observableArrayList(
                 "Clients report",
@@ -68,6 +72,7 @@ public class ReportPageController {
                 return (city == null) ? "" : city.getName();
             }
             @Override public City fromString(String s) { return null; }
+
         });
 
         setupClientsTableColumns();
@@ -80,6 +85,13 @@ public class ReportPageController {
         applyReportLayout();
 
         loadCitiesFromServer();
+
+        dpFrom.setDisable(true);
+        dpTo.setDisable(true);
+
+        // nice defaults (last 7 days)
+        dpTo.setValue(LocalDate.now());
+        dpFrom.setValue(LocalDate.now().minusDays(6));
     }
 
     private void setupClientsTableColumns() {
@@ -117,7 +129,8 @@ public class ReportPageController {
     }
 
     @FXML
-    private void onGenerate() {
+    private void onGenerate()
+    {
 
         String selected = cmbReportType.getValue();
         if (selected == null || selected.isBlank()) return;
@@ -135,7 +148,8 @@ public class ReportPageController {
         lblChooseReport.setVisible(true);
         lblChooseReport.setManaged(true);
 
-        switch (selected) {
+        switch (selected)
+        {
             case "Clients report" -> generateClientsReport();
             case "Activity report" -> generateActivityReport();
             default -> {
@@ -150,7 +164,8 @@ public class ReportPageController {
         }
     }
 
-    private void generateClientsReport() {
+    private void generateClientsReport()
+    {
         new Thread(() -> {
             try {
                 Message req = new Message(ActionType.GET_ALL_CLIENTS_REPORT_REQUEST, null);
@@ -203,16 +218,25 @@ public class ReportPageController {
         barChart.getData().add(series);
     }
 
-    private void generateActivityReport() {
+    private void generateActivityReport()
+    {
         City city = cmbCity.getValue();
         if (city == null) {
             showAlert("Missing city", "Please choose a city for Activity report.");
             return;
         }
 
-        // TEMP: last 7 days
-        LocalDate to = LocalDate.now();
-        LocalDate from = to.minusDays(6);
+        LocalDate from = dpFrom.getValue();
+        LocalDate to = dpTo.getValue();
+
+        if (from == null || to == null) {
+            showAlert("Missing dates", "Please choose From and To dates.");
+            return;
+        }
+        if (from.isAfter(to)) {
+            showAlert("Invalid dates", "'From' must be before (or equal to) 'To'.");
+            return;
+        }
 
         new Thread(() -> {
             try {
@@ -245,7 +269,8 @@ public class ReportPageController {
         }).start();
     }
 
-    private void fillActivityBarChart(ActivityReport report) {
+    private void fillActivityBarChart(ActivityReport report)
+    {
         barChart.getData().clear();
         barChart.setAnimated(false);
 
@@ -266,7 +291,8 @@ public class ReportPageController {
         barChart.getData().add(s);
     }
 
-    private void showAlert(String title, String msg) {
+    private void showAlert(String title, String msg)
+    {
         Alert a = new Alert(Alert.AlertType.INFORMATION);
         a.setTitle(title);
         a.setHeaderText(null);
@@ -274,21 +300,43 @@ public class ReportPageController {
         a.showAndWait();
     }
 
-    private void applyUiState() {
+    private void applyUiState()
+    {
         String report = cmbReportType.getValue();
 
         boolean hasReport = report != null && !report.isBlank();
         boolean isClients = "Clients report".equals(report);
 
+        boolean supportsDateRange = "Activity report".equals(report);
+
+        // Enable/disable date pickers
+        dpFrom.setDisable(!supportsDateRange);
+        dpTo.setDisable(!supportsDateRange);
+
         // City enabled only for non-clients reports
         cmbCity.setDisable(!hasReport || isClients);
 
         boolean cityChosen = cmbCity.getValue() != null;
-        btnGenerate.setDisable(!hasReport || (!isClients && !cityChosen));
+
+        // Date validation only when date range is required
+        boolean datesOk = true;
+        if (supportsDateRange) {
+            LocalDate from = dpFrom.getValue();
+            LocalDate to = dpTo.getValue();
+
+            datesOk = (from != null && to != null && !from.isAfter(to));
+        }
+
+        // Generate enabled:
+        // - Clients report: as soon as selected
+        // - Others: need city, and if date-range report -> valid dates too
+        btnGenerate.setDisable(!hasReport || (!isClients && (!cityChosen || !datesOk)));
     }
 
+
     // ✅ Layout is based on displayedReport (changes only after Generate)
-    private void applyReportLayout() {
+    private void applyReportLayout()
+    {
         String report = displayedReport;
 
         boolean hasReport = report != null && !report.isBlank();
@@ -341,7 +389,8 @@ public class ReportPageController {
         }
     }
 
-    private void wireUiStateListeners() {
+    private void wireUiStateListeners()
+    {
 
         cmbReportType.valueProperty().addListener((obs, oldV, newV) -> {
 
@@ -359,5 +408,8 @@ public class ReportPageController {
         });
 
         cmbCity.valueProperty().addListener((obs, oldV, newV) -> applyUiState());
+
+        dpFrom.valueProperty().addListener((obs, oldV, newV) -> applyUiState());
+        dpTo.valueProperty().addListener((obs, oldV, newV) -> applyUiState());
     }
 }

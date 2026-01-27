@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.DatePicker?>
 <AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ReportPageController">
 
     <children>
@@ -45,6 +46,12 @@
                     <Label text="Choose City:" />
                     <ComboBox fx:id="cmbCity" prefWidth="180.0" />
                 </VBox>
+
+                <Label text="From:" layoutX="520.0" layoutY="78.0" />
+                <DatePicker fx:id="dpFrom" layoutX="560.0" layoutY="73.0" prefWidth="140.0"/>
+
+                <Label text="To:" layoutX="710.0" layoutY="78.0" />
+                <DatePicker fx:id="dpTo" layoutX="740.0" layoutY="73.0" prefWidth="140.0"/>
 
                 <Button fx:id="btnGenerate" onAction="#onGenerate" text="Generate!">
                     <HBox.margin>
