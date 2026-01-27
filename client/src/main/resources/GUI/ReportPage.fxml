@@ -74,16 +74,20 @@
 
         <!-- ===== CHARTS ===== -->
         <!-- ===== REPORT AREA (reactive) ===== -->
-        <StackPane fx:id="reportArea" layoutY="125.0" AnchorPane.bottomAnchor="55.0"
-                   AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="11.0">
+        <StackPane fx:id="reportArea"
+                   AnchorPane.topAnchor="125.0"
+                   AnchorPane.bottomAnchor="55.0"
+                   AnchorPane.leftAnchor="11.0"
+                   AnchorPane.rightAnchor="11.0">
 
-            <!-- Big placeholder -->
+
+        <!-- Big placeholder -->
             <Label fx:id="lblChooseReport" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #666;" text="Choose a report!" StackPane.alignment="TOP_CENTER" />
 
             <!-- Actual content -->
             <HBox fx:id="reportContent" alignment="CENTER_LEFT" spacing="20">
 
-                <BarChart fx:id="barChart"  prefWidth="285.0">
+                <BarChart fx:id="barChart" prefHeight="240.0" prefWidth="285.0">
                     <xAxis>
                         <CategoryAxis fx:id="barXAxis" label="Category" />
                     </xAxis>

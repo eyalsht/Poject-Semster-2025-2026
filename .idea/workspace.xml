@@ -4,26 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Home page bigger">
-      <change afterPath="$PROJECT_DIR$/common/src/main/java/common/report/PurchasesReport.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/GetPurchasesReportHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/report/services/PurchasesReportService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" afterDir="false" />
+    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Report page update">
       <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CityCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/CityCard.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/MapCardController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/MapCardController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/enums/ActionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/enums/ActionType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/enums/ReportType.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/enums/ReportType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/handler/HandlerRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/HandlerRegistry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/report/ReportManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/report/ReportManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -544,7 +533,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769508252873</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Report page update">
+      <option name="closed" value="true" />
+      <created>1769516043120</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1769516043120</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -585,6 +582,7 @@
     <MESSAGE value="Activity report ver 0.3 - Reports&#10;Report logic updated to make it more flexible" />
     <MESSAGE value="Activity report ver 0.4 - Reports&#10;Report Page Updated" />
     <MESSAGE value="Home page bigger" />
-    <option name="LAST_COMMIT_MESSAGE" value="Home page bigger" />
+    <MESSAGE value="Report page update" />
+    <option name="LAST_COMMIT_MESSAGE" value="Report page update" />
   </component>
 </project>
