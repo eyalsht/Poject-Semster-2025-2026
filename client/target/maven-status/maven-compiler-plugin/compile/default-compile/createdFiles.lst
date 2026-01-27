@@ -3,6 +3,7 @@ controllers\InfoPageController.class
 controllers\SupportPageController.class
 controllers\MapUpdatePageController.class
 client\GCMClient.class
+controllers\CityMapsPageController$1.class
 oscf\AbstractClient.class
 oscf\AdaptableClient.class
 controllers\CatalogPageController.class

@@ -14,13 +14,16 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
+import javafx.scene.layout.StackPane;
+
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReportPageController {
+public class ReportPageController
+{
 
     @FXML private ComboBox<String> cmbReportType;
     @FXML private ComboBox<City> cmbCity;
@@ -33,6 +36,7 @@ public class ReportPageController {
     @FXML private DatePicker dpTo;
 
     @FXML private BarChart<String, Number> barChart;
+    @FXML private StackPane reportArea;
 
     @FXML private TableView<AllClientsReport.ClientRow> tableView;
     @FXML private TableColumn<AllClientsReport.ClientRow, Number> colId;
@@ -41,6 +45,9 @@ public class ReportPageController {
     @FXML private TableColumn<AllClientsReport.ClientRow, String> colFirstName;
     @FXML private TableColumn<AllClientsReport.ClientRow, String> colLastName;
     @FXML private TableColumn<AllClientsReport.ClientRow, String> colCreatedAt;
+
+    private long currentRequestId = 0;
+
 
     private static final DateTimeFormatter CREATED_FMT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -92,6 +99,9 @@ public class ReportPageController {
         // nice defaults (last 7 days)
         dpTo.setValue(LocalDate.now());
         dpFrom.setValue(LocalDate.now().minusDays(6));
+
+        barChart.prefHeightProperty().bind(reportArea.heightProperty());
+        tableView.prefHeightProperty().bind(reportArea.heightProperty());
     }
 
     private void setupClientsTableColumns() {
@@ -129,31 +139,29 @@ public class ReportPageController {
     }
 
     @FXML
-    private void onGenerate()
-    {
+    private void onGenerate() {
 
         String selected = cmbReportType.getValue();
         if (selected == null || selected.isBlank()) return;
 
-        // ✅ Switch the UI layout ONLY now (on Generate)
+        // ✅ NEW: create a unique request id for THIS generate click
+        long reqId = ++currentRequestId;
+
         displayedReport = selected;
         applyReportLayout();
 
-        // Clear old content so it doesn’t “look wrong” while loading
         barChart.getData().clear();
         tableView.getItems().clear();
 
-        // Optional: show loading text until results arrive
         lblChooseReport.setText("Loading...");
         lblChooseReport.setVisible(true);
         lblChooseReport.setManaged(true);
 
-        switch (selected)
-        {
-            case "Clients report" -> generateClientsReport();
-            case "Activity report" -> generateActivityReport();
+        switch (selected) {
+            case "Clients report" -> generateClientsReport(reqId);
+            case "Activity report" -> generateActivityReport(reqId);
+            case "Purchases report" -> generatePurchasesReport(reqId);
             default -> {
-                // No popup: just show text in the center
                 lblChooseReport.setText("This report is not implemented yet.");
                 lblChooseReport.setVisible(true);
                 lblChooseReport.setManaged(true);
@@ -164,7 +172,8 @@ public class ReportPageController {
         }
     }
 
-    private void generateClientsReport()
+
+    private void generateClientsReport(long reqId)
     {
         new Thread(() -> {
             try {
@@ -172,6 +181,7 @@ public class ReportPageController {
                 Message res = (Message) GCMClient.getInstance().sendRequest(req);
 
                 Platform.runLater(() -> {
+
                     if (res != null && res.getAction() == ActionType.GET_ALL_CLIENTS_REPORT_RESPONSE) {
                         AllClientsReport report = (AllClientsReport) res.getMessage();
 
@@ -218,7 +228,7 @@ public class ReportPageController {
         barChart.getData().add(series);
     }
 
-    private void generateActivityReport()
+    private void generateActivityReport(long reqId)
     {
         City city = cmbCity.getValue();
         if (city == null) {
@@ -307,7 +317,7 @@ public class ReportPageController {
         boolean hasReport = report != null && !report.isBlank();
         boolean isClients = "Clients report".equals(report);
 
-        boolean supportsDateRange = "Activity report".equals(report);
+        boolean supportsDateRange = "Activity report".equals(report) || "Purchases report".equals(report);
 
         // Enable/disable date pickers
         dpFrom.setDisable(!supportsDateRange);
@@ -342,6 +352,7 @@ public class ReportPageController {
         boolean hasReport = report != null && !report.isBlank();
         boolean isClients = "Clients report".equals(report);
         boolean isActivity = "Activity report".equals(report);
+        boolean isPurchases = "Purchases report".equals(report);
 
         // Placeholder visible only when no displayed report
         lblChooseReport.setVisible(!hasReport);
@@ -368,7 +379,7 @@ public class ReportPageController {
             reportContent.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
             reportContent.setSpacing(20);
 
-        } else if (isActivity) {
+        } else if (isActivity || isPurchases) {
             barChart.setVisible(true);
             barChart.setManaged(true);
             barChart.setPrefWidth(650);
@@ -412,4 +423,70 @@ public class ReportPageController {
         dpFrom.valueProperty().addListener((obs, oldV, newV) -> applyUiState());
         dpTo.valueProperty().addListener((obs, oldV, newV) -> applyUiState());
     }
+    private void generatePurchasesReport(long reqId) {
+
+        City city = cmbCity.getValue();
+        if (city == null) {
+            showAlert("Missing city", "Please choose a city for Purchases report.");
+            return;
+        }
+
+        LocalDate from = dpFrom.getValue();
+        LocalDate to = dpTo.getValue();
+
+        if (from == null || to == null) {
+            showAlert("Missing dates", "Please choose From and To dates.");
+            return;
+        }
+        if (from.isAfter(to)) {
+            showAlert("Invalid dates", "'From' must be before (or equal to) 'To'.");
+            return;
+        }
+
+        new Thread(() -> {
+            try {
+                ArrayList<Object> payload = new ArrayList<>();
+                payload.add(from);
+                payload.add(to);
+                payload.add(city.getId());
+
+                Message req = new Message(ActionType.GET_PURCHASES_REPORT_REQUEST, payload);
+                Message res = (Message) GCMClient.getInstance().sendRequest(req);
+
+                Platform.runLater(() -> {
+
+                    if (res != null && res.getAction() == ActionType.GET_PURCHASES_REPORT_RESPONSE) {
+                        common.report.PurchasesReport report = (common.report.PurchasesReport) res.getMessage();
+                        fillPurchasesBarChart(report);
+
+                        lblChooseReport.setVisible(false);
+                        lblChooseReport.setManaged(false);
+                    } else {
+                        if (reqId == currentRequestId)
+                        showAlert("Error", "Failed to generate purchases report.");
+                    }
+                });
+
+            } catch (Exception e) {
+                Platform.runLater(() -> showAlert("Network Error", "Could not generate report: " + e.getMessage()));
+            }
+        }).start();
+    }
+    private void fillPurchasesBarChart(common.report.PurchasesReport report) {
+        barChart.getData().clear();
+        barChart.setAnimated(false);
+
+        if (report == null) return;
+
+        XYChart.Series<String, Number> s = new XYChart.Series<>();
+        s.setName("Purchases (" + report.cityName + ")");
+
+        s.getData().add(new XYChart.Data<>("One-time", report.oneTime));
+        s.getData().add(new XYChart.Data<>("Subscriptions", report.subscriptions));
+        s.getData().add(new XYChart.Data<>("Renewals", report.renewals));
+
+        barChart.getData().add(s);
+    }
+
+
 }

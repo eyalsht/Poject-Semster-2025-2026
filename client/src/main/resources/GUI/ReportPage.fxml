@@ -6,6 +6,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
@@ -16,8 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.control.DatePicker?>
-<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ReportPageController">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ReportPageController">
 
     <children>
 
@@ -46,12 +46,20 @@
                     <Label text="Choose City:" />
                     <ComboBox fx:id="cmbCity" prefWidth="180.0" />
                 </VBox>
-
-                <Label text="From:" layoutX="520.0" layoutY="78.0" />
-                <DatePicker fx:id="dpFrom" layoutX="560.0" layoutY="73.0" prefWidth="140.0"/>
-
-                <Label text="To:" layoutX="710.0" layoutY="78.0" />
-                <DatePicker fx:id="dpTo" layoutX="740.0" layoutY="73.0" prefWidth="140.0"/>
+            <VBox>
+               <children>
+      
+                      <Label text="From:" />
+                      <DatePicker fx:id="dpFrom" prefWidth="140.0" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+      
+                      <Label text="To:" />
+                      <DatePicker fx:id="dpTo" prefWidth="140.0" />
+               </children>
+            </VBox>
 
                 <Button fx:id="btnGenerate" onAction="#onGenerate" text="Generate!">
                     <HBox.margin>
@@ -66,7 +74,8 @@
 
         <!-- ===== CHARTS ===== -->
         <!-- ===== REPORT AREA (reactive) ===== -->
-        <StackPane fx:id="reportArea" layoutY="125.0" prefHeight="290.0" prefWidth="678.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="11.0">
+        <StackPane fx:id="reportArea" layoutY="125.0" AnchorPane.bottomAnchor="55.0"
+                   AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="11.0">
 
             <!-- Big placeholder -->
             <Label fx:id="lblChooseReport" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #666;" text="Choose a report!" StackPane.alignment="TOP_CENTER" />
@@ -74,7 +83,7 @@
             <!-- Actual content -->
             <HBox fx:id="reportContent" alignment="CENTER_LEFT" spacing="20">
 
-                <BarChart fx:id="barChart" prefHeight="326.0" prefWidth="285.0">
+                <BarChart fx:id="barChart"  prefWidth="285.0">
                     <xAxis>
                         <CategoryAxis fx:id="barXAxis" label="Category" />
                     </xAxis>
@@ -83,7 +92,7 @@
                     </yAxis>
                 </BarChart>
 
-                <TableView fx:id="tableView" prefHeight="290.0" prefWidth="366.0">
+                <TableView fx:id="tableView" prefHeight="290.0" prefWidth="567.0">
 
                     <columns>
                         <TableColumn fx:id="colId" prefWidth="60" text="ID" />

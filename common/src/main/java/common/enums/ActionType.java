@@ -93,6 +93,10 @@ public enum ActionType {
 
     GET_ACTIVITY_REPORT_REQUEST,
     GET_ACTIVITY_REPORT_RESPONSE,
+
+    //Purchase report
+    GET_PURCHASES_REPORT_REQUEST,
+    GET_PURCHASES_REPORT_RESPONSE,
     // ==================== GENERIC ====================
     ERROR
 }

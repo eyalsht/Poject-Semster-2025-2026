@@ -4,6 +4,7 @@ import common.enums.ReportType;
 import org.hibernate.SessionFactory;
 import server.report.services.ActivityReportService;
 import server.report.services.ClientsReportService;
+import server.report.services.PurchasesReportService;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -21,6 +22,7 @@ public class ReportManager
         // 🔥 one place to rule them all
         register(new ActivityReportService());
         register(new ClientsReportService());
+        register(new PurchasesReportService());
     }
 
     private void register(ParamAwareReportService service) {
