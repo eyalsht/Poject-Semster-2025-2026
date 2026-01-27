@@ -20,8 +20,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -30,8 +31,7 @@ import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 import common.content.City; // NEW - Fixes "Cannot resolve symbol 'City'"
-import controllers.CityCardController; // NEW
-import controllers.MapCardController;
+
 
 /**
  * Controller for the catalog page.
@@ -76,41 +76,26 @@ public class CatalogPageController {
 
     public void showCityMaps(City city) {
 
-        new Thread(() -> {
+        Platform.runLater(() -> {
             try {
-                CatalogFilter filter = new CatalogFilter(city.getName(), null, null);
-                Message request = new Message(ActionType.GET_CATALOG_REQUEST, filter);
-                Message response = (Message) client.sendRequest(request);
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityMapsPage.fxml"));
+                Parent root = loader.load();
+                CityMapsPageController controller = loader.getController();
+                controller.setCity(city);
 
-                Platform.runLater(() -> {
-                    if (response != null && response.getAction() == ActionType.GET_CATALOG_RESPONSE) {
-                        CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
-                        // Clean screeen and update view
-                        flowPaneCities.getChildren().clear();
+                AnchorPane centerHost = (AnchorPane) scrollPaneCities.getScene().lookup("#centerHost");
+                if (centerHost != null) {
+                    AnchorPane.setTopAnchor(root, 0.0);
+                    AnchorPane.setRightAnchor(root, 0.0);
+                    AnchorPane.setBottomAnchor(root, 0.0);
+                    AnchorPane.setLeftAnchor(root, 0.0);
 
-                        Button btnBack = new Button("← Back to Catalog");
-                        btnBack.setOnAction(e -> loadCatalog(null, null, null));
-                        flowPaneCities.getChildren().add(btnBack);
-
-                        for (GCMMap gcmMap : catalogResponse.getMaps()) {
-                            if (gcmMap.getName() != null && !gcmMap.getName().isEmpty()) {
-                                try {
-                                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
-                                    Parent mapCard = loader.load();
-                                    MapCardController controller = loader.getController();
-                                    controller.setData(gcmMap);
-                                    flowPaneCities.getChildren().add(mapCard);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                });
+                    centerHost.getChildren().setAll(root);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
 
     private void updateCityCards(List<GCMMap> maps) {
@@ -138,28 +123,6 @@ public class CatalogPageController {
             }
         });
     }
-    /**
-     * Setup table column bindings.
-     * Using GCMMap entity directly instead of MapCatalogRow DTO.
-     */
-  /*  private void setupTableColumns() {
-        // Use property names from GCMMap entity
-        colCity.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCityName()));
-        colMap.setCellValueFactory(new PropertyValueFactory<>("name"));
-        colVersion.setCellValueFactory(new PropertyValueFactory<>("version"));
-        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
-        colDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
-
-        // Format price column
-        colPrice.setCellFactory(column -> new TableCell<>() {
-            @Override
-            protected void updateItem(Double price, boolean empty) {
-                super.updateItem(price, empty);
-                setText(empty || price == null ? "" : String.format("$%.2f", price));
-            }
-        });
-    }*/
 
     /**
      * Setup combo box change listeners for cascading filters.
