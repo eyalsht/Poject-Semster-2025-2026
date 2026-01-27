@@ -55,7 +55,7 @@ public class MainApplication extends Application
         FXMLLoader loader = new FXMLLoader(
                 MainApplication.class.getResource("/GUI/HomePage.fxml")
         );
-        Scene scene = new Scene(loader.load(), 1000, 650);
+        Scene scene = new Scene(loader.load(), 1200, 800);
         stage.setTitle("Global City Map");
         stage.setScene(scene);
         stage.setOnCloseRequest(e -> {

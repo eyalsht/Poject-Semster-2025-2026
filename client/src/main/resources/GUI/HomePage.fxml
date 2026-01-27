@@ -9,13 +9,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.HomePageController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.HomePageController">
    <top>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fx:id="imgHomePage" fitHeight="209.0" fitWidth="1005.0" layoutX="-5.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imgHomePage" fitHeight="209.0" fitWidth="1200.0"  pickOnBounds="true" preserveRatio="true" />
 
-            <Label fx:id="lblWelcome" text="Welcome, Guest" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+            <Label fx:id="lblWelcome" text="Welcome, Guest" textFill="WHITE" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -24,7 +24,7 @@
       </AnchorPane>
    </top>
    <left>
-      <VBox prefHeight="430.0" prefWidth="116.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="430.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="loginBtn" mnemonicParsing="false" onAction="#onLoginOrProfile" prefHeight="30.0" prefWidth="150.0" text="Login">
                <VBox.margin>
@@ -47,15 +47,7 @@
                   <Insets left="5.0" right="5.0" top="10.0" />
                </VBox.margin></Button>
 
-            <Button fx:id="btnReports"
-                    mnemonicParsing="false"
-                    onAction="#onReports"
-                    prefHeight="30.0"
-                    prefWidth="150.0"
-                    text="Reports"
-                    visible="false"
-                    managed="false"
-                    disable="true">
+            <Button fx:id="btnReports" disable="true" managed="false" mnemonicParsing="false" onAction="#onReports" prefHeight="30.0" prefWidth="150.0" text="Reports" visible="false">
                <VBox.margin>
                   <Insets left="5.0" right="5.0" top="10.0" />
                </VBox.margin>
