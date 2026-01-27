@@ -9,6 +9,7 @@ oscf\AdaptableClient.class
 controllers\CatalogPageController.class
 controllers\ReportPageController.class
 controllers\ReportPageController$1.class
+controllers\SupportPageController$2.class
 controllers\CityCardController.class
 controllers\SupportPageController$1.class
 client\ClientLauncher.class

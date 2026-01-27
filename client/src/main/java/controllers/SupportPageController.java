@@ -18,6 +18,7 @@ public class SupportPageController {
 
     @FXML private TextArea detailsArea;
     @FXML private ComboBox<String> questionsCombo;
+    @FXML private Button btnSend;
 
     @FXML private ListView<ChatItem> chatList;
 
@@ -162,42 +163,49 @@ public class SupportPageController {
     }
 
 
-    private void sendSupportToServer(String topic, String text, Integer cityId) {
-        GCMClient gcmClient = GCMClient.getInstance();
-        User user = gcmClient.getCurrentUser();
+    private void sendSupportToServer(String topic, String text, Integer cityId)
+    {
+        addBot("Checking your account...");
+        btnSend.setDisable(true);
 
-        if (user == null) {
-            addBot("You must login first to contact support.");
-            return;
-        }
+        runAsync(
+                () -> {
+                    GCMClient gcmClient = GCMClient.getInstance();
+                    User user = gcmClient.getCurrentUser();
+                    if (user == null) return null;
 
-        SupportSubmitRequest payload =
-                new SupportSubmitRequest(user.getId(), topic, text, cityId);
+                    SupportSubmitRequest payload =
+                            new SupportSubmitRequest(user.getId(), topic, text, cityId);
 
-        Message req =
-                new Message(ActionType.SUBMIT_SUPPORT_REQUEST, payload);
+                    Message req = new Message(ActionType.SUBMIT_SUPPORT_REQUEST, payload);
+                    return gcmClient.sendMessage(req);   // blocking call is OK here
+                },
+                (Message resp) -> {
+                    if (resp == null) {
+                        addBot("You must login first to contact support.");
+                        return;
+                    }
 
-        Message resp = gcmClient.sendMessage(req);
+                    if (!(resp.getMessage() instanceof SupportSubmitResponse data)) {
+                        addBot("Server error: bad response.");
+                        return;
+                    }
 
-        if (resp == null || !(resp.getMessage() instanceof SupportSubmitResponse)) {
-            addBot("Server error: no response.");
-            return;
-        }
+                    if (data.getChoices() != null && !data.getChoices().isEmpty()) {
+                        var uiChoices = data.getChoices().stream()
+                                .map(c -> new SupportChoice(c.getCityId(), c.getLabel()))
+                                .toList();
+                        addBot(data.getResponseText(), uiChoices);
+                    } else {
+                        addBot(data.getResponseText());
+                    }
 
-        SupportSubmitResponse data = (SupportSubmitResponse) resp.getMessage();
-
-        if (data.getChoices() != null && !data.getChoices().isEmpty()) {
-            java.util.List<SupportChoice> uiChoices = data.getChoices().stream()
-                    .map(c -> new SupportChoice(c.getCityId(), c.getLabel()))
-                    .toList();
-
-            addBot(data.getResponseText(), uiChoices);
-        } else {
-            addBot(data.getResponseText());
-        }
-
-        chatList.scrollTo(chatItems.size() - 1);
+                    chatList.scrollTo(chatItems.size() - 1);
+                },
+                (Throwable err) -> addBot("Support system error: " + err.getMessage())
+        );
     }
+
 
 
     private void addUser(String text) {
@@ -242,6 +250,26 @@ public class SupportPageController {
         // Follow up: same topic, but now with cityId
         sendSupportToServer("MEMBERSHIP_EXPIRE", "", choice.getCityId());
     }
+
+    private <T> void runAsync(java.util.concurrent.Callable<T> work,
+                              java.util.function.Consumer<T> onSuccess,
+                              java.util.function.Consumer<Throwable> onError) {
+
+        javafx.concurrent.Task<T> task = new javafx.concurrent.Task<>() {
+            @Override
+            protected T call() throws Exception {
+                return work.call();
+            }
+        };
+
+        task.setOnSucceeded(e -> onSuccess.accept(task.getValue()));
+        task.setOnFailed(e -> onError.accept(task.getException()));
+
+        Thread t = new Thread(task);
+        t.setDaemon(true);
+        t.start();
+    }
+
 
 
 }
