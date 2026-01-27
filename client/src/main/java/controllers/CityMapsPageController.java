@@ -2,6 +2,10 @@ package controllers;
 
 import common.content.City;
 import common.content.GCMMap;
+import common.dto.CatalogFilter;
+import common.dto.CatalogResponse;
+import common.enums.ActionType;
+import common.messaging.Message;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +19,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.control.Label;
 import java.io.IOException;
+import java.util.List;
+
 import client.GCMClient;
 import common.user.User;
 import common.user.Employee;
@@ -48,26 +54,84 @@ public class CityMapsPageController {
         if (lblCityTitle != null) {
             lblCityTitle.setText("City: " + city.getName());
         }
-        loadMaps();
+        loadMapsFromServer(city.getName());
+
+    }
+    private void loadMapsFromServer(String cityName) {
+        new Thread(() -> {
+            try {
+                // יצירת פילטר לעיר ספציפית
+                CatalogFilter filter = new CatalogFilter(cityName, null, null);
+                Message request = new Message(ActionType.GET_CATALOG_REQUEST, filter);
+
+                // שליחה וקבלת תשובה מהשרת
+                Message response = (Message) GCMClient.getInstance().sendRequest(request);
+
+                Platform.runLater(() -> {
+                    if (response != null && response.getAction() == ActionType.GET_CATALOG_RESPONSE) {
+                        CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
+
+                        // עדכון רשימת המפות המקומית והצגת הכרטיסים
+                        displayMaps(catalogResponse.getMaps());
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+    private void displayMaps(List<GCMMap> maps) {
+        flowPaneMaps.getChildren().clear();
+
+        if (maps == null || maps.isEmpty()) {
+            Label noMaps = new Label("No maps available for this city.");
+            flowPaneMaps.getChildren().add(noMaps);
+            return;
+        }
+
+        for (GCMMap map : maps) {
+            try {
+                // טעינת ה-FXML של כרטיס המפה
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
+                Parent card = loader.load();
+
+                // הזרקת הנתונים לכרטיס
+                MapCardController controller = loader.getController();
+                controller.setData(map);
+
+                flowPaneMaps.getChildren().add(card);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void loadMaps() {
-        flowPaneMaps.getChildren().clear();
+        Platform.runLater(() -> {
+            // 1. ניקוי הקטלוג הקיים כדי למנוע כפילויות
+            flowPaneMaps.getChildren().clear();
 
-        try {
-            if (selectedCity == null || selectedCity.getMaps() == null || selectedCity.getMaps().isEmpty()) {
-                return;
+            if (selectedCity == null || selectedCity.getMaps() == null ) return;
+
+            try {
+                // 2. מעבר על רשימת המפות של העיר שנבחרה
+                for (GCMMap map : selectedCity.getMaps()) {
+                    // טעינת ה-FXML של כרטיס המפה הבודד (MapCard.fxml)
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
+                    Parent card = loader.load();
+
+                    // הזרקת הנתונים ל-Controller של הכרטיס
+                    MapCardController cardController = loader.getController();
+                    cardController.setData(map);
+
+                    // 3. הוספת הכרטיס ל-FlowPane התחתון שמוגדר ב-FXML
+                    flowPaneMaps.getChildren().add(card);
+                }
+            } catch (Exception e) {
+                System.err.println("Error rendering map cards: " + e.getMessage());
+                e.printStackTrace();
             }
-            for (GCMMap map : selectedCity.getMaps()) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
-                Parent card = loader.load();
-                MapCardController cardController = loader.getController();
-                cardController.setData(map);
-                flowPaneMaps.getChildren().add(card);
-            }
-        } catch (Exception e) {
-            System.err.println("Hibernate Lazy error caught: " + e.getMessage());
-        }
+        });
     }
 
     private void applyRolePermissions() {
@@ -76,38 +140,44 @@ public class CityMapsPageController {
         // הסתרת כל כפתורי הניהול כברירת מחדל (לאורחים ולקוחות)
         setManagementButtonsVisible(false);
         setButtonState(btnApprovals, false);
+
         if (user instanceof Employee employee) {
             EmployeeRole role = employee.getRole();
+
             switch (role) {
                 case CONTENT_WORKER:
                     // עובד תוכן יכול לערוך אך לא לאשר מחירים או גרסאות
                     setManagementButtonsVisible(true);
-                    btnPriceUpdate.setVisible(false);
-                    btnApprovals.setVisible(false);
+                    setButtonState(btnPriceUpdate, false);
+                    setButtonState(btnApprovals, false);
                     break;
 
                 case CONTENT_MANAGER:
                     // מנהל תוכן רואה הכל כולל כפתור אישורים
                     setManagementButtonsVisible(true);
-                    btnApprovals.setVisible(true);
+                    setButtonState(btnApprovals, true);
                     break;
 
                 case COMPANY_MANAGER:
                     // מנהל חברה רואה רק אישורי מחירים
                     setManagementButtonsVisible(false);
-                    btnApprovals.setVisible(true); // עבור אישורי מחירים בלבד
+                    setButtonState(btnApprovals, true); // עבור אישורי מחירים בלבד
+                    break;
+
+                default:
                     break;
             }
         }
     }
 
     private void setManagementButtonsVisible(boolean visible) {
-        btnEditCity.setVisible(visible);
-        btnCreateTour.setVisible(visible);
-        btnAddMap.setVisible(visible);
-        btnUpdateMap.setVisible(visible);
-        btnDeleteMap.setVisible(visible);
-        btnPriceUpdate.setVisible(visible);
+        // שימוש ב-setButtonState מבטיח שגם ה-managed יתעדכן והתפריט יתכווץ
+        setButtonState(btnEditCity, visible);
+        setButtonState(btnCreateTour, visible);
+        setButtonState(btnAddMap, visible);
+        setButtonState(btnUpdateMap, visible);
+        setButtonState(btnDeleteMap, visible);
+        setButtonState(btnPriceUpdate, visible);
     }
     private void setButtonState(Button btn, boolean visible) {
         if (btn != null) {

@@ -15,13 +15,16 @@ public class MapCardController {
     @FXML private ImageView imgMap;
     @FXML private Label lblMapName;
     @FXML private Label lblMapPrice;
+    @FXML private Label lblVersion;
     private GCMMap currentMap;
 
     public void setData(GCMMap gcmMap) {
         this.currentMap = gcmMap;
         lblMapName.setText(gcmMap.getName());
         lblMapPrice.setText(String.format("Price: $%.2f", gcmMap.getPrice()));
-
+        if (lblVersion != null) {
+            lblVersion.setText("Version: " + gcmMap.getVersion());
+        }
         // Logic for loading map image from Client resources
         if (gcmMap.getImagePath() != null) {
             try {

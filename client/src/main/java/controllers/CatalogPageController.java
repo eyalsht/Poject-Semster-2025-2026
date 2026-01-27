@@ -85,12 +85,8 @@ public class CatalogPageController {
 
                 AnchorPane centerHost = (AnchorPane) scrollPaneCities.getScene().lookup("#centerHost");
                 if (centerHost != null) {
-                    AnchorPane.setTopAnchor(root, 0.0);
-                    AnchorPane.setRightAnchor(root, 0.0);
-                    AnchorPane.setBottomAnchor(root, 0.0);
-                    AnchorPane.setLeftAnchor(root, 0.0);
-
                     centerHost.getChildren().setAll(root);
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
