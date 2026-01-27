@@ -163,8 +163,8 @@ public class SupportPageController {
     }
 
 
-    private void sendSupportToServer(String topic, String text, Integer cityId)
-    {
+    private void sendSupportToServer(String topic, String text, Integer cityId) {
+
         addBot("Checking your account...");
         btnSend.setDisable(true);
 
@@ -178,7 +178,7 @@ public class SupportPageController {
                             new SupportSubmitRequest(user.getId(), topic, text, cityId);
 
                     Message req = new Message(ActionType.SUBMIT_SUPPORT_REQUEST, payload);
-                    return gcmClient.sendMessage(req);   // blocking call is OK here
+                    return gcmClient.sendMessage(req);
                 },
                 (Message resp) -> {
                     if (resp == null) {
@@ -202,9 +202,11 @@ public class SupportPageController {
 
                     chatList.scrollTo(chatItems.size() - 1);
                 },
-                (Throwable err) -> addBot("Support system error: " + err.getMessage())
+                (Throwable err) -> addBot("Support system error: " + err.getMessage()),
+                () -> btnSend.setDisable(false)   // ✅ always executed
         );
     }
+
 
 
 
@@ -253,7 +255,9 @@ public class SupportPageController {
 
     private <T> void runAsync(java.util.concurrent.Callable<T> work,
                               java.util.function.Consumer<T> onSuccess,
-                              java.util.function.Consumer<Throwable> onError) {
+                              java.util.function.Consumer<Throwable> onError,
+                              Runnable onFinally)
+    {
 
         javafx.concurrent.Task<T> task = new javafx.concurrent.Task<>() {
             @Override
@@ -262,14 +266,29 @@ public class SupportPageController {
             }
         };
 
-        task.setOnSucceeded(e -> onSuccess.accept(task.getValue()));
-        task.setOnFailed(e -> onError.accept(task.getException()));
+        task.setOnSucceeded(e -> {
+            try {
+                onSuccess.accept(task.getValue());
+            } finally {
+                if (onFinally != null) onFinally.run();
+            }
+        });
+
+        task.setOnFailed(e -> {
+            try {
+                onError.accept(task.getException());
+            } finally {
+                if (onFinally != null) onFinally.run();
+            }
+        });
+
+        task.setOnCancelled(e -> {
+            if (onFinally != null) onFinally.run();
+        });
 
         Thread t = new Thread(task);
         t.setDaemon(true);
         t.start();
     }
-
-
 
 }
