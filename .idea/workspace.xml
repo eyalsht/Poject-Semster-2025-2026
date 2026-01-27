@@ -4,20 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Activity report ver 0.2 - Reports">
-      <change afterPath="$PROJECT_DIR$/common/src/main/java/common/enums/ReportType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/report/ReportManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/report/ReportRequestContext.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/report/ReportService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/report/services/ActivityReportService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/server/report/services/ClientsReportService.java" afterDir="false" />
+    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Activity report ver 0.3 - Reports&#10;Report logic updated to make it more flexible">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/handler/GetActivityReportHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/GetActivityReportHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/handler/GetAllClientsReportHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/GetAllClientsReportHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/server/handler/HandlerRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/handler/HandlerRegistry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/report/ActivityStatsScheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/report/ActivityStatsScheduler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/report/ReportManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/report/ReportManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -512,7 +506,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769436018808</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="Activity report ver 0.3 - Reports&#10;Report logic updated to make it more flexible">
+      <option name="closed" value="true" />
+      <created>1769501942144</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1769501942144</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -550,6 +552,7 @@
     <MESSAGE value="Client report ver 0.2 - Reports" />
     <MESSAGE value="Activity report ver 0.1 - Reports" />
     <MESSAGE value="Activity report ver 0.2 - Reports" />
-    <option name="LAST_COMMIT_MESSAGE" value="Activity report ver 0.2 - Reports" />
+    <MESSAGE value="Activity report ver 0.3 - Reports&#10;Report logic updated to make it more flexible" />
+    <option name="LAST_COMMIT_MESSAGE" value="Activity report ver 0.3 - Reports&#10;Report logic updated to make it more flexible" />
   </component>
 </project>

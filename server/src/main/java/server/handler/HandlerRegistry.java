@@ -63,7 +63,6 @@ public class HandlerRegistry {
         register(ActionType.PURCHASE_REQUEST, new PurchaseHandler());
 
         // Reports
-        // Reports
         reportManager = new ReportManager(HibernateUtil.getSessionFactory());
 
         register(ActionType.GET_ALL_CLIENTS_REPORT_REQUEST,

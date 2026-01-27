@@ -5,19 +5,19 @@ import common.content.City;
 import common.enums.ActionType;
 import common.messaging.Message;
 import common.report.AllClientsReport;
+import common.report.ActivityReport;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
-import common.report.ActivityReport;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-
-
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReportPageController {
@@ -25,6 +25,9 @@ public class ReportPageController {
     @FXML private ComboBox<String> cmbReportType;
     @FXML private ComboBox<City> cmbCity;
     @FXML private Button btnGenerate;
+
+    @FXML private Label lblChooseReport;
+    @FXML private HBox reportContent;
 
     @FXML private BarChart<String, Number> barChart;
 
@@ -39,10 +42,12 @@ public class ReportPageController {
     private static final DateTimeFormatter CREATED_FMT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
+    // ✅ The report currently shown on screen (changes only after Generate)
+    private String displayedReport = null;
+
     @FXML
     public void initialize() {
 
-        // report options stay the same
         cmbReportType.setItems(FXCollections.observableArrayList(
                 "Clients report",
                 "Sales report",
@@ -51,14 +56,13 @@ public class ReportPageController {
                 "Activity report"
         ));
 
-        // ✅ Start state: only report enabled
+        // Start state
         cmbReportType.getSelectionModel().clearSelection();
         cmbReportType.setDisable(false);
 
         cmbCity.setDisable(true);
         btnGenerate.setDisable(true);
 
-        // converter stays
         cmbCity.setConverter(new StringConverter<>() {
             @Override public String toString(City city) {
                 return (city == null) ? "" : city.getName();
@@ -68,14 +72,15 @@ public class ReportPageController {
 
         setupClientsTableColumns();
 
-        // ✅ listeners that enable/disable controls based on selection
         wireUiStateListeners();
         applyUiState();
 
-        // keep your existing city loading
+        // ✅ initial view: placeholder only
+        displayedReport = null;
+        applyReportLayout();
+
         loadCitiesFromServer();
     }
-
 
     private void setupClientsTableColumns() {
         colId.setCellValueFactory(data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().userId));
@@ -112,37 +117,56 @@ public class ReportPageController {
     }
 
     @FXML
-    private void onGenerate()
-    {
-        System.out.println(">>> Generate clicked. Report=" + cmbReportType.getValue() + " city=" + cmbCity.getValue());
-        showAlert("DEBUG", "Generate clicked!");
+    private void onGenerate() {
+
         String selected = cmbReportType.getValue();
-        if (selected == null) return;
+        if (selected == null || selected.isBlank()) return;
+
+        // ✅ Switch the UI layout ONLY now (on Generate)
+        displayedReport = selected;
+        applyReportLayout();
+
+        // Clear old content so it doesn’t “look wrong” while loading
+        barChart.getData().clear();
+        tableView.getItems().clear();
+
+        // Optional: show loading text until results arrive
+        lblChooseReport.setText("Loading...");
+        lblChooseReport.setVisible(true);
+        lblChooseReport.setManaged(true);
 
         switch (selected) {
             case "Clients report" -> generateClientsReport();
             case "Activity report" -> generateActivityReport();
-            default -> showAlert("Not implemented yet", "Only 'Clients report' and 'Activity report' are implemented right now.");
+            default -> {
+                // No popup: just show text in the center
+                lblChooseReport.setText("This report is not implemented yet.");
+                lblChooseReport.setVisible(true);
+                lblChooseReport.setManaged(true);
+
+                reportContent.setVisible(false);
+                reportContent.setManaged(false);
+            }
         }
     }
 
-
-    private void generateClientsReport()
-    {
-        // (City not used for this report right now, but we already load it for later)
+    private void generateClientsReport() {
         new Thread(() -> {
             try {
                 Message req = new Message(ActionType.GET_ALL_CLIENTS_REPORT_REQUEST, null);
                 Message res = (Message) GCMClient.getInstance().sendRequest(req);
-                System.out.println(">>> Clients report response: " + (res == null ? "NULL" : res.getAction()));
-
 
                 Platform.runLater(() -> {
-                    if (res != null && res.getAction() == ActionType.GET_ALL_CLIENTS_REPORT_RESPONSE)
-                    {
+                    if (res != null && res.getAction() == ActionType.GET_ALL_CLIENTS_REPORT_RESPONSE) {
                         AllClientsReport report = (AllClientsReport) res.getMessage();
+
+                        // Hide loading text
+                        lblChooseReport.setVisible(false);
+                        lblChooseReport.setManaged(false);
+
                         fillClientsTable(report);
                         fillClientsBarChart(report);
+
                     } else {
                         showAlert("Error", "Failed to generate clients report.");
                     }
@@ -172,66 +196,21 @@ public class ReportPageController {
         series.setName("New clients");
 
         for (AllClientsReport.MonthCount mc : report.last5Months) {
-            String label = mc.month.getMonthValue() + "/" + mc.month.getYear(); // e.g. 2026-01
+            String label = mc.month.getMonthValue() + "/" + mc.month.getYear();
             series.getData().add(new XYChart.Data<>(label, mc.count));
         }
 
         barChart.getData().add(series);
     }
 
-    private void showAlert(String title, String msg) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.setTitle(title);
-        a.setHeaderText(null);
-        a.setContentText(msg);
-        a.showAndWait();
-    }
-
-    private void applyUiState() {
-        // Default: only report enabled
-        String report = cmbReportType.getValue();
-
-        boolean hasReport = report != null && !report.isBlank();
-        boolean isClients = "Clients report".equals(report);
-
-        // City enabled only for non-clients reports (future reports)
-        cmbCity.setDisable(!hasReport || isClients);
-
-        // Generate enabled:
-        // - Clients report: enabled as soon as selected
-        // - Others: enabled only when city is selected
-        boolean cityChosen = cmbCity.getValue() != null;
-        btnGenerate.setDisable(!hasReport || (!isClients && !cityChosen));
-    }
-
-    private void wireUiStateListeners() {
-        cmbReportType.valueProperty().addListener((obs, oldV, newV) -> {
-
-            if ("Clients report".equals(newV)) {
-                cmbCity.getSelectionModel().clearSelection();
-            } else {
-                // For Activity (and future city reports), auto-select first city if none selected
-                if (cmbCity.getValue() == null && cmbCity.getItems() != null && !cmbCity.getItems().isEmpty()) {
-                    cmbCity.getSelectionModel().select(0);
-                }
-            }
-
-            applyUiState();
-        });
-
-        cmbCity.valueProperty().addListener((obs, oldV, newV) -> applyUiState());
-    }
-
-
-    private void generateActivityReport()
-    {
+    private void generateActivityReport() {
         City city = cmbCity.getValue();
         if (city == null) {
             showAlert("Missing city", "Please choose a city for Activity report.");
             return;
         }
 
-        // TEMP: last 7 days (until you add DatePickers)
+        // TEMP: last 7 days
         LocalDate to = LocalDate.now();
         LocalDate from = to.minusDays(6);
 
@@ -240,20 +219,21 @@ public class ReportPageController {
                 ArrayList<Object> payload = new ArrayList<>();
                 payload.add(from);
                 payload.add(to);
-                payload.add(city.getId()); // later can be null for "all cities"
+                payload.add(city.getId());
 
                 Message req = new Message(ActionType.GET_ACTIVITY_REPORT_REQUEST, payload);
-                System.out.println(">>> Sending activity request payload: from=" + from + " to=" + to + " cityId=" + city.getId());
-
                 Message res = (Message) GCMClient.getInstance().sendRequest(req);
-                System.out.println(">>> Activity report response: " + (res == null ? "NULL" : res.getAction()));
-
 
                 Platform.runLater(() -> {
                     if (res != null && res.getAction() == ActionType.GET_ACTIVITY_REPORT_RESPONSE) {
                         ActivityReport report = (ActivityReport) res.getMessage();
+
+                        // Hide loading text
+                        lblChooseReport.setVisible(false);
+                        lblChooseReport.setManaged(false);
+
                         fillActivityBarChart(report);
-                        showAlert("Activity report", "Chart updated. (Next step: add Activity table below.)");
+
                     } else {
                         showAlert("Error", "Failed to generate activity report.");
                     }
@@ -271,7 +251,6 @@ public class ReportPageController {
 
         if (report == null || report.rows == null || report.rows.isEmpty()) return;
 
-        // For single city request: one row
         ActivityReport.CityRow row = report.rows.get(0);
 
         XYChart.Series<String, Number> s = new XYChart.Series<>();
@@ -287,6 +266,98 @@ public class ReportPageController {
         barChart.getData().add(s);
     }
 
+    private void showAlert(String title, String msg) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
+    }
 
+    private void applyUiState() {
+        String report = cmbReportType.getValue();
 
+        boolean hasReport = report != null && !report.isBlank();
+        boolean isClients = "Clients report".equals(report);
+
+        // City enabled only for non-clients reports
+        cmbCity.setDisable(!hasReport || isClients);
+
+        boolean cityChosen = cmbCity.getValue() != null;
+        btnGenerate.setDisable(!hasReport || (!isClients && !cityChosen));
+    }
+
+    // ✅ Layout is based on displayedReport (changes only after Generate)
+    private void applyReportLayout() {
+        String report = displayedReport;
+
+        boolean hasReport = report != null && !report.isBlank();
+        boolean isClients = "Clients report".equals(report);
+        boolean isActivity = "Activity report".equals(report);
+
+        // Placeholder visible only when no displayed report
+        lblChooseReport.setVisible(!hasReport);
+        lblChooseReport.setManaged(!hasReport);
+
+        // Content visible only when a report is displayed
+        reportContent.setVisible(hasReport);
+        reportContent.setManaged(hasReport);
+
+        barChart.setVisible(false);
+        barChart.setManaged(false);
+
+        tableView.setVisible(false);
+        tableView.setManaged(false);
+
+        if (isClients) {
+            barChart.setVisible(true);
+            barChart.setManaged(true);
+            barChart.setPrefWidth(285);
+
+            tableView.setVisible(true);
+            tableView.setManaged(true);
+
+            reportContent.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            reportContent.setSpacing(20);
+
+        } else if (isActivity) {
+            barChart.setVisible(true);
+            barChart.setManaged(true);
+            barChart.setPrefWidth(650);
+
+            reportContent.setAlignment(javafx.geometry.Pos.CENTER);
+            reportContent.setSpacing(0);
+
+            tableView.getItems().clear();
+
+        } else if (hasReport) {
+            lblChooseReport.setText("This report is not implemented yet.");
+            lblChooseReport.setVisible(true);
+            lblChooseReport.setManaged(true);
+            reportContent.setVisible(false);
+            reportContent.setManaged(false);
+        } else {
+            lblChooseReport.setText("Choose a report!");
+        }
+    }
+
+    private void wireUiStateListeners() {
+
+        cmbReportType.valueProperty().addListener((obs, oldV, newV) -> {
+
+            // Keep city selection logic (but do NOT change layout here)
+            if ("Clients report".equals(newV)) {
+                cmbCity.getSelectionModel().clearSelection();
+            } else {
+                if (cmbCity.getValue() == null && cmbCity.getItems() != null && !cmbCity.getItems().isEmpty()) {
+                    cmbCity.getSelectionModel().select(0);
+                }
+            }
+
+            applyUiState();
+            // ❌ no applyReportLayout() here (layout changes only on Generate)
+        });
+
+        cmbCity.valueProperty().addListener((obs, oldV, newV) -> applyUiState());
+    }
 }

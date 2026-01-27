@@ -8,18 +8,19 @@ import server.report.services.ClientsReportService;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class ReportManager {
+public class ReportManager
+{
 
     private final Map<ReportType, ParamAwareReportService> services = new EnumMap<>(ReportType.class);
     private final ReportRequestContext ctx;
 
-    public ReportManager(SessionFactory sf) {
+    public ReportManager(SessionFactory sf)
+    {
         this.ctx = new ReportRequestContext(sf);
 
         // 🔥 one place to rule them all
         register(new ActivityReportService());
         register(new ClientsReportService());
-        // register(new ClientsReportService()); // coming next
     }
 
     private void register(ParamAwareReportService service) {
