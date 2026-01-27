@@ -7,5 +7,8 @@ public enum SiteCategory
     PARK,
     PUBLIC_INSTITUTION,
     RESTAURANT,
-    HOTEL
+    HOTEL,
+    TRANSPORT,
+    GOVERNMENT,
+    NATURE
 }
