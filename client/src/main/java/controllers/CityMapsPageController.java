@@ -15,6 +15,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.control.Label;
 import java.io.IOException;
+import client.GCMClient;
+import common.user.User;
+import common.user.Employee;
+import common.enums.EmployeeRole;
 
 public class CityMapsPageController {
 
@@ -24,6 +28,19 @@ public class CityMapsPageController {
     @FXML private TextField txtSearch;
     @FXML private ComboBox<String> cbMap;
     @FXML private ComboBox<String> cbCity;
+
+    @FXML private Button btnUpdateMap;
+    @FXML private Button btnAddMap;
+    @FXML private Button btnDeleteMap;
+    @FXML private Button btnPriceUpdate;
+    @FXML private Button btnApprovals;
+    @FXML private Button btnEditCity;
+    @FXML private Button btnCreateTour;
+
+    @FXML
+    public void initialize() {
+        applyRolePermissions();
+    }
     private City selectedCity;
 
     public void setCity(City city) {
@@ -50,6 +67,52 @@ public class CityMapsPageController {
             }
         } catch (Exception e) {
             System.err.println("Hibernate Lazy error caught: " + e.getMessage());
+        }
+    }
+
+    private void applyRolePermissions() {
+        User user = GCMClient.getInstance().getCurrentUser();
+
+        // הסתרת כל כפתורי הניהול כברירת מחדל (לאורחים ולקוחות)
+        setManagementButtonsVisible(false);
+        setButtonState(btnApprovals, false);
+        if (user instanceof Employee employee) {
+            EmployeeRole role = employee.getRole();
+            switch (role) {
+                case CONTENT_WORKER:
+                    // עובד תוכן יכול לערוך אך לא לאשר מחירים או גרסאות
+                    setManagementButtonsVisible(true);
+                    btnPriceUpdate.setVisible(false);
+                    btnApprovals.setVisible(false);
+                    break;
+
+                case CONTENT_MANAGER:
+                    // מנהל תוכן רואה הכל כולל כפתור אישורים
+                    setManagementButtonsVisible(true);
+                    btnApprovals.setVisible(true);
+                    break;
+
+                case COMPANY_MANAGER:
+                    // מנהל חברה רואה רק אישורי מחירים
+                    setManagementButtonsVisible(false);
+                    btnApprovals.setVisible(true); // עבור אישורי מחירים בלבד
+                    break;
+            }
+        }
+    }
+
+    private void setManagementButtonsVisible(boolean visible) {
+        btnEditCity.setVisible(visible);
+        btnCreateTour.setVisible(visible);
+        btnAddMap.setVisible(visible);
+        btnUpdateMap.setVisible(visible);
+        btnDeleteMap.setVisible(visible);
+        btnPriceUpdate.setVisible(visible);
+    }
+    private void setButtonState(Button btn, boolean visible) {
+        if (btn != null) {
+            btn.setVisible(visible);
+            btn.setManaged(visible);
         }
     }
 
