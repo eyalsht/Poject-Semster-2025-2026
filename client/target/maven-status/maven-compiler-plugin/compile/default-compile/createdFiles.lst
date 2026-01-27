@@ -10,6 +10,7 @@ controllers\CatalogPageController.class
 controllers\ReportPageController.class
 controllers\ReportPageController$1.class
 controllers\CityCardController.class
+controllers\SupportPageController$1.class
 client\ClientLauncher.class
 controllers\CityUpdatePageController$1.class
 client\MainApplication.class
@@ -21,8 +22,10 @@ controllers\CityMapsPageController.class
 controllers\MapCardController.class
 controllers\RegisterPageController.class
 controllers\ProfilePageController.class
+controllers\SupportPageController$ChatItem.class
 controllers\ApprovalPendingPageController.class
 controllers\CityUpdatePageController$2.class
 controllers\CatalogPageController$1.class
 oscf\ObservableClient.class
 controllers\LoginPageController.class
+controllers\SupportPageController$SupportChoice.class

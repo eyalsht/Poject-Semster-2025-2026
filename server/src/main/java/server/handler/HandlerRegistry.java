@@ -79,6 +79,10 @@ public class HandlerRegistry {
         register(ActionType.GET_PURCHASES_REPORT_REQUEST,
                 new GetPurchasesReportHandler(reportManager));
 
+        //Support
+        register(ActionType.SUBMIT_SUPPORT_REQUEST, new SubmitSupportHandler());
+
+
 
 
     }

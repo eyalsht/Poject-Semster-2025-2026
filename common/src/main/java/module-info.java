@@ -18,5 +18,6 @@ module com.gcm.common {
     opens common.purchase to org.hibernate.orm.core;
     opens common.workflow to org.hibernate.orm.core;
     opens common.report to org.hibernate.orm.core;
+    exports common.support;
 }
 

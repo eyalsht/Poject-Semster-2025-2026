@@ -97,6 +97,10 @@ public enum ActionType {
     //Purchase report
     GET_PURCHASES_REPORT_REQUEST,
     GET_PURCHASES_REPORT_RESPONSE,
+
+    //Bot+ Support
+    SUBMIT_SUPPORT_REQUEST,
+    SUBMIT_SUPPORT_RESPONSE,
     // ==================== GENERIC ====================
     ERROR
 }

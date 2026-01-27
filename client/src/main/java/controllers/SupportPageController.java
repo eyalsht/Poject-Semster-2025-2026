@@ -1,22 +1,68 @@
 package controllers;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import client.GCMClient;
+import common.messaging.Message;
+import common.user.User;
+import common.enums.ActionType;
+import common.support.SupportSubmitRequest;
+import common.support.SupportSubmitResponse;
 
 public class SupportPageController {
 
     @FXML private TextArea detailsArea;
     @FXML private ComboBox<String> questionsCombo;
 
+    @FXML private ListView<ChatItem> chatList;
+
+    private final ObservableList<ChatItem> chatItems = FXCollections.observableArrayList();
+
+    // Simple model for chat list items
+    private static class ChatItem {
+        final String text;
+        final boolean isBot;
+        final java.util.List<SupportChoice> choices; // null/empty -> normal message
+
+        ChatItem(String text, boolean isBot) {
+            this(text, isBot, null);
+        }
+
+        ChatItem(String text, boolean isBot, java.util.List<SupportChoice> choices) {
+            this.text = text;
+            this.isBot = isBot;
+            this.choices = choices;
+        }
+    }
+
+
+    public static class SupportChoice {
+        private final int cityId;
+        private final String label;
+
+        public SupportChoice(int cityId, String label) {
+            this.cityId = cityId;
+            this.label = label;
+        }
+        public int getCityId() { return cityId; }
+        public String getLabel() { return label; }
+    }
+
+
     @FXML
     public void initialize() {
+
         questionsCombo.setItems(FXCollections.observableArrayList(
                 "I can’t log in",
                 "Payment issue",
                 "Subscription problem",
-                "Bug / app not working", "When my membership expires?", "I am ready to worship our only true god Catulhu!",
+                "Bug / app not working",
+                "When my membership expires?",
                 "Other"
         ));
 
@@ -28,6 +74,50 @@ public class SupportPageController {
             detailsArea.setDisable(!isOther);
             if (!isOther) detailsArea.clear();
         });
+
+        // Attach list items
+        chatList.setItems(chatItems);
+
+        // Render each message with color
+        chatList.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(ChatItem item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    return;
+                }
+
+                javafx.scene.text.Text t = new javafx.scene.text.Text(item.text);
+                t.setFill(item.isBot ? javafx.scene.paint.Color.GREEN : javafx.scene.paint.Color.BLACK);
+
+                javafx.scene.text.TextFlow flow = new javafx.scene.text.TextFlow(t);
+                flow.setPrefWidth(0);
+
+                // If this message has choices -> show buttons under it
+                if (item.choices != null && !item.choices.isEmpty()) {
+                    javafx.scene.layout.FlowPane btnPane = new javafx.scene.layout.FlowPane(8, 8);
+
+                    for (SupportChoice c : item.choices) {
+                        Button b = new Button(c.getLabel());
+                        b.setOnAction(e -> onCityChoiceClicked(c));
+                        btnPane.getChildren().add(b);
+                    }
+
+                    javafx.scene.layout.VBox box = new javafx.scene.layout.VBox(6, flow, btnPane);
+                    setGraphic(box);
+                    return;
+                }
+
+                setGraphic(flow);
+            }
+        });
+
+
+        // Optional: start conversation
+        addBot("Hi! Choose a question above and click Send 🙂");
     }
 
     @FXML
@@ -38,10 +128,120 @@ public class SupportPageController {
     @FXML
     private void handleSend() {
         String selected = questionsCombo.getValue();
+
+        String userText;
         if ("Other".equals(selected)) {
-            System.out.println("SEND: Other -> " + detailsArea.getText().trim());
+            userText = detailsArea.getText() == null ? "" : detailsArea.getText().trim();
+            if (userText.isEmpty()) {
+                new Alert(Alert.AlertType.WARNING, "Please write details for 'Other'.").showAndWait();
+                return;
+            }
         } else {
-            System.out.println("SEND: " + selected);
+            userText = selected;
         }
+
+        // User message
+        addUser(userText);
+
+        // If membership question -> call server ONLY
+        if ("When my membership expires?".equals(selected)) {
+            sendSupportToServer("MEMBERSHIP_EXPIRE", userText, null);
+        } else {
+            // Local bot for other questions (for now)
+            String botReply = getBotReplyLocal(userText);
+            addBot(botReply);
+        }
+
+        // Cleanup
+        if ("Other".equals(selected)) {
+            detailsArea.clear();
+        }
+
+        // Scroll
+        chatList.scrollTo(chatItems.size() - 1);
     }
+
+
+    private void sendSupportToServer(String topic, String text, Integer cityId) {
+        GCMClient gcmClient = GCMClient.getInstance();
+        User user = gcmClient.getCurrentUser();
+
+        if (user == null) {
+            addBot("You must login first to contact support.");
+            return;
+        }
+
+        SupportSubmitRequest payload =
+                new SupportSubmitRequest(user.getId(), topic, text, cityId);
+
+        Message req =
+                new Message(ActionType.SUBMIT_SUPPORT_REQUEST, payload);
+
+        Message resp = gcmClient.sendMessage(req);
+
+        if (resp == null || !(resp.getMessage() instanceof SupportSubmitResponse)) {
+            addBot("Server error: no response.");
+            return;
+        }
+
+        SupportSubmitResponse data = (SupportSubmitResponse) resp.getMessage();
+
+        if (data.getChoices() != null && !data.getChoices().isEmpty()) {
+            java.util.List<SupportChoice> uiChoices = data.getChoices().stream()
+                    .map(c -> new SupportChoice(c.getCityId(), c.getLabel()))
+                    .toList();
+
+            addBot(data.getResponseText(), uiChoices);
+        } else {
+            addBot(data.getResponseText());
+        }
+
+        chatList.scrollTo(chatItems.size() - 1);
+    }
+
+
+    private void addUser(String text) {
+        chatItems.add(new ChatItem("You: " + text, false));
+    }
+
+    private void addBot(String text) {
+        chatItems.add(new ChatItem("Bot: " + text, true));
+    }
+
+    private void addBot(String text, java.util.List<SupportChoice> choices) {
+        chatItems.add(new ChatItem("Bot: " + text, true, choices));
+    }
+
+
+
+
+    // Temporary local bot (so UI works NOW).
+    // After UI is good, we will connect it to your real server SupportController.
+    private String getBotReplyLocal(String userText) {
+        String t = userText.toLowerCase();
+
+        if (t.contains("log in")) {
+            return "Try: 1) check caps lock 2) retype password 3) restart app. If it still fails, choose 'Other' and write your username + exact error.";
+        }
+        if (t.contains("payment")) {
+            return "Payment issues: please verify your card details and try again. If you were charged but didn't get access, write purchase date + city name in 'Other'.";
+        }
+        if (t.contains("subscription") || t.contains("membership")) {
+            return "Subscription help: If you tell me the city name, I can check what you currently have (when we connect this to the server).";
+        }
+        if (t.contains("bug")) {
+            return "Please write what screen you were in + what button you clicked + what happened. A screenshot helps a lot.";
+        }
+
+        return "I’m not sure I can answer this automatically. Please write details in 'Other' and a support agent will handle it.";
+    }
+
+    private void onCityChoiceClicked(SupportChoice choice) {
+        addUser("City: " + choice.getLabel());
+
+        // Follow up: same topic, but now with cityId
+        sendSupportToServer("MEMBERSHIP_EXPIRE", "", choice.getCityId());
+    }
+
+
 }
