@@ -2,6 +2,7 @@ package server.handler;
 
 import common.messaging.Message;
 import common.enums.ActionType;
+import server.report.ReportManager;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -17,6 +18,8 @@ public class HandlerRegistry {
     
     private final Map<ActionType, RequestHandler> handlers = new EnumMap<>(ActionType.class);
 
+    private ReportManager reportManager;
+
     private HandlerRegistry() {}
 
     public static synchronized HandlerRegistry getInstance() {
@@ -31,7 +34,8 @@ public class HandlerRegistry {
      * Register all handlers.
      * To add a new feature: just add one line here!
      */
-    private void initialize() {
+    private void initialize()
+    {
         // Authentication
         register(ActionType.LOGIN_REQUEST, new LoginHandler());
         register(ActionType.REGISTER_REQUEST, new RegisterHandler());
@@ -59,18 +63,20 @@ public class HandlerRegistry {
         register(ActionType.PURCHASE_REQUEST, new PurchaseHandler());
 
         // Reports
+        reportManager = new ReportManager(HibernateUtil.getSessionFactory());
+
         register(ActionType.GET_ALL_CLIENTS_REPORT_REQUEST,
-                new GetAllClientsReportHandler(HibernateUtil.getSessionFactory()));
+                new GetAllClientsReportHandler(reportManager));
 
         register(ActionType.GET_ACTIVITY_REPORT_REQUEST,
-                new GetActivityReportHandler(HibernateUtil.getSessionFactory()));
-
+                new GetActivityReportHandler(reportManager));
 
         register(ActionType.LOG_MAP_VIEW_REQUEST,
                 new LogMapViewHandler(HibernateUtil.getSessionFactory()));
 
         register(ActionType.LOG_MAP_DOWNLOAD_REQUEST,
                 new LogMapDownloadHandler(HibernateUtil.getSessionFactory()));
+
 
 
     }
@@ -103,4 +109,8 @@ public class HandlerRegistry {
             return new Message(ActionType.ERROR, "Server error: " + e.getMessage());
         }
     }
+    public ReportManager getReportManager() {
+        return reportManager;
+    }
+
 }

@@ -18,16 +18,20 @@ public class ActivityStatsScheduler {
             });
 
     /**
-     * Start a daily job that runs at 23:59 (server time zone) and aggregates stats for "today".
+     * Start a daily job that runs at 23:59 (server time zone)
+     * and triggers ReportManager daily refresh for ALL reports.
      */
-    public static void start(SessionFactory sf) {
+    public static void start(ReportManager reportManager) {
 
-        // schedule first run at the next 23:59
         long initialDelaySeconds = secondsUntilNextRun(23, 59);
         long periodSeconds = TimeUnit.DAYS.toSeconds(1);
 
-        exec.scheduleAtFixedRate(() -> safeAggregate(sf),
-                initialDelaySeconds, periodSeconds, TimeUnit.SECONDS);
+        exec.scheduleAtFixedRate(
+                () -> safeRefresh(reportManager),
+                initialDelaySeconds,
+                periodSeconds,
+                TimeUnit.SECONDS
+        );
     }
 
     // ---------------------- internal helpers ----------------------
@@ -48,11 +52,10 @@ public class ActivityStatsScheduler {
         return Duration.between(now, next).getSeconds();
     }
 
-    private static void safeAggregate(SessionFactory sf) {
+    private static void safeRefresh(ReportManager reportManager) {
         try {
-            LocalDate today = LocalDate.now();
-            aggregateDay(sf, today);
-            System.out.println("[ActivityStatsScheduler] Aggregated stats for " + today);
+            reportManager.refreshDailyReports();
+            System.out.println("[ActivityStatsScheduler] Daily reports refreshed");
         } catch (Exception e) {
             System.err.println("[ActivityStatsScheduler] FAILED");
             e.printStackTrace();
@@ -71,13 +74,6 @@ public class ActivityStatsScheduler {
         try (Session s = sf.openSession()) {
             s.beginTransaction();
 
-            // This inserts/updates one row per city for the chosen day.
-            // It sums:
-            // - one-time purchases (purchase_type='ONE_TIME')
-            // - subscriptions (purchase_type='SUBSCRIPTION' and is_renewal=0)
-            // - renewals (purchase_type='SUBSCRIPTION' and is_renewal=1)
-            // - views from map_view_events
-            // - downloads (subscribers only) from map_download_events
             s.createNativeQuery("""
                 INSERT INTO daily_city_activity_stats
                     (city_id, stat_date, one_time_purchases, subscriptions, subscription_renewals, views, downloads)
