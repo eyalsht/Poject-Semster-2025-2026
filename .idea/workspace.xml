@@ -4,14 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Report page update">
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CityCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/CityCard.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" afterDir="false" />
+    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Support chat ver 0.3">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/ProfilePageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/ProfilePageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/SupportPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/SupportPageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/SupportPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/SupportPageController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -22,8 +21,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="FxmlFile" />
         <option value="Enum" />
+        <option value="FxmlFile" />
         <option value="Class" />
       </list>
     </option>
@@ -541,7 +540,47 @@
       <option name="project" value="LOCAL" />
       <updated>1769516043120</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="Report page update 2">
+      <option name="closed" value="true" />
+      <created>1769516502961</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1769516502961</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Support chat ver 0.1">
+      <option name="closed" value="true" />
+      <created>1769554045445</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1769554045445</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Support chat ver 0.2">
+      <option name="closed" value="true" />
+      <created>1769555491779</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1769555491779</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Support chat ver 0.21">
+      <option name="closed" value="true" />
+      <created>1769555798680</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1769555798680</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Support chat ver 0.3">
+      <option name="closed" value="true" />
+      <created>1769572572494</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1769572572494</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -559,10 +598,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Enteties from Renat" />
-    <MESSAGE value="New image fromRenat" />
-    <MESSAGE value="Close button" />
-    <MESSAGE value="New catalog draft" />
     <MESSAGE value="New image" />
     <MESSAGE value="Login change" />
     <MESSAGE value="Home page change buttons" />
@@ -583,6 +618,11 @@
     <MESSAGE value="Activity report ver 0.4 - Reports&#10;Report Page Updated" />
     <MESSAGE value="Home page bigger" />
     <MESSAGE value="Report page update" />
-    <option name="LAST_COMMIT_MESSAGE" value="Report page update" />
+    <MESSAGE value="Report page update 2" />
+    <MESSAGE value="Support chat ver 0.1" />
+    <MESSAGE value="Support chat ver 0.2" />
+    <MESSAGE value="Support chat ver 0.21" />
+    <MESSAGE value="Support chat ver 0.3" />
+    <option name="LAST_COMMIT_MESSAGE" value="Support chat ver 0.3" />
   </component>
 </project>
