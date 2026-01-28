@@ -1,8 +1,9 @@
 package common.support;
 
+import common.enums.SupportTicketStatus;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import common.enums.SupportTicketStatus;
 
 public class SupportTicketRowDTO implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -16,9 +17,23 @@ public class SupportTicketRowDTO implements Serializable {
     private final boolean readByClient;
     private final String preview;
 
+    // NEW fields
+    private final String agentName;
+    private final String agentReply;
+
+    // OLD constructor (keep it!)
     public SupportTicketRowDTO(int ticketId, String clientUsername, String topic,
                                SupportTicketStatus status, LocalDateTime createdAt,
                                LocalDateTime repliedAt, boolean readByClient, String preview) {
+        this(ticketId, clientUsername, topic, status, createdAt, repliedAt, readByClient, preview,
+                "Support", null);
+    }
+
+    // NEW constructor
+    public SupportTicketRowDTO(int ticketId, String clientUsername, String topic,
+                               SupportTicketStatus status, LocalDateTime createdAt,
+                               LocalDateTime repliedAt, boolean readByClient, String preview,
+                               String agentName, String agentReply) {
         this.ticketId = ticketId;
         this.clientUsername = clientUsername;
         this.topic = topic;
@@ -27,6 +42,8 @@ public class SupportTicketRowDTO implements Serializable {
         this.repliedAt = repliedAt;
         this.readByClient = readByClient;
         this.preview = preview;
+        this.agentName = agentName;
+        this.agentReply = agentReply;
     }
 
     public int getTicketId() { return ticketId; }
@@ -37,4 +54,7 @@ public class SupportTicketRowDTO implements Serializable {
     public LocalDateTime getRepliedAt() { return repliedAt; }
     public boolean isReadByClient() { return readByClient; }
     public String getPreview() { return preview; }
+
+    public String getAgentName() { return agentName; }
+    public String getAgentReply() { return agentReply; }
 }

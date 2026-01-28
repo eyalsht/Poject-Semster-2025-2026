@@ -37,6 +37,7 @@ public class SupportTicketService {
             List<SupportTicket> rows = session.createQuery(
                     "select t from SupportTicket t " +
                             "join fetch t.client c " +
+                            "left join fetch t.agent a " +
                             "order by t.status asc, t.createdAt asc", SupportTicket.class
             ).list();
 
@@ -82,6 +83,7 @@ public class SupportTicketService {
             List<SupportTicket> rows = session.createQuery(
                             "select t from SupportTicket t " +
                                     "join fetch t.client c " +
+                                    "left join fetch t.agent a " +
                                     "where c.id = :uid and t.status = :done " +
                                     "order by t.repliedAt desc", SupportTicket.class
                     ).setParameter("uid", userId)
@@ -114,12 +116,25 @@ public class SupportTicketService {
     }
 
     private static SupportTicketRowDTO toRowDTO(SupportTicket t) {
+
+        // preview (client message preview - used in agent Tasks table)
         String preview = t.getClientText();
         if (preview == null) preview = "";
         preview = preview.replace("\n", " ");
         if (preview.length() > 60) preview = preview.substring(0, 60) + "...";
 
         String username = (t.getClient() != null ? t.getClient().getUsername() : "unknown");
+
+        // agent name + reply (used in client inbox + also in agent dialog for DONE tickets)
+        String agentName = "Support";
+        if (t.getAgent() != null) {
+            String first = t.getAgent().getFirstName();
+            String last  = t.getAgent().getLastName();
+            String full = ((first != null ? first : "") + " " + (last != null ? last : "")).trim();
+            agentName = full.isBlank() ? t.getAgent().getUsername() : full;
+        }
+
+        String agentReply = t.getAgentReply();
 
         return new SupportTicketRowDTO(
                 t.getId(),
@@ -129,7 +144,11 @@ public class SupportTicketService {
                 t.getCreatedAt(),
                 t.getRepliedAt(),
                 t.isReadByClient(),
-                preview
+                preview,
+                agentName,
+                agentReply
         );
     }
+
+
 }

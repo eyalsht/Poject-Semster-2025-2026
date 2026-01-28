@@ -101,10 +101,20 @@ public class SupportTasksPageController {
         clientText.setWrapText(true);
 
         TextArea replyText = new TextArea();
-        replyText.setPromptText("Write reply...");
 
         boolean done = row.getStatus() == SupportTicketStatus.DONE;
-        replyText.setDisable(done);
+
+        if (done) {
+            // show what was already sent
+            String existing = row.getAgentReply();
+            replyText.setText(existing == null ? "" : existing);
+            replyText.setEditable(false);   // read-only but visible
+            replyText.setWrapText(true);
+        } else {
+            replyText.setPromptText("Write reply...");
+            replyText.setWrapText(true);
+        }
+
 
         ButtonType sendBtn = new ButtonType("Send", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(sendBtn, ButtonType.CLOSE);

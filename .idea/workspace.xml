@@ -4,14 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Support chat ver 0.3">
+    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Support chat ver 0.4 + patrick updated to support manager">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]1/MainApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]1/module-info.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM_[Changes]1/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_1_20_2026_11_56_AM__Changes_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_11_57_AM_[Changes]/module-info.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_11_57_AM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_11_57_AM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_1_19_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_1_20_2026_1_19_PM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_20_01_2026_11_56_[Changes]/module-info.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_20_01_2026_11_56_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_20_01_2026_11_56__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/ProfilePageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/ProfilePageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/SupportPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/SupportPageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/SupportPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/SupportPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/SupportTasksPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/SupportTasksPageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/ProfilePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/ProfilePage.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/common/support/SupportTicketRowDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/common/support/SupportTicketRowDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/server/support/SupportTicketService.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/server/support/SupportTicketService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -227,6 +240,7 @@
       <workItem from="1768141099302" duration="18563000" />
       <workItem from="1768902974675" duration="8851000" />
       <workItem from="1769289038709" duration="7298000" />
+      <workItem from="1769619561728" duration="4237000" />
     </task>
     <task id="LOCAL-00001" summary="Enteties from Renat">
       <option name="closed" value="true" />
@@ -580,7 +594,23 @@
       <option name="project" value="LOCAL" />
       <updated>1769572572494</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="Support chat ver 0.4 + patrick updated to support manager">
+      <option name="closed" value="true" />
+      <created>1769574126122</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1769574126122</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Support chat ver 0.4 + patrick updated to support manager">
+      <option name="closed" value="true" />
+      <created>1769574442525</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1769574442525</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -598,7 +628,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="New image" />
     <MESSAGE value="Login change" />
     <MESSAGE value="Home page change buttons" />
     <MESSAGE value="Server + DB update and close button closes both main and server" />
@@ -623,6 +652,7 @@
     <MESSAGE value="Support chat ver 0.2" />
     <MESSAGE value="Support chat ver 0.21" />
     <MESSAGE value="Support chat ver 0.3" />
-    <option name="LAST_COMMIT_MESSAGE" value="Support chat ver 0.3" />
+    <MESSAGE value="Support chat ver 0.4 + patrick updated to support manager" />
+    <option name="LAST_COMMIT_MESSAGE" value="Support chat ver 0.4 + patrick updated to support manager" />
   </component>
 </project>
