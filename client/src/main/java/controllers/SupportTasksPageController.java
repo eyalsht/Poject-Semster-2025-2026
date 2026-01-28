@@ -77,7 +77,29 @@ public class SupportTasksPageController {
 
                     if (resp.getMessage() instanceof ListSupportTicketsResponse r) {
                         rows.addAll(r.getRows());
+
+                        rows.sort((a, b) -> {
+                            // OPEN first, DONE after
+                            int ga = (a.getStatus() == SupportTicketStatus.OPEN) ? 0 : 1;
+                            int gb = (b.getStatus() == SupportTicketStatus.OPEN) ? 0 : 1;
+                            if (ga != gb) return Integer.compare(ga, gb);
+
+                            // OPEN: createdAt ASC (oldest first)
+                            if (a.getStatus() == SupportTicketStatus.OPEN) {
+                                if (a.getCreatedAt() == null && b.getCreatedAt() == null) return 0;
+                                if (a.getCreatedAt() == null) return 1;
+                                if (b.getCreatedAt() == null) return -1;
+                                return a.getCreatedAt().compareTo(b.getCreatedAt());
+                            }
+
+                            // DONE: repliedAt DESC (newest first)
+                            if (a.getRepliedAt() == null && b.getRepliedAt() == null) return 0;
+                            if (a.getRepliedAt() == null) return 1;
+                            if (b.getRepliedAt() == null) return -1;
+                            return b.getRepliedAt().compareTo(a.getRepliedAt());
+                        });
                     }
+
                 },
                 (Throwable err) -> new Alert(Alert.AlertType.ERROR, err.getMessage()).showAndWait(),
                 null
@@ -141,7 +163,7 @@ public class SupportTasksPageController {
         dialog.getDialogPane().setContent(box);
         dialog.showAndWait();
 
-        refresh();
+        //refresh();
     }
 
     private void doReply(int ticketId, String reply) {
@@ -155,11 +177,12 @@ public class SupportTasksPageController {
                             new ReplySupportTicketRequest(emp.getId(), ticketId, reply));
                     return c.sendMessage(req);
                 },
-                (Message resp) -> {},
+                (Message resp) -> javafx.application.Platform.runLater(this::refresh),
                 (Throwable err) -> new Alert(Alert.AlertType.ERROR, err.getMessage()).showAndWait(),
                 null
         );
     }
+
 
     private <T> void runAsync(java.util.concurrent.Callable<T> work,
                               java.util.function.Consumer<T> onSuccess,

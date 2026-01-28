@@ -16,6 +16,7 @@ controllers\SupportTasksPageController$1.class
 controllers\SupportPageController$1.class
 client\ClientLauncher.class
 controllers\CityUpdatePageController$1.class
+controllers\ProfilePageController$2.class
 client\MainApplication.class
 controllers\HomePageController.class
 controllers\WelcomePageController.class
