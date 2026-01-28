@@ -101,6 +101,13 @@ public enum ActionType {
     //Bot+ Support
     SUBMIT_SUPPORT_REQUEST,
     SUBMIT_SUPPORT_RESPONSE,
+
+    //Support agent
+    CREATE_SUPPORT_TICKET,
+    LIST_SUPPORT_TICKETS,
+    REPLY_SUPPORT_TICKET,
+    LIST_CLIENT_SUPPORT_REPLIES,
+    MARK_SUPPORT_REPLY_READ,
     // ==================== GENERIC ====================
     ERROR
 }

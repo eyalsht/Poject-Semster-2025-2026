@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.SupportTasksPageController"
+            prefWidth="900.0" prefHeight="600.0">
+
+    <children>
+        <TableView fx:id="tblTickets" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+                   AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="70">
+            <columns>
+                <TableColumn fx:id="colId" text="ID" prefWidth="60"/>
+                <TableColumn fx:id="colUser" text="User" prefWidth="140"/>
+                <TableColumn fx:id="colTopic" text="Topic" prefWidth="120"/>
+                <TableColumn fx:id="colStatus" text="Status" prefWidth="90"/>
+                <TableColumn fx:id="colCreated" text="Created" prefWidth="160"/>
+                <TableColumn fx:id="colPreview" text="Preview" prefWidth="300"/>
+            </columns>
+        </TableView>
+
+        <Button fx:id="btnOpen" text="Open / Reply"
+                AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20"
+                onAction="#onOpen"/>
+    </children>
+</AnchorPane>

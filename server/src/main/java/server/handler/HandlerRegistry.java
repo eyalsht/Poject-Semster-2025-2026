@@ -81,9 +81,11 @@ public class HandlerRegistry {
 
         //Support
         register(ActionType.SUBMIT_SUPPORT_REQUEST, new SubmitSupportHandler());
-
-
-
+        register(ActionType.CREATE_SUPPORT_TICKET, new CreateSupportTicketHandler());
+        register(ActionType.LIST_SUPPORT_TICKETS, new ListSupportTicketsHandler());
+        register(ActionType.REPLY_SUPPORT_TICKET, new ReplySupportTicketHandler());
+        register(ActionType.LIST_CLIENT_SUPPORT_REPLIES, new ListClientSupportRepliesHandler());
+        register(ActionType.MARK_SUPPORT_REPLY_READ, new MarkSupportReplyReadHandler());
 
     }
 

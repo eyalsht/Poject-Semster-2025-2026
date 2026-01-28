@@ -13,6 +13,9 @@ import common.user.User;
 import common.enums.ActionType;
 import common.support.SupportSubmitRequest;
 import common.support.SupportSubmitResponse;
+import common.support.CreateSupportTicketRequest;
+import common.support.CreateSupportTicketResponse;
+
 
 public class SupportPageController {
 
@@ -127,7 +130,8 @@ public class SupportPageController {
     }
 
     @FXML
-    private void handleSend() {
+    private void handleSend()
+    {
         String selected = questionsCombo.getValue();
 
         String userText;
@@ -143,6 +147,17 @@ public class SupportPageController {
 
         // User message
         addUser(userText);
+        if ("When my membership expires?".equals(selected)) {
+            sendSupportToServer("MEMBERSHIP_EXPIRE", userText, null);
+        }
+        else if ("Other".equals(selected)) {
+            createTicketOnServer("OTHER", userText);
+        }
+        else {
+            String botReply = getBotReplyLocal(userText);
+            addBot(botReply);
+        }
+
 
         // If membership question -> call server ONLY
         if ("When my membership expires?".equals(selected)) {
@@ -290,5 +305,39 @@ public class SupportPageController {
         t.setDaemon(true);
         t.start();
     }
+
+    private void createTicketOnServer(String topic, String text) {
+        addBot("Sending your request to support...");
+        btnSend.setDisable(true);
+
+        runAsync(
+                () -> {
+                    GCMClient gcmClient = GCMClient.getInstance();
+                    User user = gcmClient.getCurrentUser();
+                    if (user == null) return null;
+
+                    CreateSupportTicketRequest payload =
+                            new CreateSupportTicketRequest(user.getId(), topic, text);
+
+                    Message req = new Message(ActionType.CREATE_SUPPORT_TICKET, payload);
+                    return gcmClient.sendMessage(req);
+                },
+                (Message resp) -> {
+                    if (resp == null) {
+                        addBot("You must login first to contact support.");
+                        return;
+                    }
+
+                    if (resp.getMessage() instanceof CreateSupportTicketResponse r) {
+                        addBot("Sent ✅ Ticket #" + r.getTicketId() + ". A support agent will reply soon.");
+                    } else {
+                        addBot("Sent ✅ A support agent will reply soon.");
+                    }
+                },
+                (Throwable err) -> addBot("Support error: " + err.getMessage()),
+                () -> btnSend.setDisable(false)
+        );
+    }
+
 
 }

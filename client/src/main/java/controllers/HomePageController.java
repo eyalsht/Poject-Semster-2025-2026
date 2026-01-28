@@ -28,6 +28,7 @@ public class HomePageController
     @FXML private Button btnPriceUpdate;
     @FXML private Button btnReports;
     @FXML private ImageView imgHomePage;
+    @FXML private Button btnSupport;
 
     private User currentUser = null;
 
@@ -57,8 +58,13 @@ public class HomePageController
 
     @FXML
     private void onSupport() {
-        showPage("/GUI/SupportPage.fxml");
+        if (currentUser instanceof Employee emp && emp.getRole() == EmployeeRole.SUPPORT_AGENT) {
+            showPage("/GUI/SupportTasksPage.fxml");
+        } else {
+            showPage("/GUI/SupportPage.fxml");
+        }
     }
+
 
     @FXML
     private void onInfo() {
@@ -195,6 +201,12 @@ public class HomePageController
             default: // Support_Agent etc.
                 setEmployeeButtons(false, false, false);
         }*/
+
+        if (btnSupport != null) {
+            boolean isAgent = (currentUser instanceof Employee emp && emp.getRole() == EmployeeRole.SUPPORT_AGENT);
+            btnSupport.setText(isAgent ? "Tasks" : "Support");
+        }
+
     }
 
     @FXML

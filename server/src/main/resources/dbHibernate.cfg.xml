@@ -50,5 +50,7 @@
         <!-- Pending Updates -->
         <mapping class="common.workflow.PendingPriceUpdate"/>
         <mapping class="common.workflow.PendingContentRequest"/>
+
+        <mapping class="common.support.SupportTicket"/>
     </session-factory>
 </hibernate-configuration>

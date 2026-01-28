@@ -95,11 +95,20 @@ public class SupportService {
                         choices);
             }
 
-            // Default: not handled by bot -> forward to human later
             tx.commit();
+
+            String text = req.getMessageText() == null ? "" : req.getMessageText().trim();
+            if (!text.isEmpty()) {
+                // Create real support ticket
+                server.support.SupportTicketService.createTicket(
+                        new common.support.CreateSupportTicketRequest(req.getUserId(), req.getTopic(), text)
+                );
+            }
+
             return new SupportSubmitResponse(false,
                     "I couldn't answer this automatically. Your request was forwarded to support.",
                     null);
+
         }
     }
 }
