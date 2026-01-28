@@ -4,6 +4,9 @@ module com.gcm.client {
     requires com.gcm.common;
     requires java.desktop;
 
+    requires javafx.swing;
+    requires org.apache.pdfbox;
+
     opens controllers to javafx.fxml;
     opens client to javafx.fxml;
     

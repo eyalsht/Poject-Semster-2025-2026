@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Support chat ver 0.5">
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ProfilePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/ProfilePage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
+    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Support chat ver 0.6">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -225,7 +224,7 @@
       <workItem from="1768141099302" duration="18563000" />
       <workItem from="1768902974675" duration="8851000" />
       <workItem from="1769289038709" duration="7298000" />
-      <workItem from="1769619561728" duration="4972000" />
+      <workItem from="1769619561728" duration="6706000" />
     </task>
     <task id="LOCAL-00001" summary="Enteties from Renat">
       <option name="closed" value="true" />
@@ -603,7 +602,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769626391057</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="Support chat ver 0.6">
+      <option name="closed" value="true" />
+      <created>1769627890261</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1769627890261</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -621,7 +628,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Home page change buttons" />
     <MESSAGE value="Server + DB update and close button closes both main and server" />
     <MESSAGE value="User Role file" />
     <MESSAGE value="Add map page" />
@@ -646,6 +652,7 @@
     <MESSAGE value="Support chat ver 0.3" />
     <MESSAGE value="Support chat ver 0.4 + patrick updated to support manager" />
     <MESSAGE value="Support chat ver 0.5" />
-    <option name="LAST_COMMIT_MESSAGE" value="Support chat ver 0.5" />
+    <MESSAGE value="Support chat ver 0.6" />
+    <option name="LAST_COMMIT_MESSAGE" value="Support chat ver 0.6" />
   </component>
 </project>

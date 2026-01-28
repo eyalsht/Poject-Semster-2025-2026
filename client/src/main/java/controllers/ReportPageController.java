@@ -15,6 +15,20 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 import javafx.scene.layout.StackPane;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.WritableImage;
+import javafx.stage.FileChooser;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 
 import java.time.LocalDate;
@@ -45,6 +59,8 @@ public class ReportPageController
     @FXML private TableColumn<AllClientsReport.ClientRow, String> colFirstName;
     @FXML private TableColumn<AllClientsReport.ClientRow, String> colLastName;
     @FXML private TableColumn<AllClientsReport.ClientRow, String> colCreatedAt;
+
+    @FXML private Button btnExportPdf;
 
     private long currentRequestId = 0;
 
@@ -487,6 +503,72 @@ public class ReportPageController
 
         barChart.getData().add(s);
     }
+
+    @FXML
+    private void onExportPdf() {
+
+        // You export exactly what user sees in the report area (chart + table)
+        if (reportArea == null) {
+            showAlert("Error", "Nothing to export.");
+            return;
+        }
+
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Save report as PDF");
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf"));
+        fc.setInitialFileName("report.pdf");
+
+        File out = fc.showSaveDialog(reportArea.getScene().getWindow());
+        if (out == null) return;
+
+        try {
+            // 1) snapshot of the report area
+            SnapshotParameters params = new SnapshotParameters();
+            WritableImage fxImg = reportArea.snapshot(params, null);
+            BufferedImage bImg = SwingFXUtils.fromFXImage(fxImg, null);
+
+            // 2) create pdf and draw the image
+            try (PDDocument doc = new PDDocument()) {
+
+                // A4 page
+                PDPage page = new PDPage(PDRectangle.A4);
+                doc.addPage(page);
+
+                var pdImage = LosslessFactory.createFromImage(doc, bImg);
+
+                float pageW = page.getMediaBox().getWidth();
+                float pageH = page.getMediaBox().getHeight();
+
+                float imgW = pdImage.getWidth();
+                float imgH = pdImage.getHeight();
+
+                // scale to fit page with margins
+                float margin = 36; // 0.5 inch
+                float maxW = pageW - 2 * margin;
+                float maxH = pageH - 2 * margin;
+
+                float scale = Math.min(maxW / imgW, maxH / imgH);
+
+                float drawW = imgW * scale;
+                float drawH = imgH * scale;
+
+                float x = (pageW - drawW) / 2;
+                float y = (pageH - drawH) / 2;
+
+                try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
+                    cs.drawImage(pdImage, x, y, drawW, drawH);
+                }
+
+                doc.save(out);
+            }
+
+            showAlert("Saved", "PDF exported:\n" + out.getAbsolutePath());
+
+        } catch (IOException ex) {
+            showAlert("Export failed", ex.getMessage());
+        }
+    }
+
 
 
 }
