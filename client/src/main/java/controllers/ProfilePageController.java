@@ -87,4 +87,9 @@ public class ProfilePageController {
         t.setDaemon(true);
         t.start();
     }
+    @FXML
+    private void onOpenInbox() {
+        // for now just show something (we’ll implement full inbox later)
+        System.out.println("Open Inbox clicked");
+    }
 }

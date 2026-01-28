@@ -130,8 +130,8 @@ public class SupportPageController {
     }
 
     @FXML
-    private void handleSend()
-    {
+    private void handleSend() {
+
         String selected = questionsCombo.getValue();
 
         String userText;
@@ -147,6 +147,8 @@ public class SupportPageController {
 
         // User message
         addUser(userText);
+
+        // One single decision (NO duplicates)
         if ("When my membership expires?".equals(selected)) {
             sendSupportToServer("MEMBERSHIP_EXPIRE", userText, null);
         }
@@ -154,16 +156,6 @@ public class SupportPageController {
             createTicketOnServer("OTHER", userText);
         }
         else {
-            String botReply = getBotReplyLocal(userText);
-            addBot(botReply);
-        }
-
-
-        // If membership question -> call server ONLY
-        if ("When my membership expires?".equals(selected)) {
-            sendSupportToServer("MEMBERSHIP_EXPIRE", userText, null);
-        } else {
-            // Local bot for other questions (for now)
             String botReply = getBotReplyLocal(userText);
             addBot(botReply);
         }
@@ -176,6 +168,7 @@ public class SupportPageController {
         // Scroll
         chatList.scrollTo(chatItems.size() - 1);
     }
+
 
 
     private void sendSupportToServer(String topic, String text, Integer cityId) {
