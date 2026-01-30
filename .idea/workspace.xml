@@ -4,11 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Support chat ver 0.6">
+    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Report page PDF update - export as PDF">
+      <change afterPath="$PROJECT_DIR$/client/src/main/resources/images/backgrounds/bg_fog_city.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/resources/styles/theme.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/ReportPageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/ReportPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/client/MainApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/client/MainApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/InfoPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/InfoPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/LoginPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/LoginPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/InfoPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/InfoPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/client/MainApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/client/MainApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/module-info.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,6 +95,7 @@
       <recent name="C:\Software dev labs\Lab3\Poject-Semster-2025-2026\Entities\src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\resources\images\backgrounds" />
       <recent name="C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\resources\images" />
       <recent name="C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\resources\images\cities" />
       <recent name="C:\Software dev labs\Lab3\Poject-Semster-2025-2026\src\resources" />
@@ -224,7 +235,8 @@
       <workItem from="1768141099302" duration="18563000" />
       <workItem from="1768902974675" duration="8851000" />
       <workItem from="1769289038709" duration="7298000" />
-      <workItem from="1769619561728" duration="6706000" />
+      <workItem from="1769619561728" duration="8610000" />
+      <workItem from="1769692062871" duration="3042000" />
     </task>
     <task id="LOCAL-00001" summary="Enteties from Renat">
       <option name="closed" value="true" />
@@ -610,7 +622,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769627890261</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="Report page PDF update - export as PDF">
+      <option name="closed" value="true" />
+      <created>1769629558664</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1769629558664</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -628,7 +648,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Server + DB update and close button closes both main and server" />
     <MESSAGE value="User Role file" />
     <MESSAGE value="Add map page" />
     <MESSAGE value="Additional windowses+login+profile+catalog" />
@@ -653,6 +672,7 @@
     <MESSAGE value="Support chat ver 0.4 + patrick updated to support manager" />
     <MESSAGE value="Support chat ver 0.5" />
     <MESSAGE value="Support chat ver 0.6" />
-    <option name="LAST_COMMIT_MESSAGE" value="Support chat ver 0.6" />
+    <MESSAGE value="Report page PDF update - export as PDF" />
+    <option name="LAST_COMMIT_MESSAGE" value="Report page PDF update - export as PDF" />
   </component>
 </project>

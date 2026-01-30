@@ -56,6 +56,11 @@ public class MainApplication extends Application
                 MainApplication.class.getResource("/GUI/HomePage.fxml")
         );
         Scene scene = new Scene(loader.load(), 1200, 800);
+        scene.getStylesheets().add(
+                MainApplication.class.getResource("/styles/theme.css").toExternalForm()
+        );
+
+        stage.setScene(scene);
         stage.setTitle("Global City Map");
         stage.setScene(scene);
         stage.setOnCloseRequest(e -> {

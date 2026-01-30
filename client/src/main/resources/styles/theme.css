@@ -1,0 +1,21 @@
+/* Lovecraft fog city background */
+.bg-fog-city {
+    -fx-background-image: url("/images/backgrounds/bg_fog_city.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+
+    /* dim overlay */
+    -fx-background-color: rgba(0,0,0,0.65);
+    -fx-background-blend-mode: multiply;
+}
+
+/* Anything with this class won't hide the background */
+.transparent-pane {
+    -fx-background-color: transparent;
+}
+
+/* ScrollPane inner white/gray */
+.scroll-pane, .viewport {
+    -fx-background-color: transparent;
+}
