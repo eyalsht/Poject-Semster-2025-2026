@@ -1,31 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx/23.0.1"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.SupportPageController"
-      spacing="10"
-      fillWidth="true">
+<VBox fillWidth="true" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SupportPageController">
 
     <children>
 
         <!-- Title -->
         <HBox alignment="CENTER" prefHeight="40.0">
             <children>
-                <Label text="Support Page" />
+                <Label text="Support Page" textFill="#66bb6a">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font></Label>
             </children>
             <padding>
-                <Insets top="10.0" bottom="5.0" />
+                <Insets bottom="5.0" top="10.0" />
             </padding>
         </HBox>
 
         <!-- Question + Send -->
-        <HBox spacing="10.0" alignment="CENTER_LEFT">
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
-                <Label text="Please select a question:" />
+                <Label text="Please select a question:" textFill="#2e7d32">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
                 <ComboBox fx:id="questionsCombo" prefWidth="380.0" />
 
                 <HBox HBox.hgrow="ALWAYS" />
@@ -39,7 +47,10 @@
         <!-- Chat -->
         <VBox spacing="8.0" VBox.vgrow="ALWAYS">
             <children>
-                <Label text="Conversation:" />
+                <Label text="Conversation:" textFill="#2e7d32">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
                 <ListView fx:id="chatList" VBox.vgrow="ALWAYS" />
             </children>
             <padding>
@@ -48,23 +59,19 @@
         </VBox>
 
         <!-- Other details -->
-        <TextArea fx:id="detailsArea"
-                  disable="true"
-                  prefRowCount="3"
-                  wrapText="true"
-                  promptText="Choose &quot;Other&quot; to write details here...">
+        <TextArea fx:id="detailsArea" disable="true" prefRowCount="3" promptText="Choose &quot;Other&quot; to write details here..." wrapText="true">
             <VBox.margin>
                 <Insets left="30.0" right="20.0" />
             </VBox.margin>
         </TextArea>
 
         <!-- Back button -->
-        <HBox spacing="10.0" alignment="CENTER_RIGHT">
+        <HBox alignment="CENTER_RIGHT" spacing="10.0">
             <children>
                 <Button mnemonicParsing="false" onAction="#handleBack" text="Back" />
             </children>
             <padding>
-                <Insets left="30.0" right="20.0" bottom="10.0" />
+                <Insets bottom="10.0" left="30.0" right="20.0" />
             </padding>
         </HBox>
 
