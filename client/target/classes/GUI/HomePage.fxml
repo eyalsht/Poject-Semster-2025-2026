@@ -8,14 +8,48 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.paint.CycleMethod?>
+<?import javafx.scene.paint.Color?>
+
 
 <BorderPane style="-fx-background-color: transparent;" styleClass="bg-home-dim" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.HomePageController">
    <top>
       <AnchorPane style="-fx-background-color: transparent;" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fx:id="imgHomePage" fitHeight="209.0" fitWidth="1200.0"  pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imgHomePage" fitHeight="209.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="false" />
 
-            <Label fx:id="lblWelcome" text="Welcome, Guest" textFill="WHITE" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+            <!-- Smooth fade at the bottom to blend banner into background -->
+            <!-- Smooth seam: fade from dark (top) to transparent (bottom) and hang into center -->
+            <Rectangle height="120.0"
+                       AnchorPane.leftAnchor="0.0"
+                       AnchorPane.rightAnchor="0.0"
+                       AnchorPane.bottomAnchor="-45.0"
+                       mouseTransparent="true">
+               <fill>
+                  <LinearGradient startX="0.0" startY="0.0" endX="0.0" endY="1.0" cycleMethod="NO_CYCLE">
+                     <stops>
+                        <!-- top (near banner) = a bit dark -->
+                        <Stop offset="0.0">
+                           <color>
+                              <Color red="0" green="0" blue="0" opacity="0.35"/>
+                           </color>
+                        </Stop>
+                        <!-- bottom (into background) = transparent -->
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="0" green="0" blue="0" opacity="0.0"/>
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </fill>
+            </Rectangle>
+
+            <Label fx:id="lblWelcome" text="Welcome, Guest" textFill="WHITE"
+                   AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>

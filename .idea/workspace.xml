@@ -4,21 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Report page PDF update - export as PDF">
-      <change afterPath="$PROJECT_DIR$/client/src/main/resources/images/backgrounds/home_bg.png" afterDir="false" />
+    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="STYLE CHANGE!!!!">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/CatalogPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/CatalogPage.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/HomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/HomePage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/InfoPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/InfoPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/LoginPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/LoginPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/ProfilePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/ProfilePage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/SupportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/SupportPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/WelcomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/WelcomePage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/styles/theme.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/styles/theme.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/HomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/HomePage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/InfoPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/InfoPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/WelcomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/WelcomePage.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
     </list>
@@ -238,23 +227,7 @@
       <workItem from="1768902974675" duration="8851000" />
       <workItem from="1769289038709" duration="7298000" />
       <workItem from="1769619561728" duration="8610000" />
-      <workItem from="1769692062871" duration="6101000" />
-    </task>
-    <task id="LOCAL-00002" summary="Enteties from Renat">
-      <option name="closed" value="true" />
-      <created>1767093301114</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1767093301114</updated>
-    </task>
-    <task id="LOCAL-00003" summary="New image fromRenat">
-      <option name="closed" value="true" />
-      <created>1767106269242</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1767106269242</updated>
+      <workItem from="1769692062871" duration="6792000" />
     </task>
     <task id="LOCAL-00004" summary="Close button">
       <option name="closed" value="true" />
@@ -632,7 +605,23 @@
       <option name="project" value="LOCAL" />
       <updated>1769751068895</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="STYLE CHANGE!!!!">
+      <option name="closed" value="true" />
+      <created>1769754054172</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1769754054172</updated>
+    </task>
+    <task id="LOCAL-00052" summary="STYLE CHANGE!!!!">
+      <option name="closed" value="true" />
+      <created>1769754111549</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1769754111549</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -650,7 +639,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="User Role file" />
     <MESSAGE value="Add map page" />
     <MESSAGE value="Additional windowses+login+profile+catalog" />
     <MESSAGE value="new data" />
@@ -675,6 +663,7 @@
     <MESSAGE value="Support chat ver 0.5" />
     <MESSAGE value="Support chat ver 0.6" />
     <MESSAGE value="Report page PDF update - export as PDF" />
-    <option name="LAST_COMMIT_MESSAGE" value="Report page PDF update - export as PDF" />
+    <MESSAGE value="STYLE CHANGE!!!!" />
+    <option name="LAST_COMMIT_MESSAGE" value="STYLE CHANGE!!!!" />
   </component>
 </project>
