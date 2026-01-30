@@ -13,8 +13,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CatalogPageController">
+<AnchorPane prefHeight="600.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CatalogPageController">
 
     <children>
 
@@ -31,13 +32,22 @@
             </rowConstraints>
 
             <children>
-                <Label text="Choose City" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Label text="Choose City" textFill="#2e7d32" GridPane.columnIndex="0" GridPane.rowIndex="0">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
                 <ComboBox fx:id="cbCity" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                <Label text="Choose Map" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Label text="Choose Map" textFill="#2e7d32" GridPane.columnIndex="0" GridPane.rowIndex="1">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
                 <ComboBox fx:id="cbMap" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                <Label text="Search" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <Label text="Search" textFill="#2e7d32" GridPane.columnIndex="0" GridPane.rowIndex="2">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
                 <HBox prefHeight="30.0" prefWidth="258.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                     <children>
                         <TextField fx:id="txtSearch" prefHeight="26.0" prefWidth="85.0" promptText="Search cities, sites..." />

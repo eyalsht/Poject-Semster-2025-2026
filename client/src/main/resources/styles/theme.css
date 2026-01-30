@@ -1,13 +1,26 @@
 /* Lovecraft fog city background */
 .bg-fog-city {
-    -fx-background-image: url("/images/backgrounds/bg_fog_city.png");
+    -fx-background-image: url("../images/backgrounds/bg_fog_city.png");
     -fx-background-repeat: no-repeat;
     -fx-background-position: center center;
     -fx-background-size: cover;
 
-    /* dim overlay */
     -fx-background-color: rgba(0,0,0,0.65);
     -fx-background-blend-mode: multiply;
+}
+.bg-home-dim {
+    -fx-background-image: url("../images/backgrounds/home_bg.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+
+    -fx-background-color: rgba(0,0,0,0.35);
+    -fx-background-blend-mode: multiply;
+}
+.welcome-card {
+    -fx-background-color: rgba(255,255,255,0.78);
+    -fx-background-radius: 16;
+    -fx-padding: 30;
 }
 
 /* Anything with this class won't hide the background */

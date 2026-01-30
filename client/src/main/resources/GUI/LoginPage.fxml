@@ -10,15 +10,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<StackPane styleClass="bg-fog-city" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginPageController">
+<StackPane styleClass="transparent-page" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginPageController">
    <children>
       <VBox alignment="CENTER" spacing="20.0" styleClass="transparent-pane">
           <padding>
               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
           </padding>
       
-                <Label text="GCM Login">
+                <Label text="GCM Login" textFill="#2e7d32">
               <font>
                   <Font name="System Bold" size="24.0" />
               </font>
@@ -27,7 +26,7 @@
                 <TextField fx:id="tfUsername" maxWidth="250.0" promptText="Username" />
       
                 <PasswordField fx:id="tfPassword" maxWidth="250.0" promptText="Password" />
-         <HBox  styleClass="transparent-pane" alignment="CENTER">
+         <HBox alignment="CENTER" styleClass="transparent-pane">
             <children>
             
                       <Button onAction="#handleLogin" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Login">

@@ -5,18 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Report page PDF update - export as PDF">
-      <change afterPath="$PROJECT_DIR$/client/src/main/resources/images/backgrounds/bg_fog_city.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/src/main/resources/styles/theme.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/resources/images/backgrounds/home_bg.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/client/MainApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/client/MainApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/CatalogPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/CatalogPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/HomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/HomePage.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/InfoPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/InfoPage.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/LoginPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/LoginPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/ProfilePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/ProfilePage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/SupportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/SupportPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/WelcomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/WelcomePage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/styles/theme.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/styles/theme.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/HomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/HomePage.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/InfoPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/InfoPage.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/client/MainApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/client/MainApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ReportPageController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/module-info.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/WelcomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/WelcomePage.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
     </list>
@@ -101,7 +103,7 @@
       <recent name="C:\Software dev labs\Lab3\Poject-Semster-2025-2026\src\resources" />
     </key>
   </component>
-  <component name="RunManager" selected="Maven.OCSF [clean install]">
+  <component name="RunManager" selected="Maven.Client [javafx:run]">
     <configuration name="MainApplication" type="Application" factoryName="Application" singleton="false">
       <option name="ALTERNATIVE_JRE_PATH" value="$PROJECT_DIR$/../../../Program Files/Java/jdk-21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -236,15 +238,7 @@
       <workItem from="1768902974675" duration="8851000" />
       <workItem from="1769289038709" duration="7298000" />
       <workItem from="1769619561728" duration="8610000" />
-      <workItem from="1769692062871" duration="3042000" />
-    </task>
-    <task id="LOCAL-00001" summary="Enteties from Renat">
-      <option name="closed" value="true" />
-      <created>1766936651592</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1766936651592</updated>
+      <workItem from="1769692062871" duration="6101000" />
     </task>
     <task id="LOCAL-00002" summary="Enteties from Renat">
       <option name="closed" value="true" />
@@ -630,7 +624,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769629558664</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="Report page PDF update - export as PDF">
+      <option name="closed" value="true" />
+      <created>1769751068894</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1769751068895</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
