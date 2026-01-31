@@ -17,6 +17,7 @@ import javafx.scene.layout.VBox;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import util.TableRowHighlighter;
 
 public class ProfilePageController {
 
@@ -70,20 +71,7 @@ public class ProfilePageController {
                 return new javafx.beans.property.SimpleStringProperty(reply);
             });
 
-            // GREEN = unread, GREY = read
-            tblInbox.setRowFactory(tv -> new TableRow<>() {
-                @Override
-                protected void updateItem(SupportTicketRowDTO item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setStyle("");
-                    } else if (!item.isReadByClient()) {
-                        setStyle("-fx-background-color: #d6ffd6;"); // light green
-                    } else {
-                        setStyle("-fx-background-color: #eeeeee;"); // light grey
-                    }
-                }
-            });
+            TableRowHighlighter.apply(tblInbox, row -> !row.isReadByClient());
 
             // double click to open
             tblInbox.setOnMouseClicked(e -> {

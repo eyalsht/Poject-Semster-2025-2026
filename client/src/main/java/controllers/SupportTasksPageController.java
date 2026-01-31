@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import common.enums.SupportTicketStatus;
 
 import java.time.format.DateTimeFormatter;
+import util.TableRowHighlighter;
 
 public class SupportTasksPageController {
 
@@ -43,20 +44,8 @@ public class SupportTasksPageController {
         ));
         colPreview.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getPreview()));
 
-        // GREEN for DONE
-        tblTickets.setRowFactory(tv -> new TableRow<>() {
-            @Override
-            protected void updateItem(SupportTicketRowDTO item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setStyle("");
-                } else if (item.getStatus() == SupportTicketStatus.DONE) {
-                    setStyle("-fx-background-color: #d6ffd6;");
-                } else {
-                    setStyle("");
-                }
-            }
-        });
+        TableRowHighlighter.apply(tblTickets, t -> t.getStatus() != SupportTicketStatus.DONE);
+
 
         refresh();
     }

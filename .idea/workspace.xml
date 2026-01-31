@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="STYLE CHANGE!!!!">
+    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="STYLE CHANGE!!!! Fade testing">
+      <change afterPath="$PROJECT_DIR$/client/src/main/java/util/TableRowHighlighter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/HomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/HomePage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/HomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/HomePage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/ProfilePageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/ProfilePageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/SupportTasksPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/SupportTasksPageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/styles/theme.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/styles/theme.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -227,15 +228,7 @@
       <workItem from="1768902974675" duration="8851000" />
       <workItem from="1769289038709" duration="7298000" />
       <workItem from="1769619561728" duration="8610000" />
-      <workItem from="1769692062871" duration="6792000" />
-    </task>
-    <task id="LOCAL-00004" summary="Close button">
-      <option name="closed" value="true" />
-      <created>1767108622927</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1767108622927</updated>
+      <workItem from="1769692062871" duration="14221000" />
     </task>
     <task id="LOCAL-00005" summary="New catalog draft">
       <option name="closed" value="true" />
@@ -621,7 +614,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769754111549</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="STYLE CHANGE!!!! Fade testing">
+      <option name="closed" value="true" />
+      <created>1769754842672</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1769754842672</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -639,7 +640,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add map page" />
     <MESSAGE value="Additional windowses+login+profile+catalog" />
     <MESSAGE value="new data" />
     <MESSAGE value="new windows" />
@@ -664,6 +664,7 @@
     <MESSAGE value="Support chat ver 0.6" />
     <MESSAGE value="Report page PDF update - export as PDF" />
     <MESSAGE value="STYLE CHANGE!!!!" />
-    <option name="LAST_COMMIT_MESSAGE" value="STYLE CHANGE!!!!" />
+    <MESSAGE value="STYLE CHANGE!!!! Fade testing" />
+    <option name="LAST_COMMIT_MESSAGE" value="STYLE CHANGE!!!! Fade testing" />
   </component>
 </project>
