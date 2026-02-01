@@ -1,6 +1,7 @@
 controllers\CityUpdatePageController$3.class
 controllers\InfoPageController.class
 controllers\SupportPageController.class
+util\TableRowHighlighter$1.class
 controllers\MapUpdatePageController.class
 client\GCMClient.class
 controllers\CityMapsPageController$1.class
@@ -10,13 +11,13 @@ oscf\AdaptableClient.class
 controllers\CatalogPageController.class
 controllers\ReportPageController.class
 controllers\ReportPageController$1.class
+util\TableRowHighlighter.class
 controllers\SupportPageController$2.class
 controllers\CityCardController.class
 controllers\SupportTasksPageController$1.class
 controllers\SupportPageController$1.class
 client\ClientLauncher.class
 controllers\CityUpdatePageController$1.class
-controllers\ProfilePageController$2.class
 client\MainApplication.class
 controllers\HomePageController.class
 controllers\WelcomePageController.class
@@ -28,7 +29,6 @@ controllers\RegisterPageController.class
 controllers\ProfilePageController.class
 controllers\SupportPageController$ChatItem.class
 controllers\ApprovalPendingPageController.class
-controllers\SupportTasksPageController$2.class
 controllers\CityUpdatePageController$2.class
 controllers\CatalogPageController$1.class
 oscf\ObservableClient.class

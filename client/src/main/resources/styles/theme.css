@@ -2,7 +2,6 @@
    BACKGROUNDS
    ========================================================= */
 
-/* Lovecraft fog city background */
 .bg-fog-city {
     -fx-background-image: url("../images/backgrounds/bg_fog_city.png");
     -fx-background-repeat: no-repeat;
@@ -13,7 +12,6 @@
     -fx-background-blend-mode: multiply;
 }
 
-/* Home background */
 .bg-home-dim {
     -fx-background-image: url("../images/backgrounds/home_bg.png");
     -fx-background-repeat: no-repeat;
@@ -24,15 +22,13 @@
     -fx-background-blend-mode: multiply;
 }
 
-/* Card used on profile/home */
-.welcome-card {
-    -fx-background-color: rgba(255,255,255,0.78);
-    -fx-background-radius: 16;
-    -fx-padding: 30;
-}
-
 /* Utility: keep background visible through panes */
 .transparent-pane {
+    -fx-background-color: transparent;
+}
+
+/* Some of your FXML uses transparent-page: support both names */
+.transparent-page {
     -fx-background-color: transparent;
 }
 
@@ -55,6 +51,7 @@
    BUTTONS
    ========================================================= */
 
+/* Default look for any Button */
 .button {
     -fx-background-color: rgba(255,255,255,0.10);
     -fx-text-fill: white;
@@ -77,7 +74,7 @@
     -fx-background-color: rgba(255,255,255,0.08);
 }
 
-/* Primary action button */
+/* Primary action button (blue) */
 .btn-primary {
     -fx-background-color: rgba(52,152,219,0.55);
     -fx-border-color: rgba(52,152,219,0.90);
@@ -91,7 +88,7 @@
     -fx-background-color: rgba(52,152,219,0.40);
 }
 
-/* Sidebar menu buttons */
+/* Sidebar menu buttons (glass) */
 .side-btn {
     -fx-background-color: rgba(255,255,255,0.08);
     -fx-border-color: rgba(255,255,255,0.18);
@@ -108,9 +105,64 @@
     -fx-background-color: rgba(255,255,255,0.06);
 }
 
+/* ------- Button helper classes (compose in FXML) ------- */
+/* Example: styleClass="side-btn centered" for login buttons */
+.centered { -fx-alignment: CENTER; }
+
+/* Example: styleClass="side-btn wide" */
+.wide { -fx-pref-width: 180px; }
+
+/* Example: styleClass="side-btn small" */
+.small {
+    -fx-font-size: 13px;
+    -fx-padding: 7 12 7 12;
+}
+
 
 /* =========================================================
-   TABLEVIEW (GLOBAL)
+   INPUT FIELDS (TextField / PasswordField / TextArea)
+   ========================================================= */
+
+.text-field, .password-field, .text-area {
+    -fx-control-inner-background: rgba(0,0,0,0.45);
+    -fx-background-color: rgba(0,0,0,0.45);
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.45);
+
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-padding: 10;
+}
+
+.text-area .content {
+    -fx-background-color: transparent;
+}
+
+
+/* =========================================================
+   WELCOME CARD (dark glass)
+   ========================================================= */
+
+.welcome-card {
+    -fx-background-color: rgba(0,0,0,0.55);
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: rgba(255,255,255,0.15);
+    -fx-padding: 40;
+}
+
+.welcome-title {
+    -fx-text-fill: white;
+}
+
+.welcome-subtitle {
+    -fx-text-fill: rgba(255,255,255,0.65);
+}
+
+
+/* =========================================================
+   TABLEVIEW (GLOBAL) + GRID FIX
    ========================================================= */
 
 .table-view {
@@ -119,10 +171,13 @@
     -fx-border-radius: 12;
     -fx-border-color: rgba(255,255,255,0.12);
     -fx-border-width: 1;
-    -fx-table-cell-border-color: rgba(255,255,255,0.10);
+
+    /* Grid fix */
+    -fx-table-cell-border-color: transparent; /* removes inner grid lines */
+    -fx-cell-size: 34px;                      /* consistent row height */
 }
 
-/* header */
+/* Header */
 .table-view .column-header-background {
     -fx-background-color: rgba(0,0,0,0.55);
     -fx-background-radius: 12 12 0 0;
@@ -140,13 +195,28 @@
     -fx-font-weight: 700;
 }
 
-/* cells (DEFAULT: black text because our rows are green/gray) */
+/* Cells: black text (because rows are green/gray) */
 .table-view .table-cell {
     -fx-text-fill: #111;
     -fx-font-size: 13px;
+
+    /* remove borders inside cells */
+    -fx-border-color: transparent;
+    -fx-padding: 0 8 0 8;
 }
 
-/* hover/selected */
+/* Row borders off + clean empty rows */
+.table-row-cell {
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Hover/Selected */
 .table-row-cell:filled:hover {
     -fx-background-color: rgba(255,255,255,0.10);
 }
@@ -155,12 +225,11 @@
     -fx-background-color: rgba(52,152,219,0.35);
 }
 
-/* selected row text stays readable */
 .table-row-cell:filled:selected .table-cell {
     -fx-text-fill: #111;
 }
 
-/* remove focus ring */
+/* Remove focus ring */
 .table-view:focused {
     -fx-background-insets: 0;
     -fx-background-radius: 12;
@@ -177,37 +246,4 @@
 
 .table-row-cell:read {
     -fx-background-color: #f2f2f2; /* grey */
-}
-/* =========================================================
-   TABLE GRID FIX: remove ugly uneven black lines
-   ========================================================= */
-
-/* kill default grid lines */
-.table-view {
-    -fx-table-cell-border-color: transparent;   /* removes inner grid */
-    -fx-cell-size: 34px;                        /* makes rows equal height */
-}
-
-/* remove row borders */
-.table-row-cell {
-    -fx-border-color: transparent;
-    -fx-background-insets: 0;
-}
-
-/* make empty rows not draw borders/background */
-.table-row-cell:empty {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-}
-
-/* also remove borders inside cells */
-.table-cell {
-    -fx-border-color: transparent;
-    -fx-padding: 0 8 0 8;
-}
-
-/* optional: soften the outer frame only */
-.table-view {
-    -fx-border-color: rgba(255,255,255,0.12);
-    -fx-border-width: 1;
 }

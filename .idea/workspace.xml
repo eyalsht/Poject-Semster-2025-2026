@@ -4,13 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="STYLE CHANGE!!!! Fade testing">
-      <change afterPath="$PROJECT_DIR$/client/src/main/java/util/TableRowHighlighter.java" afterDir="false" />
+    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="STYLE CHANGE! Tables+Buttons">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/ProfilePageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/ProfilePageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/controllers/SupportTasksPageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/controllers/SupportTasksPageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/LoginPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/LoginPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/WelcomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/WelcomePage.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/resources/styles/theme.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/styles/theme.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/WelcomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/WelcomePage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -228,15 +230,7 @@
       <workItem from="1768902974675" duration="8851000" />
       <workItem from="1769289038709" duration="7298000" />
       <workItem from="1769619561728" duration="8610000" />
-      <workItem from="1769692062871" duration="14221000" />
-    </task>
-    <task id="LOCAL-00005" summary="New catalog draft">
-      <option name="closed" value="true" />
-      <created>1767109316171</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1767109316171</updated>
+      <workItem from="1769692062871" duration="18717000" />
     </task>
     <task id="LOCAL-00006" summary="New image">
       <option name="closed" value="true" />
@@ -622,7 +616,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769754842672</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="STYLE CHANGE! Tables+Buttons">
+      <option name="closed" value="true" />
+      <created>1769898304364</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1769898304364</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -640,7 +642,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Additional windowses+login+profile+catalog" />
     <MESSAGE value="new data" />
     <MESSAGE value="new windows" />
     <MESSAGE value="new" />
@@ -665,6 +666,7 @@
     <MESSAGE value="Report page PDF update - export as PDF" />
     <MESSAGE value="STYLE CHANGE!!!!" />
     <MESSAGE value="STYLE CHANGE!!!! Fade testing" />
-    <option name="LAST_COMMIT_MESSAGE" value="STYLE CHANGE!!!! Fade testing" />
+    <MESSAGE value="STYLE CHANGE! Tables+Buttons" />
+    <option name="LAST_COMMIT_MESSAGE" value="STYLE CHANGE! Tables+Buttons" />
   </component>
 </project>

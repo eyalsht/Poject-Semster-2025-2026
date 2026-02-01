@@ -5,36 +5,38 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane styleClass="transparent-page" prefHeight="400.0" prefWidth="600.0"
+<AnchorPane styleClass="transparent-pane" prefHeight="400.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.WelcomePageController">
 
     <children>
-        <VBox styleClass="transparent-page" alignment="CENTER" spacing="20.0"
+        <VBox styleClass="transparent-pane" alignment="CENTER" spacing="20.0"
               AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
 
-            <children>
-                <!-- This inner VBox is the card -->
-                <VBox alignment="CENTER" spacing="20.0" styleClass="welcome-card">
-                    <children>
-                        <Label fx:id="lblTitle" text="Welcome to GCM System" textFill="#2c3e50">
-                            <font>
-                                <Font name="System Bold" size="36.0" />
-                            </font>
-                        </Label>
+            <!-- Glass card -->
+            <VBox alignment="CENTER" spacing="12.0" styleClass="welcome-card">
+                <children>
 
-                        <Label fx:id="lblSubtitle"
-                               text="Please login to view your personal area or browse the catalog"
-                               textFill="#7f8c8d">
-                            <font>
-                                <Font size="18.0" />
-                            </font>
-                        </Label>
-                    </children>
-                </VBox>
-            </children>
+                    <!-- Remove textFill so CSS controls it -->
+                    <Label fx:id="lblTitle" text="Welcome to GCM System" styleClass="welcome-title">
+                        <font>
+                            <Font name="System Bold" size="36.0" />
+                        </font>
+                    </Label>
+
+                    <Label fx:id="lblSubtitle"
+                           text="Please login to view your personal area or browse the catalog"
+                           styleClass="welcome-subtitle">
+                        <font>
+                            <Font size="18.0" />
+                        </font>
+                    </Label>
+
+                </children>
+            </VBox>
+
         </VBox>
     </children>
 </AnchorPane>

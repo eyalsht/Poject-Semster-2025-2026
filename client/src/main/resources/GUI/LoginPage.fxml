@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane styleClass="transparent-page" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginPageController">
+<StackPane styleClass="transparent-pane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginPageController">
    <children>
       <VBox alignment="CENTER" spacing="20.0" styleClass="transparent-pane">
           <padding>
@@ -28,23 +28,35 @@
                 <PasswordField fx:id="tfPassword" maxWidth="250.0" promptText="Password" />
          <HBox alignment="CENTER" styleClass="transparent-pane">
             <children>
-            
-                      <Button onAction="#handleLogin" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Login">
+
+                <Button onAction="#handleLogin"
+                        text="Login"
+                        styleClass="glass-btn"
+                        prefWidth="100.0"
+                        prefHeight="30.0">
                     <font>
                         <Font name="System Bold" size="14.0" />
                     </font>
-                  <HBox.margin>
-                     <Insets right="10.0" />
-                  </HBox.margin>
+                    <HBox.margin>
+                        <Insets right="10.0" />
+                    </HBox.margin>
                 </Button>
-               <Button mnemonicParsing="false" onAction="#handleRegister" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Register">
-                  <font>
-                     <Font name="System Bold" size="14.0" />
-                  </font>
-                  <HBox.margin>
-                     <Insets left="10.0" />
-                  </HBox.margin>
-               </Button>
+
+                <Button onAction="#handleRegister"
+                        text="Register"
+                        styleClass="glass-btn"
+                        prefWidth="100.0"
+                        prefHeight="30.0"
+                        mnemonicParsing="false">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                    <HBox.margin>
+                        <Insets left="10.0" />
+                    </HBox.margin>
+                </Button>
+
+
             </children>
          </HBox>
       
