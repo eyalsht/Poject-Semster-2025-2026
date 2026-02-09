@@ -1,0 +1,14 @@
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Label?>
+<HBox alignment="CENTER_LEFT" spacing="10.0" prefWidth="380.0" style="-fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #f1f2f6;">
+    <children>
+        <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+            <Label fx:id="lblName" text="Site Name" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+            <Label fx:id="lblCategory" text="Category" textFill="#7f8c8d" style="-fx-font-size: 11;" />
+        </VBox>
+        <ImageView fx:id="imgAccessible" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
+        <Label fx:id="lblLocation" text="Loc" textFill="#3498db" />
+    </children>
+</HBox>
