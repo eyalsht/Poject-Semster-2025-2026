@@ -15,6 +15,8 @@
         <property name="hibernate.hikari.idleTimeout">30000</property>
         <property name="hibernate.hikari.maxLifetime">600000</property>
         <property name="hibernate.hikari.connectionTestQuery">SELECT 1</property>
+        <property name="hibernate.hikari.connectionTimeout">5000</property>
+        <property name="hibernate.hikari.leakDetectionThreshold">10000</property>
 
 
         <!-- Hibernate Settings -->
