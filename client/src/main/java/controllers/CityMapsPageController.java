@@ -43,6 +43,9 @@ public class CityMapsPageController {
     @FXML private Button btnEditCity;
     @FXML private Button btnCreateTour;
 
+    @FXML private Button btnShowMaps;
+    @FXML private Button btnShowTours;
+
     @FXML
     public void initialize() {
         applyRolePermissions();
@@ -52,7 +55,13 @@ public class CityMapsPageController {
     public void setCity(City city) {
         this.selectedCity = city;
         if (lblCityTitle != null) {
-            lblCityTitle.setText("City: " + city.getName());
+            lblCityTitle.setText("Welcome to " + city.getName());
+        }
+        if (cbMap != null && city.getMaps() != null) {
+            cbMap.getItems().clear();
+            for (GCMMap map : city.getMaps()) {
+                cbMap.getItems().add(map.getName());
+            }
         }
         loadMapsFromServer(city.getName());
 
@@ -183,6 +192,34 @@ public class CityMapsPageController {
         if (btn != null) {
             btn.setVisible(visible);
             btn.setManaged(visible);
+        }
+    }
+
+    @FXML
+    private void onShowMapsView() {
+        // עיצוב כפתורים
+        btnShowMaps.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-font-weight: bold;");
+        btnShowTours.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-border-color: #bdc3c7; -fx-font-weight: bold;");
+
+        loadMaps(); // הפונקציה הקיימת שלך שטוענת את המפות
+    }
+
+    @FXML
+    private void onShowToursView() {
+        // עיצוב כפתורים
+        btnShowTours.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-font-weight: bold;");
+        btnShowMaps.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-border-color: #bdc3c7; -fx-font-weight: bold;");
+
+        displayTours(); // נממש אותה בהמשך כדי להציג את כרטיסי הסיורים
+    }
+    private void displayTours() {
+        flowPaneMaps.getChildren().clear();
+        if (selectedCity == null || selectedCity.getTours() == null) return;
+
+        // לוגיקה זמנית עד שיהיה לנו TourCard.fxml
+        for (common.content.Tour tour : selectedCity.getTours()) {
+            Label tourLabel = new Label(tour.getName() + " (" + tour.getRecommendedDuration() + ")");
+            flowPaneMaps.getChildren().add(tourLabel);
         }
     }
 
