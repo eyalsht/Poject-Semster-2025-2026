@@ -26,6 +26,7 @@ public class Tour extends ContentItem implements Serializable {
         joinColumns = @JoinColumn(name = "tour_id"),
         inverseJoinColumns = @JoinColumn(name = "site_id")
     )
+    @OrderColumn(name = "order_index")
     private List<Site> sites = new ArrayList<>();
 
     // ==================== CONSTRUCTORS ====================
