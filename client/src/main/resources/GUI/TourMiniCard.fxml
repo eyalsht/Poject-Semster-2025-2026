@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="5" style="-fx-background-color: #34495e; -fx-padding: 12; -fx-background-radius: 10;"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.TourMiniCardController">
+    <children>
+        <Label fx:id="lblTourName" text="Tour Name" textFill="#f39c12" style="-fx-font-weight: bold; -fx-font-size: 16px;" />
+        <Label fx:id="lblDuration" text="Duration: 0 hours" textFill="#ecf0f1" style="-fx-font-size: 12px;" />
+        <Label fx:id="lblDescription" text="Tour description goes here..." textFill="#bdc3c7" wrapText="true" />
+    </children>
+</VBox>

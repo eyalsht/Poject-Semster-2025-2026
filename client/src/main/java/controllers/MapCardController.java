@@ -51,14 +51,17 @@ public class MapCardController {
             Parent root = loader.load();
 
             MapContentPopupController controller = loader.getController();
-            controller.setMapData(currentMap);
 
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Map Content - " + currentMap.getName());
-            stage.setScene(new Scene(root));
-            stage.show();
-
+            if (controller != null) {
+                controller.setMapData(this.currentMap);
+                Stage stage = new Stage();
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setTitle("Map Content - " + currentMap.getName());
+                stage.setScene(new Scene(root));
+                stage.show();
+            }else {
+                System.err.println("Error: MapContentPopupController not found! Check fx:controller in FXML.");
+            }
         } catch (IOException e) {
             System.err.println("Failed to open MapContentPopup: " + e.getMessage());
             e.printStackTrace();

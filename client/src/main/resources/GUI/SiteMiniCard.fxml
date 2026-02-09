@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="5" style="-fx-background-color: #34495e; -fx-padding: 10; -fx-background-radius: 10; -fx-min-width: 250;"
+      xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.SiteMiniCardController"> <children>
+    <Label fx:id="lblSiteName" text="Site Name" textFill="#3498db" style="-fx-font-weight: bold; -fx-font-size: 16px;" />
+    <Label fx:id="lblCategory" text="Category" textFill="#ecf0f1" style="-fx-font-size: 12px; -fx-font-style: italic;" />
+    <Label fx:id="lblDescription" text="Description..." textFill="#bdc3c7" wrapText="true" />
+</children>
+</VBox>
