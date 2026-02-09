@@ -102,10 +102,13 @@ public class CityRepository extends BaseRepository<City, Integer> {
                        (SELECT COUNT(t) FROM Tour t WHERE t.city = c)
                 FROM City c
                 LEFT JOIN c.sites s
+                LEFT JOIN c.tours t
                 WHERE LOWER(c.name) LIKE :pattern
                    OR LOWER(c.description) LIKE :pattern
                    OR LOWER(s.name) LIKE :pattern
                    OR LOWER(s.description) LIKE :pattern
+                   OR LOWER(t.name) LIKE :pattern
+                   OR LOWER(t.description) LIKE :pattern
                 ORDER BY c.name
                 """;
             return session.createQuery(hql, Object[].class)
