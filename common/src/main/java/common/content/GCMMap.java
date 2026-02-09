@@ -27,12 +27,12 @@ public class GCMMap extends ContentItem implements Serializable {
     private MapStatus status;
 
     // MANY Maps belong to ONE City
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "city_id", nullable = false)
     private City city;
 
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "map_sites",
         joinColumns = @JoinColumn(name = "map_id"),

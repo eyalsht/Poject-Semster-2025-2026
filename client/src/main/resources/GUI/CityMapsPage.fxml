@@ -27,7 +27,7 @@
                 <RowConstraints prefHeight="30.0" />
             </rowConstraints>
             <children>
-                <Label text="City Name:" style="-fx-font-weight: bold;" GridPane.rowIndex="0" />
+                <Label style="-fx-font-weight: bold;" text="City Name:" GridPane.rowIndex="0" />
                 <Label fx:id="lblCityTitle" text="Haifa" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
                 <Label text="Choose Map" GridPane.rowIndex="1" />
@@ -44,32 +44,30 @@
             </children>
         </GridPane>
 
-        <Button fx:id="btnApprovals" layoutX="436.0" layoutY="14.0" maxWidth="Infinity" onAction="#onApprovals" text="Approvals (0)" visible="false" managed="false" />
+        <Button fx:id="btnApprovals" layoutX="436.0" layoutY="14.0" managed="false" maxWidth="Infinity" onAction="#onApprovals" text="Approvals (0)" visible="false" />
 
         <VBox alignment="CENTER" layoutX="672.0" layoutY="7.0" prefHeight="122.0" prefWidth="150.0" spacing="10.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="7.0">
             <children>
-                <Button fx:id="btnUpdateMap" maxWidth="Infinity" onAction="#onUpdateMap" text="Edit Map" visible="false" managed="false" />
-                <Button fx:id="btnAddMap" maxWidth="Infinity" onAction="#onAddMap" text="Add Map" visible="false" managed="false" />
-                <Button fx:id="btnDeleteMap" maxWidth="Infinity" onAction="#onDeleteMap" text="Delete Map" visible="false" managed="false" />
-                <Button fx:id="btnPriceUpdate" maxWidth="Infinity" onAction="#onPriceUpdate" text="Price Update" visible="false" managed="false" />
+                <Button fx:id="btnUpdateMap" managed="false" maxWidth="Infinity" onAction="#onUpdateMap" text="Edit Map" visible="false" />
+                <Button fx:id="btnAddMap" managed="false" maxWidth="Infinity" onAction="#onAddMap" text="Add Map" visible="false" />
+                <Button fx:id="btnDeleteMap" managed="false" maxWidth="Infinity" onAction="#onDeleteMap" text="Delete Map" visible="false" />
+                <Button fx:id="btnPriceUpdate" managed="false" maxWidth="Infinity" onAction="#onPriceUpdate" text="Price Update" visible="false" />
             </children>
             <padding><Insets left="10.0" right="10.0" /></padding>
         </VBox>
 
         <VBox alignment="CENTER" layoutX="462.0" layoutY="5.0" prefHeight="145.0" prefWidth="140.0" spacing="10.0" AnchorPane.rightAnchor="188.0">
             <children>
-                <Button fx:id="btnEditCity" maxWidth="Infinity" onAction="#onEditCity" text="Edit City" visible="false" managed="false" />
-                <Button fx:id="btnCreateTour" maxWidth="Infinity" onAction="#onCreateTour" text="Create Tour" visible="false" managed="false" />
-                <Button fx:id="btnBack" maxWidth="Infinity" onAction="#onBackToCatalog" text="Back to Catalog" style="-fx-background-color: #95a5a6; -fx-text-fill: white;" />
+                <Button fx:id="btnEditCity" managed="false" maxWidth="Infinity" onAction="#onEditCity" text="Edit City" visible="false" />
+                <Button fx:id="btnCreateTour" managed="false" maxWidth="Infinity" onAction="#onCreateTour" text="Create Tour" visible="false" />
+                <Button fx:id="btnBack" maxWidth="Infinity" onAction="#onBackToCatalog" style="-fx-background-color: #95a5a6; -fx-text-fill: white;" text="Back to Catalog" />
             </children>
             <padding><Insets left="10.0" right="10.0" /></padding>
         </VBox>
 
-        <ScrollPane fx:id="scrollPaneCities" fitToWidth="true" layoutY="210.0" prefHeight="266.0" prefWidth="830.0"
-                    style="-fx-border-color: #dcdde1; -fx-background-color: white;"
-                    AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+        <ScrollPane fx:id="scrollPaneCities" fitToWidth="true" layoutY="210.0" prefHeight="390.0" prefWidth="830.0" style="-fx-border-color: #dcdde1; -fx-background-color: white;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
             <content>
-                <FlowPane fx:id="flowPaneMaps" hgap="20.0" prefWidth="828.0" prefWrapLength="800.0" vgap="20.0">
+                <FlowPane fx:id="flowPaneMaps" hgap="20.0" prefWidth="826.0" prefWrapLength="800.0" vgap="20.0">
                     <padding>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                     </padding>
