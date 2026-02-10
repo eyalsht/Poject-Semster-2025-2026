@@ -62,8 +62,8 @@ public class CatalogPageController {
 
     private final GCMClient client = GCMClient.getInstance();
     private CatalogResponse lastCatalogResponse;     // Cache the last response for filter cascading
-    private List<City> catalogCities = new ArrayList<>();  // Cache cities for price update dialog
     private boolean isUpdatingComboBoxes = false;    // Flag to prevent recursive updates
+    private List<City> catalogCities;
 
     @FXML
     public void initialize() {
@@ -168,40 +168,39 @@ public class CatalogPageController {
             return;
         }
 
-        if (response.getAction() == ActionType.GET_CATALOG_RESPONSE) {
-            CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
-            this.lastCatalogResponse = catalogResponse;
-            this.catalogCities = catalogResponse.getCities() != null ? catalogResponse.getCities() : new ArrayList<>();
+            if (response.getAction() == ActionType.GET_CATALOG_RESPONSE) {
+                CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
+                this.lastCatalogResponse = catalogResponse;
 
-            // Check if this is a search response
-            if (catalogResponse.isSearchMode()) {
-                updateCityCardsFromSearch(catalogResponse.getSearchResults());
-                return;
-            }
-
-            // Regular catalog mode - Using updateCityCards instead of TableView.setItems
-            updateCityCards(catalogResponse.getMaps());
-
-            // Set flag to prevent listener recursion
-            isUpdatingComboBoxes = true;
-            try {
-                // Update city dropdown (only on first load or if empty)
-                if (cbCity.getItems().isEmpty() && !catalogResponse.getAvailableCities().isEmpty()) {
-                    List<String> cities = new ArrayList<>();
-                    cities.add("");  // Empty option for "All"
-                    cities.addAll(catalogResponse.getAvailableCities());
-                    cbCity.setItems(FXCollections.observableArrayList(cities));
+                // Check if this is a search response
+                if (catalogResponse.isSearchMode()) {
+                    updateCityCardsFromSearch(catalogResponse.getSearchResults());
+                    return;
                 }
 
-                // Update map dropdown if available
-                if (!catalogResponse.getAvailableMapNames().isEmpty()) {
-                    updateMapComboBoxFromResponse(catalogResponse.getAvailableMapNames());
+                // Regular catalog mode - Using updateCityCards instead of TableView.setItems
+                updateCityCards(catalogResponse.getMaps());
+
+                // Set flag to prevent listener recursion
+                isUpdatingComboBoxes = true;
+                try {
+                    // Update city dropdown (only on first load or if empty)
+                    if (cbCity.getItems().isEmpty() && !catalogResponse.getAvailableCities().isEmpty()) {
+                        List<String> cities = new ArrayList<>();
+                        cities.add("");  // Empty option for "All"
+                        cities.addAll(catalogResponse.getAvailableCities());
+                        cbCity.setItems(FXCollections.observableArrayList(cities));
+                    }
+
+                    // Update map dropdown if available
+                    if (!catalogResponse.getAvailableMapNames().isEmpty()) {
+                        updateMapComboBoxFromResponse(catalogResponse.getAvailableMapNames());
+                    }
+                } finally {
+                    isUpdatingComboBoxes = false;
                 }
-            } finally {
-                isUpdatingComboBoxes = false;
             }
         }
-    }
 
     /**
      * Update city cards from search results.
@@ -371,9 +370,6 @@ public class CatalogPageController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/PriceUpdateDialog.fxml"));
             Parent root = loader.load();
-
-            PriceUpdateDialogController controller = loader.getController();
-            controller.initData(catalogCities);
 
             Stage stage = new Stage();
             stage.setTitle("Price Update Request");

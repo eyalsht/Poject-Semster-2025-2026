@@ -8,6 +8,7 @@ import common.enums.ActionType;
 import common.messaging.Message;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -47,15 +48,35 @@ public class PriceUpdateDialogController {
         scrollPaneMaps.setVisible(false);
 
         cbCitySelect.setOnAction(e -> onCitySelected());
+
+        // Load cities from server when dialog opens
+        loadCitiesFromServer();
     }
 
     /**
-     * Called by CatalogPageController to pass available cities.
+     * Fetch all cities directly from the server using GET_CITIES_REQUEST.
      */
-    public void initData(List<City> cities) {
-        if (cities != null && !cities.isEmpty()) {
-            cbCitySelect.getItems().setAll(cities);
-        }
+    private void loadCitiesFromServer() {
+        new Thread(() -> {
+            try {
+                Message request = new Message(ActionType.GET_CITIES_REQUEST, null);
+                Message response = (Message) client.sendRequest(request);
+
+                Platform.runLater(() -> {
+                    if (response != null && response.getAction() == ActionType.GET_CITIES_RESPONSE) {
+                        @SuppressWarnings("unchecked")
+                        List<City> cities = (List<City>) response.getMessage();
+                        if (cities != null && !cities.isEmpty()) {
+                            cbCitySelect.setItems(FXCollections.observableArrayList(cities));
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                Platform.runLater(() ->
+                    showAlert("Error", "Failed to load cities: " + e.getMessage())
+                );
+            }
+        }).start();
     }
 
     private void onCitySelected() {
