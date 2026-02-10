@@ -62,6 +62,7 @@ public class CatalogPageController {
 
     private final GCMClient client = GCMClient.getInstance();
     private CatalogResponse lastCatalogResponse;     // Cache the last response for filter cascading
+    private List<City> catalogCities = new ArrayList<>();  // Cache cities for price update dialog
     private boolean isUpdatingComboBoxes = false;    // Flag to prevent recursive updates
 
     @FXML
@@ -170,6 +171,7 @@ public class CatalogPageController {
         if (response.getAction() == ActionType.GET_CATALOG_RESPONSE) {
             CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
             this.lastCatalogResponse = catalogResponse;
+            this.catalogCities = catalogResponse.getCities() != null ? catalogResponse.getCities() : new ArrayList<>();
 
             // Check if this is a search response
             if (catalogResponse.isSearchMode()) {
@@ -366,13 +368,28 @@ public class CatalogPageController {
     }*/
     @FXML
     private void onPriceUpdate() {
-        // NEW: Placeholder method to resolve FXML error
-        showAlert("Info", "Selection logic needs to be updated for city cards.");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/PriceUpdateDialog.fxml"));
+            Parent root = loader.load();
+
+            PriceUpdateDialogController controller = loader.getController();
+            controller.initData(catalogCities);
+
+            Stage stage = new Stage();
+            stage.setTitle("Price Update Request");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            // Refresh catalog after dialog closes
+            loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not open Price Update dialog: " + e.getMessage());
+        }
     }
-
-
-
- /*   @FXML Using Table info - which no longer exist
+/*   @FXML Using Table info - which no longer exist
     private void onUpdateMap() {
         GCMMap selected = tblCatalog.getSelectionModel().getSelectedItem();
         if (selected == null) {
@@ -663,4 +680,3 @@ public class CatalogPageController {
         System.out.println("CityUpdatePageController mode set to: " + mode);
     }
 }
-

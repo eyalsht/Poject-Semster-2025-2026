@@ -39,6 +39,7 @@ public enum ActionType {
     GET_CITY_DETAILS_RESPONSE,
     
     // ==================== PRICE MANAGEMENT ====================
+
     UPDATE_PRICE_REQUEST,
     UPDATE_PRICE_RESPONSE,
     

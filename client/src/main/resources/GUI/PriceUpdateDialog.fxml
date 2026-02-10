@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.PriceUpdateDialogController"
+      spacing="15" prefWidth="500" prefHeight="550"
+      style="-fx-background-color: #f4f4f4;">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Title -->
+    <Label text="Price Update Request" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+
+    <!-- City Selection -->
+    <VBox spacing="5">
+        <Label text="Select City:" style="-fx-font-weight: bold;"/>
+        <ComboBox fx:id="cbCitySelect" promptText="Choose a city..." maxWidth="Infinity"/>
+    </VBox>
+
+    <!-- Subscription Price -->
+    <VBox spacing="5">
+        <Label fx:id="lblSubscriptionPrice" text="Subscription Price:" style="-fx-font-weight: bold;" visible="false"/>
+        <TextField fx:id="tfSubscriptionPrice" promptText="Subscription price" visible="false"/>
+    </VBox>
+
+    <!-- Map Prices Section -->
+    <Label text="Map Prices:" style="-fx-font-weight: bold;"/>
+    <ScrollPane fx:id="scrollPaneMaps" fitToWidth="true" prefHeight="250" visible="false">
+        <VBox fx:id="vboxMapPrices" spacing="8">
+            <padding>
+                <Insets top="5" right="5" bottom="5" left="5"/>
+            </padding>
+        </VBox>
+    </ScrollPane>
+
+    <!-- Buttons -->
+    <HBox spacing="15" alignment="CENTER_RIGHT">
+        <Button fx:id="btnSubmit" text="Submit Request" onAction="#onSubmit"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"
+                prefWidth="150"/>
+        <Button fx:id="btnCancel" text="Cancel" onAction="#onCancel"
+                style="-fx-background-color: #f44336; -fx-text-fill: white;"
+                prefWidth="100"/>
+    </HBox>
+
+    <!-- Info Label -->
+    <Label text="Note: Changes will be sent for Company Manager approval."
+           style="-fx-font-style: italic; -fx-text-fill: #666;"/>
+</VBox>
