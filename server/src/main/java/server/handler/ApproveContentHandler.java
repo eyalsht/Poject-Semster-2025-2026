@@ -2,9 +2,8 @@ package server.handler;
 
 import common.enums.ActionType;
 import common.messaging.Message;
-import common.user.User;
+import server.GcmServer;
 import server.repository.PendingContentRequestRepository;
-import server.repository.UserRepository;
 
 /**
  * Handler for approving content change requests.
@@ -22,7 +21,14 @@ public class ApproveContentHandler implements RequestHandler {
             // TODO: Get the approver user from the request if needed
             // For now, passing null as approver
             boolean success = repository.approve(pendingId, null);
-            
+
+            if (success) {
+                GcmServer server = GcmServer.getInstance();
+                if (server != null) {
+                    server.sendToAllClients(new Message(ActionType.CATALOG_UPDATED_NOTIFICATION, null));
+                }
+            }
+
             return new Message(ActionType.APPROVE_CONTENT_RESPONSE, success);
 
         } catch (Exception e) {
