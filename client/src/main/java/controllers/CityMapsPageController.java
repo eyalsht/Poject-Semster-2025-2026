@@ -97,7 +97,7 @@ public class CityMapsPageController {
             flowPaneMaps.getChildren().add(noMaps);
             return;
         }
-
+        selectedCity.setMaps(maps);
         for (GCMMap map : maps) {
             try {
                 // טעינת ה-FXML של כרטיס המפה
@@ -117,7 +117,7 @@ public class CityMapsPageController {
 
     private void loadMaps() {
         Platform.runLater(() -> {
-            // 1. ניקוי הקטלוג הקיים כדי למנוע כפילויות
+
             flowPaneMaps.getChildren().clear();
 
             if (selectedCity == null || selectedCity.getMaps() == null ) return;
@@ -129,11 +129,10 @@ public class CityMapsPageController {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
                     Parent card = loader.load();
 
-                    // הזרקת הנתונים ל-Controller של הכרטיס
+
                     MapCardController cardController = loader.getController();
                     cardController.setData(map);
 
-                    // 3. הוספת הכרטיס ל-FlowPane התחתון שמוגדר ב-FXML
                     flowPaneMaps.getChildren().add(card);
                 }
             } catch (Exception e) {
@@ -180,7 +179,6 @@ public class CityMapsPageController {
     }
 
     private void setManagementButtonsVisible(boolean visible) {
-        // שימוש ב-setButtonState מבטיח שגם ה-managed יתעדכן והתפריט יתכווץ
         setButtonState(btnEditCity, visible);
         setButtonState(btnCreateTour, visible);
         setButtonState(btnAddMap, visible);
@@ -197,20 +195,24 @@ public class CityMapsPageController {
 
     @FXML
     private void onShowMapsView() {
-        // עיצוב כפתורים
+
         btnShowMaps.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-font-weight: bold;");
         btnShowTours.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-border-color: #bdc3c7; -fx-font-weight: bold;");
 
-        loadMaps(); // הפונקציה הקיימת שלך שטוענת את המפות
+        if (flowPaneMaps != null) {
+            displayMaps(selectedCity.getMaps());
+        }
     }
 
     @FXML
     private void onShowToursView() {
-        // עיצוב כפתורים
+
         btnShowTours.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-font-weight: bold;");
         btnShowMaps.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-border-color: #bdc3c7; -fx-font-weight: bold;");
-
-        displayTours(); // נממש אותה בהמשך כדי להציג את כרטיסי הסיורים
+        if (flowPaneMaps != null) {
+            flowPaneMaps.getChildren().clear();
+        }
+        displayTours();
     }
     private void displayTours() {
         flowPaneMaps.getChildren().clear();
@@ -315,9 +317,9 @@ public class CityMapsPageController {
     @FXML
     private void onClearSearch() {
         if (txtSearch != null) {
-            txtSearch.clear(); // איפוס תיבת הטקסט
+            txtSearch.clear();
         }
-        loadMaps(); // טעינה מחדש של כל המפות
+        loadMaps();
     }
     @FXML private void onUpdateMap() {}
     @FXML private void onAddMap() {}
