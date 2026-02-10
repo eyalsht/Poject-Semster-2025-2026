@@ -81,11 +81,11 @@ public class CatalogPageController {
         refreshPendingApprovalsCount();  // Updated method name
 
         // Listen for server-pushed catalog update notifications
-        /*client.addNotificationListener(msg -> {
+        client.addNotificationListener(msg -> {
             if (msg.getAction() == ActionType.CATALOG_UPDATED_NOTIFICATION) {
                 Platform.runLater(() -> refreshCatalog());
             }
-        });*/
+        });
     }
 
     public void showCityMaps(City city) {

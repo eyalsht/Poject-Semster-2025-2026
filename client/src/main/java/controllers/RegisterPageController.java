@@ -187,7 +187,7 @@ public class RegisterPageController {
     private void handleFinish() {
         if (!validateStep2()) return;
 
-        showMessage("Processing registration...", Color.BLUE);
+        showMessage("Processing registration...", Color.web("#5dade2"));
 
         // Prepare data
         String firstName = txtFirstName.getText().trim();

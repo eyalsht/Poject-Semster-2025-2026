@@ -6,49 +6,69 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="controllers.PriceUpdateDialogController"
-      spacing="15" prefWidth="500" prefHeight="550"
-      style="-fx-background-color: #f4f4f4;">
+      spacing="15" prefWidth="580" prefHeight="600"
+      style="-fx-background-color: rgba(0,0,0,0.65);">
 
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
     <!-- Title -->
-    <Label text="Price Update Request" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+    <Label text="Price Update Request"
+           style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: white;"/>
 
     <!-- City Selection -->
     <VBox spacing="5">
-        <Label text="Select City:" style="-fx-font-weight: bold;"/>
+        <Label text="Select City:" style="-fx-font-weight: bold; -fx-text-fill: white;"/>
         <ComboBox fx:id="cbCitySelect" promptText="Choose a city..." maxWidth="Infinity"/>
     </VBox>
 
-    <!-- Subscription Price -->
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label fx:id="lblSubscriptionPrice" text="Subscription Price:" style="-fx-font-weight: bold;" visible="false"/>
-        <TextField fx:id="tfSubscriptionPrice" promptText="Subscription price" visible="false" prefWidth="120" maxWidth="120"/>
-    </HBox>
+    <!-- Subscription Price Section -->
+    <VBox fx:id="vboxSubscription" spacing="6" visible="false"
+          style="-fx-background-color: rgba(0,0,0,0.25); -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: rgba(255,255,255,0.10); -fx-padding: 10;">
+        <Label fx:id="lblSubscriptionPrice" text="Subscription Price:"
+               style="-fx-font-weight: bold; -fx-text-fill: white;"/>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label fx:id="lblSubCurrentPrice" text="Current: —"
+                   style="-fx-text-fill: rgba(255,255,255,0.65); -fx-min-width: 100;"/>
+            <TextField fx:id="tfSubscriptionPrice" promptText="New price" prefWidth="120" maxWidth="120"/>
+            <Button fx:id="btnSubReset" text="↺" onAction="#onResetSubscriptionPrice" visible="false" managed="false"
+                    style="-fx-background-color: rgba(230,126,34,0.55); -fx-text-fill: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: rgba(230,126,34,0.80); -fx-padding: 4 8 4 8; -fx-font-size: 13; -fx-cursor: hand;"/>
+        </HBox>
+    </VBox>
+
+    <!-- Map Prices Column Headers -->
+    <GridPane fx:id="gridMapHeader" hgap="10" visible="false" managed="false"
+              style="-fx-padding: 6 5 6 5; -fx-background-color: rgba(0,0,0,0.40); -fx-background-radius: 8 8 0 0;">
+        <Label text="Map Name" style="-fx-font-weight: bold; -fx-text-fill: white;" GridPane.columnIndex="0"/>
+        <Label text="Current" style="-fx-font-weight: bold; -fx-text-fill: rgba(255,255,255,0.65);" GridPane.columnIndex="1"/>
+        <Label text="New Price" style="-fx-font-weight: bold; -fx-text-fill: white;" GridPane.columnIndex="2"/>
+    </GridPane>
 
     <!-- Map Prices Section -->
-    <Label text="Map Prices:" style="-fx-font-weight: bold;"/>
-    <ScrollPane fx:id="scrollPaneMaps" fitToWidth="true" prefHeight="250" visible="false">
-        <VBox fx:id="vboxMapPrices" spacing="8">
+    <ScrollPane fx:id="scrollPaneMaps" fitToWidth="true" prefHeight="260" visible="false"
+                style="-fx-background-color: transparent;">
+        <VBox fx:id="vboxMapPrices" spacing="4">
             <padding>
-                <Insets top="5" right="5" bottom="5" left="5"/>
+                <Insets top="2" right="5" bottom="5" left="5"/>
             </padding>
         </VBox>
     </ScrollPane>
 
-    <!-- Buttons -->
+    <!-- Buttons + Changes Counter -->
     <HBox spacing="15" alignment="CENTER_RIGHT">
+        <Label fx:id="lblChangesCounter" text="" visible="false" managed="false"
+               style="-fx-text-fill: #e67e22; -fx-font-weight: bold; -fx-font-size: 13;"
+               HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
         <Button fx:id="btnSubmit" text="Submit Request" onAction="#onSubmit"
-                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"
+                style="-fx-background-color: rgba(76,175,80,0.55); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: rgba(76,175,80,0.80); -fx-cursor: hand;"
                 prefWidth="150"/>
         <Button fx:id="btnCancel" text="Cancel" onAction="#onCancel"
-                style="-fx-background-color: #f44336; -fx-text-fill: white;"
+                style="-fx-background-color: rgba(244,67,54,0.55); -fx-text-fill: white; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: rgba(244,67,54,0.80); -fx-cursor: hand;"
                 prefWidth="100"/>
     </HBox>
 
     <!-- Info Label -->
     <Label text="Note: Changes will be sent for Company Manager approval."
-           style="-fx-font-style: italic; -fx-text-fill: #666;"/>
+           style="-fx-font-style: italic; -fx-text-fill: rgba(255,255,255,0.50);"/>
 </VBox>
