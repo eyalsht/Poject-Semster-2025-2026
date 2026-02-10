@@ -80,9 +80,40 @@ public class PriceUpdateDialogController {
     }
 
     private void onCitySelected() {
-        selectedCity = cbCitySelect.getValue();
-        if (selectedCity == null) return;
+        City basicCity = cbCitySelect.getValue();
+        if (basicCity == null) return;
 
+        // Disable UI while loading full city details
+        btnSubmit.setDisable(true);
+        vboxMapPrices.getChildren().clear();
+        mapPriceFields.clear();
+        vboxMapPrices.getChildren().add(new Label("Loading city data..."));
+        scrollPaneMaps.setVisible(true);
+
+        new Thread(() -> {
+            try {
+                Message request = new Message(ActionType.GET_CITY_DETAILS_REQUEST, basicCity.getId());
+                Message response = (Message) client.sendRequest(request);
+
+                Platform.runLater(() -> {
+                    if (response != null && response.getAction() == ActionType.GET_CITY_DETAILS_RESPONSE) {
+                        selectedCity = (City) response.getMessage();
+                        populateCityDetails();
+                    } else {
+                        vboxMapPrices.getChildren().clear();
+                        vboxMapPrices.getChildren().add(new Label("Failed to load city details."));
+                    }
+                });
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    vboxMapPrices.getChildren().clear();
+                    vboxMapPrices.getChildren().add(new Label("Error: " + e.getMessage()));
+                });
+            }
+        }).start();
+    }
+
+    private void populateCityDetails() {
         // Show and populate subscription price
         lblSubscriptionPrice.setVisible(true);
         tfSubscriptionPrice.setVisible(true);
@@ -91,7 +122,6 @@ public class PriceUpdateDialogController {
         // Build map price fields
         vboxMapPrices.getChildren().clear();
         mapPriceFields.clear();
-        scrollPaneMaps.setVisible(true);
 
         List<GCMMap> maps = selectedCity.getMaps();
         if (maps != null && !maps.isEmpty()) {
