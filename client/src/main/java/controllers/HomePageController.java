@@ -94,10 +94,14 @@ public class HomePageController
     }
     @FXML
     private void onLogout(ActionEvent event) {
-        loggedIn = false;
-        updateLoginButton();
-        currentUser = null;
-        initialize();
+        client.GCMClient.getInstance().setCurrentUser(null);
+        this.currentUser = null;
+        this.loggedIn = false;
+        updateUI();
+        showPage("/GUI/WelcomePage.fxml");
+
+       // updateLoginButton();
+        System.out.println("Logout successful: Redirecting to Catalog as Guest.");
     }
     private void showPage(String fxmlPath) {
         try {
