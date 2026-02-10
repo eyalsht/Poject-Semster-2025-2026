@@ -40,6 +40,9 @@ public class PendingPriceUpdate implements Serializable {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "subscription_change")
+    private boolean subscriptionChange = false;
+
     // ==================== CONSTRUCTORS ====================
 
     public PendingPriceUpdate() {
@@ -53,6 +56,11 @@ public class PendingPriceUpdate implements Serializable {
         this.requester = requester;
         this.oldPrice = oldPrice;
         this.newPrice = newPrice;
+    }
+
+    public PendingPriceUpdate(GCMMap map, User requester, double oldPrice, double newPrice, boolean subscriptionChange) {
+        this(map, requester, oldPrice, newPrice);
+        this.subscriptionChange = subscriptionChange;
     }
 
     // ==================== GETTERS & SETTERS ====================
@@ -78,6 +86,9 @@ public class PendingPriceUpdate implements Serializable {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
+    public boolean isSubscriptionChange() { return subscriptionChange; }
+    public void setSubscriptionChange(boolean subscriptionChange) { this.subscriptionChange = subscriptionChange; }
+
     // ==================== CONVENIENCE METHODS ====================
 
     public int getMapId() { 
@@ -97,9 +108,12 @@ public class PendingPriceUpdate implements Serializable {
     }
 
     // For TableView columns (backward compatibility)
-    public String getType() { return "PRICE"; }
+    public String getType() { return subscriptionChange ? "SUBSCRIPTION" : "MAP_PRICE"; }
 
     public String getTarget() {
+        if (subscriptionChange) {
+            return getCity() + " - Subscription";
+        }
         return getCity() + " - " + getMapName() + " (" + getVersion() + ")";
     }
     

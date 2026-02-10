@@ -1,5 +1,6 @@
 package server.repository;
 
+import common.content.City;
 import common.content.GCMMap;
 import common.workflow.PendingPriceUpdate;
 import common.enums.RequestStatus;
@@ -91,10 +92,17 @@ public class PendingPriceUpdateRepository extends BaseRepository<PendingPriceUpd
                     throw new RuntimeException("Pending update not found or already processed");
                 }
 
-                // Update the map's price
-                GCMMap map = pending.getMap();
-                map.setPrice(pending.getNewPrice());
-                session.merge(map);
+                if (pending.isSubscriptionChange()) {
+                    // Update the city's subscription price
+                    City city = pending.getMap().getCity();
+                    city.setPriceSub(pending.getNewPrice());
+                    session.merge(city);
+                } else {
+                    // Update the map's price
+                    GCMMap map = pending.getMap();
+                    map.setPrice(pending.getNewPrice());
+                    session.merge(map);
+                }
 
                 // Mark as closed
                 pending.setStatus(RequestStatus.CLOSED);

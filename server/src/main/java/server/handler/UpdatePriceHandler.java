@@ -73,7 +73,8 @@ public class UpdatePriceHandler implements RequestHandler {
                         PendingPriceUpdate subPending = new PendingPriceUpdate(
                                 firstMap, requester,
                                 dto.getOldSubscriptionPrice(),
-                                dto.getNewSubscriptionPrice()
+                                dto.getNewSubscriptionPrice(),
+                                true  // subscription change
                         );
                         pendingRepository.save(subPending);
                         createdCount++;
