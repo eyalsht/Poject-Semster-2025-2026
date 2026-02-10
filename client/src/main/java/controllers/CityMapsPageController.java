@@ -10,6 +10,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -18,10 +20,14 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.control.Label;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.List;
 
 import client.GCMClient;
+import common.dto.PendingApprovalsResponse;
+import common.dto.PendingContentApprovalsResponse;
 import common.user.User;
 import common.user.Employee;
 import common.enums.EmployeeRole;
@@ -164,12 +170,16 @@ public class CityMapsPageController {
                     // מנהל תוכן רואה הכל כולל כפתור אישורים
                     setManagementButtonsVisible(true);
                     setButtonState(btnApprovals, true);
+                    btnApprovals.setText("Content Approvals");
+                    refreshPendingApprovalsCount();
                     break;
 
                 case COMPANY_MANAGER:
                     // מנהל חברה רואה רק אישורי מחירים
                     setManagementButtonsVisible(false);
                     setButtonState(btnApprovals, true); // עבור אישורי מחירים בלבד
+                    btnApprovals.setText("Price Approvals");
+                    refreshPendingApprovalsCount();
                     break;
 
                 default:
@@ -324,8 +334,113 @@ public class CityMapsPageController {
     @FXML private void onUpdateMap() {}
     @FXML private void onAddMap() {}
     @FXML private void onDeleteMap() {}
-    @FXML private void onPriceUpdate() {}
+
+    @FXML
+    private void onPriceUpdate() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/PriceUpdateDialog.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Price Update Request");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            // Refresh maps after dialog closes
+            if (selectedCity != null) {
+                loadMapsFromServer(selectedCity.getName());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not open Price Update dialog: " + e.getMessage());
+        }
+    }
+
     @FXML private void onEditCity() {}
     @FXML private void onCreateTour() {}
-    @FXML private void onApprovals() {}
+
+    @FXML
+    private void onApprovals() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/ApprovalPendingPage.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Pending Approvals");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
+
+            // Refresh maps and approval count when the window is closed
+            stage.setOnHidden(event -> {
+                if (selectedCity != null) {
+                    loadMapsFromServer(selectedCity.getName());
+                }
+                refreshPendingApprovalsCount();
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not open approvals window: " + e.getMessage());
+        }
+    }
+
+    private void refreshPendingApprovalsCount() {
+        User user = GCMClient.getInstance().getCurrentUser();
+        if (user == null || !(user instanceof Employee)) {
+            return;
+        }
+
+        Employee employee = (Employee) user;
+        EmployeeRole role = employee.getRole();
+
+        ActionType requestType;
+        if (role == EmployeeRole.COMPANY_MANAGER) {
+            requestType = ActionType.GET_PENDING_APPROVALS_REQUEST;
+        } else if (role == EmployeeRole.CONTENT_MANAGER) {
+            requestType = ActionType.GET_PENDING_CONTENT_APPROVALS_REQUEST;
+        } else {
+            return;
+        }
+
+        final ActionType finalRequestType = requestType;
+
+        new Thread(() -> {
+            try {
+                Message request = new Message(finalRequestType, null);
+                Message response = (Message) GCMClient.getInstance().sendRequest(request);
+
+                Platform.runLater(() -> updateApprovalButtonCount(response, role));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void updateApprovalButtonCount(Message response, EmployeeRole role) {
+        int count = 0;
+
+        if (response != null) {
+            if (role == EmployeeRole.COMPANY_MANAGER &&
+                    response.getAction() == ActionType.GET_PENDING_APPROVALS_RESPONSE) {
+                PendingApprovalsResponse approvals = (PendingApprovalsResponse) response.getMessage();
+                count = approvals.getTotalCount();
+            } else if (role == EmployeeRole.CONTENT_MANAGER &&
+                    response.getAction() == ActionType.GET_PENDING_CONTENT_APPROVALS_RESPONSE) {
+                PendingContentApprovalsResponse approvals = (PendingContentApprovalsResponse) response.getMessage();
+                count = approvals.getTotalCount();
+            }
+        }
+
+        String label = (role == EmployeeRole.COMPANY_MANAGER) ? "Price Approvals" : "Content Approvals";
+        btnApprovals.setText(label + " (" + count + ")");
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 }
