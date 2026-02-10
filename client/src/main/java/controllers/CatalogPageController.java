@@ -63,13 +63,8 @@ public class CatalogPageController {
     @FXML
     private Button btnApprovals;
     @FXML
-    private Button btnCreateCity;
-    @FXML
     private Button btnEditCity;
-    @FXML
-    private Button btnCreateTour;
-    @FXML
-    private Button btnEditTour;
+
 
     private final GCMClient client = GCMClient.getInstance();
     private CatalogResponse lastCatalogResponse;     // Cache the last response for filter cascading
@@ -86,11 +81,11 @@ public class CatalogPageController {
         refreshPendingApprovalsCount();  // Updated method name
 
         // Listen for server-pushed catalog update notifications
-        client.addNotificationListener(msg -> {
+        /*client.addNotificationListener(msg -> {
             if (msg.getAction() == ActionType.CATALOG_UPDATED_NOTIFICATION) {
                 Platform.runLater(() -> refreshCatalog());
             }
-        });
+        });*/
     }
 
     public void showCityMaps(City city) {

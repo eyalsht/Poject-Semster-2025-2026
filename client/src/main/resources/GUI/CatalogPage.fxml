@@ -20,10 +20,12 @@
     <children>
 
         <!-- Top selection area -->
-        <GridPane hgap="20.0" layoutX="30.0" layoutY="26.0" prefHeight="134.0" prefWidth="406.0" vgap="12.0">
+        <GridPane hgap="20.0" layoutX="27.0" layoutY="24.0" prefHeight="115.0" prefWidth="547.0" vgap="12.0">
             <columnConstraints>
                 <ColumnConstraints prefWidth="120.0" />
-                <ColumnConstraints prefWidth="200.0" />
+                <ColumnConstraints maxWidth="222.0" minWidth="168.66668701171875" prefWidth="205.3333740234375" />
+                <ColumnConstraints maxWidth="159.33331298828125" minWidth="10.0" prefWidth="122.6666259765625" />
+                <ColumnConstraints maxWidth="159.33331298828125" minWidth="10.0" prefWidth="122.6666259765625" />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints prefHeight="30.0" />
@@ -33,28 +35,33 @@
 
             <children>
                 <Label text="Choose City" textFill="#ecf0f1" GridPane.columnIndex="0" GridPane.rowIndex="0">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font></Label>
                 <ComboBox fx:id="cbCity" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
                 <Label text="Choose Map" textFill="#ecf0f1" GridPane.columnIndex="0" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font></Label>
                 <ComboBox fx:id="cbMap" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                 <Label text="Search" textFill="#ecf0f1" GridPane.columnIndex="0" GridPane.rowIndex="2">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
-                <HBox prefHeight="37.0" prefWidth="226.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                    <children>
-                        <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="27.0" prefWidth="97.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" />
-                        <Button fx:id="btnClearSearch" mnemonicParsing="false" onAction="#onClearSearch" prefHeight="28.0" prefWidth="94.0" text="Clear" />
-                    </children>
-                </HBox>
-                  <TextField fx:id="txtSearch" prefHeight="26.0" prefWidth="147.0" promptText="Search cities, sites..." GridPane.rowIndex="2" />
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font></Label>
+                <HBox prefHeight="37.0" prefWidth="226.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <TextField fx:id="txtSearch" prefHeight="26.0" prefWidth="147.0" promptText="Search cities, sites..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="27.0" prefWidth="95.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                    <GridPane.margin>
+                        <Insets left="-10.0" />
+                    </GridPane.margin>
+                </Button>
+                <Button fx:id="btnClearSearch" mnemonicParsing="false" onAction="#onClearSearch" prefHeight="27.0" prefWidth="95.0" text="Clear" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                    <GridPane.margin>
+                        <Insets left="-25.0" />
+                    </GridPane.margin>
+                </Button>
             </children>
             <opaqueInsets>
                 <Insets />
@@ -62,43 +69,54 @@
         </GridPane>
 
 
-        <ScrollPane fx:id="scrollPaneCities" fitToWidth="true" layoutY="210.0" prefHeight="414.0" prefWidth="1030.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+        <ScrollPane fx:id="scrollPaneCities" fitToWidth="true" layoutX="38.0" layoutY="210.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="401.0" prefWidth="875.0" AnchorPane.bottomAnchor="22.0" AnchorPane.leftAnchor="38.0" AnchorPane.rightAnchor="217.0">
             <content>
-                <FlowPane fx:id="flowPaneCities" hgap="20.0" prefWidth="828.0" prefWrapLength="800.0" vgap="20.0">
+                <FlowPane fx:id="flowPaneCities" hgap="20.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="45.0" prefWidth="848.0" prefWrapLength="800.0" vgap="20.0">
                     <padding>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                        <Insets bottom="15.0" left="15.0" top="15.0" />
                     </padding>
                 </FlowPane>
             </content>
         </ScrollPane>
 
-              <VBox alignment="CENTER" layoutX="672.0" layoutY="7.0" prefHeight="122.0" prefWidth="150.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="7.0">
+        <VBox alignment="CENTER" layoutX="839.0" layoutY="177.0" prefHeight="202.0" prefWidth="158.0" AnchorPane.rightAnchor="53.0" AnchorPane.topAnchor="177.0">
             <children>
-                <Button fx:id="btnEdit" visible="false" managed="false" maxWidth="Infinity" mnemonicParsing="false" onAction="#onUpdateMap" text="Edit Map">
+                <Button fx:id="btnEditCity" maxWidth="Infinity" mnemonicParsing="false" onAction="#onEditCity" prefHeight="25.0" prefWidth="123.0" text="Edit City">
                     <VBox.margin>
-                  <Insets left="10.0" right="10.0" />
-               </VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" />
+                    </VBox.margin>
+                </Button>
+                <Button fx:id="btnUpdateMap" maxWidth="Infinity" mnemonicParsing="false" onAction="#onUpdateMap" text="Edit Map">
+                    <VBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                    </VBox.margin>
                 </Button>
 
-
-                      <Button fx:id="btnPriceUpdate" maxWidth="Infinity" mnemonicParsing="false" onAction="#onPriceUpdate" text="Price Update">
+                <Button fx:id="btnAddMap" maxWidth="Infinity" mnemonicParsing="false" onAction="#onAddMap" text="Add Map">
                     <VBox.margin>
-                  <Insets left="10.0" right="10.0" top="10.0" />
-               </VBox.margin>
+                        <Insets left="10.0" right="10.0" top="10.0" />
+                    </VBox.margin>
                 </Button>
-            </children>
-        </VBox>
-        <VBox alignment="CENTER" layoutX="462.0" layoutY="4.0" prefHeight="53.0" prefWidth="140.0" AnchorPane.rightAnchor="188.0">
-            <children>
-                <Button fx:id="btnEditCity" maxWidth="Infinity" mnemonicParsing="false" onAction="#onEditCity" text="Edit City">
+
+                <Button fx:id="btnDeleteMap" maxWidth="Infinity" mnemonicParsing="false" onAction="#onDeleteMap" text="Delete Map">
+                    <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="10.0" />
+                    </VBox.margin>
+                </Button>
+
+                <Button fx:id="btnPriceUpdate" maxWidth="Infinity" mnemonicParsing="false" onAction="#onPriceUpdate" text="Price Update">
+                    <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="10.0" />
+                    </VBox.margin>
+                </Button>
+
+                <Button fx:id="btnApprovals" maxWidth="Infinity" mnemonicParsing="false" onAction="#onApprovals" prefHeight="25.0" prefWidth="144.0" text="Content Approvals (0)">
                     <VBox.margin>
                         <Insets left="10.0" right="10.0" top="10.0" />
                     </VBox.margin>
                 </Button>
             </children>
         </VBox>
-
-                <Button fx:id="btnApprovals" layoutX="436.0" layoutY="14.0" maxWidth="Infinity" mnemonicParsing="false" onAction="#onApprovals" text="Approvals (0)" />
 
     </children>
 </AnchorPane>
