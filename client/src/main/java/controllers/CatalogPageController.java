@@ -39,26 +39,37 @@ import common.content.City; // NEW - Fixes "Cannot resolve symbol 'City'"
  */
 public class CatalogPageController {
 
-    @FXML private ComboBox<String> cbCity;
-    @FXML private ComboBox<String> cbMap;
+    @FXML
+    private ComboBox<String> cbCity;
+    @FXML
+    private ComboBox<String> cbMap;
 
-    @FXML private ScrollPane scrollPaneCities;
-    @FXML private FlowPane flowPaneCities;
+    @FXML
+    private ScrollPane scrollPaneCities;
+    @FXML
+    private FlowPane flowPaneCities;
 
     // Search components
-    @FXML private TextField txtSearch;
-    @FXML private Button btnSearch;
-    @FXML private Button btnClearSearch;
+    @FXML
+    private TextField txtSearch;
+    @FXML
+    private Button btnSearch;
+    @FXML
+    private Button btnClearSearch;
 
-    @FXML private Button btnUpdateMap;
-    @FXML private Button btnAddMap;
-    @FXML private Button btnDeleteMap;
-    @FXML private Button btnPriceUpdate;
-    @FXML private Button btnApprovals;
-    @FXML private Button btnCreateCity;
-    @FXML private Button btnEditCity;
-    @FXML private Button btnCreateTour;
-    @FXML private Button btnEditTour;
+
+    @FXML
+    private Button btnPriceUpdate;
+    @FXML
+    private Button btnApprovals;
+    @FXML
+    private Button btnCreateCity;
+    @FXML
+    private Button btnEditCity;
+    @FXML
+    private Button btnCreateTour;
+    @FXML
+    private Button btnEditTour;
 
     private final GCMClient client = GCMClient.getInstance();
     private CatalogResponse lastCatalogResponse;     // Cache the last response for filter cascading
@@ -109,21 +120,21 @@ public class CatalogPageController {
 
             for (GCMMap gcmMap : maps) {
                 City city = gcmMap.getCity();
-                if (city != null && !displayedCityIds.contains(city.getId())){
+                if (city != null && !displayedCityIds.contains(city.getId())) {
                     try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityCard.fxml"));
-                    Parent card = loader.load();
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityCard.fxml"));
+                        Parent card = loader.load();
 
-                    CityCardController controller = loader.getController();
-                    controller.setData(gcmMap, this); // Injecting map and city data
+                        CityCardController controller = loader.getController();
+                        controller.setData(gcmMap, this); // Injecting map and city data
 
-                    flowPaneCities.getChildren().add(card);
-                    displayedCityIds.add(city.getId());
-                } catch (Exception e) {
-                    System.err.println("Error loading city card: " + e.getMessage());
-                    e.printStackTrace();
+                        flowPaneCities.getChildren().add(card);
+                        displayedCityIds.add(city.getId());
+                    } catch (Exception e) {
+                        System.err.println("Error loading city card: " + e.getMessage());
+                        e.printStackTrace();
+                    }
                 }
-            }
             }
         });
     }
@@ -175,39 +186,39 @@ public class CatalogPageController {
             return;
         }
 
-            if (response.getAction() == ActionType.GET_CATALOG_RESPONSE) {
-                CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
-                this.lastCatalogResponse = catalogResponse;
+        if (response.getAction() == ActionType.GET_CATALOG_RESPONSE) {
+            CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
+            this.lastCatalogResponse = catalogResponse;
 
-                // Check if this is a search response
-                if (catalogResponse.isSearchMode()) {
-                    updateCityCardsFromSearch(catalogResponse.getSearchResults());
-                    return;
+            // Check if this is a search response
+            if (catalogResponse.isSearchMode()) {
+                updateCityCardsFromSearch(catalogResponse.getSearchResults());
+                return;
+            }
+
+            // Regular catalog mode - Using updateCityCards instead of TableView.setItems
+            updateCityCards(catalogResponse.getMaps());
+
+            // Set flag to prevent listener recursion
+            isUpdatingComboBoxes = true;
+            try {
+                // Update city dropdown (only on first load or if empty)
+                if (cbCity.getItems().isEmpty() && !catalogResponse.getAvailableCities().isEmpty()) {
+                    List<String> cities = new ArrayList<>();
+                    cities.add("");  // Empty option for "All"
+                    cities.addAll(catalogResponse.getAvailableCities());
+                    cbCity.setItems(FXCollections.observableArrayList(cities));
                 }
 
-                // Regular catalog mode - Using updateCityCards instead of TableView.setItems
-                updateCityCards(catalogResponse.getMaps());
-
-                // Set flag to prevent listener recursion
-                isUpdatingComboBoxes = true;
-                try {
-                    // Update city dropdown (only on first load or if empty)
-                    if (cbCity.getItems().isEmpty() && !catalogResponse.getAvailableCities().isEmpty()) {
-                        List<String> cities = new ArrayList<>();
-                        cities.add("");  // Empty option for "All"
-                        cities.addAll(catalogResponse.getAvailableCities());
-                        cbCity.setItems(FXCollections.observableArrayList(cities));
-                    }
-
-                    // Update map dropdown if available
-                    if (!catalogResponse.getAvailableMapNames().isEmpty()) {
-                        updateMapComboBoxFromResponse(catalogResponse.getAvailableMapNames());
-                    }
-                } finally {
-                    isUpdatingComboBoxes = false;
+                // Update map dropdown if available
+                if (!catalogResponse.getAvailableMapNames().isEmpty()) {
+                    updateMapComboBoxFromResponse(catalogResponse.getAvailableMapNames());
                 }
+            } finally {
+                isUpdatingComboBoxes = false;
             }
         }
+    }
 
     /**
      * Update city cards from search results.
@@ -240,7 +251,10 @@ public class CatalogPageController {
         });
     }
 
-    public CatalogResponse getLastCatalogResponse() {return this.lastCatalogResponse;}
+    public CatalogResponse getLastCatalogResponse() {
+        return this.lastCatalogResponse;
+    }
+
     /**
      * Update map combo box based on selected city.
      */
@@ -265,7 +279,7 @@ public class CatalogPageController {
 
     /**
      * Apply visibility/permissions based on user role.
-     *
+     * <p>
      * Role permissions:
      * - Content Worker: Add/Edit/Delete (creates pending requests), NO price updates, NO approvals
      * - Content Manager: Add/Edit/Delete + Price Updates + Content Approvals
@@ -274,28 +288,47 @@ public class CatalogPageController {
     private void applyRolePermissions() {
         User user = client.getCurrentUser();
 
-        // Hide all management buttons by default
-        setManagementButtonsVisible(false);
-        btnApprovals.setVisible(false);
+        setButtonState(btnEditCity, false);
+        setButtonState(btnPriceUpdate, false);
+        setButtonState(btnApprovals, false);
 
-        if (user == null) {
-            return;  // Guest - no management buttons
+        setManagementButtonsVisible(false);
+
+        if (user == null || !(user instanceof Employee)) {
+            return;
         }
 
-        if (user instanceof Employee employee) {
+        Employee employee = (Employee) user;
+        EmployeeRole role = employee.getRole();
+
+        if (role != null) {
+            switch (role) {
+                case CONTENT_WORKER:
+                    setButtonState(btnEditCity, true);
+                    break;
+
+                case CONTENT_MANAGER:
+                    setButtonState(btnEditCity, true);
+                    setButtonState(btnPriceUpdate, true);
+                    setButtonState(btnApprovals, true);
+                    break;
+
+                case COMPANY_MANAGER:
+                    setButtonState(btnApprovals, true);
+                    break;
+            }
+        }
+    }
+
+     /*   if (user instanceof Employee employee) {
             EmployeeRole role = employee.getRole();
             if (role != null) {
                 switch (role) {
                     case CONTENT_WORKER:
                         // Can add/edit/delete content (as pending requests)
                         // CANNOT approve or change prices
-                        btnAddMap.setVisible(true);
-                        btnUpdateMap.setVisible(true);
-                        btnDeleteMap.setVisible(true);
-                        btnCreateCity.setVisible(true);
+
                         btnEditCity.setVisible(true);
-                        btnCreateTour.setVisible(true);
-                        btnEditTour.setVisible(true);
                         btnPriceUpdate.setVisible(false);
                         btnApprovals.setVisible(false);
                         break;
@@ -303,23 +336,16 @@ public class CatalogPageController {
                     case CONTENT_MANAGER:
                         // Can do everything a worker does
                         // PLUS: approve content, request price changes
-                        btnAddMap.setVisible(true);
-                        btnUpdateMap.setVisible(true);
-                        btnDeleteMap.setVisible(true);
+
                         btnPriceUpdate.setVisible(true);
-                        btnCreateCity.setVisible(true);
                         btnEditCity.setVisible(true);
-                        btnCreateTour.setVisible(true);
-                        btnEditTour.setVisible(true);
                         btnApprovals.setVisible(true);  // Shows content approvals
                         break;
 
                     case COMPANY_MANAGER:
                         // CANNOT edit content
                         // ONLY approves price changes
-                        btnAddMap.setVisible(false);
-                        btnUpdateMap.setVisible(false);
-                        btnDeleteMap.setVisible(false);
+
                         btnPriceUpdate.setVisible(false);
                         btnApprovals.setVisible(true);  // Shows price approvals only
                         break;
@@ -328,11 +354,17 @@ public class CatalogPageController {
                         break;
                 }
             }
-        }
-    }
+        }*/
+
 
     // ==================== SEARCH HANDLERS ====================
+    private void setButtonState(Button btn, boolean visible) {
 
+        if (btn != null) {
+            btn.setVisible(visible);
+            btn.setManaged(visible);
+        }
+    }
     @FXML
     private void onSearch() {
         String searchText = txtSearch.getText();
@@ -568,15 +600,8 @@ public class CatalogPageController {
      * Helper to hide/show all management buttons at once.
      */
     private void setManagementButtonsVisible(boolean visible) {
-        btnAddMap.setVisible(visible);
-        btnUpdateMap.setVisible(visible);
-        btnDeleteMap.setVisible(visible);
-        btnPriceUpdate.setVisible(visible);
-        btnCreateTour.setVisible(visible);
-        btnCreateCity.setVisible(visible);
-        btnEditCity.setVisible(visible);
-        btnEditTour.setVisible(visible);
-
+        setButtonState(btnPriceUpdate, visible);
+        setButtonState(btnEditCity, visible);
     }
 
     private void openMapUpdateWindow(String mode, GCMMap selected) {
