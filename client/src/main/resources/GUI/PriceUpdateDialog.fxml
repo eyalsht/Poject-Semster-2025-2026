@@ -23,10 +23,10 @@
     </VBox>
 
     <!-- Subscription Price -->
-    <VBox spacing="5">
+    <HBox spacing="10" alignment="CENTER_LEFT">
         <Label fx:id="lblSubscriptionPrice" text="Subscription Price:" style="-fx-font-weight: bold;" visible="false"/>
-        <TextField fx:id="tfSubscriptionPrice" promptText="Subscription price" visible="false"/>
-    </VBox>
+        <TextField fx:id="tfSubscriptionPrice" promptText="Subscription price" visible="false" prefWidth="120" maxWidth="120"/>
+    </HBox>
 
     <!-- Map Prices Section -->
     <Label text="Map Prices:" style="-fx-font-weight: bold;"/>

@@ -109,6 +109,9 @@ public enum ActionType {
     REPLY_SUPPORT_TICKET,
     LIST_CLIENT_SUPPORT_REPLIES,
     MARK_SUPPORT_REPLY_READ,
+    // ==================== NOTIFICATIONS ====================
+    CATALOG_UPDATED_NOTIFICATION,
+
     // ==================== GENERIC ====================
     ERROR
 }

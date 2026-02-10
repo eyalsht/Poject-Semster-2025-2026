@@ -18,11 +18,18 @@ import server.ocsf.ConnectionToClient;
  */
 public class GcmServer extends AbstractServer {
 
+    private static GcmServer instance;
+
     private final HandlerRegistry handlerRegistry;
 
     public GcmServer(int port) {
         super(port);
         this.handlerRegistry = HandlerRegistry.getInstance();
+        instance = this;
+    }
+
+    public static GcmServer getInstance() {
+        return instance;
     }
 
     @Override

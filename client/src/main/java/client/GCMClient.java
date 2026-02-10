@@ -1,10 +1,14 @@
 package client;
 
+import common.enums.ActionType;
 import common.messaging.Message;
 import common.user.User;
 import oscf.AbstractClient;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 /**
  * Singleton client for communication with the GCM server.
@@ -21,6 +25,9 @@ public class GCMClient extends AbstractClient {
 
     // Current logged-in user
     private volatile User currentUser;
+
+    // Notification listeners for server-pushed messages
+    private final List<Consumer<Message>> notificationListeners = new CopyOnWriteArrayList<>();
 
     // ==================== SINGLETON PATTERN ====================
 
@@ -88,6 +95,17 @@ public class GCMClient extends AbstractClient {
     @Override
     protected void handleMessageFromServer(Object msg) {
         System.out.println("GCMClient received: " + msg);
+
+        // Check if this is a server-pushed notification (not a response to a request)
+        if (msg instanceof Message message) {
+            ActionType action = message.getAction();
+            if (action == ActionType.CATALOG_UPDATED_NOTIFICATION) {
+                for (Consumer<Message> listener : notificationListeners) {
+                    listener.accept(message);
+                }
+                return;
+            }
+        }
 
         synchronized (this) {
             this.lastResponse = msg;
@@ -188,6 +206,16 @@ public class GCMClient extends AbstractClient {
      */
     public boolean isLoggedIn() {
         return currentUser != null;
+    }
+
+    // ==================== NOTIFICATION LISTENERS ====================
+
+    public void addNotificationListener(Consumer<Message> listener) {
+        notificationListeners.add(listener);
+    }
+
+    public void removeNotificationListener(Consumer<Message> listener) {
+        notificationListeners.remove(listener);
     }
 
     // ==================== LIFECYCLE ====================
