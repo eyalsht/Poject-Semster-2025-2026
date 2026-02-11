@@ -15,24 +15,26 @@ public class SupportTicketRowDTO implements Serializable {
     private final LocalDateTime createdAt;
     private final LocalDateTime repliedAt;
     private final boolean readByClient;
-    private final String preview;
 
-    // NEW fields
+    private final String preview;
+    private final String clientText;
+
     private final String agentName;
     private final String agentReply;
 
-    // OLD constructor (keep it!)
+
     public SupportTicketRowDTO(int ticketId, String clientUsername, String topic,
                                SupportTicketStatus status, LocalDateTime createdAt,
                                LocalDateTime repliedAt, boolean readByClient, String preview) {
-        this(ticketId, clientUsername, topic, status, createdAt, repliedAt, readByClient, preview,
-                "Support", null);
+        this(ticketId, clientUsername, topic, status, createdAt, repliedAt, readByClient,
+                preview, null, "Support", null);
     }
 
     // NEW constructor
     public SupportTicketRowDTO(int ticketId, String clientUsername, String topic,
                                SupportTicketStatus status, LocalDateTime createdAt,
-                               LocalDateTime repliedAt, boolean readByClient, String preview,
+                               LocalDateTime repliedAt, boolean readByClient,
+                               String preview, String clientText,
                                String agentName, String agentReply) {
         this.ticketId = ticketId;
         this.clientUsername = clientUsername;
@@ -42,6 +44,7 @@ public class SupportTicketRowDTO implements Serializable {
         this.repliedAt = repliedAt;
         this.readByClient = readByClient;
         this.preview = preview;
+        this.clientText = clientText;
         this.agentName = agentName;
         this.agentReply = agentReply;
     }
@@ -53,7 +56,9 @@ public class SupportTicketRowDTO implements Serializable {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getRepliedAt() { return repliedAt; }
     public boolean isReadByClient() { return readByClient; }
+
     public String getPreview() { return preview; }
+    public String getClientText() { return clientText; }
 
     public String getAgentName() { return agentName; }
     public String getAgentReply() { return agentReply; }

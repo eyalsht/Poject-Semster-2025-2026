@@ -107,7 +107,10 @@ public class SupportTasksPageController {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Ticket #" + row.getTicketId());
 
-        TextArea clientText = new TextArea(row.getPreview());
+        String full = row.getClientText();
+        if (full == null || full.isBlank()) full = row.getPreview(); // fallback
+        TextArea clientText = new TextArea(full);
+
         clientText.setEditable(false);
         clientText.setWrapText(true);
 

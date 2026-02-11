@@ -1,12 +1,15 @@
 package server.support;
 
-import common.support.*;
+import common.enums.SupportTicketStatus;
+import common.support.CreateSupportTicketRequest;
+import common.support.ReplySupportTicketRequest;
+import common.support.SupportTicket;
+import common.support.SupportTicketRowDTO;
 import common.user.Employee;
 import common.user.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import server.HibernateUtil;
-import common.enums.SupportTicketStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -117,10 +120,12 @@ public class SupportTicketService {
 
     private static SupportTicketRowDTO toRowDTO(SupportTicket t) {
 
-        // preview (client message preview - used in agent Tasks table)
-        String preview = t.getClientText();
-        if (preview == null) preview = "";
-        preview = preview.replace("\n", " ");
+        // FULL client message (used in agent reply window + client "open message" window)
+        String fullClientText = t.getClientText();
+        if (fullClientText == null) fullClientText = "";
+
+        // PREVIEW (used in tables)
+        String preview = fullClientText.replace("\n", " ");
         if (preview.length() > 60) preview = preview.substring(0, 60) + "...";
 
         String username = (t.getClient() != null ? t.getClient().getUsername() : "unknown");
@@ -129,13 +134,16 @@ public class SupportTicketService {
         String agentName = "Support";
         if (t.getAgent() != null) {
             String first = t.getAgent().getFirstName();
-            String last  = t.getAgent().getLastName();
+            String last = t.getAgent().getLastName();
             String full = ((first != null ? first : "") + " " + (last != null ? last : "")).trim();
             agentName = full.isBlank() ? t.getAgent().getUsername() : full;
         }
 
         String agentReply = t.getAgentReply();
 
+        // ✅ IMPORTANT:
+        // This assumes you updated SupportTicketRowDTO to include `clientText` (full message)
+        // constructor: (..., preview, clientText, agentName, agentReply)
         return new SupportTicketRowDTO(
                 t.getId(),
                 username,
@@ -145,10 +153,9 @@ public class SupportTicketService {
                 t.getRepliedAt(),
                 t.isReadByClient(),
                 preview,
+                fullClientText,   // ✅ full message sent to client/agent
                 agentName,
                 agentReply
         );
     }
-
-
 }

@@ -251,7 +251,10 @@ public class ProfilePageController {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Ticket #" + row.getTicketId());
 
-        String from = row.getAgentName() == null ? "Support" : row.getAgentName();
+        String from = (row.getAgentName() == null || row.getAgentName().isBlank())
+                ? "Support"
+                : row.getAgentName();
+
         String subject = "Ticket #" + row.getTicketId() + " - " + row.getTopic();
 
         Label lbl1 = new Label("From: " + from);
@@ -260,28 +263,41 @@ public class ProfilePageController {
         String dateStr = (row.getRepliedAt() == null ? "" : dtf.format(row.getRepliedAt()));
         Label lbl3 = new Label("Date: " + dateStr);
 
-        TextArea body = new TextArea();
-        body.setEditable(false);
-        body.setWrapText(true);
+        // --- Client message (FULL) ---
+        TextArea clientBody = new TextArea();
+        clientBody.setEditable(false);
+        clientBody.setWrapText(true);
 
-        String text = row.getAgentReply();
-        if (text == null || text.isBlank()) {
-            text = "(No reply yet)";
+        String clientText = row.getClientText();
+        if (clientText == null || clientText.isBlank()) {
+            clientText = "(No client message)";
         }
-        body.setText(text);
+        clientBody.setText(clientText);
+        clientBody.setPrefRowCount(8);
 
-        body.setPrefRowCount(12);
+        // --- Agent reply ---
+        TextArea agentBody = new TextArea();
+        agentBody.setEditable(false);
+        agentBody.setWrapText(true);
+
+        String replyText = row.getAgentReply();
+        if (replyText == null || replyText.isBlank()) {
+            replyText = "(No reply yet)";
+        }
+        agentBody.setText(replyText);
+        agentBody.setPrefRowCount(8);
 
         VBox box = new VBox(10,
                 lbl1,
                 lbl2,
                 lbl3,
-                new Label("Message:"),
-                body
+                new Label("Your message:"),
+                clientBody,
+                new Label("Support reply:"),
+                agentBody
         );
 
         dialog.getDialogPane().setContent(box);
-
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
         dialog.showAndWait();
 
@@ -290,6 +306,7 @@ public class ProfilePageController {
             markRead(row.getTicketId());
         }
     }
+
 
     private void markRead(int ticketId) {
         runAsync(
