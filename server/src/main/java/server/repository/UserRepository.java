@@ -4,6 +4,7 @@ import common.purchase.PaymentDetails;
 import common.user.Client;
 import common.user.User;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -125,6 +126,29 @@ public class UserRepository extends BaseRepository<User, Integer> {
         return executeQuery(session ->
             Optional.ofNullable(session.get(Client.class, id))
         );
+    }
+
+    /**
+     * Load PaymentDetails directly via HQL, bypassing @Embedded loading issues
+     * with JOINED inheritance.
+     */
+    public PaymentDetails loadPaymentDetails(int userId) {
+        return executeQuery(session -> {
+            List<Object[]> rows = session.createQuery(
+                "SELECT c.paymentDetails.creditCardNumber, c.paymentDetails.cvv, " +
+                "c.paymentDetails.expiryMonth, c.paymentDetails.expiryYear " +
+                "FROM Client c WHERE c.id = :id", Object[].class)
+                .setParameter("id", userId)
+                .getResultList();
+            if (rows.isEmpty()) return null;
+            Object[] row = rows.get(0);
+            String card = (String) row[0];
+            String cvv = (String) row[1];
+            String month = (String) row[2];
+            String year = (String) row[3];
+            if (card == null && cvv == null && month == null && year == null) return null;
+            return new PaymentDetails(card, cvv, month, year);
+        });
     }
 
     /**

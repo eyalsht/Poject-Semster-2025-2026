@@ -81,23 +81,19 @@ public class PurchaseController {
 
             User user = optionalUser.get();
 
-            // Step 2: Validate payment using card details if user is a Client
+            // Step 2: Validate payment
             if (user instanceof Client) {
-                // Load Client specifically to ensure @Embedded PaymentDetails is
-                // fully initialised (JOINED inheritance + detached session can
-                // leave the embedded fields null when loaded via User.class).
-                Optional<Client> optClient = userRepository.findClientById(userId);
-                if (optClient.isEmpty()) {
-                    System.err.println("Purchase failed: Client not found with ID: " + userId);
-                    return false;
+                common.purchase.PaymentDetails pd = userRepository.loadPaymentDetails(userId);
+                System.out.println("[DEBUG] PaymentDetails for userId=" + userId + ": " + pd);
+                if (pd != null) {
+                    System.out.println("[DEBUG] card=" + pd.getCreditCardNumber()
+                        + " expiry=" + pd.getExpiryMonth() + "/" + pd.getExpiryYear());
                 }
-                Client client = optClient.get();
-                if (!paymentService.validate(client.getPaymentDetails())) {
+                if (!paymentService.validate(pd)) {
                     System.err.println("Purchase failed: Payment validation failed for UserID: " + userId);
                     return false;
                 }
             } else {
-                // Fallback to token validation for non-clients
                 if (!paymentService.validate(creditCardToken)) {
                     System.err.println("Purchase failed: Payment validation failed for UserID: " + userId);
                     return false;
