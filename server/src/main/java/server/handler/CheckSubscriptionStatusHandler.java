@@ -53,8 +53,6 @@ public class CheckSubscriptionStatusHandler implements RequestHandler {
                 new SubscriptionStatusDTO(active, expiry, cityName, cityId, pricePerMonth));
 
         } catch (Exception e) {
-            System.err.println("CheckSubscriptionStatusHandler failed: " + e.getMessage());
-            e.printStackTrace();
             return new Message(ActionType.CHECK_SUBSCRIPTION_STATUS_RESPONSE,
                 new SubscriptionStatusDTO(false, null, "Error", 0, 0));
         }

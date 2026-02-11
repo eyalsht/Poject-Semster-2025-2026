@@ -32,7 +32,6 @@ public class PurchaseHandler implements RequestHandler {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             return new Message(ActionType.PURCHASE_RESPONSE, "Server error: " + e.getMessage());
         }
     }

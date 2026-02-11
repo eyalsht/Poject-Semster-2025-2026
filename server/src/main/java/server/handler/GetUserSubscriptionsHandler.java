@@ -46,8 +46,6 @@ public class GetUserSubscriptionsHandler implements RequestHandler {
             return new Message(ActionType.GET_USER_SUBSCRIPTIONS_RESPONSE, result);
 
         } catch (Exception e) {
-            System.err.println("GetUserSubscriptionsHandler failed: " + e.getMessage());
-            e.printStackTrace();
             return new Message(ActionType.GET_USER_SUBSCRIPTIONS_RESPONSE, new ArrayList<>());
         }
     }

@@ -541,8 +541,8 @@ public class CityMapsPageController {
                     Platform.runLater(() -> {
                         if (status.isActive()) {
                             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                            btnSubscribe.setText("Subscribed (expires " + dtf.format(status.getExpirationDate()) + ")");
-                            btnSubscribe.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;");
+                            btnSubscribe.setText("Subscribed until " + dtf.format(status.getExpirationDate()));
+                            btnSubscribe.setStyle("-fx-background-color: white; -fx-text-fill: #27ae60; -fx-font-weight: bold; -fx-background-radius: 5; -fx-border-color: #27ae60; -fx-border-radius: 5; -fx-border-width: 2;");
                         } else {
                             btnSubscribe.setText(String.format("Subscribe ($%.2f/mo)", status.getPricePerMonth()));
                             btnSubscribe.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;");
