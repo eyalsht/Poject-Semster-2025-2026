@@ -63,13 +63,8 @@ public class CatalogPageController {
     @FXML
     private Button btnApprovals;
     @FXML
-    private Button btnCreateCity;
-    @FXML
     private Button btnEditCity;
-    @FXML
-    private Button btnCreateTour;
-    @FXML
-    private Button btnEditTour;
+
 
     private final GCMClient client = GCMClient.getInstance();
     private CatalogResponse lastCatalogResponse;     // Cache the last response for filter cascading

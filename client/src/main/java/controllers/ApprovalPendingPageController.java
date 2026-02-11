@@ -15,6 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -35,7 +36,8 @@ public class ApprovalPendingPageController {
     @FXML private Button btnApprove;
     @FXML private Button btnDeny;
     @FXML private Label lblStatus;
-    @FXML private Label lblTitle;  // Add a title label to the FXML
+    @FXML private Label lblTitle;
+    @FXML private Label lblSubtitle;
 
     private final GCMClient client = GCMClient.getInstance();
     private CatalogPageController catalogController;
@@ -62,10 +64,15 @@ public class ApprovalPendingPageController {
             isPriceApprovalMode = (currentUserRole == EmployeeRole.COMPANY_MANAGER);
         }
         
-        // Update title based on mode
+        // Update title and subtitle based on mode
         if (lblTitle != null) {
-            lblTitle.setText(isPriceApprovalMode ? 
+            lblTitle.setText(isPriceApprovalMode ?
                 "Pending Price Approvals" : "Pending Content Approvals");
+        }
+        if (lblSubtitle != null) {
+            lblSubtitle.setText(isPriceApprovalMode ?
+                "As Company Manager, review price change requests" :
+                "As Content Manager, review content change requests");
         }
     }
 
@@ -237,6 +244,13 @@ public class ApprovalPendingPageController {
     private void setStatus(String message) {
         if (lblStatus != null) {
             lblStatus.setText(message);
+            if (message.toLowerCase().contains("success")) {
+                lblStatus.setTextFill(Color.web("#4caf50"));
+            } else if (message.toLowerCase().contains("error") || message.toLowerCase().contains("failed")) {
+                lblStatus.setTextFill(Color.web("#ff6b6b"));
+            } else {
+                lblStatus.setTextFill(Color.WHITE);
+            }
         }
     }
 }
