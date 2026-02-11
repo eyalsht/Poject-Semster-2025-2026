@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="600.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MySubscriptionsPageController">
+    <children>
+        <VBox layoutX="30.0" layoutY="20.0" spacing="15.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="20.0">
+            <children>
+                <Label text="My Subscriptions" textFill="#ecf0f1" style="-fx-font-size: 22px; -fx-font-weight: bold;">
+                    <font>
+                        <Font name="System Bold" size="22.0" />
+                    </font>
+                </Label>
+
+                <Label fx:id="lblEmpty" text="No active subscriptions found." textFill="#95a5a6" visible="false" managed="false">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
+
+                <TableView fx:id="tblSubscriptions" prefHeight="450.0" prefWidth="980.0" style="-fx-background-color: transparent;">
+                    <columns>
+                        <TableColumn fx:id="colCity" prefWidth="200.0" text="City" />
+                        <TableColumn fx:id="colExpiry" prefWidth="180.0" text="Expiry Date" />
+                        <TableColumn fx:id="colStatus" prefWidth="150.0" text="Status" />
+                        <TableColumn fx:id="colPrice" prefWidth="150.0" text="Monthly Price" />
+                        <TableColumn fx:id="colAction" prefWidth="180.0" text="Actions" />
+                    </columns>
+                </TableView>
+
+                <Button fx:id="btnRefresh" onAction="#onRefresh" prefHeight="30.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Refresh" />
+            </children>
+            <padding>
+                <Insets bottom="20.0" />
+            </padding>
+        </VBox>
+    </children>
+</AnchorPane>
