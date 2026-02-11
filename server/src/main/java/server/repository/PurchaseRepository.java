@@ -37,45 +37,33 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
     /**
      * Log a new subscription purchase.
      */
-    public Subscription createSubscription(User user, City city, double price, int months)
+    public Subscription createSubscription(int userId, int cityId, double price, int months,
+                                              boolean isRenewal, LocalDate latestExpiration)
     {
         final Subscription subscription = new Subscription();
         // Use native SQL to avoid Hibernate detached entity / closed connection issues
-        // with JOINED inheritance on User
         executeInTransaction(session -> {
             LocalDate today = LocalDate.now();
-
-            // Find the latest expiration date of any subscription for this user+city
-            LocalDate latestExpiration = session.createQuery(
-                            "select max(s.expirationDate) " +
-                                    "from Subscription s " +
-                                    "where s.user.id = :userId and s.city.id = :cityId",
-                            LocalDate.class)
-                    .setParameter("userId", user.getId())
-                    .setParameter("cityId", city.getId())
-                    .getSingleResult();
-
-            boolean renewal = (latestExpiration != null && !latestExpiration.isBefore(today));
-            LocalDate base = (renewal ? latestExpiration : today);
+            LocalDate base = (isRenewal && latestExpiration != null) ? latestExpiration : today;
             LocalDate newExpiration = base.plusMonths(months);
 
             // Insert via native SQL to bypass entity proxy issues
             session.createNativeQuery(
                 "INSERT INTO purchases (purchase_type, user_id, city_id, price, purchase_date, expiration_date, is_renewal) " +
                 "VALUES ('SUBSCRIPTION', :userId, :cityId, :price, :purchaseDate, :expirationDate, :isRenewal)")
-                .setParameter("userId", user.getId())
-                .setParameter("cityId", city.getId())
+                .setParameter("userId", userId)
+                .setParameter("cityId", cityId)
                 .setParameter("price", price)
                 .setParameter("purchaseDate", today)
                 .setParameter("expirationDate", newExpiration)
-                .setParameter("isRenewal", renewal)
+                .setParameter("isRenewal", isRenewal)
                 .executeUpdate();
 
             // Populate the returned object for logging
             subscription.setPricePaid(price);
             subscription.setPurchaseDate(today);
             subscription.setExpirationDate(newExpiration);
-            subscription.setRenewal(renewal);
+            subscription.setRenewal(isRenewal);
         });
         return subscription;
     }
@@ -167,6 +155,20 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
                    .getResultList();
             return results.isEmpty() ? null : results.get(0);
         });
+    }
+
+    /**
+     * Find the latest expiration date for a user+city pair (lightweight, no entity loading).
+     */
+    public LocalDate findLatestExpirationDate(int userId, int cityId) {
+        return executeQuery(session ->
+            session.createQuery(
+                "SELECT MAX(s.expirationDate) FROM Subscription s WHERE s.user.id = :userId AND s.city.id = :cityId",
+                LocalDate.class)
+                .setParameter("userId", userId)
+                .setParameter("cityId", cityId)
+                .getSingleResult()
+        );
     }
 
     /**

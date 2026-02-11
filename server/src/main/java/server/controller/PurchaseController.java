@@ -158,9 +158,9 @@ public class PurchaseController {
     private String processSubscriptionPurchase(User user, City city, double monthlyPrice, int monthsToAdd) {
         try {
             // Check for existing active subscription (renewal detection)
-            Subscription existing = purchaseRepository.findLatestSubscription(user.getId(), city.getId());
-            boolean isRenewal = (existing != null && existing.getExpirationDate() != null
-                    && !existing.getExpirationDate().isBefore(LocalDate.now()));
+            // Use lightweight date query - returns just a LocalDate, no entity loading
+            LocalDate latestExpiration = purchaseRepository.findLatestExpirationDate(user.getId(), city.getId());
+            boolean isRenewal = (latestExpiration != null && !latestExpiration.isBefore(LocalDate.now()));
 
             // Calculate total price with discounts
             double totalPrice = monthlyPrice * monthsToAdd;
@@ -182,8 +182,9 @@ public class PurchaseController {
             double totalDiscount = durationDiscount + renewalDiscount;
             totalPrice = totalPrice * (1 - totalDiscount);
 
-            // Create subscription record
-            Subscription subscription = purchaseRepository.createSubscription(user, city, totalPrice, monthsToAdd);
+            // Create subscription record - pass IDs only, no entity objects
+            Subscription subscription = purchaseRepository.createSubscription(
+                user.getId(), city.getId(), totalPrice, monthsToAdd, isRenewal, latestExpiration);
 
             System.out.println("Subscription purchase completed for UserID: " + user.getId() +
                 ", City: " + city.getName() +
