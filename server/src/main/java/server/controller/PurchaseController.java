@@ -1,6 +1,5 @@
 package server.controller;
 
-import common.content.City;
 import common.content.GCMMap;
 import common.purchase.PurchasedMapSnapshot;
 import common.purchase.Subscription;
@@ -105,24 +104,21 @@ public class PurchaseController {
                     return "City ID is required for SUBSCRIPTION purchase";
                 }
 
-                Optional<City> optionalCity;
-                try {
-                    optionalCity = cityRepository.findById(cityId);
-                } catch (Exception e) {
-                    return "FAILED at cityRepository.findById: " + e.getClass().getSimpleName() + ": " + e.getMessage();
-                }
-                if (optionalCity.isEmpty()) {
+                // Use lightweight query to avoid loading the full City entity graph
+                // (City eagerly loads all maps, sites, tours which corrupts the connection pool)
+                Object[] cityData = cityRepository.findNameAndPrice(cityId);
+                if (cityData == null) {
                     return "City not found with ID: " + cityId;
                 }
 
-                City city = optionalCity.get();
-                double monthlyPrice = city.getPriceSub();
+                String cityName = (String) cityData[0];
+                double monthlyPrice = ((Number) cityData[1]).doubleValue();
 
                 if (monthlyPrice <= 0) {
-                    return "Invalid subscription price for city: " + city.getName() + " (price=" + monthlyPrice + ")";
+                    return "Invalid subscription price for city: " + cityName + " (price=" + monthlyPrice + ")";
                 }
 
-                return processSubscriptionPurchase(user, city, monthlyPrice, monthsToAdd);
+                return processSubscriptionPurchase(userId, cityId, cityName, monthlyPrice, monthsToAdd);
 
             } else if (PURCHASE_TYPE_ONE_TIME.equals(purchaseType)) {
                 // One-time purchases are for maps only - no city required
@@ -159,15 +155,16 @@ public class PurchaseController {
      * Process a subscription purchase with renewal and duration discounts.
      * @return null on success, error reason on failure
      */
-    private String processSubscriptionPurchase(User user, City city, double monthlyPrice, int monthsToAdd) {
+    private String processSubscriptionPurchase(int userId, int cityId, String cityName,
+                                                  double monthlyPrice, int monthsToAdd) {
         try {
             // Everything (renewal check, discount calc, insert) happens in a single
             // transaction inside createSubscription to avoid connection pool issues
             Subscription subscription = purchaseRepository.createSubscription(
-                user.getId(), city.getId(), monthlyPrice, monthsToAdd);
+                userId, cityId, monthlyPrice, monthsToAdd);
 
-            System.out.println("Subscription purchase completed for UserID: " + user.getId() +
-                ", City: " + city.getName() +
+            System.out.println("Subscription purchase completed for UserID: " + userId +
+                ", City: " + cityName +
                 ", Months: " + monthsToAdd +
                 ", Price: $" + String.format("%.2f", subscription.getPricePaid()) +
                 ", Expires: " + subscription.getExpirationDate());

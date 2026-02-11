@@ -118,6 +118,21 @@ public class CityRepository extends BaseRepository<City, Integer> {
     }
 
     /**
+     * Lightweight query to get city name and subscription price without loading
+     * the full entity graph (maps, sites, tours).
+     * Returns Object[] {name (String), priceSub (Double)} or null if not found.
+     */
+    public Object[] findNameAndPrice(int cityId) {
+        return executeQuery(session -> {
+            Object[] result = (Object[]) session.createNativeQuery(
+                "SELECT name, price_sub FROM cities WHERE id = :id")
+                .setParameter("id", cityId)
+                .getSingleResultOrNull();
+            return result;
+        });
+    }
+
+    /**
      * Get map descriptions for a given city.
      */
     public List<String> getMapDescriptionsForCity(int cityId) {
