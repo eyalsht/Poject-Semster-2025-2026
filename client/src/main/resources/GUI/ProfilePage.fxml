@@ -48,6 +48,7 @@
                <font>
                   <Font name="System Bold" size="12.0" />
                </font></Label>
+            <Button fx:id="btnChangePayment" managed="false" mnemonicParsing="false" onAction="#onChangePayment" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5;" text="Change" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
 
             <Label text="Inbox:" textFill="#388e3c" GridPane.columnIndex="0" GridPane.rowIndex="3">
                <font>
@@ -80,7 +81,7 @@
       </GridPane>
 
       <!-- Inbox table -->
-      <Label layoutX="140.0" layoutY="280.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Inbox messages:" />
+      <Label layoutX="140.0" layoutY="280.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Inbox messages:" textFill="#a0b0a0" />
 
       <TableView fx:id="tblInbox" layoutX="140.0" layoutY="310.0" prefHeight="330.0" prefWidth="720.0">
 

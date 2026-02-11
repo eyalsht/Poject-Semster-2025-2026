@@ -2,7 +2,7 @@ package server.handler;
 
 import common.enums.ActionType;
 import common.messaging.Message;
-import server.PurchaseController;
+import server.controller.PurchaseController;
 
 import java.util.ArrayList;
 

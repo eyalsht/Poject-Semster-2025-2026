@@ -127,4 +127,16 @@ public class UserRepository extends BaseRepository<User, Integer> {
         );
     }
 
+    /**
+     * Update client's payment details.
+     */
+    public void updatePaymentDetails(int userId, PaymentDetails newPayment) {
+        executeInTransaction(session -> {
+            Client client = session.get(Client.class, userId);
+            if (client != null) {
+                client.setPaymentDetails(newPayment);
+            }
+        });
+    }
+
 }

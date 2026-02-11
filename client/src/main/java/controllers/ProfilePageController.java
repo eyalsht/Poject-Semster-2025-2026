@@ -32,6 +32,7 @@ public class ProfilePageController {
     @FXML private Label lblInbox;
     @FXML private Label lblHistory;
     @FXML private Button btnOpenInbox;
+    @FXML private Button btnChangePayment;
 
     // NEW inbox table
     @FXML private TableView<SupportTicketRowDTO> tblInbox;
@@ -111,6 +112,11 @@ public class ProfilePageController {
                 lblPayment.setText(masked + " (exp: " + expiry + ")");
             } else {
                 lblPayment.setText("Not set");
+            }
+
+            if (btnChangePayment != null) {
+                btnChangePayment.setVisible(true);
+                btnChangePayment.setManaged(true);
             }
 
             loadPurchaseSummary(user);
@@ -194,6 +200,43 @@ public class ProfilePageController {
                 },
                 null
         );
+    }
+
+    @FXML
+    private void onChangePayment() {
+        openPaymentUpdateDialog();
+    }
+
+    private void openPaymentUpdateDialog() {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/GUI/PaymentUpdateDialog.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            PaymentUpdateDialogController controller = loader.getController();
+
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("Update Payment Details");
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            // Refresh payment display if saved
+            if (controller.isSaved()) {
+                User user = GCMClient.getInstance().getCurrentUser();
+                if (user instanceof Client client) {
+                    PaymentDetails pd = client.getPaymentDetails();
+                    if (pd != null && pd.getCreditCardNumber() != null && !pd.getCreditCardNumber().isBlank()) {
+                        String card = pd.getCreditCardNumber();
+                        String masked = "**** **** **** " + card.substring(Math.max(0, card.length() - 4));
+                        String expiry = (pd.getExpiryMonth() != null ? pd.getExpiryMonth() : "??")
+                                + "/" + (pd.getExpiryYear() != null ? pd.getExpiryYear() : "??");
+                        lblPayment.setText(masked + " (exp: " + expiry + ")");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
