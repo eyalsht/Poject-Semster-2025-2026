@@ -176,6 +176,13 @@ public class PurchaseConfirmationDialogController {
                     && response.getAction() == ActionType.PURCHASE_RESPONSE
                     && Boolean.TRUE.equals(response.getMessage());
 
+                // Extract error reason if present
+                String errorReason = null;
+                if (!success && response != null && response.getMessage() instanceof String) {
+                    errorReason = (String) response.getMessage();
+                }
+                final String displayError = errorReason;
+
                 Platform.runLater(() -> {
                     progressBar.setVisible(false);
                     progressBar.setManaged(false);
@@ -188,7 +195,10 @@ public class PurchaseConfirmationDialogController {
                         btnConfirm.setManaged(false);
                         btnCancel.setText("Close");
                     } else {
-                        lblStatus.setText("Payment failed. Update your payment details or try again.");
+                        String msg = displayError != null
+                            ? "Purchase failed: " + displayError
+                            : "Purchase failed. Please try again.";
+                        lblStatus.setText(msg);
                         lblStatus.setTextFill(javafx.scene.paint.Color.web("#e74c3c"));
                         btnConfirm.setDisable(false);
                         btnConfirm.setText("Retry");

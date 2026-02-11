@@ -20,15 +20,20 @@ public class PurchaseHandler implements RequestHandler {
             String creditCardToken = (String) data.get(4);
             int monthsToAdd = (Integer) data.get(5);
 
-            boolean success = PurchaseController.getInstance().processPurchase(
+            String error = PurchaseController.getInstance().processPurchase(
                 userId, cityId, mapId, purchaseType, creditCardToken, monthsToAdd
             );
 
-            return new Message(ActionType.PURCHASE_RESPONSE, success);
+            // null = success (send true), non-null = error reason string
+            if (error == null) {
+                return new Message(ActionType.PURCHASE_RESPONSE, true);
+            } else {
+                return new Message(ActionType.PURCHASE_RESPONSE, error);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new Message(ActionType.PURCHASE_RESPONSE, false);
+            return new Message(ActionType.PURCHASE_RESPONSE, "Server error: " + e.getMessage());
         }
     }
 }
