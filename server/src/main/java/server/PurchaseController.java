@@ -2,6 +2,7 @@ package server;
 
 import common.content.City;
 import common.content.GCMMap;
+import common.purchase.PurchasedMapSnapshot;
 import common.purchase.Subscription;
 import common.user.Client;
 import common.user.User;
@@ -53,7 +54,7 @@ public class PurchaseController {
 
     /**
      * Process a purchase request.
-     * 
+     *
      * @param userId          The ID of the user making the purchase
      * @param cityId          The ID of the city (required for subscription, optional for one-time)
      * @param mapId           The ID of the map (required for one-time purchase)
@@ -64,7 +65,7 @@ public class PurchaseController {
      */
     public boolean processPurchase(int userId, Integer cityId, Integer mapId, String purchaseType,
                                    String creditCardToken, int monthsToAdd) {
-    
+
         System.out.println("Processing " + purchaseType + " purchase for UserID: " + userId +
             ", CityID: " + cityId + ", MapID: " + mapId);
 
@@ -79,9 +80,21 @@ public class PurchaseController {
 
             User user = optionalUser.get();
 
-            // Step 2: Handle based on purchase type
-            double price;
+            // Step 2: Validate payment using card details if user is a Client
+            if (user instanceof Client client) {
+                if (!paymentService.validate(client.getPaymentDetails())) {
+                    System.err.println("Purchase failed: Payment validation failed for UserID: " + userId);
+                    return false;
+                }
+            } else {
+                // Fallback to token validation for non-clients
+                if (!paymentService.validate(creditCardToken)) {
+                    System.err.println("Purchase failed: Payment validation failed for UserID: " + userId);
+                    return false;
+                }
+            }
 
+            // Step 3: Handle based on purchase type
             if (PURCHASE_TYPE_SUBSCRIPTION.equals(purchaseType)) {
                 // Subscriptions require a city
                 if (cityId == null) {
@@ -96,20 +109,14 @@ public class PurchaseController {
                 }
 
                 City city = optionalCity.get();
-                price = city.getPriceSub();
-                
-                if (price <= 0) {
+                double monthlyPrice = city.getPriceSub();
+
+                if (monthlyPrice <= 0) {
                     System.err.println("Purchase failed: Invalid subscription price for city: " + city.getName());
                     return false;
                 }
 
-                // Validate payment
-                if (!paymentService.validate(creditCardToken)) {
-                    System.err.println("Purchase failed: Payment validation failed for UserID: " + userId);
-                    return false;
-                }
-
-                return processSubscriptionPurchase(user, city, price, monthsToAdd);
+                return processSubscriptionPurchase(user, city, monthlyPrice, monthsToAdd);
 
             } else if (PURCHASE_TYPE_ONE_TIME.equals(purchaseType)) {
                 // One-time purchases are for maps only - no city required
@@ -125,16 +132,10 @@ public class PurchaseController {
                 }
 
                 GCMMap map = optionalMap.get();
-                price = map.getPrice();
+                double price = map.getPrice();
 
                 if (price <= 0) {
                     System.err.println("Purchase failed: Invalid price for map: " + map.getName());
-                    return false;
-                }
-
-                // Validate payment
-                if (!paymentService.validate(creditCardToken)) {
-                    System.err.println("Purchase failed: Payment validation failed for UserID: " + userId);
                     return false;
                 }
 
@@ -153,22 +154,45 @@ public class PurchaseController {
     }
 
     /**
-     * Process a subscription purchase.
+     * Process a subscription purchase with renewal and duration discounts.
      */
-    private boolean processSubscriptionPurchase(User user, City city, double price, int monthsToAdd) {
+    private boolean processSubscriptionPurchase(User user, City city, double monthlyPrice, int monthsToAdd) {
         try {
-            // Create subscription record
-            Subscription subscription = purchaseRepository.createSubscription(user, city, price, monthsToAdd);
+            // Check for existing active subscription (renewal detection)
+            Subscription existing = purchaseRepository.findLatestSubscription(user.getId(), city.getId());
+            boolean isRenewal = (existing != null && existing.getExpirationDate() != null
+                    && !existing.getExpirationDate().isBefore(LocalDate.now()));
 
-            // Update user's subscription expiry (if user is a Client)
-            if (user instanceof Client client) {
-                LocalDate newExpiry = subscription.getExpirationDate();
-                userRepository.updateSubscriptionExpiry(user.getId(), newExpiry);
-                System.out.println("Subscription updated for UserID: " + user.getId() + 
-                    ". Expires: " + newExpiry);
+            // Calculate total price with discounts
+            double totalPrice = monthlyPrice * monthsToAdd;
+
+            // Duration discounts: 3mo=5%, 6mo=10%, 12mo=15%
+            double durationDiscount = 0;
+            if (monthsToAdd >= 12) {
+                durationDiscount = 0.15;
+            } else if (monthsToAdd >= 6) {
+                durationDiscount = 0.10;
+            } else if (monthsToAdd >= 3) {
+                durationDiscount = 0.05;
             }
 
-            System.out.println("Subscription purchase completed successfully for UserID: " + user.getId());
+            // Renewal discount: 10%
+            double renewalDiscount = isRenewal ? 0.10 : 0;
+
+            // Combine discounts (additive)
+            double totalDiscount = durationDiscount + renewalDiscount;
+            totalPrice = totalPrice * (1 - totalDiscount);
+
+            // Create subscription record
+            Subscription subscription = purchaseRepository.createSubscription(user, city, totalPrice, monthsToAdd);
+
+            System.out.println("Subscription purchase completed for UserID: " + user.getId() +
+                ", City: " + city.getName() +
+                ", Months: " + monthsToAdd +
+                ", Renewal: " + isRenewal +
+                ", Total discount: " + (totalDiscount * 100) + "%" +
+                ", Price: $" + String.format("%.2f", totalPrice) +
+                ", Expires: " + subscription.getExpirationDate());
             return true;
 
         } catch (Exception e) {
@@ -179,16 +203,33 @@ public class PurchaseController {
     }
 
     /**
-     * Process a one-time map purchase.
-     * Note: City parameter removed - maps are purchased directly, not through cities.
+     * Process a one-time map purchase with upgrade discount.
      */
     private boolean processOneTimePurchase(User user, GCMMap map, double price) {
         try {
+            // Check if user has a previous version (upgrade detection)
+            PurchasedMapSnapshot existingSnapshot = purchaseRepository.findPurchasedSnapshot(user.getId(), map.getId());
+
+            if (existingSnapshot != null) {
+                String existingVersion = existingSnapshot.getPurchasedVersion();
+                String currentVersion = map.getVersion();
+
+                if (currentVersion.equals(existingVersion)) {
+                    System.err.println("Purchase failed: User already owns this map version");
+                    return false;
+                }
+
+                // Apply 50% upgrade discount
+                price = price * 0.50;
+                System.out.println("Upgrade detected: applying 50% discount for map " + map.getName());
+            }
+
             // Create one-time purchase record (also creates snapshot for the user)
             purchaseRepository.createOneTimePurchase(user, map, price);
 
-            System.out.println("One-time purchase completed for UserID: " + user.getId() + 
-                ", MapID: " + map.getId() + ", Version: " + map.getVersion());
+            System.out.println("One-time purchase completed for UserID: " + user.getId() +
+                ", MapID: " + map.getId() + ", Version: " + map.getVersion() +
+                ", Price: $" + String.format("%.2f", price));
             return true;
 
         } catch (Exception e) {
@@ -198,4 +239,3 @@ public class PurchaseController {
         }
     }
 }
-

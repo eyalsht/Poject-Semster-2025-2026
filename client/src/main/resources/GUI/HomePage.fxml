@@ -71,6 +71,18 @@
                </VBox.margin>
             </Button>
 
+            <Button fx:id="btnMySubscriptions" managed="false" mnemonicParsing="false" onAction="#onMySubscriptions" prefHeight="30.0" prefWidth="150.0" text="Subscriptions" visible="false">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+
+            <Button fx:id="btnMyMaps" managed="false" mnemonicParsing="false" onAction="#onMyMaps" prefHeight="30.0" prefWidth="150.0" text="My Maps" visible="false">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+
             <Button fx:id="btnSupport" mnemonicParsing="false" onAction="#onSupport" prefHeight="30.0" prefWidth="150.0" text="Support">
                <VBox.margin>
                   <Insets left="5.0" right="5.0" top="10.0" />

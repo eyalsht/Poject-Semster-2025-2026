@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import common.enums.EmployeeRole;
+import common.user.Client;
 import common.user.Employee;
 
 public class HomePageController
@@ -29,6 +30,8 @@ public class HomePageController
     @FXML private Button btnReports;
     @FXML private ImageView imgHomePage;
     @FXML private Button btnSupport;
+    @FXML private Button btnMySubscriptions;
+    @FXML private Button btnMyMaps;
 
     private User currentUser = null;
 
@@ -65,6 +68,16 @@ public class HomePageController
         }
     }
 
+
+    @FXML
+    private void onMySubscriptions() {
+        showPage("/GUI/MySubscriptionsPage.fxml");
+    }
+
+    @FXML
+    private void onMyMaps() {
+        showPage("/GUI/MyMapsPage.fxml");
+    }
 
     @FXML
     private void onInfo() {
@@ -205,6 +218,15 @@ public class HomePageController
             default: // Support_Agent etc.
                 setEmployeeButtons(false, false, false);
         }*/
+
+        // Show subscription/maps buttons only for Client users
+        if (btnMySubscriptions != null && btnMyMaps != null) {
+            boolean isClient = (currentUser instanceof Client);
+            btnMySubscriptions.setVisible(isClient);
+            btnMySubscriptions.setManaged(isClient);
+            btnMyMaps.setVisible(isClient);
+            btnMyMaps.setManaged(isClient);
+        }
 
         if (btnSupport != null) {
             boolean isAgent = (currentUser instanceof Employee emp && emp.getRole() == EmployeeRole.SUPPORT_AGENT);

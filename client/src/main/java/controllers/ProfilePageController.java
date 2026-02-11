@@ -7,6 +7,10 @@ import common.support.ListClientSupportRepliesRequest;
 import common.support.ListClientSupportRepliesResponse;
 import common.support.MarkSupportReplyReadRequest;
 import common.support.SupportTicketRowDTO;
+import common.dto.SubscriptionStatusDTO;
+import common.purchase.PaymentDetails;
+import common.purchase.PurchasedMapSnapshot;
+import common.user.Client;
 import common.user.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -96,10 +100,64 @@ public class ProfilePageController {
         lblName.setText(fullName);
         lblEmail.setText(user.getEmail() != null ? user.getEmail() : user.getUsername());
 
-        lblPayment.setText("Not set");
-        lblHistory.setText("(coming soon)");
+        // Payment details
+        if (user instanceof Client client) {
+            PaymentDetails pd = client.getPaymentDetails();
+            if (pd != null && pd.getCreditCardNumber() != null && !pd.getCreditCardNumber().isBlank()) {
+                String card = pd.getCreditCardNumber();
+                String masked = "**** **** **** " + card.substring(Math.max(0, card.length() - 4));
+                String expiry = (pd.getExpiryMonth() != null ? pd.getExpiryMonth() : "??")
+                        + "/" + (pd.getExpiryYear() != null ? pd.getExpiryYear() : "??");
+                lblPayment.setText(masked + " (exp: " + expiry + ")");
+            } else {
+                lblPayment.setText("Not set");
+            }
+
+            loadPurchaseSummary(user);
+        } else {
+            lblPayment.setText("N/A");
+            lblHistory.setText("N/A");
+        }
 
         refreshInbox(user);
+    }
+
+    private void loadPurchaseSummary(User user) {
+        lblHistory.setText("Loading...");
+
+        // Fetch subscriptions count
+        runAsync(
+            () -> {
+                Message subReq = new Message(ActionType.GET_USER_SUBSCRIPTIONS_REQUEST, user.getId());
+                return GCMClient.getInstance().sendMessage(subReq);
+            },
+            (Message subResp) -> {
+                int subCount = 0;
+                if (subResp != null && subResp.getMessage() instanceof java.util.ArrayList<?> list) {
+                    subCount = list.size();
+                }
+                final int subs = subCount;
+
+                // Fetch purchased maps count
+                runAsync(
+                    () -> {
+                        Message mapReq = new Message(ActionType.GET_USER_PURCHASED_MAPS_REQUEST, user.getId());
+                        return GCMClient.getInstance().sendMessage(mapReq);
+                    },
+                    (Message mapResp) -> {
+                        int mapCount = 0;
+                        if (mapResp != null && mapResp.getMessage() instanceof java.util.ArrayList<?> list) {
+                            mapCount = list.size();
+                        }
+                        lblHistory.setText(subs + " active subscriptions, " + mapCount + " purchased maps");
+                    },
+                    (Throwable err) -> lblHistory.setText("Could not load"),
+                    null
+                );
+            },
+            (Throwable err) -> lblHistory.setText("Could not load"),
+            null
+        );
     }
 
     private void refreshInbox(User user) {

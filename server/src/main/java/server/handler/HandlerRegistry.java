@@ -61,6 +61,10 @@ public class HandlerRegistry {
 
         // Purchases
         register(ActionType.PURCHASE_REQUEST, new PurchaseHandler());
+        register(ActionType.GET_USER_SUBSCRIPTIONS_REQUEST, new GetUserSubscriptionsHandler());
+        register(ActionType.GET_USER_PURCHASED_MAPS_REQUEST, new GetUserPurchasedMapsHandler());
+        register(ActionType.CHECK_SUBSCRIPTION_STATUS_REQUEST, new CheckSubscriptionStatusHandler());
+        register(ActionType.CHECK_MAP_PURCHASE_STATUS_REQUEST, new CheckMapPurchaseStatusHandler());
 
         // Reports
         reportManager = new ReportManager(HibernateUtil.getSessionFactory());

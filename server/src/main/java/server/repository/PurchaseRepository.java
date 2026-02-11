@@ -62,7 +62,8 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
         subscription.setCity(city);
         subscription.setPricePaid(price);
         subscription.setPurchaseDate(LocalDate.now());
-        subscription.setExpirationDate(LocalDate.now().plusMonths(months));
+        subscription.setExpirationDate(newExpiration);
+        subscription.setRenewal(renewal);
 
         save(subscription);
         return subscription;
@@ -102,5 +103,64 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
                    .setParameter("userId", userId)
                    .getResultList()
         );
+    }
+
+    /**
+     * Find all active (non-expired) subscriptions for a user.
+     */
+    public List<Subscription> findActiveSubscriptionsByUserId(int userId) {
+        return executeQuery(session ->
+            session.createQuery(
+                "FROM Subscription s WHERE s.user.id = :userId AND s.expirationDate >= :today ORDER BY s.expirationDate DESC",
+                Subscription.class)
+                   .setParameter("userId", userId)
+                   .setParameter("today", LocalDate.now())
+                   .getResultList()
+        );
+    }
+
+    /**
+     * Find the latest subscription for a user+city pair.
+     */
+    public Subscription findLatestSubscription(int userId, int cityId) {
+        return executeQuery(session -> {
+            List<Subscription> results = session.createQuery(
+                "FROM Subscription s WHERE s.user.id = :userId AND s.city.id = :cityId ORDER BY s.expirationDate DESC",
+                Subscription.class)
+                   .setParameter("userId", userId)
+                   .setParameter("cityId", cityId)
+                   .setMaxResults(1)
+                   .getResultList();
+            return results.isEmpty() ? null : results.get(0);
+        });
+    }
+
+    /**
+     * Find all purchased map snapshots for a user.
+     */
+    public List<PurchasedMapSnapshot> findPurchasedMapsByUserId(int userId) {
+        return executeQuery(session ->
+            session.createQuery(
+                "FROM PurchasedMapSnapshot s WHERE s.client.id = :userId ORDER BY s.purchaseDate DESC",
+                PurchasedMapSnapshot.class)
+                   .setParameter("userId", userId)
+                   .getResultList()
+        );
+    }
+
+    /**
+     * Find a purchased snapshot for a specific user and map.
+     */
+    public PurchasedMapSnapshot findPurchasedSnapshot(int userId, int mapId) {
+        return executeQuery(session -> {
+            List<PurchasedMapSnapshot> results = session.createQuery(
+                "FROM PurchasedMapSnapshot s WHERE s.client.id = :userId AND s.originalMap.id = :mapId ORDER BY s.purchaseDate DESC",
+                PurchasedMapSnapshot.class)
+                   .setParameter("userId", userId)
+                   .setParameter("mapId", mapId)
+                   .setMaxResults(1)
+                   .getResultList();
+            return results.isEmpty() ? null : results.get(0);
+        });
     }
 }

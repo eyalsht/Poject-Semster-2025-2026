@@ -14,7 +14,7 @@ public class PurchaseHandler implements RequestHandler {
             ArrayList<Object> data = (ArrayList<Object>) request.getMessage();
 
             int userId = (Integer) data.get(0);
-            int cityId = (Integer) data.get(1);
+            Integer cityId = data.get(1) != null ? (Integer) data.get(1) : null;
             Integer mapId = (data.get(2) != null) ? (Integer) data.get(2) : null;
             String purchaseType = (String) data.get(3);
             String creditCardToken = (String) data.get(4);

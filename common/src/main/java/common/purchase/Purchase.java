@@ -72,4 +72,11 @@ public abstract class Purchase implements Serializable {
     public boolean isRenewal() { return isRenewal; }
     public void setRenewal(boolean renewal) { this.isRenewal = renewal; }
 
+    public String getPurchaseTypeLabel() {
+        if (this instanceof common.purchase.Subscription) {
+            return isRenewal ? "Subscription Renewal" : "New Subscription";
+        }
+        return "One-Time Map Purchase";
+    }
+
 }

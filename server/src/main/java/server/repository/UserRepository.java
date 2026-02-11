@@ -127,15 +127,4 @@ public class UserRepository extends BaseRepository<User, Integer> {
         );
     }
 
-    /**
-     * Update client's subscription expiry date.
-     */
-    public void updateSubscriptionExpiry(int userId, java.time.LocalDate newExpiryDate) {
-        executeInTransaction(session -> {
-            Client client = session.get(Client.class, userId);
-            if (client != null) {
-                client.setSubscriptionExpiry(newExpiryDate);
-            }
-        });
-    }
 }

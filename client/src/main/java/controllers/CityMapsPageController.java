@@ -28,9 +28,14 @@ import java.util.List;
 import client.GCMClient;
 import common.dto.PendingApprovalsResponse;
 import common.dto.PendingContentApprovalsResponse;
+import common.dto.SubscriptionStatusDTO;
 import common.user.User;
+import common.user.Client;
 import common.user.Employee;
 import common.enums.EmployeeRole;
+
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class CityMapsPageController {
 
@@ -45,7 +50,9 @@ public class CityMapsPageController {
     @FXML private Button btnPriceUpdate;
     @FXML private Button btnApprovals;
     @FXML private Button btnEditCity;
+    @FXML private Button btnSubscribe;
     private boolean isLoading = false;
+    private SubscriptionStatusDTO subscriptionStatus;
 
     @FXML private Button btnShowMaps;
     @FXML private Button btnShowTours;
@@ -67,6 +74,8 @@ public class CityMapsPageController {
             loadMapsFromServer(city.getName());
         }
 
+        // Check subscription status for clients
+        checkSubscriptionStatus(city);
     }
 
     private void updateMapComboBox(List<GCMMap> maps) {
@@ -470,6 +479,73 @@ public class CityMapsPageController {
 
         String label = (role == EmployeeRole.COMPANY_MANAGER) ? "Price Approvals" : "Content Approvals";
         btnApprovals.setText(label + " (" + count + ")");
+    }
+
+    private void checkSubscriptionStatus(City city) {
+        User user = GCMClient.getInstance().getCurrentUser();
+        if (!(user instanceof Client) || btnSubscribe == null) return;
+
+        new Thread(() -> {
+            try {
+                ArrayList<Integer> params = new ArrayList<>();
+                params.add(user.getId());
+                params.add(city.getId());
+
+                Message request = new Message(ActionType.CHECK_SUBSCRIPTION_STATUS_REQUEST, params);
+                Message response = (Message) GCMClient.getInstance().sendRequest(request);
+
+                if (response != null && response.getAction() == ActionType.CHECK_SUBSCRIPTION_STATUS_RESPONSE) {
+                    SubscriptionStatusDTO status = (SubscriptionStatusDTO) response.getMessage();
+                    this.subscriptionStatus = status;
+
+                    Platform.runLater(() -> {
+                        if (status.isActive()) {
+                            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                            btnSubscribe.setText("Subscribed (expires " + dtf.format(status.getExpirationDate()) + ")");
+                            btnSubscribe.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;");
+                        } else {
+                            btnSubscribe.setText(String.format("Subscribe ($%.2f/mo)", status.getPricePerMonth()));
+                            btnSubscribe.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;");
+                        }
+                        btnSubscribe.setVisible(true);
+                        btnSubscribe.setManaged(true);
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    @FXML
+    private void onSubscribe() {
+        if (selectedCity == null || subscriptionStatus == null) return;
+
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/GUI/PurchaseConfirmationDialog.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            PurchaseConfirmationDialogController controller = loader.getController();
+            controller.setSubscriptionData(
+                selectedCity.getName(),
+                selectedCity.getId(),
+                subscriptionStatus.getPricePerMonth(),
+                subscriptionStatus.isActive()
+            );
+
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("Subscribe - " + selectedCity.getName());
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            // Refresh subscription status after dialog
+            if (controller.isPurchaseComplete()) {
+                checkSubscriptionStatus(selectedCity);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void showAlert(String title, String message) {

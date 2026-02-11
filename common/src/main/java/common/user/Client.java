@@ -2,7 +2,6 @@ package common.user;
 
 import common.purchase.PurchasedMapSnapshot;
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import common.purchase.PaymentDetails;
@@ -18,9 +17,6 @@ public class Client extends User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "subscription_expiry")
-    private LocalDate subscriptionExpiry;
-
     @Embedded
     private PaymentDetails paymentDetails;
 
@@ -33,11 +29,10 @@ public class Client extends User {
     }
 
     public Client(int id, String firstName, String lastName, String username, String email, String password,
-                  String phoneNumber, PaymentDetails paymentDetails, LocalDate subscriptionExpiry) {
+                  String phoneNumber, PaymentDetails paymentDetails) {
         super(id, username, password, firstName, lastName, email);
         this.phoneNumber = phoneNumber;
         this.paymentDetails = paymentDetails;
-        this.subscriptionExpiry = subscriptionExpiry;
     }
 
     public Client(int id, String username, String password, String email, PaymentDetails paymentDetails, String phoneNumber) {
@@ -54,19 +49,12 @@ public class Client extends User {
     public PaymentDetails getPaymentDetails() { return paymentDetails; }
     public void setPaymentDetails(PaymentDetails paymentDetails) { this.paymentDetails = paymentDetails; }
 
-    public LocalDate getSubscriptionExpiry() { return subscriptionExpiry; }
-    public void setSubscriptionExpiry(LocalDate subscriptionExpiry) { this.subscriptionExpiry = subscriptionExpiry; }
-
     public void register() {
         // registration logic
     }
 
     public void updateProfile() {
         // profile update logic
-    }
-
-    public void purchaseSubscription() {
-        // purchase logic
     }
 
     // ==================== PURCHASED MAPS RELATIONSHIP ====================
@@ -84,6 +72,13 @@ public class Client extends User {
         if (purchasedMaps == null) return false;
         return purchasedMaps.stream()
             .anyMatch(snapshot -> snapshot.getOriginalMapId() == originalMapId);
+    }
+
+    public boolean hasPurchasedMapVersion(int originalMapId, String version) {
+        if (purchasedMaps == null || version == null) return false;
+        return purchasedMaps.stream()
+            .anyMatch(snapshot -> snapshot.getOriginalMapId() == originalMapId
+                    && version.equals(snapshot.getPurchasedVersion()));
     }
     
     @Override
