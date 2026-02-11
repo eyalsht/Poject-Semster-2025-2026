@@ -3,7 +3,6 @@ package server.handler;
 import common.dto.SubscriptionStatusDTO;
 import common.enums.ActionType;
 import common.messaging.Message;
-import common.purchase.Subscription;
 import server.repository.PurchaseRepository;
 
 import java.time.LocalDate;
@@ -18,16 +17,28 @@ public class GetUserSubscriptionsHandler implements RequestHandler {
             int userId = (Integer) request.getMessage();
             PurchaseRepository repo = PurchaseRepository.getInstance();
 
-            List<Subscription> subs = repo.findActiveSubscriptionsByUserId(userId);
+            // Use native SQL to avoid loading full entities (which corrupts connection pool)
+            List<Object[]> rows = repo.findActiveSubscriptionDTOsNative(userId);
             ArrayList<SubscriptionStatusDTO> result = new ArrayList<>();
 
-            for (Subscription sub : subs) {
-                LocalDate expiry = sub.getExpirationDate();
-                boolean active = expiry != null && !expiry.isBefore(LocalDate.now());
+            for (Object[] row : rows) {
+                // row = { city_id (Integer), expiration_date (java.sql.Date), city_name (String), price_sub (Double) }
+                int cityId = ((Number) row[0]).intValue();
 
-                String cityName = sub.getCity() != null ? sub.getCity().getName() : "Unknown";
-                int cityId = sub.getCity() != null ? sub.getCity().getId() : 0;
-                double pricePerMonth = sub.getCity() != null ? sub.getCity().getPriceSub() : 0;
+                LocalDate expiry = null;
+                if (row[1] != null) {
+                    if (row[1] instanceof java.sql.Date) {
+                        expiry = ((java.sql.Date) row[1]).toLocalDate();
+                    } else if (row[1] instanceof LocalDate) {
+                        expiry = (LocalDate) row[1];
+                    } else {
+                        expiry = LocalDate.parse(row[1].toString());
+                    }
+                }
+
+                boolean active = expiry != null && !expiry.isBefore(LocalDate.now());
+                String cityName = (String) row[2];
+                double pricePerMonth = ((Number) row[3]).doubleValue();
 
                 result.add(new SubscriptionStatusDTO(active, expiry, cityName, cityId, pricePerMonth));
             }
@@ -35,6 +46,7 @@ public class GetUserSubscriptionsHandler implements RequestHandler {
             return new Message(ActionType.GET_USER_SUBSCRIPTIONS_RESPONSE, result);
 
         } catch (Exception e) {
+            System.err.println("GetUserSubscriptionsHandler failed: " + e.getMessage());
             e.printStackTrace();
             return new Message(ActionType.GET_USER_SUBSCRIPTIONS_RESPONSE, new ArrayList<>());
         }

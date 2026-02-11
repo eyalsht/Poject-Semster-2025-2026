@@ -241,6 +241,44 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
     }
 
     /**
+     * Lightweight native SQL: check subscription status for a user+city pair.
+     * Returns Object[] { expiration_date (java.sql.Date), city_name (String), price_sub (Double) }
+     * or null if no subscription exists.
+     */
+    public Object[] checkSubscriptionStatusNative(int userId, int cityId) {
+        return executeQuery(session -> {
+            Object[] result = (Object[]) session.createNativeQuery(
+                "SELECT MAX(p.expiration_date), c.name, c.price_sub " +
+                "FROM purchases p JOIN cities c ON p.city_id = c.id " +
+                "WHERE p.purchase_type = 'SUBSCRIPTION' AND p.user_id = :userId AND p.city_id = :cityId " +
+                "GROUP BY c.name, c.price_sub")
+                .setParameter("userId", userId)
+                .setParameter("cityId", cityId)
+                .getSingleResultOrNull();
+            return result;
+        });
+    }
+
+    /**
+     * Lightweight native SQL: get all active subscriptions for a user (grouped by city).
+     * Each Object[] contains { city_id (Integer), expiration_date (java.sql.Date), city_name (String), price_sub (Double) }
+     */
+    @SuppressWarnings("unchecked")
+    public List<Object[]> findActiveSubscriptionDTOsNative(int userId) {
+        return executeQuery(session ->
+            session.createNativeQuery(
+                "SELECT p.city_id, MAX(p.expiration_date) as expiry, c.name, c.price_sub " +
+                "FROM purchases p JOIN cities c ON p.city_id = c.id " +
+                "WHERE p.purchase_type = 'SUBSCRIPTION' AND p.user_id = :userId " +
+                "GROUP BY p.city_id, c.name, c.price_sub " +
+                "HAVING MAX(p.expiration_date) >= CURRENT_DATE " +
+                "ORDER BY expiry DESC")
+                .setParameter("userId", userId)
+                .getResultList()
+        );
+    }
+
+    /**
      * Find a purchased snapshot for a specific user and map.
      */
     public PurchasedMapSnapshot findPurchasedSnapshot(int userId, int mapId) {
