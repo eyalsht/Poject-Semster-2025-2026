@@ -65,6 +65,12 @@
                   <Font name="System Bold" size="12.0" />
                </font></Label>
             <Label fx:id="lblHistory" text="(coming soon)" textFill="#388e3c" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Button fx:id="btnExploreHistory"
+                    mnemonicParsing="false"
+                    onAction="#onExplorePurchaseHistory"
+                    text="Explore"
+                    GridPane.columnIndex="2"
+                    GridPane.rowIndex="4"/>
          </children>
          <columnConstraints>
             <ColumnConstraints />

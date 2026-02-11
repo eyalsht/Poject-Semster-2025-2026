@@ -1,5 +1,11 @@
 package controllers;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.event.ActionEvent;
+import javafx.scene.layout.HBox;
 import client.GCMClient;
 import common.enums.ActionType;
 import common.messaging.Message;
@@ -23,7 +29,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import util.TableRowHighlighter;
 
-public class ProfilePageController {
+public class ProfilePageController
+{
 
     @FXML private Label lblWelcome;
     @FXML private Label lblName;
@@ -355,4 +362,144 @@ public class ProfilePageController {
         t.setDaemon(true);
         t.start();
     }
+
+    @FXML
+    private void onExplorePurchaseHistory(ActionEvent event) {
+        User user = GCMClient.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        // 1) Fetch subscriptions
+        runAsync(
+                () -> {
+                    Message subReq = new Message(ActionType.GET_USER_SUBSCRIPTIONS_REQUEST, user.getId());
+                    return GCMClient.getInstance().sendMessage(subReq);
+                },
+                (Message subResp) -> {
+                    List<SubscriptionStatusDTO> subs = java.util.Collections.emptyList();
+
+                    if (subResp != null && subResp.getMessage() instanceof java.util.ArrayList<?> list) {
+                        // safe cast
+                        subs = (List<SubscriptionStatusDTO>) list;
+                    }
+
+                    final List<SubscriptionStatusDTO> finalSubs = subs;
+
+                    // 2) Fetch purchased maps
+                    runAsync(
+                            () -> {
+                                Message mapReq = new Message(ActionType.GET_USER_PURCHASED_MAPS_REQUEST, user.getId());
+                                return GCMClient.getInstance().sendMessage(mapReq);
+                            },
+                            (Message mapResp) -> {
+                                List<PurchasedMapSnapshot> maps = java.util.Collections.emptyList();
+
+                                if (mapResp != null && mapResp.getMessage() instanceof java.util.ArrayList<?> list2) {
+                                    maps = (List<PurchasedMapSnapshot>) list2;
+                                }
+
+                                showPurchaseHistoryDialog(user, finalSubs, maps);
+                            },
+                            (Throwable err) -> new Alert(Alert.AlertType.ERROR, "Could not load purchased maps").showAndWait(),
+                            null
+                    );
+                },
+                (Throwable err) -> new Alert(Alert.AlertType.ERROR, "Could not load subscriptions").showAndWait(),
+                null
+        );
+    }
+
+    private void showPurchaseHistoryDialog(User user,
+                                           List<SubscriptionStatusDTO> subscriptions,
+                                           List<PurchasedMapSnapshot> purchases) {
+
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Purchase history");
+
+        String firstName = (user.getFirstName() != null && !user.getFirstName().isBlank())
+                ? user.getFirstName()
+                : user.getUsername();
+
+        Label title = new Label(firstName + ", here is your purchase history");
+        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+        // ---------------- LEFT: Subscriptions table ----------------
+        TableView<SubscriptionStatusDTO> tblSubs = new TableView<>();
+        tblSubs.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<SubscriptionStatusDTO, String> colCity = new TableColumn<>("City");
+        colCity.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().getCityName() == null ? "" : d.getValue().getCityName()
+        ));
+
+        TableColumn<SubscriptionStatusDTO, String> colExpiry = new TableColumn<>("Expires");
+        colExpiry.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().getExpirationDate() == null ? "" : d.getValue().getExpirationDate().toString()
+        ));
+
+        TableColumn<SubscriptionStatusDTO, String> colActive = new TableColumn<>("Active");
+        colActive.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().isActive() ? "YES" : "NO"
+        ));
+
+        TableColumn<SubscriptionStatusDTO, String> colPrice = new TableColumn<>("Price/mo");
+        colPrice.setCellValueFactory(d -> new SimpleStringProperty(
+                String.format("%.2f", d.getValue().getPricePerMonth())
+        ));
+
+        tblSubs.getColumns().addAll(colCity, colExpiry, colActive, colPrice);
+        tblSubs.setItems(FXCollections.observableArrayList(
+                new java.util.ArrayList<>(subscriptions)
+        ));
+
+        VBox left = new VBox(8, new Label("Subscriptions"), tblSubs);
+        left.setPrefWidth(430);
+
+        // ---------------- RIGHT: One-time purchases table ----------------
+        TableView<PurchasedMapSnapshot> tblMaps = new TableView<>();
+        tblMaps.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<PurchasedMapSnapshot, String> colPCity = new TableColumn<>("City");
+        colPCity.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().getCityName() == null ? "" : d.getValue().getCityName()
+        ));
+
+        TableColumn<PurchasedMapSnapshot, String> colMap = new TableColumn<>("Map");
+        colMap.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().getMapName() == null ? "" : d.getValue().getMapName()
+        ));
+
+        TableColumn<PurchasedMapSnapshot, String> colVer = new TableColumn<>("Version");
+        colVer.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().getPurchasedVersion() == null ? "" : d.getValue().getPurchasedVersion()
+        ));
+
+        TableColumn<PurchasedMapSnapshot, String> colDate = new TableColumn<>("Date");
+        colDate.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().getPurchaseDate() == null ? "" : d.getValue().getPurchaseDate().toString()
+        ));
+
+        TableColumn<PurchasedMapSnapshot, String> colPaid = new TableColumn<>("Paid");
+        colPaid.setCellValueFactory(d -> new SimpleStringProperty(
+                String.format("%.2f", d.getValue().getPricePaid())
+        ));
+
+        tblMaps.getColumns().addAll(colPCity, colMap, colVer, colDate, colPaid);
+        tblMaps.setItems(FXCollections.observableArrayList(
+                new java.util.ArrayList<>(purchases)
+        ));
+
+
+        VBox right = new VBox(8, new Label("One-time purchases"), tblMaps);
+        right.setPrefWidth(430);
+
+        HBox tables = new HBox(12, left, right);
+
+        VBox root = new VBox(12, title, tables);
+        root.setPrefSize(920, 520);
+
+        dialog.getDialogPane().setContent(root);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        dialog.showAndWait();
+    }
+
 }
