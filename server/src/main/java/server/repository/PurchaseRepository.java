@@ -35,32 +35,58 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
     // ==================== PURCHASE-SPECIFIC OPERATIONS ====================
 
     /**
-     * Log a new subscription purchase.
+     * Create a subscription: queries for renewal status AND inserts in a single transaction
+     * to avoid connection pool issues between separate calls.
+     *
+     * @return a populated Subscription object (not managed by Hibernate)
      */
-    public Subscription createSubscription(int userId, int cityId, double price, int months,
-                                              boolean isRenewal, LocalDate latestExpiration)
+    public Subscription createSubscription(int userId, int cityId, double monthlyPrice, int months)
     {
         final Subscription subscription = new Subscription();
-        // Use native SQL to avoid Hibernate detached entity / closed connection issues
         executeInTransaction(session -> {
             LocalDate today = LocalDate.now();
-            LocalDate base = (isRenewal && latestExpiration != null) ? latestExpiration : today;
+
+            // 1. Check for renewal (query + insert in same session/connection)
+            Object result = session.createNativeQuery(
+                "SELECT MAX(expiration_date) FROM purchases WHERE purchase_type = 'SUBSCRIPTION' AND user_id = :userId AND city_id = :cityId")
+                .setParameter("userId", userId)
+                .setParameter("cityId", cityId)
+                .getSingleResult();
+
+            LocalDate latestExpiration = null;
+            if (result != null) {
+                if (result instanceof java.sql.Date) latestExpiration = ((java.sql.Date) result).toLocalDate();
+                else if (result instanceof LocalDate) latestExpiration = (LocalDate) result;
+                else latestExpiration = LocalDate.parse(result.toString());
+            }
+
+            boolean isRenewal = (latestExpiration != null && !latestExpiration.isBefore(today));
+            LocalDate base = isRenewal ? latestExpiration : today;
             LocalDate newExpiration = base.plusMonths(months);
 
-            // Insert via native SQL to bypass entity proxy issues
+            // 2. Calculate discounts
+            double durationDiscount = 0;
+            if (months >= 12) durationDiscount = 0.15;
+            else if (months >= 6) durationDiscount = 0.10;
+            else if (months >= 3) durationDiscount = 0.05;
+            double renewalDiscount = isRenewal ? 0.10 : 0;
+            double totalDiscount = durationDiscount + renewalDiscount;
+            double totalPrice = monthlyPrice * months * (1 - totalDiscount);
+
+            // 3. Insert via native SQL
             session.createNativeQuery(
                 "INSERT INTO purchases (purchase_type, user_id, city_id, price, purchase_date, expiration_date, is_renewal) " +
                 "VALUES ('SUBSCRIPTION', :userId, :cityId, :price, :purchaseDate, :expirationDate, :isRenewal)")
                 .setParameter("userId", userId)
                 .setParameter("cityId", cityId)
-                .setParameter("price", price)
+                .setParameter("price", totalPrice)
                 .setParameter("purchaseDate", today)
                 .setParameter("expirationDate", newExpiration)
                 .setParameter("isRenewal", isRenewal)
                 .executeUpdate();
 
-            // Populate the returned object for logging
-            subscription.setPricePaid(price);
+            // Populate the returned object for logging/display
+            subscription.setPricePaid(totalPrice);
             subscription.setPurchaseDate(today);
             subscription.setExpirationDate(newExpiration);
             subscription.setRenewal(isRenewal);

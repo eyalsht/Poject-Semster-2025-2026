@@ -9,7 +9,6 @@ import common.user.User;
 import server.repository.*;
 import server.service.PaymentService;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 /**
@@ -161,45 +160,22 @@ public class PurchaseController {
      * @return null on success, error reason on failure
      */
     private String processSubscriptionPurchase(User user, City city, double monthlyPrice, int monthsToAdd) {
-        // Granular error handling to pinpoint exactly which step fails
-        LocalDate latestExpiration;
         try {
-            latestExpiration = purchaseRepository.findLatestExpirationDate(user.getId(), city.getId());
+            // Everything (renewal check, discount calc, insert) happens in a single
+            // transaction inside createSubscription to avoid connection pool issues
+            Subscription subscription = purchaseRepository.createSubscription(
+                user.getId(), city.getId(), monthlyPrice, monthsToAdd);
+
+            System.out.println("Subscription purchase completed for UserID: " + user.getId() +
+                ", City: " + city.getName() +
+                ", Months: " + monthsToAdd +
+                ", Price: $" + String.format("%.2f", subscription.getPricePaid()) +
+                ", Expires: " + subscription.getExpirationDate());
+            return null; // success
         } catch (Exception e) {
             e.printStackTrace();
-            return "FAILED at findLatestExpirationDate: " + e.getClass().getSimpleName() + ": " + e.getMessage();
+            return "Subscription creation failed: " + e.getClass().getSimpleName() + ": " + e.getMessage();
         }
-
-        boolean isRenewal = (latestExpiration != null && !latestExpiration.isBefore(LocalDate.now()));
-
-        // Calculate total price with discounts
-        double totalPrice = monthlyPrice * monthsToAdd;
-        double durationDiscount = 0;
-        if (monthsToAdd >= 12) durationDiscount = 0.15;
-        else if (monthsToAdd >= 6) durationDiscount = 0.10;
-        else if (monthsToAdd >= 3) durationDiscount = 0.05;
-
-        double renewalDiscount = isRenewal ? 0.10 : 0;
-        double totalDiscount = durationDiscount + renewalDiscount;
-        totalPrice = totalPrice * (1 - totalDiscount);
-
-        Subscription subscription;
-        try {
-            subscription = purchaseRepository.createSubscription(
-                user.getId(), city.getId(), totalPrice, monthsToAdd, isRenewal, latestExpiration);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "FAILED at createSubscription: " + e.getClass().getSimpleName() + ": " + e.getMessage();
-        }
-
-        System.out.println("Subscription purchase completed for UserID: " + user.getId() +
-            ", City: " + city.getName() +
-            ", Months: " + monthsToAdd +
-            ", Renewal: " + isRenewal +
-            ", Total discount: " + (totalDiscount * 100) + "%" +
-            ", Price: $" + String.format("%.2f", totalPrice) +
-            ", Expires: " + subscription.getExpirationDate());
-        return null; // success
     }
 
     /**
