@@ -8,8 +8,13 @@ import common.purchase.PurchasedMapSnapshot;
 import common.purchase.Subscription;
 import common.user.Client;
 import common.user.User;
+import server.HibernateUtil;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -42,22 +47,29 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
      */
     public Subscription createSubscription(int userId, int cityId, double monthlyPrice, int months)
     {
+        // Bypass Hibernate session management entirely - use raw JDBC
+        // to avoid the persistent "connection is closed" issue
+        SessionFactoryImplementor sfi = (SessionFactoryImplementor) HibernateUtil.getSessionFactory();
+        ConnectionProvider cp = sfi.getServiceRegistry().getService(ConnectionProvider.class);
+
         final Subscription subscription = new Subscription();
-        executeInTransaction(session -> {
+        Connection conn = null;
+        try {
+            conn = cp.getConnection();
+            conn.setAutoCommit(false);
             LocalDate today = LocalDate.now();
 
-            // 1. Check for renewal (query + insert in same session/connection)
-            Object result = session.createNativeQuery(
-                "SELECT MAX(expiration_date) FROM purchases WHERE purchase_type = 'SUBSCRIPTION' AND user_id = :userId AND city_id = :cityId")
-                .setParameter("userId", userId)
-                .setParameter("cityId", cityId)
-                .getSingleResult();
-
+            // 1. Check for renewal
             LocalDate latestExpiration = null;
-            if (result != null) {
-                if (result instanceof java.sql.Date) latestExpiration = ((java.sql.Date) result).toLocalDate();
-                else if (result instanceof LocalDate) latestExpiration = (LocalDate) result;
-                else latestExpiration = LocalDate.parse(result.toString());
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "SELECT MAX(expiration_date) FROM purchases WHERE purchase_type = 'SUBSCRIPTION' AND user_id = ? AND city_id = ?")) {
+                ps.setInt(1, userId);
+                ps.setInt(2, cityId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getDate(1) != null) {
+                        latestExpiration = rs.getDate(1).toLocalDate();
+                    }
+                }
             }
 
             boolean isRenewal = (latestExpiration != null && !latestExpiration.isBefore(today));
@@ -70,27 +82,35 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
             else if (months >= 6) durationDiscount = 0.10;
             else if (months >= 3) durationDiscount = 0.05;
             double renewalDiscount = isRenewal ? 0.10 : 0;
-            double totalDiscount = durationDiscount + renewalDiscount;
-            double totalPrice = monthlyPrice * months * (1 - totalDiscount);
+            double totalPrice = monthlyPrice * months * (1 - (durationDiscount + renewalDiscount));
 
-            // 3. Insert via native SQL
-            session.createNativeQuery(
-                "INSERT INTO purchases (purchase_type, user_id, city_id, price, purchase_date, expiration_date, is_renewal) " +
-                "VALUES ('SUBSCRIPTION', :userId, :cityId, :price, :purchaseDate, :expirationDate, :isRenewal)")
-                .setParameter("userId", userId)
-                .setParameter("cityId", cityId)
-                .setParameter("price", totalPrice)
-                .setParameter("purchaseDate", today)
-                .setParameter("expirationDate", newExpiration)
-                .setParameter("isRenewal", isRenewal)
-                .executeUpdate();
+            // 3. Insert
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "INSERT INTO purchases (purchase_type, user_id, city_id, price, purchase_date, expiration_date, is_renewal) " +
+                    "VALUES ('SUBSCRIPTION', ?, ?, ?, ?, ?, ?)")) {
+                ps.setInt(1, userId);
+                ps.setInt(2, cityId);
+                ps.setDouble(3, totalPrice);
+                ps.setDate(4, java.sql.Date.valueOf(today));
+                ps.setDate(5, java.sql.Date.valueOf(newExpiration));
+                ps.setBoolean(6, isRenewal);
+                ps.executeUpdate();
+            }
 
-            // Populate the returned object for logging/display
+            conn.commit();
+
+            // Populate returned object for logging
             subscription.setPricePaid(totalPrice);
             subscription.setPurchaseDate(today);
             subscription.setExpirationDate(newExpiration);
             subscription.setRenewal(isRenewal);
-        });
+
+        } catch (Exception e) {
+            if (conn != null) try { conn.rollback(); } catch (Exception ignored) {}
+            throw new RuntimeException("Subscription creation failed: " + e.getMessage(), e);
+        } finally {
+            if (conn != null) try { cp.closeConnection(conn); } catch (Exception ignored) {}
+        }
         return subscription;
     }
 
