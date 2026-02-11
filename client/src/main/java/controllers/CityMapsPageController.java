@@ -24,6 +24,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import client.GCMClient;
 import common.dto.PendingApprovalsResponse;
@@ -98,14 +100,13 @@ public class CityMapsPageController {
                 Message response = (Message) GCMClient.getInstance().sendRequest(request);
 
                 Platform.runLater(() -> {
-                    try {
                         if (response != null && response.getAction() == ActionType.GET_CATALOG_RESPONSE) {
                             CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
-                            displayMaps(catalogResponse.getMaps());
+                            selectedCity.setMaps(catalogResponse.getMaps());
+                            renderMapCards(selectedCity.getMaps());
                         }
-                    } finally {
+
                         isLoading = false; // שחרור המנעול לאחר העדכון
-                    }
                 });
             } catch (Exception e) {
                 isLoading = false;
@@ -168,6 +169,33 @@ public class CityMapsPageController {
     });*/
     }
 
+    private void renderMapCards(List<GCMMap> mapsToDisplay) {
+        if (mapsToDisplay == null || flowPaneMaps == null) return;
+
+        Platform.runLater(() -> {
+            flowPaneMaps.getChildren().clear();
+            Set<Integer> seenIds = new HashSet<>();
+            List<Parent> newCards = new ArrayList<>();
+
+            for (GCMMap map : mapsToDisplay) {
+                if (map != null && !seenIds.contains(map.getId())) {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
+                        Parent card = loader.load();
+                        MapCardController controller = loader.getController();
+                        controller.setData(map);
+
+                        newCards.add(card);
+                        seenIds.add(map.getId());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            flowPaneMaps.getChildren().setAll(newCards);
+            System.out.println("Rendered " + newCards.size() + " unique maps for " + selectedCity.getName());
+        });
+    }
     private void loadMaps() {
         Platform.runLater(() -> {
 
@@ -327,19 +355,23 @@ public class CityMapsPageController {
         }).start();
     }
 
-    private void updateCityCards(java.util.List<common.content.GCMMap> maps) {
-        java.util.Set<Integer> displayedCityIds = new java.util.HashSet<>();
+    private void updateCityCards(List<GCMMap> maps) {
+        List<Parent> cityCards = new ArrayList<>();
+        Set<Integer> seenCityIds = new HashSet<>();
         for (common.content.GCMMap gcmMap : maps) {
-            common.content.City city = gcmMap.getCity();
-            if (city != null && !displayedCityIds.contains(city.getId())) {
+            City city = gcmMap.getCity();
+            if (city != null && !seenCityIds.contains(city.getId())) {
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityCard.fxml"));
                     Parent card = loader.load();
-                    controllers.CityCardController controller = loader.getController();
-                    controller.setData(gcmMap, null);
-                    flowPaneMaps.getChildren().add(card);
-                    displayedCityIds.add(city.getId());
-                } catch (Exception e) { e.printStackTrace(); }
+                    CityCardController controller = loader.getController();
+                    controller.setData(gcmMap, this);
+
+                    cityCards.add(card);
+                    seenCityIds.add(city.getId());
+                } catch (Exception e) {
+                    System.err.println("Error loading city card: " + e.getMessage());
+                }
             }
         }
     }
@@ -349,8 +381,16 @@ public class CityMapsPageController {
         if (selectedCity == null || txtSearch == null) return;
 
         String query = txtSearch.getText().toLowerCase();
-        flowPaneMaps.getChildren().clear(); // ניקוי התצוגה לפני הצגת התוצאות
+        List<GCMMap> filtered = selectedCity.getMaps().stream()
+                .filter(map -> map.getName().toLowerCase().contains(query) ||
+                        (map.getSites() != null && map.getSites().stream()
+                                .anyMatch(s -> s.getName().toLowerCase().contains(query))))
+                .toList();
 
+        renderMapCards(filtered);
+        /*
+        flowPaneMaps.getChildren().clear(); // ניקוי התצוגה לפני הצגת התוצאות
+        java.util.Set<Integer> addedMapIds = new java.util.HashSet<>();
         for (GCMMap map : selectedCity.getMaps()) {
             // בדיקה אם השאילתה מופיעה בשם המפה או בשם של אחד האתרים שבתוכה
             boolean nameMatch = map.getName().toLowerCase().contains(query);
@@ -366,7 +406,7 @@ public class CityMapsPageController {
                     flowPaneMaps.getChildren().add(card);
                 } catch (IOException e) { e.printStackTrace(); }
             }
-        }
+        }*/
     }
 
     @FXML
@@ -374,7 +414,7 @@ public class CityMapsPageController {
         if (txtSearch != null) {
             txtSearch.clear();
         }
-        loadMaps();
+        if (selectedCity != null) renderMapCards(selectedCity.getMaps());
     }
     @FXML private void onUpdateMap() {}
     @FXML private void onAddMap() {}

@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import java.util.Objects;
 @Entity
 @Table(name = "maps")
 public class GCMMap extends ContentItem implements Serializable {
@@ -135,6 +135,18 @@ public class GCMMap extends ContentItem implements Serializable {
         return "Map Name: " + name + ", Version: " + version + ", Status: " + status;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GCMMap gcmMap)) return false;
+        // COMPARE BASE ON ID
+        return getId() == gcmMap.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
     @Override
     public String toString() {
         return name + " v" + version;
