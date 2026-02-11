@@ -83,7 +83,11 @@ public class CatalogPageController {
         // Listen for server-pushed catalog update notifications
         client.addNotificationListener((common.messaging.Message msg) -> {
             if (msg.getAction() == ActionType.CATALOG_UPDATED_NOTIFICATION) {
-                Platform.runLater(() -> refreshCatalog());
+                Platform.runLater(() -> {
+                    if (flowPaneCities != null && flowPaneCities.getScene() != null) {
+                        refreshCatalog();
+                    }
+                });
             }
         });
     }

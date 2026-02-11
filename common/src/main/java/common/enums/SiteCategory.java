@@ -10,5 +10,9 @@ public enum SiteCategory
     HOTEL,
     TRANSPORT,
     GOVERNMENT,
-    NATURE
+    NATURE,
+    SHOPPING,
+    ATTRACTION,
+    BEACH,
+    MEMORIAL,
 }
