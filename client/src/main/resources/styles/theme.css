@@ -279,3 +279,27 @@
     -fx-bar-fill: #6c3483;
 }
 
+/* =========================================================
+   FORCE AXIS TICK LABELS (Maps / 0.0 / 1.0 etc) TO BE VISIBLE
+   ========================================================= */
+
+/* X + Y axis tick labels */
+.axis .tick-label {
+    -fx-fill: white;        /* IMPORTANT: text color */
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+/* Sometimes JavaFX uses this selector internally */
+.axis-tick-mark,
+.axis-minor-tick-mark {
+    -fx-stroke: white;
+}
+
+/* extra safety — some skins use Text nodes directly */
+.chart .axis Text {
+    -fx-fill: white;
+    -fx-font-weight: bold;
+}
+
+
