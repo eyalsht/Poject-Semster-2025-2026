@@ -23,17 +23,10 @@
 }
 
 /* Utility: keep background visible through panes */
-.transparent-pane {
-    -fx-background-color: transparent;
-}
-
-/* Some of your FXML uses transparent-page: support both names */
-.transparent-page {
-    -fx-background-color: transparent;
-}
-
-/* ScrollPane: remove default white viewport */
-.scroll-pane, .scroll-pane > .viewport {
+.transparent-pane,
+.transparent-page,
+.scroll-pane,
+.scroll-pane > .viewport {
     -fx-background-color: transparent;
 }
 
@@ -51,7 +44,6 @@
    BUTTONS
    ========================================================= */
 
-/* Default look for any Button */
 .button {
     -fx-background-color: rgba(255,255,255,0.10);
     -fx-text-fill: white;
@@ -105,22 +97,14 @@
     -fx-background-color: rgba(255,255,255,0.06);
 }
 
-/* ------- Button helper classes (compose in FXML) ------- */
-/* Example: styleClass="side-btn centered" for login buttons */
+/* Helper classes (compose in FXML) */
 .centered { -fx-alignment: CENTER; }
-
-/* Example: styleClass="side-btn wide" */
 .wide { -fx-pref-width: 180px; }
-
-/* Example: styleClass="side-btn small" */
-.small {
-    -fx-font-size: 13px;
-    -fx-padding: 7 12 7 12;
-}
+.small { -fx-font-size: 13px; -fx-padding: 7 12 7 12; }
 
 
 /* =========================================================
-   INPUT FIELDS (TextField / PasswordField / TextArea)
+   INPUT FIELDS
    ========================================================= */
 
 .text-field, .password-field, .text-area {
@@ -135,13 +119,14 @@
     -fx-padding: 10;
 }
 
+/* keep textarea content transparent so background shows */
 .text-area .content {
     -fx-background-color: transparent;
 }
 
 
 /* =========================================================
-   WELCOME CARD (dark glass)
+   WELCOME CARD
    ========================================================= */
 
 .welcome-card {
@@ -152,17 +137,12 @@
     -fx-padding: 40;
 }
 
-.welcome-title {
-    -fx-text-fill: white;
-}
-
-.welcome-subtitle {
-    -fx-text-fill: rgba(255,255,255,0.65);
-}
+.welcome-title { -fx-text-fill: white; }
+.welcome-subtitle { -fx-text-fill: rgba(255,255,255,0.65); }
 
 
 /* =========================================================
-   TABLEVIEW (GLOBAL) + GRID FIX
+   TABLEVIEW (GLOBAL)
    ========================================================= */
 
 .table-view {
@@ -172,9 +152,9 @@
     -fx-border-color: rgba(255,255,255,0.12);
     -fx-border-width: 1;
 
-    /* Grid fix */
-    -fx-table-cell-border-color: transparent; /* removes inner grid lines */
-    -fx-cell-size: 34px;                      /* consistent row height */
+    /* cleaner grid */
+    -fx-table-cell-border-color: transparent;
+    -fx-cell-size: 34px;
 }
 
 /* Header */
@@ -195,17 +175,14 @@
     -fx-font-weight: 700;
 }
 
-/* Cells: black text (because rows are green/gray) */
+/* Cells: black text (because unread/read rows are light) */
 .table-view .table-cell {
     -fx-text-fill: #111;
     -fx-font-size: 13px;
-
-    /* remove borders inside cells */
     -fx-border-color: transparent;
     -fx-padding: 0 8 0 8;
 }
 
-/* Row borders off + clean empty rows */
 .table-row-cell {
     -fx-border-color: transparent;
     -fx-background-insets: 0;
@@ -216,7 +193,6 @@
     -fx-border-color: transparent;
 }
 
-/* Hover/Selected */
 .table-row-cell:filled:hover {
     -fx-background-color: rgba(255,255,255,0.10);
 }
@@ -229,7 +205,6 @@
     -fx-text-fill: #111;
 }
 
-/* Remove focus ring */
 .table-view:focused {
     -fx-background-insets: 0;
     -fx-background-radius: 12;
@@ -237,39 +212,70 @@
 
 
 /* =========================================================
-   UNREAD / READ ROW HIGHLIGHT (used via Java pseudo-classes)
+   UNREAD / READ ROW HIGHLIGHT (pseudo-classes from Java)
    ========================================================= */
 
-.table-row-cell:unread {
-    -fx-background-color: #bff2bf; /* green */
-}
+.table-row-cell:unread { -fx-background-color: #bff2bf; } /* green */
+.table-row-cell:read   { -fx-background-color: #f2f2f2; } /* grey */
 
-.table-row-cell:read {
-    -fx-background-color: #f2f2f2; /* grey */
-}
 
 /* =========================================================
-   CHART (BarChart) TEXT VISIBILITY ON DARK BACKGROUND
+   CHARTS (BarChart) - HIGH VISIBILITY STYLE
    ========================================================= */
 
 .chart {
     -fx-background-color: transparent;
 }
 
+/* dark glass background for chart area */
 .chart-plot-background {
-    -fx-background-color: rgba(0,0,0,0.25);
+    -fx-background-color: rgba(0,0,0,0.35);
 }
 
-.axis-label,
-.axis-tick-label,
+/* ===== AXIS TITLES (Value / Category) ===== */
+.axis-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+/* ===== AXIS NUMBERS (0.0, 1.0, etc) ===== */
+.axis-tick-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+/* ===== LEGEND TEXT ===== */
 .chart-title,
 .chart-legend-item {
-    -fx-text-fill: rgba(255,255,255,0.90);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
 }
 
+/* legend background */
 .chart-legend {
-    -fx-background-color: rgba(0,0,0,0.35);
+    -fx-background-color: rgba(0,0,0,0.45);
     -fx-background-radius: 10;
     -fx-padding: 8;
+}
+
+/* grid lines more visible */
+.chart-vertical-grid-lines,
+.chart-horizontal-grid-lines {
+    -fx-stroke: rgba(255,255,255,0.35);
+}
+
+/* ===== PURPLE BARS ===== */
+.default-color0.chart-bar {
+    -fx-bar-fill: #8e44ad;
+}
+
+.default-color1.chart-bar {
+    -fx-bar-fill: #9b59b6;
+}
+
+.default-color2.chart-bar {
+    -fx-bar-fill: #6c3483;
 }
 
