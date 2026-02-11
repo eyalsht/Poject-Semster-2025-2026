@@ -7,5 +7,6 @@ module com.gcm.server {
 
     requires org.hibernate.orm.core;
     requires jakarta.persistence;
+    requires twilio;
 }
 

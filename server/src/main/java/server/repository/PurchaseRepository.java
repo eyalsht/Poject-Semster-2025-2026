@@ -11,6 +11,7 @@ import common.user.User;
 import server.HibernateUtil;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
+import server.NotificationService;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -292,5 +293,43 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
                    .getResultList();
             return results.isEmpty() ? null : results.get(0);
         });
+    }
+    /**
+     * סורק את מסד הנתונים ושולח התראות למשתמשים שהמנוי שלהם מסתיים בעוד 3 ימים.
+     */
+    public void checkAndNotifyExpiringSubscriptions()
+    {
+        java.time.LocalDate targetDate = java.time.LocalDate.now().plusDays(3);
+
+        List<Object[]> results = executeQuery(session ->
+                session.createNativeQuery(
+                                "SELECT u.email, cl.phone_number, u.first_name, c.name as city_name " +
+                                        "FROM purchases p " +
+                                        "JOIN users u ON p.user_id = u.id " +
+                                        "JOIN cities c ON p.city_id = c.id " +
+                                        "JOIN clients cl ON u.id = cl.id " +
+                                        "WHERE p.purchase_type = 'SUBSCRIPTION' " +
+                                        "AND p.expiration_date = :targetDate")
+                        .setParameter("targetDate", java.sql.Date.valueOf(targetDate))
+                        .getResultList()
+        );
+
+        for (Object[] row : results)
+        {
+            String email = (String) row[0];
+            String phone = (String) row[1];
+            String firstName = (String) row[2];
+            String cityName = (String) row[3];
+
+            NotificationService.sendSubscriptionAlert(
+                    email,
+                    phone,
+                    firstName,
+                    3,
+                    cityName
+            );
+
+            System.out.println("[Notification] Sent 3-day reminder to: " + email + " (Phone: " + phone + ") for city: " + cityName);
+        }
     }
 }

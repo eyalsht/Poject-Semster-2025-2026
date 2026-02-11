@@ -7,6 +7,8 @@ import common.user.User;
 import java.util.List;
 import java.util.Optional;
 
+import static server.NotificationService.sendRegistrationAlert;
+
 /**
  * Repository for User entity operations.
  * Handles User, Client, and Employee entities (Single Table Inheritance).
@@ -97,6 +99,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
 
         try {
             save(client);
+            sendRegistrationAlert(email,phone,firstName);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
