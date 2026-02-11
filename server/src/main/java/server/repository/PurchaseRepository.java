@@ -158,17 +158,20 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
     }
 
     /**
-     * Find the latest expiration date for a user+city pair (lightweight, no entity loading).
+     * Find the latest expiration date for a user+city pair (lightweight native SQL, no entity loading).
      */
     public LocalDate findLatestExpirationDate(int userId, int cityId) {
-        return executeQuery(session ->
-            session.createQuery(
-                "SELECT MAX(s.expirationDate) FROM Subscription s WHERE s.user.id = :userId AND s.city.id = :cityId",
-                LocalDate.class)
+        return executeQuery(session -> {
+            Object result = session.createNativeQuery(
+                "SELECT MAX(expiration_date) FROM purchases WHERE purchase_type = 'SUBSCRIPTION' AND user_id = :userId AND city_id = :cityId")
                 .setParameter("userId", userId)
                 .setParameter("cityId", cityId)
-                .getSingleResult()
-        );
+                .getSingleResult();
+            if (result == null) return null;
+            if (result instanceof java.sql.Date) return ((java.sql.Date) result).toLocalDate();
+            if (result instanceof LocalDate) return (LocalDate) result;
+            return LocalDate.parse(result.toString());
+        });
     }
 
     /**
