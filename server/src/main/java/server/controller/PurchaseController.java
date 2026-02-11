@@ -99,7 +99,7 @@ public class PurchaseController {
                 }
             }
 
-            // Step 3: Handle based on purchase type
+            // Step 3: Handle based on a purchase type
             if (PURCHASE_TYPE_SUBSCRIPTION.equals(purchaseType)) {
                 // Subscriptions require a city
                 if (cityId == null) {

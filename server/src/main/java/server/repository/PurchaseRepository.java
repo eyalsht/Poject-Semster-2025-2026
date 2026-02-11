@@ -158,7 +158,7 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
     }
 
     /**
-     * Find the latest expiration date for a user+city pair (lightweight native SQL, no entity loading).
+     * Finds the latest expiration date for a user+city pair (lightweight native SQL, no entity loading).
      */
     public LocalDate findLatestExpirationDate(int userId, int cityId) {
         return executeQuery(session -> {
