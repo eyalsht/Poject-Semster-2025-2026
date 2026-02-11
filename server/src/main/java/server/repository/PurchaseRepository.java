@@ -84,10 +84,10 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
             double renewalDiscount = isRenewal ? 0.10 : 0;
             double totalPrice = monthlyPrice * months * (1 - (durationDiscount + renewalDiscount));
 
-            // 3. Insert
+            // 3. Insert (include map_id, purchased_version, snapshot_id as NULL for SINGLE_TABLE inheritance)
             try (PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO purchases (purchase_type, user_id, city_id, price, purchase_date, expiration_date, is_renewal) " +
-                    "VALUES ('SUBSCRIPTION', ?, ?, ?, ?, ?, ?)")) {
+                    "INSERT INTO purchases (purchase_type, user_id, city_id, map_id, price, purchase_date, expiration_date, is_renewal, purchased_version, snapshot_id) " +
+                    "VALUES ('SUBSCRIPTION', ?, ?, NULL, ?, ?, ?, ?, NULL, NULL)")) {
                 ps.setInt(1, userId);
                 ps.setInt(2, cityId);
                 ps.setDouble(3, totalPrice);
