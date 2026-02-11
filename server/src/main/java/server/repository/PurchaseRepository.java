@@ -58,14 +58,18 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
         LocalDate base = (renewal ? latestExpiration : today);
         LocalDate newExpiration = base.plusMonths(months);
         Subscription subscription = new Subscription();
-        subscription.setUser(user);
-        subscription.setCity(city);
         subscription.setPricePaid(price);
         subscription.setPurchaseDate(LocalDate.now());
         subscription.setExpirationDate(newExpiration);
         subscription.setRenewal(renewal);
 
-        save(subscription);
+        // Must re-attach user and city within the transaction session,
+        // since the originals were loaded in a different (now closed) session
+        executeInTransaction(session -> {
+            subscription.setUser(session.getReference(User.class, user.getId()));
+            subscription.setCity(session.getReference(City.class, city.getId()));
+            session.persist(subscription);
+        });
         return subscription;
     }
 
@@ -75,20 +79,27 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
      */
     public OneTimePurchase createOneTimePurchase(User user, GCMMap map, double price) {
         OneTimePurchase purchase = new OneTimePurchase();
-        purchase.setUser(user);
-        purchase.setMap(map);
         purchase.setPricePaid(price);
         purchase.setPurchaseDate(LocalDate.now());
         purchase.setPurchasedVersion(map.getVersion());
 
-        // Create snapshot if user is a Client
-        if (user instanceof Client client) {
-            PurchasedMapSnapshot snapshot = new PurchasedMapSnapshot(client, map, price);
-            client.addPurchasedMap(snapshot);
-            purchase.setSnapshot(snapshot);
-        }
+        // Must re-attach entities within the transaction session,
+        // since the originals were loaded in a different (now closed) session
+        executeInTransaction(session -> {
+            User managedUser = session.getReference(User.class, user.getId());
+            GCMMap managedMap = session.getReference(GCMMap.class, map.getId());
+            purchase.setUser(managedUser);
+            purchase.setMap(managedMap);
 
-        save(purchase);
+            // Create snapshot if user is a Client
+            if (managedUser instanceof Client client) {
+                PurchasedMapSnapshot snapshot = new PurchasedMapSnapshot(client, managedMap, price);
+                client.addPurchasedMap(snapshot);
+                purchase.setSnapshot(snapshot);
+            }
+
+            session.persist(purchase);
+        });
         return purchase;
     }
 
