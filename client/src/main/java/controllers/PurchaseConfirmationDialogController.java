@@ -5,8 +5,12 @@ import common.enums.ActionType;
 import common.messaging.Message;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -23,6 +27,7 @@ public class PurchaseConfirmationDialogController {
     @FXML private ProgressBar progressBar;
     @FXML private Button btnConfirm;
     @FXML private Button btnCancel;
+    @FXML private Button btnUpdatePayment;
 
     private String purchaseType;
     private int cityId;
@@ -183,9 +188,16 @@ public class PurchaseConfirmationDialogController {
                         btnConfirm.setManaged(false);
                         btnCancel.setText("Close");
                     } else {
-                        lblStatus.setText("Payment failed. Please check your payment details.");
+                        lblStatus.setText("Payment failed. Update your payment details or try again.");
                         lblStatus.setTextFill(javafx.scene.paint.Color.web("#e74c3c"));
                         btnConfirm.setDisable(false);
+                        btnConfirm.setText("Retry");
+
+                        // Show Update Payment button
+                        if (btnUpdatePayment != null) {
+                            btnUpdatePayment.setVisible(true);
+                            btnUpdatePayment.setManaged(true);
+                        }
                     }
                 });
 
@@ -199,6 +211,29 @@ public class PurchaseConfirmationDialogController {
                 });
             }
         }).start();
+    }
+
+    @FXML
+    private void onUpdatePayment() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/PaymentUpdateDialog.fxml"));
+            Parent root = loader.load();
+
+            PaymentUpdateDialogController controller = loader.getController();
+
+            Stage stage = new Stage();
+            stage.setTitle("Update Payment Details");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            if (controller.isSaved()) {
+                lblStatus.setText("Payment updated! Click Retry to continue.");
+                lblStatus.setTextFill(javafx.scene.paint.Color.web("#2ecc71"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

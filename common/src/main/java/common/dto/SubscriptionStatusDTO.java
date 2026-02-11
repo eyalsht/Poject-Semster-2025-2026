@@ -2,6 +2,7 @@ package common.dto;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class SubscriptionStatusDTO implements Serializable {
 
@@ -37,4 +38,13 @@ public class SubscriptionStatusDTO implements Serializable {
 
     public double getPricePerMonth() { return pricePerMonth; }
     public void setPricePerMonth(double pricePerMonth) { this.pricePerMonth = pricePerMonth; }
+
+    /**
+     * Returns true if the subscription is active and expires within the given number of days.
+     */
+    public boolean isExpiringSoon(int days) {
+        if (!active || expirationDate == null) return false;
+        long remaining = ChronoUnit.DAYS.between(LocalDate.now(), expirationDate);
+        return remaining >= 0 && remaining <= days;
+    }
 }
