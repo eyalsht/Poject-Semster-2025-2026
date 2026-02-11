@@ -39,36 +39,43 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
      */
     public Subscription createSubscription(User user, City city, double price, int months)
     {
-        LocalDate today = LocalDate.now();
-
-        // Find the latest expiration date of any subscription for this user+city
-        LocalDate latestExpiration = executeQuery(session ->
-                session.createQuery(
-                                "select max(s.expirationDate) " +
-                                        "from Subscription s " +
-                                        "where s.user.id = :userId and s.city.id = :cityId",
-                                LocalDate.class)
-                        .setParameter("userId", user.getId())
-                        .setParameter("cityId", city.getId())
-                        .getSingleResult()
-        );
-
-        boolean renewal = (latestExpiration != null && !latestExpiration.isBefore(today));
-
-        LocalDate base = (renewal ? latestExpiration : today);
-        LocalDate newExpiration = base.plusMonths(months);
-        Subscription subscription = new Subscription();
-        subscription.setPricePaid(price);
-        subscription.setPurchaseDate(LocalDate.now());
-        subscription.setExpirationDate(newExpiration);
-        subscription.setRenewal(renewal);
-
-        // Must re-attach user and city within the transaction session,
-        // since the originals were loaded in a different (now closed) session
+        final Subscription subscription = new Subscription();
+        // Use native SQL to avoid Hibernate detached entity / closed connection issues
+        // with JOINED inheritance on User
         executeInTransaction(session -> {
-            subscription.setUser(session.getReference(User.class, user.getId()));
-            subscription.setCity(session.getReference(City.class, city.getId()));
-            session.persist(subscription);
+            LocalDate today = LocalDate.now();
+
+            // Find the latest expiration date of any subscription for this user+city
+            LocalDate latestExpiration = session.createQuery(
+                            "select max(s.expirationDate) " +
+                                    "from Subscription s " +
+                                    "where s.user.id = :userId and s.city.id = :cityId",
+                            LocalDate.class)
+                    .setParameter("userId", user.getId())
+                    .setParameter("cityId", city.getId())
+                    .getSingleResult();
+
+            boolean renewal = (latestExpiration != null && !latestExpiration.isBefore(today));
+            LocalDate base = (renewal ? latestExpiration : today);
+            LocalDate newExpiration = base.plusMonths(months);
+
+            // Insert via native SQL to bypass entity proxy issues
+            session.createNativeQuery(
+                "INSERT INTO purchases (purchase_type, user_id, city_id, price, purchase_date, expiration_date, is_renewal) " +
+                "VALUES ('SUBSCRIPTION', :userId, :cityId, :price, :purchaseDate, :expirationDate, :isRenewal)")
+                .setParameter("userId", user.getId())
+                .setParameter("cityId", city.getId())
+                .setParameter("price", price)
+                .setParameter("purchaseDate", today)
+                .setParameter("expirationDate", newExpiration)
+                .setParameter("isRenewal", renewal)
+                .executeUpdate();
+
+            // Populate the returned object for logging
+            subscription.setPricePaid(price);
+            subscription.setPurchaseDate(today);
+            subscription.setExpirationDate(newExpiration);
+            subscription.setRenewal(renewal);
         });
         return subscription;
     }
@@ -78,27 +85,43 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
      * Creates a snapshot of the map at purchase time.
      */
     public OneTimePurchase createOneTimePurchase(User user, GCMMap map, double price) {
-        OneTimePurchase purchase = new OneTimePurchase();
-        purchase.setPricePaid(price);
-        purchase.setPurchaseDate(LocalDate.now());
-        purchase.setPurchasedVersion(map.getVersion());
-
-        // Must re-attach entities within the transaction session,
-        // since the originals were loaded in a different (now closed) session
+        final OneTimePurchase purchase = new OneTimePurchase();
+        // Use native SQL to avoid Hibernate detached entity / closed connection issues
         executeInTransaction(session -> {
-            User managedUser = session.getReference(User.class, user.getId());
-            GCMMap managedMap = session.getReference(GCMMap.class, map.getId());
-            purchase.setUser(managedUser);
-            purchase.setMap(managedMap);
+            LocalDate today = LocalDate.now();
 
-            // Create snapshot if user is a Client
-            if (managedUser instanceof Client client) {
-                PurchasedMapSnapshot snapshot = new PurchasedMapSnapshot(client, managedMap, price);
-                client.addPurchasedMap(snapshot);
-                purchase.setSnapshot(snapshot);
+            // Insert purchase record via native SQL
+            session.createNativeQuery(
+                "INSERT INTO purchases (purchase_type, user_id, city_id, map_id, price, purchase_date, purchased_version, is_renewal) " +
+                "VALUES ('ONE_TIME', :userId, :cityId, :mapId, :price, :purchaseDate, :version, false)")
+                .setParameter("userId", user.getId())
+                .setParameter("cityId", map.getCity() != null ? map.getCity().getId() : null)
+                .setParameter("mapId", map.getId())
+                .setParameter("price", price)
+                .setParameter("purchaseDate", today)
+                .setParameter("version", map.getVersion())
+                .executeUpdate();
+
+            // Create snapshot record if user is a Client
+            if (user instanceof Client) {
+                session.createNativeQuery(
+                    "INSERT INTO purchased_map_snapshots (client_id, original_map_id, map_name, city_name, purchased_version, description, purchase_date, price_paid) " +
+                    "VALUES (:clientId, :mapId, :mapName, :cityName, :version, :desc, :purchaseDate, :price)")
+                    .setParameter("clientId", user.getId())
+                    .setParameter("mapId", map.getId())
+                    .setParameter("mapName", map.getName())
+                    .setParameter("cityName", map.getCityName())
+                    .setParameter("version", map.getVersion())
+                    .setParameter("desc", map.getDescription())
+                    .setParameter("purchaseDate", today)
+                    .setParameter("price", price)
+                    .executeUpdate();
             }
 
-            session.persist(purchase);
+            // Populate returned object for logging
+            purchase.setPricePaid(price);
+            purchase.setPurchaseDate(today);
+            purchase.setPurchasedVersion(map.getVersion());
         });
         return purchase;
     }
