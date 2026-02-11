@@ -247,3 +247,29 @@
 .table-row-cell:read {
     -fx-background-color: #f2f2f2; /* grey */
 }
+
+/* =========================================================
+   CHART (BarChart) TEXT VISIBILITY ON DARK BACKGROUND
+   ========================================================= */
+
+.chart {
+    -fx-background-color: transparent;
+}
+
+.chart-plot-background {
+    -fx-background-color: rgba(0,0,0,0.25);
+}
+
+.axis-label,
+.axis-tick-label,
+.chart-title,
+.chart-legend-item {
+    -fx-text-fill: rgba(255,255,255,0.90);
+}
+
+.chart-legend {
+    -fx-background-color: rgba(0,0,0,0.35);
+    -fx-background-radius: 10;
+    -fx-padding: 8;
+}
+

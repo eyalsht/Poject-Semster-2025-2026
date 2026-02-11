@@ -24,6 +24,12 @@ public class ActivityReportService implements ReportManager.ParamAwareReportServ
         LocalDate to = (LocalDate) params[1];
         Integer cityId = (Integer) params[2];
 
+        LocalDate day = from;
+        while (!day.isAfter(to)) {
+            server.report.ActivityStatsScheduler.aggregateDay(ctx.getSessionFactory(), day);
+            day = day.plusDays(1);
+        }
+
         try (Session s = ctx.getSessionFactory().openSession()) {
             s.beginTransaction();
 

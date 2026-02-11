@@ -5,6 +5,7 @@ import common.report.PurchasesReport;
 import org.hibernate.Session;
 import server.report.ReportManager;
 import server.report.ReportRequestContext;
+import server.report.ActivityStatsScheduler;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,11 +18,18 @@ public class PurchasesReportService implements ReportManager.ParamAwareReportSer
     }
 
     @Override
-    public Object generate(ReportRequestContext ctx, Object... params) {
+    public Object generate(ReportRequestContext ctx, Object... params)
+    {
 
         LocalDate from = (LocalDate) params[0];
         LocalDate to = (LocalDate) params[1];
         Integer cityId = (Integer) params[2];
+
+        LocalDate day = from;
+        while (!day.isAfter(to)) {
+            server.report.ActivityStatsScheduler.aggregateDay(ctx.getSessionFactory(), day);
+            day = day.plusDays(1);
+        }
 
         try (Session s = ctx.getSessionFactory().openSession()) {
             s.beginTransaction();
