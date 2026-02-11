@@ -15,47 +15,42 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CityMapsPageController">
     <children>
-        <GridPane hgap="20.0" layoutX="20.0" layoutY="68.0" prefHeight="73.0" prefWidth="545.0" vgap="12.0">
+        <GridPane hgap="20.0" layoutX="27.0" layoutY="68.0" prefHeight="73.0" prefWidth="545.0" translateX="5.8" translateY="2.7" vgap="12.0">
             <columnConstraints>
-                <ColumnConstraints maxWidth="162.33331298828125" minWidth="103.66665649414062" prefWidth="154.33334350585938" />
-                <ColumnConstraints maxWidth="222.0" minWidth="121.00002034505212" prefWidth="142.6666463216146" />
-                <ColumnConstraints maxWidth="159.0" minWidth="10.0" prefWidth="109.33331298828125" />
-                <ColumnConstraints maxWidth="159.0" minWidth="10.0" prefWidth="90.6666870117187" />
+                <ColumnConstraints maxWidth="120.0" prefWidth="120.0" />
+                <ColumnConstraints maxWidth="222.0" minWidth="168.0" prefWidth="205.0" />
+                <ColumnConstraints maxWidth="159.0" minWidth="10.0" prefWidth="122.0" />
+                <ColumnConstraints maxWidth="159.0" minWidth="10.0" prefWidth="122.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints prefHeight="30.0" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" />
                 <RowConstraints prefHeight="30.0" />
             </rowConstraints>
             <children>
-                <Label text="Search Maps" textFill="#ecf0f1">
+                <Label text="Search" textFill="#ecf0f1" GridPane.rowIndex="1">
                     <font>
                         <Font name="System Bold" size="12.0" />
                     </font>
                <GridPane.margin>
-                  <Insets bottom="20.0" />
+                  <Insets />
                </GridPane.margin>
                 </Label>
-                <TextField fx:id="txtSearch" prefHeight="26.0" prefWidth="147.0" promptText="Search maps, sites..." GridPane.columnIndex="1">
-               <GridPane.margin>
-                  <Insets bottom="20.0" />
-               </GridPane.margin></TextField>
-
-                <Button onAction="#onSearch" prefHeight="27.0" prefWidth="95.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" GridPane.columnIndex="2">
-                    <GridPane.margin><Insets bottom="20.0" left="-10.0" /></GridPane.margin>
-                </Button>
-
-                <Button onAction="#onClearSearch" prefHeight="27.0" prefWidth="95.0" text="Clear" GridPane.columnIndex="3">
-                    <GridPane.margin><Insets bottom="20.0" left="-25.0" /></GridPane.margin>
-                </Button>
-
-                <Button fx:id="btnBack" mnemonicParsing="false" onAction="#onBackToCatalog" prefHeight="27.0" prefWidth="174.0" style="-fx-background-color: #95a5a6; -fx-text-fill: white;" text="Back to Catalog" GridPane.rowIndex="1">
+                <TextField fx:id="txtSearch" prefHeight="26.0" prefWidth="167.0" promptText="Search maps, sites..." translateX="-0.2" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets />
-               </GridPane.margin></Button>
+               </GridPane.margin></TextField>
+
+                <Button mnemonicParsing="false" onAction="#onSearch" prefHeight="27.0" prefWidth="74.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" translateX="0.2" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                    <GridPane.margin><Insets left="-10.0" /></GridPane.margin>
+                </Button>
+
+                <Button onAction="#onClearSearch" prefHeight="27.0" prefWidth="74.0" text="Clear" translateX="0.85" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                    <GridPane.margin><Insets left="-45.0" /></GridPane.margin>
+                </Button>
             </children>
         </GridPane>
 
-        <HBox alignment="CENTER_RIGHT" layoutX="580.0" layoutY="105.0" prefHeight="40.0" spacing="10.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="105.0">
+        <HBox alignment="CENTER_RIGHT" layoutX="580.0" layoutY="105.0" prefHeight="40.0" spacing="10.0" translateY="2.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="105.0">
             <children>
                 <Button fx:id="btnEditCity" managed="false" mnemonicParsing="false" onAction="#onEditCity" prefHeight="30.0" text="Edit City" visible="false" />
                 <Button fx:id="btnCreateTour" managed="false" mnemonicParsing="false" onAction="#onCreateTour" prefHeight="30.0" text="Create Tour" visible="false" />
@@ -75,6 +70,8 @@
             </FlowPane>
          </content>
       </ScrollPane>
+
+                <Button fx:id="btnBack" layoutX="36.0" layoutY="26.0" mnemonicParsing="false" onAction="#onBackToCatalog" prefHeight="25.0" prefWidth="131.0" style="-fx-background-color: #95a5a6; -fx-text-fill: white;" text="Back to Catalog" />
 
     </children>
 </AnchorPane>

@@ -51,14 +51,14 @@
                     </font></Label>
                 <HBox prefHeight="37.0" prefWidth="226.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <TextField fx:id="txtSearch" prefHeight="26.0" prefWidth="147.0" promptText="Search cities, sites..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="27.0" prefWidth="95.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="27.0" prefWidth="74.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" GridPane.columnIndex="2" GridPane.rowIndex="2">
                     <GridPane.margin>
                         <Insets left="-10.0" />
                     </GridPane.margin>
                 </Button>
-                <Button fx:id="btnClearSearch" mnemonicParsing="false" onAction="#onClearSearch" prefHeight="27.0" prefWidth="95.0" text="Clear" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                <Button fx:id="btnClearSearch" mnemonicParsing="false" onAction="#onClearSearch" prefHeight="27.0" prefWidth="74.0" text="Clear" GridPane.columnIndex="3" GridPane.rowIndex="2">
                     <GridPane.margin>
-                        <Insets left="-25.0" />
+                        <Insets left="-45.0" />
                     </GridPane.margin>
                 </Button>
             </children>
