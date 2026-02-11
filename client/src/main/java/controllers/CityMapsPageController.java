@@ -62,9 +62,8 @@ public class CityMapsPageController {
             lblCityTitle.setText("Welcome to " + city.getName());
         }
         if (city.getMaps() != null && !city.getMaps().isEmpty()) {
-            //updateMapComboBox(city.getMaps());
             displayMaps(city.getMaps());
-        } else if (!isLoading){
+        } else if (!isLoading) {
             loadMapsFromServer(city.getName());
         }
 
@@ -106,29 +105,36 @@ public class CityMapsPageController {
         }).start();
     }
     private void displayMaps(List<GCMMap> maps) {
-
-        if (maps == null) return;
-
-        // 1. שמירת המפות באובייקט העיר
+        if (maps == null || selectedCity == null) return;
         selectedCity.setMaps(maps);
+        List<Parent> cards = new java.util.ArrayList<>();
+        java.util.Set<Integer> seenMapIds = new java.util.HashSet<>();
+
 
         // 2. הכנת רשימת הכרטיסים ב-Thread הנוכחי (לא ב-UI Thread) כדי לא לתקוע את המסך
         List<Parent> newCards = new java.util.ArrayList<>();
         for (GCMMap map : maps) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
-                Parent card = loader.load();
-                MapCardController controller = loader.getController();
-                controller.setData(map);
-                newCards.add(card);
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (map != null && !seenMapIds.contains(map.getId())) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
+                    Parent card = loader.load();
+                    MapCardController controller = loader.getController();
+                    controller.setData(map);
+                    newCards.add(card);
+                    seenMapIds.add(map.getId());
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
-        // 3. עדכון ה-UI בפעולה אחת ויחידה - זה מונע את השכפול!
+
         Platform.runLater(() -> {
-            flowPaneMaps.getChildren().setAll(newCards); // setAll מנקה ומחליף בבת אחת
+            if (flowPaneMaps != null) {
+                flowPaneMaps.getChildren().setAll(newCards);
+                System.out.println("Displaying " + newCards.size() + " unique maps for " + selectedCity.getName());
+            }
         });
       /*  Platform.runLater(() -> {
         flowPaneMaps.getChildren().clear();

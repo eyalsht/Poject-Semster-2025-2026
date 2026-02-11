@@ -109,11 +109,33 @@ public class CatalogPageController {
     }
 
     private void updateCityCards(List<GCMMap> maps) {
-        Platform.runLater(() -> {
-            flowPaneCities.getChildren().clear(); // clean old card
-            Set<Integer> displayedCityIds = new HashSet<>();
 
-            for (GCMMap gcmMap : maps) {
+        List<Parent> cityCards = new java.util.ArrayList<>();
+
+        Set<Integer> displayedCityIds = new HashSet<>();
+
+
+        for (GCMMap gcmMap : maps) {
+            City city = gcmMap.getCity();
+            if (city != null && !displayedCityIds.contains(city.getId())) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityCard.fxml"));
+                    Parent card = loader.load();
+
+                    CityCardController controller = loader.getController();
+                    controller.setData(gcmMap, this);
+
+                    cityCards.add(card);
+                    displayedCityIds.add(city.getId());
+                } catch (Exception e) {
+                    System.err.println("Error loading city card: " + e.getMessage());
+                }
+            }
+        }
+        Platform.runLater(() -> {
+            flowPaneCities.getChildren().setAll(cityCards);
+        });
+           /* for (GCMMap gcmMap : maps) {
                 City city = gcmMap.getCity();
                 if (city != null && !displayedCityIds.contains(city.getId())) {
                     try {
@@ -130,8 +152,7 @@ public class CatalogPageController {
                         e.printStackTrace();
                     }
                 }
-            }
-        });
+            }*/
     }
 
     /**
@@ -219,7 +240,28 @@ public class CatalogPageController {
      * Update city cards from search results.
      */
     private void updateCityCardsFromSearch(List<CatalogResponse.CitySearchResult> searchResults) {
+
+        List<Parent> searchCards = new java.util.ArrayList<>();
+
+        for (CatalogResponse.CitySearchResult result : searchResults) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityCard.fxml"));
+                Parent card = loader.load();
+                CityCardController controller = loader.getController();
+                controller.setSearchData(result, this);
+                searchCards.add(card);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         Platform.runLater(() -> {
+            flowPaneCities.getChildren().setAll(searchCards);
+            if (searchCards.isEmpty()) {
+                flowPaneCities.getChildren().add(new Label("No results found."));
+            }
+        });
+      /*  Platform.runLater(() -> {
             flowPaneCities.getChildren().clear();
 
             if (searchResults.isEmpty()) {
@@ -243,7 +285,7 @@ public class CatalogPageController {
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
     }
 
     public CatalogResponse getLastCatalogResponse() {
