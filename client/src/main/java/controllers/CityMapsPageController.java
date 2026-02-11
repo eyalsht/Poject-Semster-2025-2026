@@ -42,12 +42,10 @@ public class CityMapsPageController {
     @FXML private ComboBox<String> cbCity;
 
     @FXML private Button btnUpdateMap;
-    @FXML private Button btnAddMap;
-    @FXML private Button btnDeleteMap;
     @FXML private Button btnPriceUpdate;
     @FXML private Button btnApprovals;
     @FXML private Button btnEditCity;
-    @FXML private Button btnCreateTour;
+    private boolean isLoading = false;
 
     @FXML private Button btnShowMaps;
     @FXML private Button btnShowTours;
@@ -63,39 +61,76 @@ public class CityMapsPageController {
         if (lblCityTitle != null) {
             lblCityTitle.setText("Welcome to " + city.getName());
         }
-        if (cbMap != null && city.getMaps() != null) {
+        if (city.getMaps() != null && !city.getMaps().isEmpty()) {
+            //updateMapComboBox(city.getMaps());
+            displayMaps(city.getMaps());
+        } else if (!isLoading){
+            loadMapsFromServer(city.getName());
+        }
+
+    }
+
+    private void updateMapComboBox(List<GCMMap> maps) {
+        if (cbMap != null && maps != null) {
             cbMap.getItems().clear();
-            for (GCMMap map : city.getMaps()) {
+            for (GCMMap map : maps) {
                 cbMap.getItems().add(map.getName());
             }
         }
-        loadMapsFromServer(city.getName());
-
     }
+
     private void loadMapsFromServer(String cityName) {
+        if (isLoading) return; // אם כבר יש טעינה בדרך, אל תתחיל חדשה
+
+        isLoading = true;
         new Thread(() -> {
             try {
-                // יצירת פילטר לעיר ספציפית
                 CatalogFilter filter = new CatalogFilter(cityName, null, null);
                 Message request = new Message(ActionType.GET_CATALOG_REQUEST, filter);
-
-                // שליחה וקבלת תשובה מהשרת
                 Message response = (Message) GCMClient.getInstance().sendRequest(request);
 
                 Platform.runLater(() -> {
-                    if (response != null && response.getAction() == ActionType.GET_CATALOG_RESPONSE) {
-                        CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
-
-                        // עדכון רשימת המפות המקומית והצגת הכרטיסים
-                        displayMaps(catalogResponse.getMaps());
+                    try {
+                        if (response != null && response.getAction() == ActionType.GET_CATALOG_RESPONSE) {
+                            CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
+                            displayMaps(catalogResponse.getMaps());
+                        }
+                    } finally {
+                        isLoading = false; // שחרור המנעול לאחר העדכון
                     }
                 });
             } catch (Exception e) {
+                isLoading = false;
                 e.printStackTrace();
             }
         }).start();
     }
     private void displayMaps(List<GCMMap> maps) {
+
+        if (maps == null) return;
+
+        // 1. שמירת המפות באובייקט העיר
+        selectedCity.setMaps(maps);
+
+        // 2. הכנת רשימת הכרטיסים ב-Thread הנוכחי (לא ב-UI Thread) כדי לא לתקוע את המסך
+        List<Parent> newCards = new java.util.ArrayList<>();
+        for (GCMMap map : maps) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
+                Parent card = loader.load();
+                MapCardController controller = loader.getController();
+                controller.setData(map);
+                newCards.add(card);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 3. עדכון ה-UI בפעולה אחת ויחידה - זה מונע את השכפול!
+        Platform.runLater(() -> {
+            flowPaneMaps.getChildren().setAll(newCards); // setAll מנקה ומחליף בבת אחת
+        });
+      /*  Platform.runLater(() -> {
         flowPaneMaps.getChildren().clear();
 
         if (maps == null || maps.isEmpty()) {
@@ -106,19 +141,16 @@ public class CityMapsPageController {
         selectedCity.setMaps(maps);
         for (GCMMap map : maps) {
             try {
-                // טעינת ה-FXML של כרטיס המפה
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
                 Parent card = loader.load();
-
-                // הזרקת הנתונים לכרטיס
                 MapCardController controller = loader.getController();
                 controller.setData(map);
-
                 flowPaneMaps.getChildren().add(card);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    });*/
     }
 
     private void loadMaps() {
@@ -190,10 +222,7 @@ public class CityMapsPageController {
 
     private void setManagementButtonsVisible(boolean visible) {
         setButtonState(btnEditCity, visible);
-        setButtonState(btnCreateTour, visible);
-        setButtonState(btnAddMap, visible);
         setButtonState(btnUpdateMap, visible);
-        setButtonState(btnDeleteMap, visible);
         setButtonState(btnPriceUpdate, visible);
     }
     private void setButtonState(Button btn, boolean visible) {
@@ -209,7 +238,7 @@ public class CityMapsPageController {
         btnShowMaps.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-font-weight: bold;");
         btnShowTours.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-border-color: #bdc3c7; -fx-font-weight: bold;");
 
-        if (flowPaneMaps != null) {
+        if (selectedCity != null && flowPaneMaps != null) {
             displayMaps(selectedCity.getMaps());
         }
     }
@@ -225,14 +254,15 @@ public class CityMapsPageController {
         displayTours();
     }
     private void displayTours() {
-        flowPaneMaps.getChildren().clear();
-        if (selectedCity == null || selectedCity.getTours() == null) return;
+        Platform.runLater(() -> {
+            flowPaneMaps.getChildren().clear();
+            if (selectedCity == null || selectedCity.getTours() == null) return;
 
-        // לוגיקה זמנית עד שיהיה לנו TourCard.fxml
-        for (common.content.Tour tour : selectedCity.getTours()) {
-            Label tourLabel = new Label(tour.getName() + " (" + tour.getRecommendedDuration() + ")");
-            flowPaneMaps.getChildren().add(tourLabel);
-        }
+            for (common.content.Tour tour : selectedCity.getTours()) {
+                Label tourLabel = new Label(tour.getName() + " (" + tour.getRecommendedDuration() + ")");
+                flowPaneMaps.getChildren().add(tourLabel);
+            }
+        });
     }
 
     @FXML

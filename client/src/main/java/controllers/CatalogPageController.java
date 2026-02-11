@@ -433,13 +433,13 @@ public class CatalogPageController {
      // NEW: Placeholder method to resolve FXML error
      showAlert("Info", "Selection logic needs to be updated for city cards.");
  }
-
-    @FXML
-    private void onCreateCity() { OpenCityUpdateWindow("create");}
     @FXML
     private void onEditCity() {
         OpenCityUpdateWindow("add");
     }
+   /*
+    @FXML
+    private void onCreateCity() { OpenCityUpdateWindow("create");}
     @FXML
     private void onAddMap() {
         openMapUpdateWindow("add", null);
@@ -450,7 +450,7 @@ public class CatalogPageController {
     private void onEditTour() {
         OpenCityUpdateWindow("edit");
     }
-
+/*
   /*  @FXML Using Table info - which no longer exist
     private void onDeleteMap() {
         GCMMap selected = tblCatalog.getSelectionModel().getSelectedItem();
