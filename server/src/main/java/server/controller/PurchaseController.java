@@ -62,9 +62,9 @@ public class PurchaseController {
      * @param purchaseType    SUBSCRIPTION or ONE_TIME
      * @param creditCardToken Payment token
      * @param monthsToAdd     Months to add for subscription
-     * @return true if purchase was successful
+     * @return null if purchase was successful, or an error reason string
      */
-    public boolean processPurchase(int userId, Integer cityId, Integer mapId, String purchaseType,
+    public String processPurchase(int userId, Integer cityId, Integer mapId, String purchaseType,
                                    String creditCardToken, int monthsToAdd) {
 
         System.out.println("Processing " + purchaseType + " purchase for UserID: " + userId +
@@ -75,32 +75,27 @@ public class PurchaseController {
             Optional<User> optionalUser = userRepository.findById(userId);
 
             if (optionalUser.isEmpty()) {
-                System.err.println("Purchase failed: User not found with ID: " + userId);
-                return false;
+                return "User not found with ID: " + userId;
             }
 
             User user = optionalUser.get();
 
-            // Step 2: Validate payment using card details if user is a Client
+            // Step 2: Validate payment
             if (user instanceof Client) {
-                // Load Client specifically to ensure @Embedded PaymentDetails is
-                // fully initialised (JOINED inheritance + detached session can
-                // leave the embedded fields null when loaded via User.class).
-                Optional<Client> optClient = userRepository.findClientById(userId);
-                if (optClient.isEmpty()) {
-                    System.err.println("Purchase failed: Client not found with ID: " + userId);
-                    return false;
+                common.purchase.PaymentDetails pd = userRepository.loadPaymentDetails(userId);
+                System.out.println("[DEBUG] PaymentDetails for userId=" + userId + ": " + pd);
+                if (pd != null) {
+                    System.out.println("[DEBUG] card=" + pd.getCreditCardNumber()
+                        + " expiry=" + pd.getExpiryMonth() + "/" + pd.getExpiryYear());
                 }
-                Client client = optClient.get();
-                if (!paymentService.validate(client.getPaymentDetails())) {
-                    System.err.println("Purchase failed: Payment validation failed for UserID: " + userId);
-                    return false;
+                if (!paymentService.validate(pd)) {
+                    return "Payment validation failed: " + (pd == null ? "No payment details on file" :
+                        "Card ending " + (pd.getCreditCardNumber() != null ? pd.getCreditCardNumber().substring(Math.max(0, pd.getCreditCardNumber().length()-4)) : "????") +
+                        " exp " + pd.getExpiryMonth() + "/" + pd.getExpiryYear());
                 }
             } else {
-                // Fallback to token validation for non-clients
                 if (!paymentService.validate(creditCardToken)) {
-                    System.err.println("Purchase failed: Payment validation failed for UserID: " + userId);
-                    return false;
+                    return "Payment validation failed for token";
                 }
             }
 
@@ -108,22 +103,19 @@ public class PurchaseController {
             if (PURCHASE_TYPE_SUBSCRIPTION.equals(purchaseType)) {
                 // Subscriptions require a city
                 if (cityId == null) {
-                    System.err.println("Purchase failed: City ID is required for SUBSCRIPTION purchase");
-                    return false;
+                    return "City ID is required for SUBSCRIPTION purchase";
                 }
 
                 Optional<City> optionalCity = cityRepository.findById(cityId);
                 if (optionalCity.isEmpty()) {
-                    System.err.println("Purchase failed: City not found with ID: " + cityId);
-                    return false;
+                    return "City not found with ID: " + cityId;
                 }
 
                 City city = optionalCity.get();
                 double monthlyPrice = city.getPriceSub();
 
                 if (monthlyPrice <= 0) {
-                    System.err.println("Purchase failed: Invalid subscription price for city: " + city.getName());
-                    return false;
+                    return "Invalid subscription price for city: " + city.getName() + " (price=" + monthlyPrice + ")";
                 }
 
                 return processSubscriptionPurchase(user, city, monthlyPrice, monthsToAdd);
@@ -131,42 +123,39 @@ public class PurchaseController {
             } else if (PURCHASE_TYPE_ONE_TIME.equals(purchaseType)) {
                 // One-time purchases are for maps only - no city required
                 if (mapId == null) {
-                    System.err.println("Purchase failed: Map ID is required for ONE_TIME purchase");
-                    return false;
+                    return "Map ID is required for ONE_TIME purchase";
                 }
 
                 Optional<GCMMap> optionalMap = mapRepository.findById(mapId);
                 if (optionalMap.isEmpty()) {
-                    System.err.println("Purchase failed: Map not found with ID: " + mapId);
-                    return false;
+                    return "Map not found with ID: " + mapId;
                 }
 
                 GCMMap map = optionalMap.get();
                 double price = map.getPrice();
 
                 if (price <= 0) {
-                    System.err.println("Purchase failed: Invalid price for map: " + map.getName());
-                    return false;
+                    return "Invalid price for map: " + map.getName() + " (price=" + price + ")";
                 }
 
                 return processOneTimePurchase(user, map, price);
 
             } else {
-                System.err.println("Purchase failed: Invalid purchase type: " + purchaseType);
-                return false;
+                return "Invalid purchase type: " + purchaseType;
             }
 
         } catch (Exception e) {
             System.err.println("Purchase failed with exception: " + e.getMessage());
             e.printStackTrace();
-            return false;
+            return "Server exception: " + e.getMessage();
         }
     }
 
     /**
      * Process a subscription purchase with renewal and duration discounts.
+     * @return null on success, error reason on failure
      */
-    private boolean processSubscriptionPurchase(User user, City city, double monthlyPrice, int monthsToAdd) {
+    private String processSubscriptionPurchase(User user, City city, double monthlyPrice, int monthsToAdd) {
         try {
             // Check for existing active subscription (renewal detection)
             Subscription existing = purchaseRepository.findLatestSubscription(user.getId(), city.getId());
@@ -203,19 +192,20 @@ public class PurchaseController {
                 ", Total discount: " + (totalDiscount * 100) + "%" +
                 ", Price: $" + String.format("%.2f", totalPrice) +
                 ", Expires: " + subscription.getExpirationDate());
-            return true;
+            return null; // success
 
         } catch (Exception e) {
             System.err.println("Failed to process subscription purchase: " + e.getMessage());
             e.printStackTrace();
-            return false;
+            return "Subscription creation failed: " + e.getMessage();
         }
     }
 
     /**
      * Process a one-time map purchase with upgrade discount.
+     * @return null on success, error reason on failure
      */
-    private boolean processOneTimePurchase(User user, GCMMap map, double price) {
+    private String processOneTimePurchase(User user, GCMMap map, double price) {
         try {
             // Check if user has a previous version (upgrade detection)
             PurchasedMapSnapshot existingSnapshot = purchaseRepository.findPurchasedSnapshot(user.getId(), map.getId());
@@ -225,8 +215,7 @@ public class PurchaseController {
                 String currentVersion = map.getVersion();
 
                 if (currentVersion.equals(existingVersion)) {
-                    System.err.println("Purchase failed: User already owns this map version");
-                    return false;
+                    return "You already own this map version (v" + currentVersion + ")";
                 }
 
                 // Apply 50% upgrade discount
@@ -240,12 +229,12 @@ public class PurchaseController {
             System.out.println("One-time purchase completed for UserID: " + user.getId() +
                 ", MapID: " + map.getId() + ", Version: " + map.getVersion() +
                 ", Price: $" + String.format("%.2f", price));
-            return true;
+            return null; // success
 
         } catch (Exception e) {
             System.err.println("Failed to process one-time purchase: " + e.getMessage());
             e.printStackTrace();
-            return false;
+            return "Map purchase failed: " + e.getMessage();
         }
     }
 }
