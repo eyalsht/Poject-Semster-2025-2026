@@ -5,15 +5,12 @@
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
 
-<VBox fx:id="mapCardRoot" alignment="TOP_CENTER" prefHeight="260.0" prefWidth="200.0"
-      spacing="8.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #dcdde1;"
-      xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.MapCardController" onMouseClicked="#onMapClicked">
+<VBox fx:id="mapCardRoot" alignment="TOP_CENTER" onMouseClicked="#onMapClicked" prefHeight="220.0" prefWidth="219.0" spacing="8.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #dcdde1;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MapCardController">
     <children>
-        <ImageView fx:id="imgMap" fitHeight="130.0" fitWidth="170.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="imgMap" fitHeight="140.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true">
             <VBox.margin>
                 <Insets top="10.0" />
             </VBox.margin>

@@ -273,28 +273,28 @@ public class CityMapsPageController {
 
     @FXML
     private void onBackToCatalog() {
-    try{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CatalogPage.fxml"));
-        Parent catalogView = loader.load();
-        AnchorPane centerHost = (AnchorPane) btnBack.getScene().lookup("#centerHost");
-        if (centerHost != null) {
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CatalogPage.fxml"));
+            Parent catalogView = loader.load();
+            AnchorPane centerHost = (AnchorPane) btnBack.getScene().lookup("#centerHost");
+            if (centerHost != null) {
 
-            AnchorPane.setTopAnchor(catalogView, 0.0);
-            AnchorPane.setRightAnchor(catalogView, 0.0);
-            AnchorPane.setBottomAnchor(catalogView, 0.0);
-            AnchorPane.setLeftAnchor(catalogView, 0.0);
+                AnchorPane.setTopAnchor(catalogView, 0.0);
+                AnchorPane.setRightAnchor(catalogView, 0.0);
+                AnchorPane.setBottomAnchor(catalogView, 0.0);
+                AnchorPane.setLeftAnchor(catalogView, 0.0);
 
 
-            centerHost.getChildren().setAll(catalogView);
-            System.out.println("Returned to main city catalog cleanly.");
-        } else {
-            System.err.println("Error: Could not find centerHost to return to catalog.");
+                centerHost.getChildren().setAll(catalogView);
+                System.out.println("Returned to main city catalog cleanly.");
+            } else {
+                System.err.println("Error: Could not find centerHost to return to catalog.");
+            }
         }
+        catch (IOException e) {
+            System.err.println("Failed to load CatalogPage.fxml: " + e.getMessage());
+            e.printStackTrace();
         }
-    catch (IOException e) {
-        System.err.println("Failed to load CatalogPage.fxml: " + e.getMessage());
-        e.printStackTrace();
-    }
     }
 
     private void loadCatalog(String city, String map, String version) {

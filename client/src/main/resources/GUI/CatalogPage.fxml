@@ -76,9 +76,9 @@
             </children>
         </HBox>
 
-        <ScrollPane fx:id="scrollPaneCities" fitToWidth="true" layoutX="10.0" layoutY="160.0"  prefHeight="401.0" prefWidth="891.0" AnchorPane.bottomAnchor="22.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+        <ScrollPane fx:id="scrollPaneCities" fitToWidth="true" layoutX="10.0" layoutY="160.0" prefHeight="401.0" prefWidth="891.0" AnchorPane.bottomAnchor="22.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
             <content>
-                <FlowPane fx:id="flowPaneCities" hgap="20.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="45.0" prefWidth="848.0" prefWrapLength="800.0" vgap="20.0">
+                <FlowPane fx:id="flowPaneCities" hgap="20.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="45.0" prefWidth="848.0" prefWrapLength="800.0" vgap="20.0">
                     <padding>
                         <Insets bottom="15.0" left="15.0" top="15.0" />
                     </padding>

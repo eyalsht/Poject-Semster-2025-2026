@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
 import common.content.City; // NEW - Fixes "Cannot resolve symbol 'City'"
-
+import java.util.function.Consumer;
 
 /**
  * Controller for the catalog page.
@@ -81,7 +81,7 @@ public class CatalogPageController {
         refreshPendingApprovalsCount();  // Updated method name
 
         // Listen for server-pushed catalog update notifications
-        client.addNotificationListener(msg -> {
+        client.addNotificationListener((common.messaging.Message msg) -> {
             if (msg.getAction() == ActionType.CATALOG_UPDATED_NOTIFICATION) {
                 Platform.runLater(() -> refreshCatalog());
             }
