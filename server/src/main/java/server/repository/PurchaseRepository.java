@@ -57,6 +57,13 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
         try {
             conn = cp.getConnection();
             conn.setAutoCommit(false);
+
+            // Fix schema: map_id must be nullable for SINGLE_TABLE inheritance (subscriptions have no map)
+            try (PreparedStatement alter = conn.prepareStatement(
+                    "ALTER TABLE purchases MODIFY COLUMN map_id INT NULL")) {
+                alter.executeUpdate();
+            } catch (Exception ignored) { /* already nullable */ }
+
             LocalDate today = LocalDate.now();
 
             // 1. Check for renewal

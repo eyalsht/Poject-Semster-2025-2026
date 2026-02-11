@@ -16,7 +16,7 @@ public class OneTimePurchase extends Purchase implements Serializable {
 
     // Specific map for one-time purchase
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "map_id", nullable = false)
+    @JoinColumn(name = "map_id")
     private GCMMap map;
 
     // Reference to the snapshot created for this purchase
