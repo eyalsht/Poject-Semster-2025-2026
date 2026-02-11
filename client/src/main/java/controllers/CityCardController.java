@@ -24,12 +24,17 @@ public class CityCardController {
     @FXML private Label lblMapDesc;
 
     private City city;
-    private CatalogPageController mainController;
+    private Object mainController;
 
-    public void setData(GCMMap mapData, CatalogPageController mainController) {
-        this.mainController = mainController;
+    public void setData(GCMMap mapData, Object controller) {
+        //this.mainController = mainController;
+        this.mainController = controller;
         this.city = mapData.getCity();
-
+        if (controller == null) {
+            System.err.println("DEBUG: setData received a NULL controller!");
+        } else {
+            System.out.println("DEBUG: setData received controller of type: " + controller.getClass().getName());
+        }
         if (city != null) {
             // UPDATED: Now using the local 'city' variable to get the name
             lblCityName.setText(city.getName());
@@ -96,10 +101,31 @@ public class CityCardController {
 
     @FXML
     private void onCardClicked() {
-        if (mainController != null && city != null) {
-            mainController.showCityMaps(city);
-        }else{
-            System.out.println("Error: City or MainController is not initialized for this card.");
+        if (city == null) {
+            System.err.println("DEBUG: Clicked on a card with NULL City"); //
+            return;
         }
+        if (mainController == null) {
+            System.err.println("DEBUG: Clicked on card [" + city.getName() + "] but mainController is NULL"); //
+            return;
+        }
+
+        if (mainController instanceof CatalogPageController catalog) {
+            System.out.println("DEBUG: Navigating to city maps for: " + city.getName()); //
+            catalog.showCityMaps(city);
+        }
+        else if (mainController instanceof CityMapsPageController) {
+            System.out.println("DEBUG: Already inside " + city.getName()); //
+        }
+       /* if (mainController != null && city != null) {
+            System.out.println("Error: City or MainController is not initialized.");
+            return;
+        }
+        if (mainController instanceof CatalogPageController catalog) {
+
+            catalog.showCityMaps(city);
+        } else if (mainController instanceof CityMapsPageController mapsPage) {
+            System.out.println("Already in CityMapsPage for: " + city.getName());
+        }*/
     }
 }

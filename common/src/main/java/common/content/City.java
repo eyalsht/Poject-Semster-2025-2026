@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Comparator;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "cities")
@@ -76,7 +80,18 @@ public class City extends ContentItem implements Serializable {
     // ==================== MAP RELATIONSHIP ====================
     
     public List<GCMMap> getMaps() { return maps; }
-    public void setMaps(List<GCMMap> maps) { this.maps = maps; }
+    public void setMaps(List<GCMMap> maps) { if (maps == null) {
+        this.maps = new ArrayList<>();
+        return;
+    }
+
+        this.maps = maps.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(GCMMap::getId))),
+                        ArrayList::new
+                ));
+    }
 
     public void addMap(GCMMap map) {
         if (this.maps == null) this.maps = new ArrayList<>();
