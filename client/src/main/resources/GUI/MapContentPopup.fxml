@@ -28,7 +28,7 @@
             </VBox.margin>
         </HBox>
 
-        <TabPane fx:id="tabPane" stylesheets="@MapContentPopupStyle.css" tabClosingPolicy="UNAVAILABLE" styleClass="modern-tab-pane">
+        <TabPane fx:id="tabPane" stylesheets="@../styles/MapContentPopupStyle.css" tabClosingPolicy="UNAVAILABLE" styleClass="modern-tab-pane">
             <tabs>
                 <Tab text="Sites">
                     <content>

@@ -50,6 +50,11 @@
                     </font>
                 </Label>
                 <Button fx:id="btnBuy" managed="false" mnemonicParsing="false" onAction="#onBuy" prefHeight="32.0" prefWidth="140.0" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand;" text="Buy" visible="false" />
+                <Label fx:id="lblSubscription" managed="false" text="Via Subscription" textFill="#2980b9" visible="false">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
             </children>
             <padding>
                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />

@@ -27,8 +27,10 @@ public class MapCardController {
     @FXML private Label lblMapPrice;
     @FXML private Label lblVersion;
     @FXML private Button btnBuy;
+    @FXML private Label lblSubscription;
     private GCMMap currentMap;
     private MapPurchaseStatusDTO purchaseStatus;
+    private boolean viewOnly = false;
 
      public void setData(GCMMap gcmMap) {
          this.currentMap = gcmMap;
@@ -40,8 +42,17 @@ public class MapCardController {
          if (lblDescription != null) {
              lblDescription.setText(gcmMap.getDescription());
          }
-         // Check purchase status for clients
-         if (btnBuy != null && GCMClient.getInstance().getCurrentUser() instanceof Client) {
+         // Check purchase status for clients (skip if viewOnly)
+         if (viewOnly) {
+             if (btnBuy != null) {
+                 btnBuy.setVisible(false);
+                 btnBuy.setManaged(false);
+             }
+             if (lblSubscription != null) {
+                 lblSubscription.setVisible(true);
+                 lblSubscription.setManaged(true);
+             }
+         } else if (btnBuy != null && GCMClient.getInstance().getCurrentUser() instanceof Client) {
              checkMapPurchaseStatus(gcmMap);
          }
          // Logic for loading map image from Client resources
@@ -54,6 +65,10 @@ public class MapCardController {
              }
          }*/
      }
+
+    public void setViewOnly(boolean viewOnly) {
+        this.viewOnly = viewOnly;
+    }
 
     private void checkMapPurchaseStatus(GCMMap map) {
         int userId = GCMClient.getInstance().getCurrentUser().getId();
