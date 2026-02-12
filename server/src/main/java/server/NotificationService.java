@@ -6,8 +6,8 @@ import com.twilio.type.PhoneNumber;
 
 public class NotificationService
 {
-    public static final String ACCOUNT_SID = "SECRET ACCOUNT SID";
-    public static final String AUTH_TOKEN = "SECRET ACCOUNT TOKEN";
+    public static final String TWILIO_ACCOUNT_SID = "SECRET ACCOUNT SID";
+    public static final String TWILIO_AUTH_TOKEN = "SECRET ACCOUNT TOKEN";
     public static final String TWILIO_NUMBER = "SECRET TWILIO NUMBER";
 
     public static void sendEmail(String recipientEmail, String subject, String messageText) {
@@ -17,7 +17,7 @@ public class NotificationService
 
     public static void sendSMS(String phoneNumber, String messageText) {
         try {
-            Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+            Twilio.init(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
             phoneNumber = formatPhoneNumberToInternational(phoneNumber);
             Message message = Message.creator(
                     new PhoneNumber(phoneNumber),
