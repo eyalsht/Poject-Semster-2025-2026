@@ -77,7 +77,7 @@ public class NotificationService
 
         sendEmail(email, subject, message);
         if (phone != null && !phone.isEmpty()) {
-            //sendSMS(phone, "GCM Reminder: Hello "+firstName+"! Your subscription to " + city + " expires in " + days + " days!");
+            sendSMS(phone, message);
         }
     }
 
@@ -90,7 +90,7 @@ public class NotificationService
 
         sendEmail(email, subject, message);
         if (phone != null && !phone.isEmpty()) {
-            //sendSMS(phone, "Welcome to GCM, " + firstName + "! Check out our app.");
+            sendSMS(phone, message);
         }
     }
     public static String formatPhoneNumberToInternational(String phoneNumber) {
