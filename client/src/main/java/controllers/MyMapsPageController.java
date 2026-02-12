@@ -92,6 +92,9 @@ public class MyMapsPageController {
                             vboxSubMaps.getChildren().clear();
 
                             for (City city : cities) {
+                                System.out.println("[MyMaps-Sub] City: " + city.getName()
+                                        + ", maps count: " + (city.getMaps() != null ? city.getMaps().size() : "null"));
+
                                 // City name header
                                 Label cityHeader = new Label(city.getName());
                                 cityHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3498db;");
@@ -106,6 +109,9 @@ public class MyMapsPageController {
 
                                 if (city.getMaps() != null) {
                                     for (GCMMap map : city.getMaps()) {
+                                        System.out.println("[MyMaps-Sub]   Map: name='" + map.getName()
+                                                + "', desc='" + map.getDescription()
+                                                + "', price=" + map.getPrice());
                                         try {
                                             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
                                             Parent card = loader.load();

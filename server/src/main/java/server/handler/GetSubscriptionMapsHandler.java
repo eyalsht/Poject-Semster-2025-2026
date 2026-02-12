@@ -46,27 +46,29 @@ public class GetSubscriptionMapsHandler implements RequestHandler {
                 cleanCity.setPriceSub(dbCity.getPriceSub());
                 cleanCity.setImagePath(dbCity.getImagePath());
 
-                List<GCMMap> cleanMaps = new ArrayList<>();
+                boolean hasMap = false;
                 if (dbCity.getMaps() != null) {
                     for (GCMMap m : dbCity.getMaps()) {
-                        GCMMap cleanMap = new GCMMap();
-                        cleanMap.setId(m.getId());
-                        cleanMap.setName(m.getName());
-                        cleanMap.setDescription(m.getDescription());
-                        cleanMap.setVersion(m.getVersion());
-                        cleanMap.setPrice(m.getPrice());
-                        cleanMap.setStatus(m.getStatus());
+                        GCMMap cleanMap = new GCMMap(
+                                m.getId(), m.getName(), m.getDescription(),
+                                m.getVersion(), m.getPrice(), m.getStatus()
+                        );
                         cleanMap.setImagePath(m.getImagePath());
-                        cleanMaps.add(cleanMap);
+                        // Add directly to internal list, bypassing City.setMaps() TreeSet logic
+                        cleanCity.getMaps().add(cleanMap);
+                        hasMap = true;
+                        System.out.println("[SubMaps] City=" + dbCity.getName()
+                                + " Map=" + cleanMap.getName()
+                                + " Desc=" + cleanMap.getDescription());
                     }
                 }
-                cleanCity.setMaps(cleanMaps);
 
-                if (!cleanMaps.isEmpty()) {
+                if (hasMap) {
                     result.add(cleanCity);
                 }
             }
 
+            System.out.println("[SubMaps] Returning " + result.size() + " cities for userId=" + userId);
             return new Message(ActionType.GET_SUBSCRIPTION_MAPS_RESPONSE, result);
 
         } catch (Exception e) {
