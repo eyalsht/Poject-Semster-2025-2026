@@ -11,8 +11,8 @@ import java.util.Properties;
 public class NotificationService
 {
     private static final String SMTP_HOST = "smtp.gmail.com";
-    private static final String SENDER_EMAIL = System.getenv("EMAIL_USER");
-    private static final String SENDER_PASSWORD = System.getenv("EMAIL_PASSWORD");
+    private static final String EMAIL_USER = System.getenv("EMAIL_USER");
+    private static final String EMAIL_PASSWORD = System.getenv("EMAIL_PASSWORD");
 
     public static final String TWILIO_ACCOUNT_SID = System.getenv("TWILIO_ACCOUNT_SID");
     public static final String TWILIO_AUTH_TOKEN = System.getenv("TWILIO_AUTH_TOKEN");
@@ -28,13 +28,13 @@ public class NotificationService
         Session session = Session.getInstance(prop, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(SENDER_EMAIL, SENDER_PASSWORD);
+                return new PasswordAuthentication(EMAIL_USER, EMAIL_PASSWORD);
             }
         });
 
         try {
             MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(SENDER_EMAIL));
+            message.setFrom(new InternetAddress(EMAIL_USER));
             message.setRecipients(MimeMessage.RecipientType.TO, InternetAddress.parse(recipientEmail));
             message.setSubject(subject);
             message.setText(messageText);
