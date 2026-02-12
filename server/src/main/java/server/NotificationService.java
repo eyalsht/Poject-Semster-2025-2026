@@ -6,9 +6,9 @@ import com.twilio.type.PhoneNumber;
 
 public class NotificationService
 {
-    public static final String TWILIO_ACCOUNT_SID = "SECRET ACCOUNT SID";
-    public static final String TWILIO_AUTH_TOKEN = "SECRET ACCOUNT TOKEN";
-    public static final String TWILIO_NUMBER = "SECRET TWILIO NUMBER";
+    public static final String TWILIO_ACCOUNT_SID = System.getenv("TWILIO_ACCOUNT_SID");
+    public static final String TWILIO_AUTH_TOKEN = System.getenv("TWILIO_AUTH_TOKEN");
+    public static final String TWILIO_NUMBER = System.getenv("TWILIO_NUMBER");
 
     public static void sendEmail(String recipientEmail, String subject, String messageText) {
         // המימוש של JavaMail שדיברנו עליו קודם
