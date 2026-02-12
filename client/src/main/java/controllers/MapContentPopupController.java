@@ -23,9 +23,11 @@ public class MapContentPopupController {
 
     @FXML
     private VBox vboxTours;
+    private boolean isPurchased;
 
     public void setMapData(GCMMap currentMap) {
         if (currentMap == null) return;
+        this.isPurchased = isPurchased;
 
         if (lblMapName != null) {
             lblMapName.setText(currentMap.getName());
@@ -56,6 +58,7 @@ public class MapContentPopupController {
 
                 TourMiniCardController controller = loader.getController();
                 controller.setTourData(tour);
+                controller.setAccess(this.isPurchased);
                 vboxTours.getChildren().add(card);
             } catch (IOException e) {
                 e.printStackTrace();

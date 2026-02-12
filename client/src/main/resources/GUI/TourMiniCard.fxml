@@ -1,17 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox spacing="5" style="-fx-background-color: #34495e; -fx-padding: 12; -fx-background-radius: 10;"
+<VBox fx:id="cardRoot" onMouseClicked="#toggleDetails" spacing="5" style="-fx-background-color: #34495e; -fx-padding: 12; -fx-background-radius: 10; -fx-cursor: hand;"
       xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="controllers.TourMiniCardController">
     <children>
-        <Label fx:id="lblTourName" text="Tour Name" textFill="#f39c12" style="-fx-font-weight: bold; -fx-font-size: 16px;" />
-        <Label fx:id="lblDuration" text="Duration: 0 hours" textFill="#ecf0f1" style="-fx-font-size: 12px;" />
-        <Label fx:id="lblDescription" text="Tour description goes here..." textFill="#bdc3c7" wrapText="true" />
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <children>
+                <VBox spacing="2">
+                    <children>
+                        <Label fx:id="lblTourName" text="Tour Name" textFill="#f39c12" style="-fx-font-weight: bold; -fx-font-size: 16px;" />
+                        <Label fx:id="lblDuration" text="Duration: 0 hours" textFill="#ecf0f1" style="-fx-font-size: 12px;" />
+                    </children>
+                </VBox>
+
+                <Pane HBox.hgrow="ALWAYS" /> <Label fx:id="lblArrow" text="▶" textFill="#f39c12" style="-fx-font-size: 14px;">
+                <HBox.margin>
+                    <Insets right="5" />
+                </HBox.margin>
+            </Label>
+            </children>
+        </HBox>
+
+        <VBox fx:id="detailsPane" managed="false" visible="false" spacing="10" style="-fx-padding: 10 0 0 0;">
+            <children>
+                <Separator opacity="0.2" />
+                <Label text="Description:" textFill="#f39c12" style="-fx-font-size: 13px; -fx-font-weight: bold;" />
+                <Label fx:id="lblDescription" text="Tour description goes here..." textFill="#bdc3c7" wrapText="true" />
+
+                <Label text="Tour Sites:" textFill="#f39c12" style="-fx-font-size: 13px; -fx-font-weight: bold;" />
+                <VBox fx:id="vboxTourSites" spacing="3" style="-fx-padding: 0 0 0 10;" />
+            </children>
+        </VBox>
     </children>
 </VBox>
