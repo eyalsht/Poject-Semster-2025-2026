@@ -54,6 +54,15 @@ public class NotificationService
     public static void sendSMS(String phoneNumber, String messageText)
     {
         try {
+            System.out.println("[DEBUG] --- SMS ATTEMPT ---");
+            System.out.println("[DEBUG] SID: " + (TWILIO_ACCOUNT_SID != null ? "FOUND" : "NULL"));
+            System.out.println("[DEBUG] Token: " + (TWILIO_AUTH_TOKEN != null ? "FOUND" : "NULL"));
+            System.out.println("[DEBUG] Sending from: " + TWILIO_NUMBER);
+            System.out.println("[DEBUG] Target phone: " + phoneNumber);
+            if (TWILIO_ACCOUNT_SID == null || TWILIO_AUTH_TOKEN == null || TWILIO_NUMBER == null) {
+                System.err.println("[SMS] Error: Twilio credentials are missing in Environment!");
+                return;
+            }
             Twilio.init(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
             phoneNumber = formatPhoneNumberToInternational(phoneNumber);
             Message message = Message.creator(
