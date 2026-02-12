@@ -32,7 +32,6 @@ public class MySubscriptionsPageController {
     @FXML private TableColumn<SubscriptionStatusDTO, String> colPrice;
     @FXML private TableColumn<SubscriptionStatusDTO, String> colAction;
     @FXML private Label lblEmpty;
-    @FXML private Button btnRefresh;
 
     private final ObservableList<SubscriptionStatusDTO> subscriptions = FXCollections.observableArrayList();
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -141,8 +140,4 @@ public class MySubscriptionsPageController {
         }
     }
 
-    @FXML
-    private void onRefresh() {
-        loadSubscriptions();
-    }
 }

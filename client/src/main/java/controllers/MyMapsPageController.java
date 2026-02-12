@@ -112,8 +112,4 @@ public class MyMapsPageController {
         return card;
     }
 
-    @FXML
-    private void onRefresh() {
-        loadPurchasedMaps();
-    }
 }
