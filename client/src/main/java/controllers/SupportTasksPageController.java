@@ -46,7 +46,6 @@ public class SupportTasksPageController {
 
         TableRowHighlighter.apply(tblTickets, t -> t.getStatus() != SupportTicketStatus.DONE);
 
-
         refresh();
     }
 
@@ -105,6 +104,19 @@ public class SupportTasksPageController {
 
     private void openReplyDialog(SupportTicketRowDTO row) {
         Dialog<Void> dialog = new Dialog<>();
+
+        String css = client.MainApplication.class.getResource("/styles/theme.css").toExternalForm();
+
+        // Apply to dialog pane (sometimes not enough alone)
+        dialog.getDialogPane().getStylesheets().add(css);
+
+        // GUARANTEED: apply to the Dialog's Scene once it exists
+        dialog.getDialogPane().sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null && !newScene.getStylesheets().contains(css)) {
+                newScene.getStylesheets().add(css);
+            }
+        });
+
         dialog.setTitle("Ticket #" + row.getTicketId());
 
         String full = row.getClientText();
@@ -119,16 +131,14 @@ public class SupportTasksPageController {
         boolean done = row.getStatus() == SupportTicketStatus.DONE;
 
         if (done) {
-            // show what was already sent
             String existing = row.getAgentReply();
             replyText.setText(existing == null ? "" : existing);
-            replyText.setEditable(false);   // read-only but visible
+            replyText.setEditable(false);
             replyText.setWrapText(true);
         } else {
             replyText.setPromptText("Write reply...");
             replyText.setWrapText(true);
         }
-
 
         ButtonType sendBtn = new ButtonType("Send", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(sendBtn, ButtonType.CLOSE);
@@ -152,10 +162,10 @@ public class SupportTasksPageController {
                 replyText
         );
 
+        box.getStyleClass().add("welcome-card");
+
         dialog.getDialogPane().setContent(box);
         dialog.showAndWait();
-
-        //refresh();
     }
 
     private void doReply(int ticketId, String reply) {
@@ -174,7 +184,6 @@ public class SupportTasksPageController {
                 null
         );
     }
-
 
     private <T> void runAsync(java.util.concurrent.Callable<T> work,
                               java.util.function.Consumer<T> onSuccess,

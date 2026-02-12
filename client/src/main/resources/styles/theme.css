@@ -194,7 +194,12 @@
 }
 
 .table-row-cell:filled:hover {
-    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-background-color: rgba(255,255,255,0.08);
+}
+
+.table-row-cell:filled:hover .table-cell {
+    -fx-text-fill: #bff2bf;   /* green */
+    -fx-font-weight: bold;
 }
 
 .table-row-cell:filled:selected {
@@ -301,5 +306,45 @@
     -fx-fill: white;
     -fx-font-weight: bold;
 }
+
+/* =========================================================
+   DIALOGS (JavaFX DialogPane) - Lovecraft glass style
+   ========================================================= */
+
+.dialog-pane {
+    -fx-background-color: rgba(0,0,0,0.55);
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(255,255,255,0.15);
+    -fx-border-width: 1;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: transparent;
+}
+
+.dialog-pane .content {
+    -fx-background-color: transparent;
+}
+
+.dialog-pane .label {
+    -fx-text-fill: white;
+}
+
+/* Buttons inside dialogs */
+.dialog-pane .button-bar .button {
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-text-fill: white;
+    -fx-font-weight: 600;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: rgba(255,255,255,0.20);
+}
+
+/* (Optional) remove bright default focus ring */
+.dialog-pane:focused {
+    -fx-background-insets: 0;
+}
+
 
 
