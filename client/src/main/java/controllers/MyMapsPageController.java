@@ -92,40 +92,27 @@ public class MyMapsPageController {
                             vboxSubMaps.getChildren().clear();
 
                             for (City city : cities) {
-                                System.out.println("[MyMaps-Sub] City: " + city.getName()
-                                        + ", maps count: " + (city.getMaps() != null ? city.getMaps().size() : "null"));
-
                                 // City name header
                                 Label cityHeader = new Label(city.getName());
                                 cityHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3498db;");
                                 cityHeader.setPadding(new Insets(10, 0, 5, 0));
                                 vboxSubMaps.getChildren().add(cityHeader);
 
-                                // FlowPane for this city's maps
-                                FlowPane cityMapsFlow = new FlowPane();
-                                cityMapsFlow.setHgap(20);
-                                cityMapsFlow.setVgap(15);
-                                cityMapsFlow.setPrefWrapLength(900);
-
                                 if (city.getMaps() != null) {
                                     for (GCMMap map : city.getMaps()) {
-                                        System.out.println("[MyMaps-Sub]   Map: name='" + map.getName()
-                                                + "', desc='" + map.getDescription()
-                                                + "', price=" + map.getPrice());
                                         try {
                                             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
                                             Parent card = loader.load();
                                             MapCardController controller = loader.getController();
                                             controller.setViewOnly(true);
                                             controller.setData(map);
-                                            cityMapsFlow.getChildren().add(card);
+                                            // Add cards directly to VBox so they stretch to full width
+                                            vboxSubMaps.getChildren().add(card);
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }
                                     }
                                 }
-
-                                vboxSubMaps.getChildren().add(cityMapsFlow);
                             }
                         } else {
                             // No active subscriptions - hide section entirely
