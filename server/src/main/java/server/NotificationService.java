@@ -20,15 +20,9 @@ public class NotificationService
 
     public static void sendEmail(String recipientEmail, String subject, String messageText)
     {
-        if (recipientEmail == null || recipientEmail.isEmpty())
-        {
-            System.err.println("[Mail] Error: Recipient email is null or empty!");
-            return;
-        }
-        if (EMAIL_USER == null || EMAIL_PASSWORD == null) {
-            System.err.println("[Mail] Error: Environment variables EMAIL_USER or EMAIL_PASSWORD are not set!");
-            return;
-        }
+        System.out.println("[DEBUG] Attempting to send mail to: " + recipientEmail);
+        System.out.println("[DEBUG] EMAIL_USER is: " + EMAIL_USER);
+        System.out.println("[DEBUG] EMAIL_PASSWORD length: " + (EMAIL_PASSWORD != null ? EMAIL_PASSWORD.length() : "NULL"));
         Properties prop = new Properties();
         prop.put("mail.smtp.host", SMTP_HOST);
         prop.put("mail.smtp.port", "587");
@@ -40,7 +34,7 @@ public class NotificationService
                 return new PasswordAuthentication(EMAIL_USER, EMAIL_PASSWORD);
             }
         });
-
+        session.setDebug(true);
         try {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(EMAIL_USER));
