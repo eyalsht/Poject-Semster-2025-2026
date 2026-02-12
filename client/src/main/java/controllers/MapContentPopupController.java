@@ -3,6 +3,7 @@ package controllers;
 import common.content.GCMMap;
 import common.content.Site;
 import common.content.Tour;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -89,5 +90,8 @@ public class MapContentPopupController {
     @FXML
     private void onClose() {
         ((Stage) lblMapName.getScene().getWindow()).close();
+    }
+
+    public void onBuyClicked(ActionEvent actionEvent) {
     }
 }
