@@ -3,16 +3,49 @@ package server;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.util.Properties;
 
 public class NotificationService
 {
+    private static final String SMTP_HOST = "smtp.gmail.com";
+    private static final String SENDER_EMAIL = System.getenv("EMAIL_USER");
+    private static final String SENDER_PASSWORD = System.getenv("EMAIL_PASSWORD");
+
     public static final String TWILIO_ACCOUNT_SID = System.getenv("TWILIO_ACCOUNT_SID");
     public static final String TWILIO_AUTH_TOKEN = System.getenv("TWILIO_AUTH_TOKEN");
     public static final String TWILIO_NUMBER = System.getenv("TWILIO_NUMBER");
 
-    public static void sendEmail(String recipientEmail, String subject, String messageText) {
-        // המימוש של JavaMail שדיברנו עליו קודם
-        System.out.println("Sending Email to " + recipientEmail + ": " + messageText);
+    public static void sendEmail(String recipientEmail, String subject, String messageText)
+    {
+        Properties prop = new Properties();
+        prop.put("mail.smtp.host", SMTP_HOST);
+        prop.put("mail.smtp.port", "587");
+        prop.put("mail.smtp.auth", "true");
+        prop.put("mail.smtp.starttls.enable", "true"); // אבטחה TLS
+        Session session = Session.getInstance(prop, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(SENDER_EMAIL, SENDER_PASSWORD);
+            }
+        });
+
+        try {
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(SENDER_EMAIL));
+            message.setRecipients(MimeMessage.RecipientType.TO, InternetAddress.parse(recipientEmail));
+            message.setSubject(subject);
+            message.setText(messageText);
+
+            Transport.send(message);
+            System.out.println("[Mail] Email sent successfully to: " + recipientEmail);
+
+        } catch (MessagingException e) {
+            System.err.println("[Mail] Failed to send email: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public static void sendSMS(String phoneNumber, String messageText) {
