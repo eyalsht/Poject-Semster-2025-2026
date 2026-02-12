@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="520.0" prefWidth="900.0" style="-fx-background-color: #1e1e2e;"
-            stylesheets="@/styles/purchase-history.css"
+            stylesheets="@../styles/purchase-history.css"
             xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.PurchaseHistoryDialogController">
 
