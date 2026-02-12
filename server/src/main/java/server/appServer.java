@@ -38,11 +38,10 @@ public class appServer {
     private static void startDailyNotificationCheck() {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread t = new Thread(r);
-            t.setDaemon(true); // הופך את ה-Thread ל-Daemon כדי שלא ימנע מהשרת להיסגר
+            t.setDaemon(true);
             return t;
         });
 
-        // הרצה ראשונה אחרי דקה, ואז כל 24 שעות
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 System.out.println("[Scheduler] Starting daily subscription expiry check...");
