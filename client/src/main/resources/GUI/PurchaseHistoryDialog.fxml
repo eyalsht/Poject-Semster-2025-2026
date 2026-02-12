@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="520.0" prefWidth="900.0" style="-fx-background-color: #1e1e2e;"
+            stylesheets="@/styles/purchase-history.css"
+            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.PurchaseHistoryDialogController">
+
+    <VBox spacing="16.0"
+          AnchorPane.topAnchor="25.0" AnchorPane.bottomAnchor="20.0"
+          AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0">
+
+        <!-- Title -->
+        <Label fx:id="lblTitle" text="Purchase History" textFill="white">
+            <font><Font name="System Bold" size="20.0" /></font>
+        </Label>
+
+        <!-- Two columns side by side -->
+        <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+
+            <!-- Left: Subscriptions -->
+            <VBox spacing="8.0" HBox.hgrow="ALWAYS" prefWidth="410.0">
+                <Label text="Active Subscriptions" textFill="#27ae60">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Label>
+                <TableView fx:id="tblSubscriptions" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colSubCity" text="City" prefWidth="120.0" />
+                        <TableColumn fx:id="colSubExpiry" text="Expires" prefWidth="100.0" />
+                        <TableColumn fx:id="colSubStatus" text="Status" prefWidth="100.0" />
+                        <TableColumn fx:id="colSubPrice" text="Price" prefWidth="80.0" />
+                    </columns>
+                </TableView>
+                <Label fx:id="lblNoSubs" text="No active subscriptions." textFill="#95a5a6" visible="false" managed="false">
+                    <font><Font size="13.0" /></font>
+                    <padding><Insets top="20.0" left="10.0" /></padding>
+                </Label>
+            </VBox>
+
+            <!-- Right: Purchased Maps -->
+            <VBox spacing="8.0" HBox.hgrow="ALWAYS" prefWidth="410.0">
+                <Label text="Purchased Maps" textFill="#e67e22">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Label>
+                <TableView fx:id="tblPurchases" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colMapName" text="Map" prefWidth="100.0" />
+                        <TableColumn fx:id="colMapCity" text="City" prefWidth="80.0" />
+                        <TableColumn fx:id="colMapVersion" text="Version" prefWidth="60.0" />
+                        <TableColumn fx:id="colMapDate" text="Date" prefWidth="85.0" />
+                        <TableColumn fx:id="colMapPrice" text="Paid" prefWidth="70.0" />
+                    </columns>
+                </TableView>
+                <Label fx:id="lblNoPurchases" text="No maps purchased yet." textFill="#95a5a6" visible="false" managed="false">
+                    <font><Font size="13.0" /></font>
+                    <padding><Insets top="20.0" left="10.0" /></padding>
+                </Label>
+            </VBox>
+        </HBox>
+
+        <!-- Close button -->
+        <HBox alignment="CENTER">
+            <Button fx:id="btnClose" text="Close" onAction="#onClose" prefHeight="32.0" prefWidth="100.0"
+                    style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-weight: bold;" />
+        </HBox>
+    </VBox>
+</AnchorPane>

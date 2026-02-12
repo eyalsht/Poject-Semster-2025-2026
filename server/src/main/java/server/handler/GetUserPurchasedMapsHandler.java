@@ -21,7 +21,6 @@ public class GetUserPurchasedMapsHandler implements RequestHandler {
             return new Message(ActionType.GET_USER_PURCHASED_MAPS_RESPONSE, new ArrayList<>(snapshots));
 
         } catch (Exception e) {
-            e.printStackTrace();
             return new Message(ActionType.GET_USER_PURCHASED_MAPS_RESPONSE, new ArrayList<>());
         }
     }
