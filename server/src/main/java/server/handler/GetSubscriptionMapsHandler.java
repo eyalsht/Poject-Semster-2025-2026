@@ -57,9 +57,6 @@ public class GetSubscriptionMapsHandler implements RequestHandler {
                         // Add directly to internal list, bypassing City.setMaps() TreeSet logic
                         cleanCity.getMaps().add(cleanMap);
                         hasMap = true;
-                        System.out.println("[SubMaps] City=" + dbCity.getName()
-                                + " Map=" + cleanMap.getName()
-                                + " Desc=" + cleanMap.getDescription());
                     }
                 }
 
@@ -68,7 +65,6 @@ public class GetSubscriptionMapsHandler implements RequestHandler {
                 }
             }
 
-            System.out.println("[SubMaps] Returning " + result.size() + " cities for userId=" + userId);
             return new Message(ActionType.GET_SUBSCRIPTION_MAPS_RESPONSE, result);
 
         } catch (Exception e) {
