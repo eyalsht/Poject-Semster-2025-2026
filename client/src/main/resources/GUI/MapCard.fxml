@@ -14,17 +14,9 @@
 
         <VBox alignment="TOP_LEFT" HBox.hgrow="ALWAYS" spacing="10.0">
             <children>
-                <Label fx:id="lblMapName" text="Map Name" textFill="#2f3640">
-                    <font>
-                        <Font name="System Bold" size="22.0" />
-                    </font>
-                </Label>
+                <Label fx:id="lblMapName" text="Map Name" style="-fx-text-fill: #2f3640; -fx-font-size: 22px; -fx-font-weight: bold;" />
 
-                <Label fx:id="lblDescription" lineSpacing="1.2" text="Full detailed description will appear here, stretching across multiple lines to provide all the rich information about the map." textFill="#7f8c8d" wrapText="true">
-                    <font>
-                        <Font size="15.0" />
-                    </font>
-                </Label>
+                <Label fx:id="lblDescription" lineSpacing="1.2" text="Full detailed description will appear here, stretching across multiple lines to provide all the rich information about the map." style="-fx-text-fill: #7f8c8d; -fx-font-size: 15px;" wrapText="true" />
             </children>
             <padding>
                 <Insets bottom="15.0" left="25.0" right="20.0" top="15.0" />
@@ -39,22 +31,10 @@
 
         <VBox alignment="CENTER" minWidth="180.0" prefWidth="180.0" spacing="10.0" style="-fx-background-color: #fafafa; -fx-background-radius: 0 15 15 0;">
             <children>
-                <Label fx:id="lblMapPrice" text="Price: $0.00" textFill="#e67e22">
-                    <font>
-                        <Font name="System Bold" size="18.0" />
-                    </font>
-                </Label>
-                <Label fx:id="lblVersion" text="Version: 1.0" textFill="#bdc3c7">
-                    <font>
-                        <Font size="13.0" />
-                    </font>
-                </Label>
+                <Label fx:id="lblMapPrice" text="Price: $0.00" style="-fx-text-fill: #e67e22; -fx-font-size: 18px; -fx-font-weight: bold;" />
+                <Label fx:id="lblVersion" text="Version: 1.0" style="-fx-text-fill: #bdc3c7; -fx-font-size: 13px;" />
                 <Button fx:id="btnBuy" managed="false" mnemonicParsing="false" onAction="#onBuy" prefHeight="32.0" prefWidth="140.0" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand;" text="Buy" visible="false" />
-                <Label fx:id="lblSubscription" managed="false" text="Via Subscription" textFill="#2980b9" visible="false">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </Label>
+                <Label fx:id="lblSubscription" managed="false" text="Via Subscription" style="-fx-text-fill: #2980b9; -fx-font-size: 12px; -fx-font-weight: bold;" visible="false" />
             </children>
             <padding>
                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
