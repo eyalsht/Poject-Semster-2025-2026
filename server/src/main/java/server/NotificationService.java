@@ -20,6 +20,15 @@ public class NotificationService
 
     public static void sendEmail(String recipientEmail, String subject, String messageText)
     {
+        if (recipientEmail == null || recipientEmail.isEmpty())
+        {
+            System.err.println("[Mail] Error: Recipient email is null or empty!");
+            return;
+        }
+        if (EMAIL_USER == null || EMAIL_PASSWORD == null) {
+            System.err.println("[Mail] Error: Environment variables EMAIL_USER or EMAIL_PASSWORD are not set!");
+            return;
+        }
         Properties prop = new Properties();
         prop.put("mail.smtp.host", SMTP_HOST);
         prop.put("mail.smtp.port", "587");
@@ -79,6 +88,7 @@ public class NotificationService
     }
 
     public static void sendRegistrationAlert(String email, String phone, String firstName) {
+
         String subject = "GCM Registration";
         String message = "Hello " + firstName + ",\n\n" +
                 "Welcome to GCM Services!\n" +
