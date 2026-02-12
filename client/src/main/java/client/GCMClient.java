@@ -96,7 +96,7 @@ public class GCMClient extends AbstractClient {
     protected void handleMessageFromServer(Object msg) {
         System.out.println("GCMClient received: " + msg);
 
-        // Check if this is a server-pushed notification (not a response to a request)
+        // Check if this is a server-pushed notification or fire-and-forget response
         if (msg instanceof Message message) {
             ActionType action = message.getAction();
             if (action == ActionType.CATALOG_UPDATED_NOTIFICATION) {
@@ -104,6 +104,9 @@ public class GCMClient extends AbstractClient {
                     listener.accept(message);
                 }
                 return;
+            }
+            if (action == ActionType.LOGOUT_RESPONSE) {
+                return; // fire-and-forget — don't interfere with request-response flow
             }
         }
 
@@ -225,6 +228,13 @@ public class GCMClient extends AbstractClient {
      */
     public void quit() {
         try {
+            if (currentUser != null) {
+                try {
+                    sendToServer(new Message(ActionType.LOGOUT_REQUEST, null));
+                } catch (Exception e) {
+                    // Server-side clientDisconnected/clientException will clean up
+                }
+            }
             logout();
             closeConnection();
             instance = null;

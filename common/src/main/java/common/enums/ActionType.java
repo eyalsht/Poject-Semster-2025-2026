@@ -16,7 +16,10 @@ public enum ActionType {
     
     REGISTER_REQUEST,
     REGISTER_RESPONSE,       // Replaces REGISTER_SUCCESS/REGISTER_FAILED
-    
+
+    LOGOUT_REQUEST,
+    LOGOUT_RESPONSE,
+
     // ==================== CATALOG ====================
     // Single request for all catalog data (cities, maps, filters)
     GET_CATALOG_REQUEST,

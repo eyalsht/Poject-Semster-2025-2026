@@ -1,6 +1,9 @@
 package controllers;
 
+import client.GCMClient;
 import client.MainApplication;
+import common.enums.ActionType;
+import common.messaging.Message;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -107,13 +110,22 @@ public class HomePageController
     }
     @FXML
     private void onLogout(ActionEvent event) {
-        client.GCMClient.getInstance().setCurrentUser(null);
+        // Notify server (fire-and-forget on background thread)
+        new Thread(() -> {
+            try {
+                GCMClient.getInstance().sendToServer(
+                        new Message(ActionType.LOGOUT_REQUEST, null));
+            } catch (Exception e) {
+                System.err.println("Failed to send logout request: " + e.getMessage());
+            }
+        }).start();
+
+        GCMClient.getInstance().setCurrentUser(null);
         this.currentUser = null;
         this.loggedIn = false;
         updateUI();
         showPage("/GUI/WelcomePage.fxml");
 
-       // updateLoginButton();
         System.out.println("Logout successful: Redirecting to Catalog as Guest.");
     }
     private void showPage(String fxmlPath) {
