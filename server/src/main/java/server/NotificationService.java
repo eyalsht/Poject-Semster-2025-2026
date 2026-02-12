@@ -48,7 +48,8 @@ public class NotificationService
         }
     }
 
-    public static void sendSMS(String phoneNumber, String messageText) {
+    public static void sendSMS(String phoneNumber, String messageText)
+    {
         try {
             Twilio.init(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
             phoneNumber = formatPhoneNumberToInternational(phoneNumber);
@@ -73,7 +74,7 @@ public class NotificationService
 
         sendEmail(email, subject, message);
         if (phone != null && !phone.isEmpty()) {
-            sendSMS(phone, "GCM Reminder: Hello "+firstName+"! Your subscription to " + city + " expires in " + days + " days!");
+            //sendSMS(phone, "GCM Reminder: Hello "+firstName+"! Your subscription to " + city + " expires in " + days + " days!");
         }
     }
 
@@ -85,7 +86,7 @@ public class NotificationService
 
         sendEmail(email, subject, message);
         if (phone != null && !phone.isEmpty()) {
-            sendSMS(phone, "Welcome to GCM, " + firstName + "! Check out our app.");
+            //sendSMS(phone, "Welcome to GCM, " + firstName + "! Check out our app.");
         }
     }
     public static String formatPhoneNumberToInternational(String phoneNumber) {

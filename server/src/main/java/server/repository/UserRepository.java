@@ -99,7 +99,11 @@ public class UserRepository extends BaseRepository<User, Integer> {
 
         try {
             save(client);
-            sendRegistrationAlert(email,phone,firstName);
+            try {
+                sendRegistrationAlert(email, phone, firstName);
+            } catch (Exception e) {
+                System.err.println("Warning: User registered but notification failed: " + e.getMessage());
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();
