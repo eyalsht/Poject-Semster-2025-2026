@@ -28,7 +28,7 @@ public class MapContentPopupController {
         if (currentMap == null) return;
 
         if (lblMapName != null) {
-            lblMapName.setText("Detailed Information for " + currentMap.getName());
+            lblMapName.setText(currentMap.getName());
         }
 
     try {
