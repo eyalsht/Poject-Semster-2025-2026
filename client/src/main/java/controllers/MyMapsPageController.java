@@ -116,7 +116,7 @@ public class MyMapsPageController {
                                 TitledPane cityPane = new TitledPane(city.getName(), cityContent);
                                 cityPane.setExpanded(true);
                                 cityPane.setAnimated(true);
-                                cityPane.setStyle("-fx-base: #34495e; -fx-text-fill: #3498db; -fx-font-size: 14px; -fx-font-weight: bold;");
+                                cityPane.getStyleClass().add("city-pane");
                                 vboxSubMaps.getChildren().add(cityPane);
                             }
                         } else {

@@ -24,8 +24,7 @@
                     <children>
                         <!-- Purchased Maps Section (collapsible) -->
                         <TitledPane fx:id="titledPanePurchased" text="My Purchased Maps" expanded="true"
-                                    animated="true"
-                                    style="-fx-base: #2c3e50; -fx-text-fill: #ecf0f1; -fx-font-size: 16px; -fx-font-weight: bold;">
+                                    animated="true">
                             <content>
                                 <VBox spacing="10.0">
                                     <children>
@@ -47,8 +46,7 @@
 
                         <!-- Subscription Maps Section (collapsible, hidden by default) -->
                         <TitledPane fx:id="titledPaneSubscription" text="Maps from Active Subscriptions" expanded="true"
-                                    animated="true" visible="false" managed="false"
-                                    style="-fx-base: #2c3e50; -fx-text-fill: #ecf0f1; -fx-font-size: 16px; -fx-font-weight: bold;">
+                                    animated="true" visible="false" managed="false">
                             <content>
                                 <VBox fx:id="vboxSubMaps" spacing="20.0">
                                     <padding>
