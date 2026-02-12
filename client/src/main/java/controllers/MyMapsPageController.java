@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
@@ -27,10 +28,10 @@ import java.util.ArrayList;
 
 public class MyMapsPageController {
 
+    @FXML private TitledPane titledPanePurchased;
     @FXML private FlowPane flowPaneMaps;
     @FXML private Label lblEmpty;
-    @FXML private VBox vboxSubscriptionSection;
-    @FXML private Label lblSubEmpty;
+    @FXML private TitledPane titledPaneSubscription;
     @FXML private VBox vboxSubMaps;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -87,16 +88,14 @@ public class MyMapsPageController {
                         ArrayList<City> cities = (ArrayList<City>) response.getMessage();
 
                         if (cities != null && !cities.isEmpty()) {
-                            vboxSubscriptionSection.setVisible(true);
-                            vboxSubscriptionSection.setManaged(true);
+                            titledPaneSubscription.setVisible(true);
+                            titledPaneSubscription.setManaged(true);
                             vboxSubMaps.getChildren().clear();
 
                             for (City city : cities) {
-                                // City name header
-                                Label cityHeader = new Label(city.getName());
-                                cityHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3498db;");
-                                cityHeader.setPadding(new Insets(10, 0, 5, 0));
-                                vboxSubMaps.getChildren().add(cityHeader);
+                                // Create a VBox to hold the map cards for this city
+                                VBox cityContent = new VBox(10);
+                                cityContent.setPadding(new Insets(5, 0, 10, 10));
 
                                 if (city.getMaps() != null) {
                                     for (GCMMap map : city.getMaps()) {
@@ -106,18 +105,24 @@ public class MyMapsPageController {
                                             MapCardController controller = loader.getController();
                                             controller.setViewOnly(true);
                                             controller.setData(map);
-                                            // Add cards directly to VBox so they stretch to full width
-                                            vboxSubMaps.getChildren().add(card);
+                                            cityContent.getChildren().add(card);
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }
                                     }
                                 }
+
+                                // Wrap city maps in a collapsible TitledPane
+                                TitledPane cityPane = new TitledPane(city.getName(), cityContent);
+                                cityPane.setExpanded(true);
+                                cityPane.setAnimated(true);
+                                cityPane.setStyle("-fx-base: #34495e; -fx-text-fill: #3498db; -fx-font-size: 14px; -fx-font-weight: bold;");
+                                vboxSubMaps.getChildren().add(cityPane);
                             }
                         } else {
                             // No active subscriptions - hide section entirely
-                            vboxSubscriptionSection.setVisible(false);
-                            vboxSubscriptionSection.setManaged(false);
+                            titledPaneSubscription.setVisible(false);
+                            titledPaneSubscription.setManaged(false);
                         }
                     }
                 });

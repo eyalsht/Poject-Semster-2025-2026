@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
@@ -21,49 +22,41 @@
                         <Insets bottom="20.0" left="30.0" right="30.0" top="40.0" />
                     </padding>
                     <children>
-                        <!-- Purchased Maps Section -->
-                        <Label text="My Purchased Maps" textFill="#ecf0f1" style="-fx-font-size: 22px; -fx-font-weight: bold;">
-                            <font>
-                                <Font name="System Bold" size="22.0" />
-                            </font>
-                        </Label>
+                        <!-- Purchased Maps Section (collapsible) -->
+                        <TitledPane fx:id="titledPanePurchased" text="My Purchased Maps" expanded="true"
+                                    animated="true"
+                                    style="-fx-base: #2c3e50; -fx-text-fill: #ecf0f1; -fx-font-size: 16px; -fx-font-weight: bold;">
+                            <content>
+                                <VBox spacing="10.0">
+                                    <children>
+                                        <Label fx:id="lblEmpty" text="No maps purchased yet." textFill="#95a5a6" visible="false" managed="false">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
 
-                        <Label fx:id="lblEmpty" text="No maps purchased yet." textFill="#95a5a6" visible="false" managed="false">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </Label>
+                                        <FlowPane fx:id="flowPaneMaps" hgap="20.0" vgap="20.0" prefWrapLength="900.0">
+                                            <padding>
+                                                <Insets bottom="15.0" left="15.0" top="15.0" />
+                                            </padding>
+                                        </FlowPane>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </TitledPane>
 
-                        <FlowPane fx:id="flowPaneMaps" hgap="20.0" vgap="20.0" prefWrapLength="900.0">
-                            <padding>
-                                <Insets bottom="15.0" left="15.0" top="15.0" />
-                            </padding>
-                        </FlowPane>
-
-                        <!-- Subscription Maps Section -->
-                        <VBox fx:id="vboxSubscriptionSection" spacing="15.0" visible="false" managed="false">
-                            <children>
-                                <Separator style="-fx-background-color: #7f8c8d;" />
-
-                                <Label text="Maps from Active Subscriptions" textFill="#ecf0f1" style="-fx-font-size: 22px; -fx-font-weight: bold;">
-                                    <font>
-                                        <Font name="System Bold" size="22.0" />
-                                    </font>
-                                </Label>
-
-                                <Label fx:id="lblSubEmpty" text="No maps from subscriptions." textFill="#95a5a6" visible="false" managed="false">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                </Label>
-
+                        <!-- Subscription Maps Section (collapsible, hidden by default) -->
+                        <TitledPane fx:id="titledPaneSubscription" text="Maps from Active Subscriptions" expanded="true"
+                                    animated="true" visible="false" managed="false"
+                                    style="-fx-base: #2c3e50; -fx-text-fill: #ecf0f1; -fx-font-size: 16px; -fx-font-weight: bold;">
+                            <content>
                                 <VBox fx:id="vboxSubMaps" spacing="20.0">
                                     <padding>
                                         <Insets bottom="15.0" left="15.0" top="5.0" />
                                     </padding>
                                 </VBox>
-                            </children>
-                        </VBox>
+                            </content>
+                        </TitledPane>
 
                     </children>
                 </VBox>
