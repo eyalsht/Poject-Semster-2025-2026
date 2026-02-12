@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MapCardController {
-    @FXML private ImageView imgMap;
+    @FXML private Label lblDescription;
     @FXML private Label lblMapName;
     @FXML private Label lblMapPrice;
     @FXML private Label lblVersion;
@@ -37,20 +37,22 @@ public class MapCardController {
          if (lblVersion != null) {
              lblVersion.setText("Version: " + gcmMap.getVersion());
          }
+         if (lblDescription != null) {
+             lblDescription.setText(gcmMap.getDescription());
+         }
+         // Check purchase status for clients
+         if (btnBuy != null && GCMClient.getInstance().getCurrentUser() instanceof Client) {
+             checkMapPurchaseStatus(gcmMap);
+         }
          // Logic for loading map image from Client resources
-         if (gcmMap.getImagePath() != null) {
+       /*  if (gcmMap.getImagePath() != null) {
              try {
                  String path = "/images/maps/" + gcmMap.getImagePath();
                  imgMap.setImage(new Image(getClass().getResourceAsStream(path)));
              } catch (Exception e) {
                  System.err.println("Map image not found: " + gcmMap.getImagePath());
              }
-         }
-
-         // Check purchase status for clients
-         if (btnBuy != null && GCMClient.getInstance().getCurrentUser() instanceof Client) {
-             checkMapPurchaseStatus(gcmMap);
-         }
+         }*/
      }
 
     private void checkMapPurchaseStatus(GCMMap map) {
