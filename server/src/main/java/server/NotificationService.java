@@ -122,9 +122,9 @@ public class NotificationService
                 "Thank you for your purchase!\n"+
                 "One time purchase details:\n"+
                 "City: "+city+
-                "Map name: "+mapName+
-                "Map version: "+mapVersion+
-                "Price: "+price +"$";
+                "\nmMap name: "+mapName+
+                "\nMap version: "+mapVersion+
+                "\nPrice: "+price +"$";
         sendEmail(email,subject, message);
         //OPTIONAL - SEND SMS...
     }
