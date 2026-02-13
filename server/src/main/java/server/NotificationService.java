@@ -108,10 +108,23 @@ public class NotificationService
     public static void sendSubscriptionAlert(String email,String phone, String firstName, String city, double price, LocalDate expirationDate)
     {
         String subject = "GCM Subscription Payment receipt";
-        String message = "Hello "+firstName+",/n"+
+        String message = "Hello "+firstName+",\n\n"+
                 "Thank you for your purchase!\n"+
                 "Your subscription to "+city+ " will expire in "+expirationDate+"\n"+
-                "Price: "+price;
+                "Price: "+price +"$";
+        sendEmail(email,subject, message);
+        //OPTIONAL - SEND SMS...
+    }
+    public static void sendOneTimePurchaseAlert(String email,String phone,String firstName, String city,double price,String mapName, String mapVersion)
+    {
+        String subject = "GCM Map purchase receipt";
+        String message = "Hello "+firstName+",\n\n"+
+                "Thank you for your purchase!\n"+
+                "One time purchase details:\n"+
+                "City: "+city+
+                "Map name: "+mapName+
+                "Map version: "+mapVersion+
+                "Price: "+price +"$";
         sendEmail(email,subject, message);
         //OPTIONAL - SEND SMS...
     }
