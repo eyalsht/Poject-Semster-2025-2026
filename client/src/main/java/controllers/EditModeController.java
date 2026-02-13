@@ -1334,10 +1334,8 @@ public class EditModeController {
                     int finalSuccess = success;
                     Platform.runLater(() -> {
                         showAlert("Submitted", finalSuccess + "/" + toSubmit.size() + " changes submitted for approval.");
-                        // Reload city data to reset all tracking
-                        if (currentCity != null) {
-                            onCitySelected();
-                        }
+                        // Close the edit mode window
+                        ((Stage) cbCitySelector.getScene().getWindow()).close();
                     });
                 }).start();
             }

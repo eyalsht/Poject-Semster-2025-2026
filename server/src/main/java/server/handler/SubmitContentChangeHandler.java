@@ -4,6 +4,7 @@ import common.dto.ContentChangeRequest;
 import common.enums.ActionType;
 import common.messaging.Message;
 import common.user.User;
+import server.GcmServer;
 import server.repository.PendingContentRequestRepository;
 import server.repository.UserRepository;
 
@@ -30,6 +31,14 @@ public class SubmitContentChangeHandler implements RequestHandler {
                 changeRequest.getTargetName(),
                 changeRequest.getContentDetailsJson()
             );
+
+            if (success) {
+                // Notify all clients so approval counts refresh
+                GcmServer server = GcmServer.getInstance();
+                if (server != null) {
+                    server.sendToAllClients(new Message(ActionType.CATALOG_UPDATED_NOTIFICATION, null));
+                }
+            }
 
             return new Message(ActionType.SUBMIT_CONTENT_CHANGE_RESPONSE, success);
 

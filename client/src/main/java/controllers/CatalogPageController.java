@@ -86,6 +86,7 @@ public class CatalogPageController {
                 Platform.runLater(() -> {
                     if (flowPaneCities != null && flowPaneCities.getScene() != null) {
                         refreshCatalog();
+                        refreshPendingApprovalsCount();
                     }
                 });
             }

@@ -25,11 +25,11 @@ public class GCMMap extends ContentItem implements Serializable {
     private String imagePath;
 
     @Lob
-    @Column(name = "map_image")
+    @Column(name = "map_image", columnDefinition = "LONGBLOB")
     private byte[] mapImage;
 
     @Lob
-    @Column(name = "site_markers_json")
+    @Column(name = "site_markers_json", columnDefinition = "LONGTEXT")
     private String siteMarkersJson;
 
     @Enumerated(EnumType.STRING)
