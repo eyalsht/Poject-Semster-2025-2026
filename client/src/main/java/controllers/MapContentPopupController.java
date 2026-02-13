@@ -94,7 +94,7 @@ public class MapContentPopupController {
             case NO_ACCESS:
             default:
                 // Show site list only, placeholder instead of image
-                showImagePlaceholder("Map Preview", "Purchase this map to view the full image.");
+                showImagePlaceholder("Map Preview", "Purchase this map or subscribe to the city to view the full image.");
                 showToursTab(false);
                 break;
         }
