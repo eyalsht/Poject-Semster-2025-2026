@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static server.NotificationService.sendOneTimePurchaseAlert;
 import static server.NotificationService.sendSubscriptionAlert;
 
 
@@ -202,6 +203,13 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
             purchase.setPricePaid(price);
             purchase.setPurchaseDate(today);
             purchase.setPurchasedVersion(map.getVersion());
+            Optional<String> email = findEmailByUserId(user.getId());
+            Optional<String> phone = findPhoneByUserId(user.getId());
+            Optional<String> firstName = findNameByUserId(user.getId());
+            String cityName = map.getCityName();
+            String mapName = map.getName();
+            String mapVersion = map.getVersion();
+            sendOneTimePurchaseAlert(email.orElse(null),phone.orElse(null),firstName.orElse(null),cityName,price,mapName,mapVersion);
         });
         return purchase;
     }
