@@ -23,8 +23,6 @@
                 <Label fx:id="lblMapName" text="Map Name" textFill="WHITE" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
 
                 <Pane HBox.hgrow="ALWAYS" />
-                <Button fx:id="btnBuyInPopup" onAction="#onBuyClicked" text="Buy Map" visible="false" managed="false"
-                        style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;" />
                 <Button onAction="#onClose" text="X" style="-fx-background-color: #e74c3c; -fx-background-radius: 50; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" prefWidth="35" prefHeight="35" />
             </children>
             <VBox.margin>

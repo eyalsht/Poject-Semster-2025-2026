@@ -8,7 +8,6 @@ import common.enums.MapAccessLevel;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -34,7 +33,6 @@ public class MapContentPopupController {
     @FXML private VBox vboxTours;
     @FXML private TabPane tabPane;
     @FXML private Tab tabTours;
-    @FXML private Button btnBuyInPopup;
     @FXML private ImageView imgMapView;
     @FXML private Pane markerOverlay;
     @FXML private StackPane imageContainer;
@@ -84,7 +82,6 @@ public class MapContentPopupController {
                 showMapImage();
                 renderMarkers();
                 showToursTab(true);
-                showBuyButton(false);
                 break;
 
             case MAP_PURCHASED:
@@ -92,15 +89,13 @@ public class MapContentPopupController {
                 showMapImage();
                 renderMarkers();
                 showToursTab(false);
-                showBuyButton(false);
                 break;
 
             case NO_ACCESS:
             default:
-                // Show site list only, placeholder instead of image, buy button visible
+                // Show site list only, placeholder instead of image
                 showImagePlaceholder("Map Preview", "Purchase this map to view the full image.");
                 showToursTab(false);
-                showBuyButton(true);
                 break;
         }
     }
@@ -139,13 +134,6 @@ public class MapContentPopupController {
         if (tabPane == null || tabTours == null) return;
         if (!show) {
             tabPane.getTabs().remove(tabTours);
-        }
-    }
-
-    private void showBuyButton(boolean show) {
-        if (btnBuyInPopup != null) {
-            btnBuyInPopup.setVisible(show);
-            btnBuyInPopup.setManaged(show);
         }
     }
 
@@ -242,13 +230,6 @@ public class MapContentPopupController {
 
     @FXML
     private void onClose() {
-        ((Stage) lblMapName.getScene().getWindow()).close();
-    }
-
-    @FXML
-    public void onBuyClicked() {
-        // Delegate to the existing purchase flow — the MapCardController
-        // handles the actual purchase logic. This button is a convenience shortcut.
         ((Stage) lblMapName.getScene().getWindow()).close();
     }
 }
