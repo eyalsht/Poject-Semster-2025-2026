@@ -63,12 +63,12 @@
                         <ImageView fx:id="imgMapView" preserveRatio="true" fitWidth="400" fitHeight="430" />
                         <Pane fx:id="markerOverlay" mouseTransparent="true" />
 
-                        <!-- Placeholder for non-purchasers -->
+                        <!-- Placeholder shown when image is unavailable -->
                         <VBox fx:id="imagePlaceholder" alignment="CENTER" spacing="10" visible="false" managed="false"
                               style="-fx-background-color: rgba(26,37,47,0.9); -fx-background-radius: 10;">
                             <children>
-                                <Label text="Map Preview" textFill="#7f8c8d" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
-                                <Label text="Purchase this map to view the full image" textFill="#95a5a6" style="-fx-font-size: 13px;" wrapText="true" />
+                                <Label fx:id="lblPlaceholderTitle" text="Map Preview" textFill="#7f8c8d" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+                                <Label fx:id="lblPlaceholderMessage" text="" textFill="#95a5a6" style="-fx-font-size: 13px;" wrapText="true" />
                             </children>
                             <padding>
                                 <Insets top="20" right="20" bottom="20" left="20" />

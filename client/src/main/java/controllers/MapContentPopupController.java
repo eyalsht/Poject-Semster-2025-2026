@@ -39,6 +39,8 @@ public class MapContentPopupController {
     @FXML private Pane markerOverlay;
     @FXML private StackPane imageContainer;
     @FXML private VBox imagePlaceholder;
+    @FXML private Label lblPlaceholderTitle;
+    @FXML private Label lblPlaceholderMessage;
 
     private MapAccessLevel accessLevel = MapAccessLevel.NO_ACCESS;
     private GCMMap currentMap;
@@ -96,7 +98,7 @@ public class MapContentPopupController {
             case NO_ACCESS:
             default:
                 // Show site list only, placeholder instead of image, buy button visible
-                showImagePlaceholder();
+                showImagePlaceholder("Map Preview", "Purchase this map to view the full image.");
                 showToursTab(false);
                 showBuyButton(true);
                 break;
@@ -112,18 +114,24 @@ public class MapContentPopupController {
             imgMapView.setImage(image);
             imgMapView.setVisible(true);
         } else {
-            // No image data stored — show placeholder even for purchasers
-            showImagePlaceholder();
+            // Has access but no image uploaded yet
+            showImagePlaceholder("No Image Available", "A map image has not been uploaded yet.");
         }
     }
 
-    private void showImagePlaceholder() {
+    private void showImagePlaceholder(String title, String message) {
         if (imgMapView != null) {
             imgMapView.setVisible(false);
         }
         if (imagePlaceholder != null) {
             imagePlaceholder.setVisible(true);
             imagePlaceholder.setManaged(true);
+        }
+        if (lblPlaceholderTitle != null) {
+            lblPlaceholderTitle.setText(title);
+        }
+        if (lblPlaceholderMessage != null) {
+            lblPlaceholderMessage.setText(message);
         }
     }
 
