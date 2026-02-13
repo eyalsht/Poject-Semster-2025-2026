@@ -71,10 +71,10 @@ public class EditModeController {
     // Map editing state
     private byte[] pendingMapImage;
     private List<SiteMarker> pendingMarkers = new ArrayList<>();
-    private Site pendingSiteToPlace;
     private GCMMap currentEditingMap;
     private Pane markerOverlayPane;
     private ImageView mapImageView;
+    private ListView<Site> lvOnMapSites; // reference to On Map list for marker placement
 
     // Site/Tour editing state
     private Site currentEditingSite;
@@ -295,7 +295,6 @@ public class EditModeController {
         pendingMapImage = map.getMapImage();
         originalMapImage = map.getMapImage();
         pendingMarkers = map.getSiteMarkers() != null ? new ArrayList<>(map.getSiteMarkers()) : new ArrayList<>();
-        pendingSiteToPlace = null;
 
         vboxMapEditor.getChildren().clear();
 
@@ -343,7 +342,6 @@ public class EditModeController {
         Label lbl = new Label("Map Image");
         lbl.getStyleClass().add("field-label");
 
-        // Use AnchorPane so we can position markers absolutely relative to the image
         StackPane imageContainer = new StackPane();
         imageContainer.setMinHeight(300);
         imageContainer.setMaxHeight(400);
@@ -356,7 +354,6 @@ public class EditModeController {
 
         markerOverlayPane = new Pane();
         markerOverlayPane.setPickOnBounds(false);
-        // Bind overlay size to match the image view
         markerOverlayPane.prefWidthProperty().bind(mapImageView.fitWidthProperty());
         markerOverlayPane.prefHeightProperty().bind(mapImageView.fitHeightProperty());
 
@@ -365,42 +362,47 @@ public class EditModeController {
             mapImageView.setImage(img);
         }
 
-        // Marker instruction label
-        Label lblInstruction = new Label("");
+        // Instruction label
+        Label lblInstruction = new Label("Select a site from 'On Map' list, then click to place/move its marker");
         lblInstruction.setId("markerInstruction");
         lblInstruction.getStyleClass().add("marker-instruction");
 
-        // Click handler for marker placement — compute relative to actual image bounds
+        // Click handler — places/moves marker for whichever site is selected in the On Map list
+        // Uses same offset math as renderMarkersOnOverlay for accurate coordinates
         mapImageView.setOnMouseClicked(event -> {
-            if (pendingSiteToPlace != null && mapImageView.getImage() != null) {
-                // event.getX()/getY() are relative to the ImageView node
-                Bounds imgBounds = mapImageView.getBoundsInLocal();
-                double relX = event.getX() / imgBounds.getWidth();
-                double relY = event.getY() / imgBounds.getHeight();
-                relX = Math.max(0, Math.min(1, relX));
-                relY = Math.max(0, Math.min(1, relY));
-
-                // Remove existing marker for this site if any
-                pendingMarkers.removeIf(m -> m.getSiteId() == pendingSiteToPlace.getId());
-                pendingMarkers.add(new SiteMarker(pendingSiteToPlace.getId(), relX, relY));
-
-                renderMarkersOnOverlay();
-                pendingSiteToPlace = null;
-                lblInstruction.setText("");
-                recalculateChangeCount();
+            if (mapImageView.getImage() == null || lvOnMapSites == null) return;
+            Site selected = lvOnMapSites.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                lblInstruction.setText("Select a site from 'On Map' list first, then click to place its marker");
+                return;
             }
-        });
 
-        // Skip button (only visible when placing)
-        Button btnSkip = new Button("Skip Marker Placement");
-        btnSkip.getStyleClass().add("transfer-button");
-        btnSkip.setVisible(false);
-        btnSkip.setManaged(false);
-        btnSkip.setOnAction(e -> {
-            pendingSiteToPlace = null;
-            lblInstruction.setText("");
-            btnSkip.setVisible(false);
-            btnSkip.setManaged(false);
+            // Compute relative position accounting for preserveRatio offset
+            Image img = mapImageView.getImage();
+            double imgW = img.getWidth();
+            double imgH = img.getHeight();
+            double fitW = mapImageView.getFitWidth();
+            double fitH = mapImageView.getFitHeight();
+            double scale = Math.min(fitW / imgW, fitH / imgH);
+            double renderedW = imgW * scale;
+            double renderedH = imgH * scale;
+            double offsetX = (fitW - renderedW) / 2.0;
+            double offsetY = (fitH - renderedH) / 2.0;
+
+            double relX = (event.getX() - offsetX) / renderedW;
+            double relY = (event.getY() - offsetY) / renderedH;
+            relX = Math.max(0, Math.min(1, relX));
+            relY = Math.max(0, Math.min(1, relY));
+
+            // Place or move marker for the selected site
+            pendingMarkers.removeIf(m -> m.getSiteId() == selected.getId());
+            pendingMarkers.add(new SiteMarker(selected.getId(), relX, relY));
+
+            renderMarkersOnOverlay();
+            lblInstruction.setText("Marker placed for: " + selected.getName() + "  \u2014  click again to reposition");
+            recalculateChangeCount();
+            // Refresh On Map list to update "(no marker)" hints
+            if (lvOnMapSites != null) lvOnMapSites.refresh();
         });
 
         imageContainer.getChildren().addAll(mapImageView, markerOverlayPane);
@@ -426,9 +428,7 @@ public class EditModeController {
             }
         });
 
-        // Store the skip button & instruction label so we can control them from add-site
-        section.getChildren().addAll(lbl, imageContainer, btnUpload, lblInstruction, btnSkip);
-        section.setUserData(new Object[]{lblInstruction, btnSkip});
+        section.getChildren().addAll(lbl, imageContainer, btnUpload, lblInstruction);
 
         renderMarkersOnOverlay();
 
@@ -524,7 +524,24 @@ public class EditModeController {
             @Override
             protected void updateItem(Site item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.getName());
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    boolean hasMarker = pendingMarkers.stream().anyMatch(m -> m.getSiteId() == item.getId());
+                    setText(item.getName() + (hasMarker ? "" : "  (no marker)"));
+                }
+            }
+        });
+
+        // Store reference so the map click handler can read the selection
+        this.lvOnMapSites = lvOnMap;
+
+        // When selecting a site in On Map list, update the instruction
+        lvOnMap.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                boolean hasMarker = pendingMarkers.stream().anyMatch(m -> m.getSiteId() == newVal.getId());
+                String action = hasMarker ? "reposition" : "place";
+                updateMarkerInstruction("Click on the map to " + action + " marker for: " + newVal.getName());
             }
         });
 
@@ -557,10 +574,11 @@ public class EditModeController {
                 if (map.getSites() == null) map.setSites(new ArrayList<>());
                 map.getSites().add(selected);
 
-                // Prompt for marker placement
-                pendingSiteToPlace = selected;
-                updateMarkerInstruction("Click on the map image to place marker for: " + selected.getName(), true);
+                // Auto-select the newly added site so user can immediately place its marker
+                lvOnMap.getSelectionModel().select(selected);
                 recalculateChangeCount();
+                // Refresh cells to show "(no marker)" hint
+                lvOnMap.refresh();
             }
         });
 
@@ -575,6 +593,7 @@ public class EditModeController {
                 pendingMarkers.removeIf(m -> m.getSiteId() == selected.getId());
                 renderMarkersOnOverlay();
                 recalculateChangeCount();
+                lvOnMap.refresh();
             }
         });
 
@@ -596,18 +615,10 @@ public class EditModeController {
         return section;
     }
 
-    private void updateMarkerInstruction(String text, boolean showSkip) {
+    private void updateMarkerInstruction(String text) {
         vboxMapEditor.lookupAll("#markerInstruction").forEach(node -> {
             if (node instanceof Label) {
                 ((Label) node).setText(text != null ? text : "");
-                // Find sibling skip button via parent
-                if (node.getParent() instanceof VBox parent) {
-                    Object ud = parent.getUserData();
-                    if (ud instanceof Object[] arr && arr.length >= 2 && arr[1] instanceof Button skipBtn) {
-                        skipBtn.setVisible(showSkip);
-                        skipBtn.setManaged(showSkip);
-                    }
-                }
             }
         });
     }
@@ -1423,7 +1434,7 @@ public class EditModeController {
         pendingMapImage = null;
         originalMapImage = null;
         pendingMarkers.clear();
-        pendingSiteToPlace = null;
+        lvOnMapSites = null;
         currentMapOnMapSites = null;
         currentTourSites = null;
         updateChangeCountLabel(0);
