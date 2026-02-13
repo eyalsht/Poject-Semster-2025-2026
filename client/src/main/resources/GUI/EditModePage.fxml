@@ -7,7 +7,7 @@
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="controllers.EditModeController"
-      prefWidth="1100" prefHeight="700" spacing="0"
+      prefWidth="1200" prefHeight="780" spacing="0"
       stylesheets="@../styles/EditModeStyle.css" styleClass="edit-mode-root">
 
     <!-- Header Bar -->

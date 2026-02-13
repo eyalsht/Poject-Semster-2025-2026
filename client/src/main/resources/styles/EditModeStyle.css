@@ -29,6 +29,24 @@
     -fx-background-radius: 5;
 }
 
+.city-combo .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: #34495e;
+}
+
+.city-combo .list-cell:hover {
+    -fx-background-color: #3498db;
+}
+
+.edit-combo .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: #34495e;
+}
+
+.edit-combo .list-cell:hover {
+    -fx-background-color: #3498db;
+}
+
 .close-button {
     -fx-background-color: rgba(231, 76, 60, 0.55);
     -fx-text-fill: white;

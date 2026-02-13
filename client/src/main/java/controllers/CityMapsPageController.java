@@ -454,7 +454,7 @@ public class CityMapsPageController {
 
             Stage stage = new Stage();
             stage.setTitle("Edit Mode");
-            stage.setScene(new Scene(root, 1100, 700));
+            stage.setScene(new Scene(root, 1200, 780));
             stage.initModality(Modality.APPLICATION_MODAL);
 
             stage.setOnHidden(event -> {

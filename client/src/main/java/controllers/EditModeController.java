@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -53,11 +54,19 @@ public class EditModeController {
     private ObservableList<Site> citySites = FXCollections.observableArrayList();
     private ObservableList<Tour> cityTours = FXCollections.observableArrayList();
 
-    // Change tracking
-    private int changeCount = 0;
+    // Change tracking — snapshot-based: store original state and compare
     private final Map<String, String> originalValues = new HashMap<>();
     private final Map<String, HBox> fieldRows = new HashMap<>();
     private final List<ContentChangeRequest> pendingChanges = new ArrayList<>();
+
+    // Snapshot of original site IDs per map (for dirty detection)
+    private final Map<Integer, Set<Integer>> originalMapSiteIds = new HashMap<>();
+    // Snapshot of original site IDs per tour
+    private final Map<Integer, List<Integer>> originalTourSiteIds = new HashMap<>();
+    // Snapshot of original markers per map
+    private final Map<Integer, List<SiteMarker>> originalMapMarkers = new HashMap<>();
+    // Snapshot of original map image (just whether it was null/present)
+    private byte[] originalMapImage;
 
     // Map editing state
     private byte[] pendingMapImage;
@@ -72,6 +81,10 @@ public class EditModeController {
     private Tour currentEditingTour;
     private boolean isNewSite = false;
     private boolean isNewTour = false;
+
+    // Live observable lists for current map/tour editors (for snapshot comparison)
+    private ObservableList<Site> currentMapOnMapSites;
+    private ObservableList<Site> currentTourSites;
 
     @FXML
     public void initialize() {
@@ -94,6 +107,7 @@ public class EditModeController {
             protected void updateItem(City item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || item == null ? null : item.getName());
+                setTextFill(Color.WHITE);
             }
         });
         cbCitySelector.setOnAction(e -> onCitySelected());
@@ -219,6 +233,23 @@ public class EditModeController {
         lvSites.setItems(citySites);
         lvTours.setItems(cityTours);
 
+        // Take snapshots of original state for all maps and tours
+        for (GCMMap m : cityMaps) {
+            Set<Integer> siteIds = new HashSet<>();
+            if (m.getSites() != null) {
+                for (Site s : m.getSites()) siteIds.add(s.getId());
+            }
+            originalMapSiteIds.put(m.getId(), siteIds);
+            originalMapMarkers.put(m.getId(), m.getSiteMarkers() != null ? new ArrayList<>(m.getSiteMarkers()) : new ArrayList<>());
+        }
+        for (Tour t : cityTours) {
+            List<Integer> siteIds = new ArrayList<>();
+            if (t.getSites() != null) {
+                for (Site s : t.getSites()) siteIds.add(s.getId());
+            }
+            originalTourSiteIds.put(t.getId(), siteIds);
+        }
+
         // Populate city details tab
         populateCityDetailsTab();
 
@@ -262,6 +293,7 @@ public class EditModeController {
     private void populateMapEditor(GCMMap map) {
         currentEditingMap = map;
         pendingMapImage = map.getMapImage();
+        originalMapImage = map.getMapImage();
         pendingMarkers = map.getSiteMarkers() != null ? new ArrayList<>(map.getSiteMarkers()) : new ArrayList<>();
         pendingSiteToPlace = null;
 
@@ -311,6 +343,7 @@ public class EditModeController {
         Label lbl = new Label("Map Image");
         lbl.getStyleClass().add("field-label");
 
+        // Use AnchorPane so we can position markers absolutely relative to the image
         StackPane imageContainer = new StackPane();
         imageContainer.setMinHeight(300);
         imageContainer.setMaxHeight(400);
@@ -323,17 +356,27 @@ public class EditModeController {
 
         markerOverlayPane = new Pane();
         markerOverlayPane.setPickOnBounds(false);
+        // Bind overlay size to match the image view
+        markerOverlayPane.prefWidthProperty().bind(mapImageView.fitWidthProperty());
+        markerOverlayPane.prefHeightProperty().bind(mapImageView.fitHeightProperty());
 
         if (pendingMapImage != null && pendingMapImage.length > 0) {
             Image img = new Image(new ByteArrayInputStream(pendingMapImage));
             mapImageView.setImage(img);
         }
 
-        // Click handler for marker placement
-        imageContainer.setOnMouseClicked(event -> {
+        // Marker instruction label
+        Label lblInstruction = new Label("");
+        lblInstruction.setId("markerInstruction");
+        lblInstruction.getStyleClass().add("marker-instruction");
+
+        // Click handler for marker placement — compute relative to actual image bounds
+        mapImageView.setOnMouseClicked(event -> {
             if (pendingSiteToPlace != null && mapImageView.getImage() != null) {
-                double relX = event.getX() / imageContainer.getWidth();
-                double relY = event.getY() / imageContainer.getHeight();
+                // event.getX()/getY() are relative to the ImageView node
+                Bounds imgBounds = mapImageView.getBoundsInLocal();
+                double relX = event.getX() / imgBounds.getWidth();
+                double relY = event.getY() / imgBounds.getHeight();
                 relX = Math.max(0, Math.min(1, relX));
                 relY = Math.max(0, Math.min(1, relY));
 
@@ -343,9 +386,21 @@ public class EditModeController {
 
                 renderMarkersOnOverlay();
                 pendingSiteToPlace = null;
-                updateMarkerInstruction(null);
-                incrementChangeCount();
+                lblInstruction.setText("");
+                recalculateChangeCount();
             }
+        });
+
+        // Skip button (only visible when placing)
+        Button btnSkip = new Button("Skip Marker Placement");
+        btnSkip.getStyleClass().add("transfer-button");
+        btnSkip.setVisible(false);
+        btnSkip.setManaged(false);
+        btnSkip.setOnAction(e -> {
+            pendingSiteToPlace = null;
+            lblInstruction.setText("");
+            btnSkip.setVisible(false);
+            btnSkip.setManaged(false);
         });
 
         imageContainer.getChildren().addAll(mapImageView, markerOverlayPane);
@@ -364,20 +419,16 @@ public class EditModeController {
                     pendingMapImage = Files.readAllBytes(file.toPath());
                     Image img = new Image(new ByteArrayInputStream(pendingMapImage));
                     mapImageView.setImage(img);
-                    incrementChangeCount();
+                    recalculateChangeCount();
                 } catch (Exception ex) {
                     showAlert("Error", "Could not load image: " + ex.getMessage());
                 }
             }
         });
 
-        section.getChildren().addAll(lbl, imageContainer, btnUpload);
-
-        // Marker instruction label
-        Label lblInstruction = new Label("");
-        lblInstruction.setId("markerInstruction");
-        lblInstruction.getStyleClass().add("marker-instruction");
-        section.getChildren().add(lblInstruction);
+        // Store the skip button & instruction label so we can control them from add-site
+        section.getChildren().addAll(lbl, imageContainer, btnUpload, lblInstruction, btnSkip);
+        section.setUserData(new Object[]{lblInstruction, btnSkip});
 
         renderMarkersOnOverlay();
 
@@ -390,8 +441,24 @@ public class EditModeController {
 
         if (mapImageView.getImage() == null) return;
 
+        // Compute the actual rendered image size (preserveRatio means it may be smaller than fitWidth/fitHeight)
+        Image img = mapImageView.getImage();
+        double imgW = img.getWidth();
+        double imgH = img.getHeight();
+        double fitW = mapImageView.getFitWidth();
+        double fitH = mapImageView.getFitHeight();
+
+        double scale = Math.min(fitW / imgW, fitH / imgH);
+        double renderedW = imgW * scale;
+        double renderedH = imgH * scale;
+
+        // Offset from top-left of the ImageView to the actual image
+        double offsetX = (fitW - renderedW) / 2.0;
+        double offsetY = (fitH - renderedH) / 2.0;
+
         // Get map sites for numbering
-        List<Site> mapSites = currentEditingMap != null ? currentEditingMap.getSites() : new ArrayList<>();
+        List<Site> mapSites = currentEditingMap != null && currentEditingMap.getSites() != null
+                ? currentEditingMap.getSites() : new ArrayList<>();
 
         for (SiteMarker marker : pendingMarkers) {
             int index = -1;
@@ -401,11 +468,11 @@ public class EditModeController {
                     break;
                 }
             }
-            // Also check citySites for newly added sites
             if (index < 0) {
+                // Check citySites for newly added sites not yet in mapSites list
                 for (int i = 0; i < citySites.size(); i++) {
                     if (citySites.get(i).getId() == marker.getSiteId()) {
-                        index = i + mapSites.size();
+                        index = mapSites.size() + i;
                         break;
                     }
                 }
@@ -413,8 +480,10 @@ public class EditModeController {
             if (index < 0) continue;
 
             StackPane pin = createMarkerPin(index + 1);
-            pin.layoutXProperty().bind(mapImageView.fitWidthProperty().multiply(marker.getX()).subtract(12));
-            pin.layoutYProperty().bind(mapImageView.fitHeightProperty().multiply(marker.getY()).subtract(12));
+            double px = offsetX + marker.getX() * renderedW - 12;
+            double py = offsetY + marker.getY() * renderedH - 12;
+            pin.setLayoutX(px);
+            pin.setLayoutY(py);
             markerOverlayPane.getChildren().add(pin);
         }
     }
@@ -431,6 +500,7 @@ public class EditModeController {
 
         StackPane pin = new StackPane(circle, text);
         pin.setPrefSize(24, 24);
+        pin.setMouseTransparent(true);
         return pin;
     }
 
@@ -446,10 +516,10 @@ public class EditModeController {
         ListView<Site> lvOnMap = new ListView<>();
         lvOnMap.setPrefHeight(120);
         lvOnMap.getStyleClass().add("edit-list");
-        ObservableList<Site> onMapSites = FXCollections.observableArrayList(
+        currentMapOnMapSites = FXCollections.observableArrayList(
                 map.getSites() != null ? map.getSites() : new ArrayList<>()
         );
-        lvOnMap.setItems(onMapSites);
+        lvOnMap.setItems(currentMapOnMapSites);
         lvOnMap.setCellFactory(lv -> new ListCell<Site>() {
             @Override
             protected void updateItem(Site item, boolean empty) {
@@ -464,7 +534,7 @@ public class EditModeController {
         lvAvailable.getStyleClass().add("edit-list");
         ObservableList<Site> availableSites = FXCollections.observableArrayList();
         for (Site s : citySites) {
-            boolean onMap = onMapSites.stream().anyMatch(ms -> ms.getId() == s.getId());
+            boolean onMap = currentMapOnMapSites.stream().anyMatch(ms -> ms.getId() == s.getId());
             if (!onMap) availableSites.add(s);
         }
         lvAvailable.setItems(availableSites);
@@ -477,34 +547,34 @@ public class EditModeController {
         });
 
         // Transfer buttons
-        Button btnAdd = new Button("< Add");
+        Button btnAdd = new Button("\u2190 Add to Map");
         btnAdd.getStyleClass().add("transfer-button");
         btnAdd.setOnAction(e -> {
             Site selected = lvAvailable.getSelectionModel().getSelectedItem();
             if (selected != null) {
-                onMapSites.add(selected);
+                currentMapOnMapSites.add(selected);
                 availableSites.remove(selected);
                 if (map.getSites() == null) map.setSites(new ArrayList<>());
                 map.getSites().add(selected);
-                incrementChangeCount();
 
                 // Prompt for marker placement
                 pendingSiteToPlace = selected;
-                updateMarkerInstruction("Click on the map to place marker for: " + selected.getName());
+                updateMarkerInstruction("Click on the map image to place marker for: " + selected.getName(), true);
+                recalculateChangeCount();
             }
         });
 
-        Button btnRemove = new Button("Remove >");
+        Button btnRemove = new Button("Remove \u2192");
         btnRemove.getStyleClass().add("transfer-button");
         btnRemove.setOnAction(e -> {
             Site selected = lvOnMap.getSelectionModel().getSelectedItem();
             if (selected != null) {
-                onMapSites.remove(selected);
+                currentMapOnMapSites.remove(selected);
                 availableSites.add(selected);
                 if (map.getSites() != null) map.getSites().remove(selected);
                 pendingMarkers.removeIf(m -> m.getSiteId() == selected.getId());
                 renderMarkersOnOverlay();
-                incrementChangeCount();
+                recalculateChangeCount();
             }
         });
 
@@ -526,11 +596,18 @@ public class EditModeController {
         return section;
     }
 
-    private void updateMarkerInstruction(String text) {
-        // Find the instruction label in the map editor
+    private void updateMarkerInstruction(String text, boolean showSkip) {
         vboxMapEditor.lookupAll("#markerInstruction").forEach(node -> {
             if (node instanceof Label) {
                 ((Label) node).setText(text != null ? text : "");
+                // Find sibling skip button via parent
+                if (node.getParent() instanceof VBox parent) {
+                    Object ud = parent.getUserData();
+                    if (ud instanceof Object[] arr && arr.length >= 2 && arr[1] instanceof Button skipBtn) {
+                        skipBtn.setVisible(showSkip);
+                        skipBtn.setManaged(showSkip);
+                    }
+                }
             }
         });
     }
@@ -663,14 +740,14 @@ public class EditModeController {
         lbl.getStyleClass().add("field-label");
 
         // Tour sites (ordered)
-        ListView<Site> lvTourSites = new ListView<>();
-        lvTourSites.setPrefHeight(150);
-        lvTourSites.getStyleClass().add("edit-list");
-        ObservableList<Site> tourSites = FXCollections.observableArrayList(
+        ListView<Site> lvTourSitesView = new ListView<>();
+        lvTourSitesView.setPrefHeight(150);
+        lvTourSitesView.getStyleClass().add("edit-list");
+        currentTourSites = FXCollections.observableArrayList(
                 tour.getSites() != null ? tour.getSites() : new ArrayList<>()
         );
-        lvTourSites.setItems(tourSites);
-        lvTourSites.setCellFactory(lv -> new ListCell<Site>() {
+        lvTourSitesView.setItems(currentTourSites);
+        lvTourSitesView.setCellFactory(lv -> new ListCell<Site>() {
             @Override
             protected void updateItem(Site item, boolean empty) {
                 super.updateItem(item, empty);
@@ -678,28 +755,28 @@ public class EditModeController {
             }
         });
 
-        // Up/Down buttons
-        Button btnUp = new Button("\u25B2");
+        // Up/Down buttons with labels
+        Button btnUp = new Button("\u25B2 Move Up");
         btnUp.getStyleClass().add("order-button");
         btnUp.setOnAction(e -> {
-            int idx = lvTourSites.getSelectionModel().getSelectedIndex();
+            int idx = lvTourSitesView.getSelectionModel().getSelectedIndex();
             if (idx > 0) {
-                Site s = tourSites.remove(idx);
-                tourSites.add(idx - 1, s);
-                lvTourSites.getSelectionModel().select(idx - 1);
-                incrementChangeCount();
+                Site s = currentTourSites.remove(idx);
+                currentTourSites.add(idx - 1, s);
+                lvTourSitesView.getSelectionModel().select(idx - 1);
+                recalculateChangeCount();
             }
         });
 
-        Button btnDown = new Button("\u25BC");
+        Button btnDown = new Button("\u25BC Move Down");
         btnDown.getStyleClass().add("order-button");
         btnDown.setOnAction(e -> {
-            int idx = lvTourSites.getSelectionModel().getSelectedIndex();
-            if (idx >= 0 && idx < tourSites.size() - 1) {
-                Site s = tourSites.remove(idx);
-                tourSites.add(idx + 1, s);
-                lvTourSites.getSelectionModel().select(idx + 1);
-                incrementChangeCount();
+            int idx = lvTourSitesView.getSelectionModel().getSelectedIndex();
+            if (idx >= 0 && idx < currentTourSites.size() - 1) {
+                Site s = currentTourSites.remove(idx);
+                currentTourSites.add(idx + 1, s);
+                lvTourSitesView.getSelectionModel().select(idx + 1);
+                recalculateChangeCount();
             }
         });
 
@@ -712,7 +789,7 @@ public class EditModeController {
         lvAvailable.getStyleClass().add("edit-list");
         ObservableList<Site> availableSites = FXCollections.observableArrayList();
         for (Site s : citySites) {
-            boolean inTour = tourSites.stream().anyMatch(ts -> ts.getId() == s.getId());
+            boolean inTour = currentTourSites.stream().anyMatch(ts -> ts.getId() == s.getId());
             if (!inTour) availableSites.add(s);
         }
         lvAvailable.setItems(availableSites);
@@ -725,25 +802,25 @@ public class EditModeController {
         });
 
         // Transfer buttons
-        Button btnAddToTour = new Button("< Add");
+        Button btnAddToTour = new Button("\u2190 Add to Tour");
         btnAddToTour.getStyleClass().add("transfer-button");
         btnAddToTour.setOnAction(e -> {
             Site selected = lvAvailable.getSelectionModel().getSelectedItem();
             if (selected != null) {
-                tourSites.add(selected);
+                currentTourSites.add(selected);
                 availableSites.remove(selected);
-                incrementChangeCount();
+                recalculateChangeCount();
             }
         });
 
-        Button btnRemoveFromTour = new Button("Remove >");
+        Button btnRemoveFromTour = new Button("Remove \u2192");
         btnRemoveFromTour.getStyleClass().add("transfer-button");
         btnRemoveFromTour.setOnAction(e -> {
-            Site selected = lvTourSites.getSelectionModel().getSelectedItem();
+            Site selected = lvTourSitesView.getSelectionModel().getSelectedItem();
             if (selected != null) {
-                tourSites.remove(selected);
+                currentTourSites.remove(selected);
                 availableSites.add(selected);
-                incrementChangeCount();
+                recalculateChangeCount();
             }
         });
 
@@ -751,15 +828,18 @@ public class EditModeController {
         transferButtons.setAlignment(Pos.CENTER);
 
         HBox listsBox = new HBox(10);
-        VBox tourBox = new VBox(3, new Label("In Tour (ordered)"), lvTourSites, orderButtons);
+        VBox tourBox = new VBox(3, new Label("In Tour (ordered)"), lvTourSitesView);
         tourBox.getStyleClass().add("transfer-list-box");
         HBox.setHgrow(tourBox, Priority.ALWAYS);
+
+        VBox middleBox = new VBox(10, orderButtons, transferButtons);
+        middleBox.setAlignment(Pos.CENTER);
 
         VBox availableBox = new VBox(3, new Label("Available"), lvAvailable);
         availableBox.getStyleClass().add("transfer-list-box");
         HBox.setHgrow(availableBox, Priority.ALWAYS);
 
-        listsBox.getChildren().addAll(tourBox, transferButtons, availableBox);
+        listsBox.getChildren().addAll(tourBox, middleBox, availableBox);
         section.getChildren().addAll(lbl, listsBox);
         return section;
     }
@@ -791,15 +871,16 @@ public class EditModeController {
         tf.textProperty().addListener((obs, oldVal, newVal) -> {
             boolean changed = !origVal.equals(newVal);
             if (changed) {
-                row.getStyleClass().removeAll("field-row-changed");
-                row.getStyleClass().add("field-row-changed");
+                if (!row.getStyleClass().contains("field-row-changed"))
+                    row.getStyleClass().add("field-row-changed");
                 btnReset.setVisible(true);
                 btnReset.setManaged(true);
             } else {
-                row.getStyleClass().removeAll("field-row-changed");
+                row.getStyleClass().remove("field-row-changed");
                 btnReset.setVisible(false);
                 btnReset.setManaged(false);
             }
+            recalculateChangeCount();
         });
 
         btnReset.setOnAction(e -> tf.setText(origVal));
@@ -836,15 +917,16 @@ public class EditModeController {
         ta.textProperty().addListener((obs, oldVal, newVal) -> {
             boolean changed = !origVal.equals(newVal);
             if (changed) {
-                row.getStyleClass().removeAll("field-row-changed");
-                row.getStyleClass().add("field-row-changed");
+                if (!row.getStyleClass().contains("field-row-changed"))
+                    row.getStyleClass().add("field-row-changed");
                 btnReset.setVisible(true);
                 btnReset.setManaged(true);
             } else {
-                row.getStyleClass().removeAll("field-row-changed");
+                row.getStyleClass().remove("field-row-changed");
                 btnReset.setVisible(false);
                 btnReset.setManaged(false);
             }
+            recalculateChangeCount();
         });
 
         btnReset.setOnAction(e -> ta.setText(origVal));
@@ -871,6 +953,16 @@ public class EditModeController {
         HBox.setHgrow(cb, Priority.ALWAYS);
         cb.setMaxWidth(Double.MAX_VALUE);
 
+        // Make the button cell text white
+        cb.setButtonCell(new ListCell<T>() {
+            @Override
+            protected void updateItem(T item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.toString());
+                setTextFill(Color.WHITE);
+            }
+        });
+
         Button btnReset = new Button("\u21BA");
         btnReset.getStyleClass().add("reset-button");
         btnReset.setVisible(false);
@@ -879,15 +971,16 @@ public class EditModeController {
         cb.setOnAction(e -> {
             boolean changed = !Objects.equals(selected, cb.getValue());
             if (changed) {
-                row.getStyleClass().removeAll("field-row-changed");
-                row.getStyleClass().add("field-row-changed");
+                if (!row.getStyleClass().contains("field-row-changed"))
+                    row.getStyleClass().add("field-row-changed");
                 btnReset.setVisible(true);
                 btnReset.setManaged(true);
             } else {
-                row.getStyleClass().removeAll("field-row-changed");
+                row.getStyleClass().remove("field-row-changed");
                 btnReset.setVisible(false);
                 btnReset.setManaged(false);
             }
+            recalculateChangeCount();
         });
 
         btnReset.setOnAction(e -> cb.setValue(selected));
@@ -918,15 +1011,16 @@ public class EditModeController {
         cb.selectedProperty().addListener((obs, oldVal, newVal) -> {
             boolean changed = initialValue != newVal;
             if (changed) {
-                row.getStyleClass().removeAll("field-row-changed");
-                row.getStyleClass().add("field-row-changed");
+                if (!row.getStyleClass().contains("field-row-changed"))
+                    row.getStyleClass().add("field-row-changed");
                 btnReset.setVisible(true);
                 btnReset.setManaged(true);
             } else {
-                row.getStyleClass().removeAll("field-row-changed");
+                row.getStyleClass().remove("field-row-changed");
                 btnReset.setVisible(false);
                 btnReset.setManaged(false);
             }
+            recalculateChangeCount();
         });
 
         btnReset.setOnAction(e -> cb.setSelected(initialValue));
@@ -940,6 +1034,75 @@ public class EditModeController {
         Label lbl = new Label(text);
         lbl.getStyleClass().add("placeholder-label");
         return lbl;
+    }
+
+    // ==================== CHANGE COUNTING (snapshot-based) ====================
+
+    /**
+     * Recalculate the total change count by comparing current state to original snapshots.
+     * This ensures add+remove = 0 changes, not 2.
+     */
+    private void recalculateChangeCount() {
+        int count = 0;
+
+        // 1. Count changed text fields / text areas (field rows with "field-row-changed" class)
+        for (HBox row : fieldRows.values()) {
+            if (row.getStyleClass().contains("field-row-changed")) {
+                count++;
+            }
+        }
+
+        // 2. Count map site assignment changes (compare current vs original)
+        if (currentEditingMap != null && currentMapOnMapSites != null) {
+            Set<Integer> currentIds = new HashSet<>();
+            for (Site s : currentMapOnMapSites) currentIds.add(s.getId());
+            Set<Integer> origIds = originalMapSiteIds.getOrDefault(currentEditingMap.getId(), new HashSet<>());
+            if (!currentIds.equals(origIds)) {
+                count++;
+            }
+        }
+
+        // 3. Count map marker changes
+        if (currentEditingMap != null) {
+            List<SiteMarker> origMarkers = originalMapMarkers.getOrDefault(currentEditingMap.getId(), new ArrayList<>());
+            if (!markersEqual(pendingMarkers, origMarkers)) {
+                count++;
+            }
+        }
+
+        // 4. Count map image changes
+        if (currentEditingMap != null) {
+            boolean imageChanged = !Arrays.equals(pendingMapImage, originalMapImage);
+            if (imageChanged) {
+                count++;
+            }
+        }
+
+        // 5. Count tour site changes (compare current vs original)
+        if (currentEditingTour != null && currentTourSites != null && !isNewTour) {
+            List<Integer> currentIds = new ArrayList<>();
+            for (Site s : currentTourSites) currentIds.add(s.getId());
+            List<Integer> origIds = originalTourSiteIds.getOrDefault(currentEditingTour.getId(), new ArrayList<>());
+            if (!currentIds.equals(origIds)) {
+                count++;
+            }
+        }
+
+        updateChangeCountLabel(count);
+    }
+
+    private boolean markersEqual(List<SiteMarker> a, List<SiteMarker> b) {
+        if (a.size() != b.size()) return false;
+        for (int i = 0; i < a.size(); i++) {
+            SiteMarker ma = a.get(i);
+            SiteMarker mb = b.get(i);
+            if (ma.getSiteId() != mb.getSiteId() ||
+                    Math.abs(ma.getX() - mb.getX()) > 0.001 ||
+                    Math.abs(ma.getY() - mb.getY()) > 0.001) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // ==================== SUBMISSION METHODS ====================
@@ -1014,8 +1177,13 @@ public class EditModeController {
             return;
         }
 
-        // Get ordered site IDs from the tour sites list
-        String siteIds = getTourSiteIds(tour);
+        // Get ordered site IDs from the live tour sites list
+        String siteIds = "";
+        if (currentTourSites != null) {
+            siteIds = currentTourSites.stream()
+                    .map(s -> String.valueOf(s.getId()))
+                    .collect(Collectors.joining(","));
+        }
 
         String json = buildTourJson(name, desc, siteIds);
 
@@ -1172,9 +1340,9 @@ public class EditModeController {
             sb.append(",\"siteMarkersJson\":").append(markersSb);
         }
 
-        // Site IDs (comma-separated)
-        if (map.getSites() != null && !map.getSites().isEmpty()) {
-            String siteIds = map.getSites().stream()
+        // Site IDs (comma-separated) — use the live list
+        if (currentMapOnMapSites != null && !currentMapOnMapSites.isEmpty()) {
+            String siteIds = currentMapOnMapSites.stream()
                     .map(s -> String.valueOf(s.getId()))
                     .collect(Collectors.joining(","));
             sb.append(",\"siteIds\":\"").append(siteIds).append("\"");
@@ -1245,35 +1413,25 @@ public class EditModeController {
         return null;
     }
 
-    private String getTourSiteIds(Tour tour) {
-        // Find the tour sites ListView in the editor
-        if (tour.getSites() != null) {
-            return tour.getSites().stream()
-                    .map(s -> String.valueOf(s.getId()))
-                    .collect(Collectors.joining(","));
-        }
-        return "";
-    }
-
-    private void incrementChangeCount() {
-        changeCount++;
-        updateChangeCountLabel();
-    }
-
     private void resetChangeTracking() {
-        changeCount = 0;
         originalValues.clear();
         fieldRows.clear();
         pendingChanges.clear();
+        originalMapSiteIds.clear();
+        originalTourSiteIds.clear();
+        originalMapMarkers.clear();
         pendingMapImage = null;
+        originalMapImage = null;
         pendingMarkers.clear();
         pendingSiteToPlace = null;
-        updateChangeCountLabel();
+        currentMapOnMapSites = null;
+        currentTourSites = null;
+        updateChangeCountLabel(0);
     }
 
-    private void updateChangeCountLabel() {
-        lblChangeCount.setText(changeCount + " change" + (changeCount != 1 ? "s" : ""));
-        btnSubmitAll.setDisable(changeCount == 0);
+    private void updateChangeCountLabel(int count) {
+        lblChangeCount.setText(count + " change" + (count != 1 ? "s" : ""));
+        btnSubmitAll.setDisable(count == 0);
     }
 
     private String escapeJson(String value) {
