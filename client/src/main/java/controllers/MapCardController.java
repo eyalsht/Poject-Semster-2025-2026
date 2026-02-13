@@ -132,7 +132,7 @@ public class MapCardController {
         if (GCMClient.getInstance().getCurrentUser() instanceof Employee) {
             return MapAccessLevel.FULL_ACCESS;
         }
-        if (subscriptionActive) {
+        if (viewOnly || subscriptionActive) {
             return MapAccessLevel.FULL_ACCESS;
         }
         if (purchaseStatus != null && purchaseStatus.isPurchased()) {

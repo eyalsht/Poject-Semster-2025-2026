@@ -410,6 +410,11 @@ public class EditModeController {
             File file = fileChooser.showOpenDialog(btnUpload.getScene().getWindow());
             if (file != null) {
                 try {
+                    long fileSize = file.length();
+                    if (fileSize > 5 * 1024 * 1024) {
+                        showAlert("File Too Large", "Image must be under 5 MB. Selected file is " + String.format("%.1f", fileSize / (1024.0 * 1024.0)) + " MB.");
+                        return;
+                    }
                     pendingMapImage = Files.readAllBytes(file.toPath());
                     Image img = new Image(new ByteArrayInputStream(pendingMapImage));
                     mapImageView.setImage(img);
