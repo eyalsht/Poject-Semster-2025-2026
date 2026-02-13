@@ -3,9 +3,12 @@ package controllers;
 import client.GCMClient;
 import common.content.GCMMap;
 import common.dto.MapPurchaseStatusDTO;
+import common.dto.SubscriptionStatusDTO;
 import common.enums.ActionType;
+import common.enums.MapAccessLevel;
 import common.messaging.Message;
 import common.user.Client;
+import common.user.Employee;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,6 +33,7 @@ public class MapCardController {
     @FXML private Label lblSubscription;
     private GCMMap currentMap;
     private MapPurchaseStatusDTO purchaseStatus;
+    private boolean subscriptionActive = false;
     private boolean viewOnly = false;
 
      public void setData(GCMMap gcmMap) {
@@ -54,16 +58,8 @@ public class MapCardController {
              }
          } else if (btnBuy != null && GCMClient.getInstance().getCurrentUser() instanceof Client) {
              checkMapPurchaseStatus(gcmMap);
+             checkSubscriptionStatus(gcmMap);
          }
-         // Logic for loading map image from Client resources
-       /*  if (gcmMap.getImagePath() != null) {
-             try {
-                 String path = "/images/maps/" + gcmMap.getImagePath();
-                 imgMap.setImage(new Image(getClass().getResourceAsStream(path)));
-             } catch (Exception e) {
-                 System.err.println("Map image not found: " + gcmMap.getImagePath());
-             }
-         }*/
      }
 
     public void setViewOnly(boolean viewOnly) {
@@ -106,6 +102,43 @@ public class MapCardController {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    private void checkSubscriptionStatus(GCMMap map) {
+        if (map.getCity() == null) return;
+        int userId = GCMClient.getInstance().getCurrentUser().getId();
+        int cityId = map.getCity().getId();
+
+        new Thread(() -> {
+            try {
+                ArrayList<Integer> params = new ArrayList<>();
+                params.add(userId);
+                params.add(cityId);
+
+                Message request = new Message(ActionType.CHECK_SUBSCRIPTION_STATUS_REQUEST, params);
+                Message response = (Message) GCMClient.getInstance().sendRequest(request);
+
+                if (response != null && response.getAction() == ActionType.CHECK_SUBSCRIPTION_STATUS_RESPONSE) {
+                    SubscriptionStatusDTO status = (SubscriptionStatusDTO) response.getMessage();
+                    this.subscriptionActive = status.isActive();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private MapAccessLevel computeAccessLevel() {
+        if (GCMClient.getInstance().getCurrentUser() instanceof Employee) {
+            return MapAccessLevel.FULL_ACCESS;
+        }
+        if (subscriptionActive) {
+            return MapAccessLevel.FULL_ACCESS;
+        }
+        if (purchaseStatus != null && purchaseStatus.isPurchased()) {
+            return MapAccessLevel.MAP_PURCHASED;
+        }
+        return MapAccessLevel.NO_ACCESS;
     }
 
     @FXML
@@ -161,16 +194,18 @@ public class MapCardController {
             MapContentPopupController controller = loader.getController();
 
             if (controller != null) {
-                controller.setMapData(this.currentMap);
+                MapAccessLevel accessLevel = computeAccessLevel();
+                controller.setMapData(this.currentMap, accessLevel);
+
                 Stage stage = new Stage();
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.setTitle("Map Content - " + currentMap.getName());
 
-                Scene scene = new Scene(root, 500, 550); //
+                Scene scene = new Scene(root, 900, 600);
                 scene.setFill(javafx.scene.paint.Color.web("#2c3e50"));
 
                 stage.setScene(scene);
-                stage.setResizable(false);
+                stage.setResizable(true);
 
                 stage.show();
             } else {

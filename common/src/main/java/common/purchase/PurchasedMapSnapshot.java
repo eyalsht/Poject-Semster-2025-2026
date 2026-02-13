@@ -68,7 +68,7 @@ public class PurchasedMapSnapshot implements Serializable {
         this.cityName = map.getCityName();
         this.purchasedVersion = map.getVersion();
         this.description = map.getDescription();
-        //this.mapImageData = map.getMapImage();
+        this.mapImageData = map.getMapImage();
         this.purchaseDate = LocalDate.now();
         this.pricePaid = pricePaid;
     }

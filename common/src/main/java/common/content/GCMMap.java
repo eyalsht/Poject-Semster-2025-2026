@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 @Entity
 @Table(name = "maps")
 public class GCMMap extends ContentItem implements Serializable {
@@ -21,6 +23,14 @@ public class GCMMap extends ContentItem implements Serializable {
 
     @Column(name = "image_path")
     private String imagePath;
+
+    @Lob
+    @Column(name = "map_image")
+    private byte[] mapImage;
+
+    @Lob
+    @Column(name = "site_markers_json")
+    private String siteMarkersJson;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -38,6 +48,7 @@ public class GCMMap extends ContentItem implements Serializable {
         joinColumns = @JoinColumn(name = "map_id"),
         inverseJoinColumns = @JoinColumn(name = "site_id")
     )
+    @OrderColumn(name = "display_order")
     private List<Site> sites = new ArrayList<>();
 
     // ==================== CONSTRUCTORS ====================
@@ -68,6 +79,52 @@ public class GCMMap extends ContentItem implements Serializable {
 
     public String getImagePath() { return imagePath; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+
+    public byte[] getMapImage() { return mapImage; }
+    public void setMapImage(byte[] mapImage) { this.mapImage = mapImage; }
+
+    public String getSiteMarkersJson() { return siteMarkersJson; }
+    public void setSiteMarkersJson(String siteMarkersJson) { this.siteMarkersJson = siteMarkersJson; }
+
+    /**
+     * Parse siteMarkersJson into a list of SiteMarker objects.
+     * Expected JSON format: [{"siteId":1,"x":0.35,"y":0.62}, ...]
+     */
+    public List<SiteMarker> getSiteMarkers() {
+        if (siteMarkersJson == null || siteMarkersJson.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<SiteMarker> markers = new ArrayList<>();
+        Pattern p = Pattern.compile("\\{[^}]*\"siteId\"\\s*:\\s*(\\d+)[^}]*\"x\"\\s*:\\s*([\\d.]+)[^}]*\"y\"\\s*:\\s*([\\d.]+)[^}]*\\}");
+        Matcher m = p.matcher(siteMarkersJson);
+        while (m.find()) {
+            markers.add(new SiteMarker(
+                Integer.parseInt(m.group(1)),
+                Double.parseDouble(m.group(2)),
+                Double.parseDouble(m.group(3))
+            ));
+        }
+        return markers;
+    }
+
+    /**
+     * Serialize a list of SiteMarker objects to JSON and store in siteMarkersJson.
+     */
+    public void setSiteMarkers(List<SiteMarker> markers) {
+        if (markers == null || markers.isEmpty()) {
+            this.siteMarkersJson = null;
+            return;
+        }
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < markers.size(); i++) {
+            SiteMarker mk = markers.get(i);
+            if (i > 0) sb.append(",");
+            sb.append(String.format("{\"siteId\":%d,\"x\":%.4f,\"y\":%.4f}",
+                    mk.getSiteId(), mk.getX(), mk.getY()));
+        }
+        sb.append("]");
+        this.siteMarkersJson = sb.toString();
+    }
 
     public String getVersion() { return version; }
     public void setVersion(String version) { this.version = version; }

@@ -8,12 +8,16 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.geometry.Insets?>
+
 <VBox spacing="15" style="-fx-background-color: #2c3e50; -fx-padding: 20; -fx-background-radius: 15;"
       xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="controllers.MapContentPopupController">
 
     <children>
+        <!-- Header -->
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
                 <Label fx:id="lblMapName" text="Map Name" textFill="WHITE" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
@@ -28,23 +32,51 @@
             </VBox.margin>
         </HBox>
 
-        <TabPane fx:id="tabPane" stylesheets="@../styles/MapContentPopupStyle.css" tabClosingPolicy="UNAVAILABLE" styleClass="modern-tab-pane">
-            <tabs>
-                <Tab text="Sites">
-                    <content>
-                        <ScrollPane fitToWidth="true">
-                            <VBox fx:id="vboxSites" spacing="12" style="-fx-padding: 10;" />
-                        </ScrollPane>
-                    </content>
-                </Tab>
-                <Tab text="Tours">
-                    <content>
-                        <ScrollPane fitToWidth="true">
-                            <VBox fx:id="vboxTours" spacing="12" style="-fx-padding: 10;" />
-                        </ScrollPane>
-                    </content>
-                </Tab>
-            </tabs>
-        </TabPane>
+        <!-- Body: Left TabPane + Right Image Pane -->
+        <HBox spacing="15" VBox.vgrow="ALWAYS">
+            <children>
+                <!-- Left side: Sites / Tours tabs -->
+                <TabPane fx:id="tabPane" stylesheets="@../styles/MapContentPopupStyle.css" tabClosingPolicy="UNAVAILABLE" styleClass="modern-tab-pane"
+                         prefWidth="400" HBox.hgrow="ALWAYS">
+                    <tabs>
+                        <Tab text="Sites">
+                            <content>
+                                <ScrollPane fitToWidth="true">
+                                    <VBox fx:id="vboxSites" spacing="12" style="-fx-padding: 10;" />
+                                </ScrollPane>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="tabTours" text="Tours">
+                            <content>
+                                <ScrollPane fitToWidth="true">
+                                    <VBox fx:id="vboxTours" spacing="12" style="-fx-padding: 10;" />
+                                </ScrollPane>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+
+                <!-- Right side: Map image + marker overlay -->
+                <StackPane fx:id="imageContainer" prefWidth="420" prefHeight="450"
+                           style="-fx-background-color: #1a252f; -fx-background-radius: 10;">
+                    <children>
+                        <ImageView fx:id="imgMapView" preserveRatio="true" fitWidth="400" fitHeight="430" />
+                        <Pane fx:id="markerOverlay" mouseTransparent="true" />
+
+                        <!-- Placeholder for non-purchasers -->
+                        <VBox fx:id="imagePlaceholder" alignment="CENTER" spacing="10" visible="false" managed="false"
+                              style="-fx-background-color: rgba(26,37,47,0.9); -fx-background-radius: 10;">
+                            <children>
+                                <Label text="Map Preview" textFill="#7f8c8d" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+                                <Label text="Purchase this map to view the full image" textFill="#95a5a6" style="-fx-font-size: 13px;" wrapText="true" />
+                            </children>
+                            <padding>
+                                <Insets top="20" right="20" bottom="20" left="20" />
+                            </padding>
+                        </VBox>
+                    </children>
+                </StackPane>
+            </children>
+        </HBox>
     </children>
 </VBox>
