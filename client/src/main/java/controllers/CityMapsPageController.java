@@ -442,7 +442,33 @@ public class CityMapsPageController {
         }
     }
 
-    @FXML private void onEditCity() {}
+    @FXML private void onEditCity() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/EditModePage.fxml"));
+            Parent root = loader.load();
+
+            EditModeController controller = loader.getController();
+            if (selectedCity != null) {
+                controller.preSelectCity(selectedCity);
+            }
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit Mode");
+            stage.setScene(new Scene(root, 1100, 700));
+            stage.initModality(Modality.APPLICATION_MODAL);
+
+            stage.setOnHidden(event -> {
+                if (selectedCity != null) {
+                    loadMapsFromServer(selectedCity.getName());
+                }
+            });
+
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not open Edit Mode: " + e.getMessage());
+        }
+    }
     @FXML private void onCreateTour() {}
 
     @FXML

@@ -43,6 +43,7 @@ public class HandlerRegistry {
         // Catalog
         register(ActionType.GET_CATALOG_REQUEST, new GetCatalogHandler());
         register(ActionType.GET_CITY_DETAILS_REQUEST, new GetCityDetailsHandler());
+        register(ActionType.GET_CITY_FULL_DETAILS_REQUEST, new GetCityFullDetailsHandler());
         register(ActionType.GET_CITIES_REQUEST,new GetCitiesHandler());
         register(ActionType.GET_CITY_SITES_REQUEST, new GetCitySitesHandler());
         register(ActionType.GET_CITY_TOURS_REQUEST, new GetCityToursHandler());

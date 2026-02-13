@@ -69,7 +69,7 @@
 
         <HBox alignment="CENTER_RIGHT" layoutX="580.0" layoutY="105.0" prefHeight="40.0" spacing="10.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="105.0">
             <children>
-                <Button fx:id="btnEditCity" managed="false" mnemonicParsing="false" onAction="#onEditCity" prefHeight="30.0" text="Edit City" visible="false" />
+                <Button fx:id="btnEditCity" managed="false" mnemonicParsing="false" onAction="#onEditCity" prefHeight="30.0" text="Edit Mode" visible="false" />
                 <Button fx:id="btnUpdateMap" managed="false" mnemonicParsing="false" onAction="#onUpdateMap" prefHeight="30.0" text="Edit Map" visible="false" />
                 <Button fx:id="btnPriceUpdate" managed="false" mnemonicParsing="false" onAction="#onPriceUpdate" prefHeight="30.0" text="Price Update" visible="false" />
                 <Button fx:id="btnApprovals" managed="false" mnemonicParsing="false" onAction="#onApprovals" prefHeight="30.0" text="Approvals (0)" visible="false" />

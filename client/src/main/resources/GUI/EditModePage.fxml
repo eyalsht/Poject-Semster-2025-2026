@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.EditModeController"
+      prefWidth="1100" prefHeight="700" spacing="0"
+      stylesheets="@../styles/EditModeStyle.css" styleClass="edit-mode-root">
+
+    <!-- Header Bar -->
+    <HBox alignment="CENTER_LEFT" spacing="15" styleClass="header-bar">
+        <padding><Insets top="10" bottom="10" left="20" right="20"/></padding>
+        <Label text="Edit Mode" styleClass="header-title">
+            <font><Font name="System Bold" size="18"/></font>
+        </Label>
+        <Label text="City:" styleClass="header-label"/>
+        <ComboBox fx:id="cbCitySelector" prefWidth="200" promptText="Select a city..." styleClass="city-combo"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnClose" text="X" onAction="#onClose" styleClass="close-button" prefWidth="35" prefHeight="35"/>
+    </HBox>
+
+    <!-- Tab Pane -->
+    <TabPane fx:id="tabPane" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE" styleClass="edit-tab-pane">
+
+        <!-- Tab 1: City Details -->
+        <Tab text="City Details" fx:id="tabCityDetails">
+            <ScrollPane fitToWidth="true" styleClass="tab-scroll">
+                <VBox fx:id="vboxCityDetails" spacing="15" styleClass="tab-content-vbox">
+                    <padding><Insets top="20" bottom="20" left="30" right="30"/></padding>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <!-- Tab 2: Maps -->
+        <Tab text="Maps" fx:id="tabMaps">
+            <SplitPane fx:id="splitMaps" dividerPositions="0.25" styleClass="tab-split">
+                <!-- Left: Map list -->
+                <VBox spacing="10" styleClass="list-panel">
+                    <padding><Insets top="10" bottom="10" left="10" right="10"/></padding>
+                    <Label text="Maps" styleClass="panel-title"/>
+                    <ListView fx:id="lvMaps" VBox.vgrow="ALWAYS" styleClass="edit-list"/>
+                </VBox>
+                <!-- Right: Map editor -->
+                <ScrollPane fitToWidth="true" styleClass="tab-scroll">
+                    <VBox fx:id="vboxMapEditor" spacing="12" styleClass="tab-content-vbox">
+                        <padding><Insets top="15" bottom="15" left="20" right="20"/></padding>
+                        <Label text="Select a map to edit" styleClass="placeholder-label"/>
+                    </VBox>
+                </ScrollPane>
+            </SplitPane>
+        </Tab>
+
+        <!-- Tab 3: Sites -->
+        <Tab text="Sites" fx:id="tabSites">
+            <SplitPane fx:id="splitSites" dividerPositions="0.25" styleClass="tab-split">
+                <!-- Left: Site list -->
+                <VBox spacing="10" styleClass="list-panel">
+                    <padding><Insets top="10" bottom="10" left="10" right="10"/></padding>
+                    <Label text="Sites" styleClass="panel-title"/>
+                    <ListView fx:id="lvSites" VBox.vgrow="ALWAYS" styleClass="edit-list"/>
+                    <Button fx:id="btnNewSite" text="+ New Site" onAction="#onNewSite" styleClass="add-button" maxWidth="Infinity"/>
+                </VBox>
+                <!-- Right: Site editor -->
+                <ScrollPane fitToWidth="true" styleClass="tab-scroll">
+                    <VBox fx:id="vboxSiteEditor" spacing="12" styleClass="tab-content-vbox">
+                        <padding><Insets top="15" bottom="15" left="20" right="20"/></padding>
+                        <Label text="Select a site to edit" styleClass="placeholder-label"/>
+                    </VBox>
+                </ScrollPane>
+            </SplitPane>
+        </Tab>
+
+        <!-- Tab 4: Tours -->
+        <Tab text="Tours" fx:id="tabTours">
+            <SplitPane fx:id="splitTours" dividerPositions="0.25" styleClass="tab-split">
+                <!-- Left: Tour list -->
+                <VBox spacing="10" styleClass="list-panel">
+                    <padding><Insets top="10" bottom="10" left="10" right="10"/></padding>
+                    <Label text="Tours" styleClass="panel-title"/>
+                    <ListView fx:id="lvTours" VBox.vgrow="ALWAYS" styleClass="edit-list"/>
+                    <Button fx:id="btnNewTour" text="+ New Tour" onAction="#onNewTour" styleClass="add-button" maxWidth="Infinity"/>
+                </VBox>
+                <!-- Right: Tour editor -->
+                <ScrollPane fitToWidth="true" styleClass="tab-scroll">
+                    <VBox fx:id="vboxTourEditor" spacing="12" styleClass="tab-content-vbox">
+                        <padding><Insets top="15" bottom="15" left="20" right="20"/></padding>
+                        <Label text="Select a tour to edit" styleClass="placeholder-label"/>
+                    </VBox>
+                </ScrollPane>
+            </SplitPane>
+        </Tab>
+    </TabPane>
+
+    <!-- Status Bar -->
+    <HBox fx:id="statusBar" alignment="CENTER_LEFT" spacing="15" styleClass="status-bar">
+        <padding><Insets top="8" bottom="8" left="20" right="20"/></padding>
+        <Label fx:id="lblStatus" text="Select a city to begin editing" styleClass="status-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="lblChangeCount" text="0 changes" styleClass="change-count-label"/>
+        <Button fx:id="btnSubmitAll" text="Submit All" onAction="#onSubmitAll" styleClass="submit-all-button" disable="true"/>
+    </HBox>
+</VBox>

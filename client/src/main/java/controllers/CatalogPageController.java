@@ -481,7 +481,7 @@ public class CatalogPageController {
  }
     @FXML
     private void onEditCity() {
-        OpenCityUpdateWindow("add");
+        openEditModeWindow(null);
     }
    /*
     @FXML
@@ -671,7 +671,35 @@ public class CatalogPageController {
             showAlert("Error", "Could not open map editor.");
         }
     }
-    // In CatalogPageController
+    private void openEditModeWindow(common.content.City preSelectCity) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/EditModePage.fxml"));
+            Parent root = loader.load();
+
+            EditModeController controller = loader.getController();
+            if (preSelectCity != null) {
+                controller.preSelectCity(preSelectCity);
+            }
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit Mode");
+            stage.setScene(new Scene(root, 1100, 700));
+            stage.initModality(Modality.APPLICATION_MODAL);
+
+            stage.setOnHidden(event -> {
+                if (GCMClient.isClientConnected()) {
+                    refreshCatalog();
+                }
+            });
+
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not open Edit Mode.");
+        }
+    }
+
+    // In CatalogPageController (legacy, kept for reference)
     private void OpenCityUpdateWindow(String mode) {
         try {
             System.out.println(">>> [CATALOG] OpenCityUpdateWindow START - mode=" + mode);

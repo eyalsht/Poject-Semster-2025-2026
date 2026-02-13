@@ -1,0 +1,390 @@
+/* ==================== ROOT & LAYOUT ==================== */
+
+.edit-mode-root {
+    -fx-background-color: #2c3e50;
+}
+
+/* ==================== HEADER BAR ==================== */
+
+.header-bar {
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 0 0 1 0;
+}
+
+.header-title {
+    -fx-text-fill: white;
+}
+
+.header-label {
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+    -fx-font-size: 14px;
+}
+
+.city-combo {
+    -fx-background-color: rgba(0, 0, 0, 0.35);
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.close-button {
+    -fx-background-color: rgba(231, 76, 60, 0.55);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-cursor: hand;
+}
+
+.close-button:hover {
+    -fx-background-color: rgba(231, 76, 60, 0.85);
+}
+
+/* ==================== TAB PANE ==================== */
+
+.edit-tab-pane {
+    -fx-background-color: #2c3e50;
+}
+
+.edit-tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.edit-tab-pane .tab {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 15;
+    -fx-padding: 8 20;
+    -fx-background-insets: 0 5 0 5;
+    -fx-cursor: hand;
+}
+
+.edit-tab-pane .tab:selected {
+    -fx-background-color: #3498db;
+    -fx-border-color: #5dade2;
+}
+
+.edit-tab-pane .tab:disabled {
+    -fx-opacity: 0.4;
+}
+
+.edit-tab-pane .tab .tab-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.edit-tab-pane .tab-content-area {
+    -fx-background-color: transparent;
+}
+
+/* ==================== SPLIT PANE ==================== */
+
+.tab-split {
+    -fx-background-color: transparent;
+}
+
+.tab-split > .split-pane-divider {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-padding: 0 1 0 1;
+}
+
+/* ==================== LIST PANEL ==================== */
+
+.list-panel {
+    -fx-background-color: rgba(0, 0, 0, 0.15);
+}
+
+.panel-title {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+/* ==================== LISTVIEW ==================== */
+
+.edit-list {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-radius: 5;
+}
+
+.edit-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 6 10;
+}
+
+.edit-list .list-cell:filled:selected {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.edit-list .list-cell:filled:hover {
+    -fx-background-color: rgba(52, 152, 219, 0.3);
+}
+
+/* ==================== SCROLL PANE ==================== */
+
+.tab-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.tab-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+/* ==================== TAB CONTENT ==================== */
+
+.tab-content-vbox {
+    -fx-background-color: transparent;
+}
+
+.section-title {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 5 0;
+}
+
+.placeholder-label {
+    -fx-text-fill: rgba(255, 255, 255, 0.5);
+    -fx-font-size: 14px;
+    -fx-font-style: italic;
+    -fx-padding: 40 0;
+    -fx-alignment: center;
+}
+
+/* ==================== FIELD ROWS ==================== */
+
+.field-row {
+    -fx-background-color: rgba(0, 0, 0, 0.25);
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(255, 255, 255, 0.08);
+    -fx-border-radius: 8;
+}
+
+.field-row-changed {
+    -fx-background-color: rgba(230, 126, 34, 0.20);
+    -fx-border-color: rgba(230, 126, 34, 0.60);
+}
+
+.field-label {
+    -fx-text-fill: rgba(255, 255, 255, 0.85);
+    -fx-font-size: 13px;
+}
+
+.field-section {
+    -fx-background-color: rgba(0, 0, 0, 0.15);
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(255, 255, 255, 0.08);
+    -fx-border-radius: 8;
+}
+
+/* ==================== INPUT CONTROLS ==================== */
+
+.edit-field {
+    -fx-background-color: rgba(0, 0, 0, 0.45);
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.35);
+}
+
+.edit-textarea {
+    -fx-background-color: rgba(0, 0, 0, 0.45);
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.edit-textarea .content {
+    -fx-background-color: rgba(0, 0, 0, 0.45);
+}
+
+.edit-combo {
+    -fx-background-color: rgba(0, 0, 0, 0.45);
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+/* ==================== BUTTONS ==================== */
+
+.reset-button {
+    -fx-background-color: #e67e22;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 15;
+    -fx-min-width: 30;
+    -fx-min-height: 30;
+    -fx-cursor: hand;
+}
+
+.reset-button:hover {
+    -fx-background-color: #d35400;
+}
+
+.submit-button {
+    -fx-background-color: rgba(76, 175, 80, 0.55);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(76, 175, 80, 0.3);
+    -fx-border-radius: 8;
+    -fx-padding: 8 20;
+    -fx-cursor: hand;
+}
+
+.submit-button:hover {
+    -fx-background-color: rgba(76, 175, 80, 0.85);
+}
+
+.delete-button {
+    -fx-background-color: rgba(231, 76, 60, 0.55);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(231, 76, 60, 0.3);
+    -fx-border-radius: 8;
+    -fx-padding: 8 20;
+    -fx-cursor: hand;
+}
+
+.delete-button:hover {
+    -fx-background-color: rgba(231, 76, 60, 0.85);
+}
+
+.delete-button:disabled {
+    -fx-opacity: 0.4;
+}
+
+.add-button {
+    -fx-background-color: rgba(52, 152, 219, 0.55);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(52, 152, 219, 0.3);
+    -fx-border-radius: 8;
+    -fx-padding: 8 15;
+    -fx-cursor: hand;
+}
+
+.add-button:hover {
+    -fx-background-color: rgba(52, 152, 219, 0.85);
+}
+
+.transfer-button {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-radius: 5;
+    -fx-padding: 5 12;
+    -fx-cursor: hand;
+}
+
+.transfer-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+}
+
+.order-button {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-radius: 5;
+    -fx-padding: 5 10;
+    -fx-cursor: hand;
+    -fx-min-width: 35;
+}
+
+.order-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+}
+
+.upload-button {
+    -fx-background-color: rgba(155, 89, 182, 0.55);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(155, 89, 182, 0.3);
+    -fx-border-radius: 8;
+    -fx-padding: 8 15;
+    -fx-cursor: hand;
+}
+
+.upload-button:hover {
+    -fx-background-color: rgba(155, 89, 182, 0.85);
+}
+
+/* ==================== MAP IMAGE ==================== */
+
+.image-container {
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: crosshair;
+}
+
+.marker-instruction {
+    -fx-text-fill: #e67e22;
+    -fx-font-size: 13px;
+    -fx-font-style: italic;
+    -fx-padding: 5 0 0 0;
+}
+
+/* ==================== TRANSFER LIST BOX ==================== */
+
+.transfer-list-box .label {
+    -fx-text-fill: rgba(255, 255, 255, 0.7);
+    -fx-font-size: 12px;
+}
+
+/* ==================== STATUS BAR ==================== */
+
+.status-bar {
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 1 0 0 0;
+}
+
+.status-label {
+    -fx-text-fill: rgba(255, 255, 255, 0.7);
+    -fx-font-size: 13px;
+}
+
+.change-count-label {
+    -fx-text-fill: #e67e22;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.submit-all-button {
+    -fx-background-color: rgba(76, 175, 80, 0.55);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(76, 175, 80, 0.3);
+    -fx-border-radius: 8;
+    -fx-padding: 6 20;
+    -fx-cursor: hand;
+}
+
+.submit-all-button:hover {
+    -fx-background-color: rgba(76, 175, 80, 0.85);
+}
+
+.submit-all-button:disabled {
+    -fx-opacity: 0.4;
+}

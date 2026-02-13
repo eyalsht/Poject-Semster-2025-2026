@@ -155,7 +155,7 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
                 applyTourChange(session, pending);
                 break;
             case CITY:
-                //applyCityChanges(session,pending);
+                applyCityChanges(session, pending);
                 break;
         }
     }
@@ -215,28 +215,72 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
         if (mapId == null) {
             throw new RuntimeException("Cannot update map: targetId is null");
         }
-        
+
         GCMMap map = session.get(GCMMap.class, mapId);
         if (map == null) {
             throw new RuntimeException("Map not found with ID: " + mapId);
         }
-        
+
+        boolean contentChanged = false;
+
         // Extract values from JSON
         String description = extractJsonValue(json, "description");
         String mapName = extractJsonValue(json, "mapName");
-        
+
         // Update only the fields that are allowed to be edited
         if (description != null && !description.isEmpty()) {
             map.setDescription(description);
             System.out.println("Updated map description for: " + map.getName());
         }
-        
+
         // Map name update (if provided and different)
         if (mapName != null && !mapName.isEmpty() && !mapName.equals(map.getName())) {
             map.setName(mapName);
             System.out.println("Updated map name to: " + mapName);
         }
-        
+
+        // Map image update (Base64 encoded)
+        String mapImageBase64 = extractJsonValue(json, "mapImage");
+        if (mapImageBase64 != null && !mapImageBase64.isEmpty()) {
+            byte[] imageBytes = java.util.Base64.getDecoder().decode(mapImageBase64);
+            map.setMapImage(imageBytes);
+            contentChanged = true;
+            System.out.println("Updated map image for: " + map.getName() + " (" + imageBytes.length + " bytes)");
+        }
+
+        // Site markers JSON update
+        String siteMarkersJson = extractJsonValue(json, "siteMarkersJson");
+        if (siteMarkersJson != null && !siteMarkersJson.isEmpty()) {
+            map.setSiteMarkersJson(siteMarkersJson);
+            contentChanged = true;
+            System.out.println("Updated site markers for: " + map.getName());
+        }
+
+        // Site IDs update (comma-separated)
+        String siteIdsRaw = extractJsonValue(json, "siteIds");
+        if (siteIdsRaw != null && !siteIdsRaw.trim().isEmpty()) {
+            map.getSites().clear();
+            List<Integer> siteIds = Arrays.stream(siteIdsRaw.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toList());
+            for (Integer siteId : siteIds) {
+                Site site = session.get(Site.class, siteId);
+                if (site != null) {
+                    map.addSite(site);
+                }
+            }
+            contentChanged = true;
+            System.out.println("Updated map sites for: " + map.getName() + " (" + siteIds.size() + " sites)");
+        }
+
+        // Bump version if content actually changed (sites, markers, image)
+        if (contentChanged) {
+            bumpMapVersion(map);
+            System.out.println("Bumped map version to: " + map.getVersion());
+        }
+
         session.merge(map);
         System.out.println("Map update applied for ID: " + mapId);
     }
@@ -455,6 +499,56 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
             System.out.println("Approved Delete: Tour ID " + targetId);
         } else {
             System.err.println("Error: Could not find Tour with ID " + targetId + " to delete.");
+        }
+    }
+
+    private void applyCityChanges(org.hibernate.Session session, PendingContentRequest pending) {
+        if (pending.getActionType() != ContentActionType.EDIT) {
+            System.err.println("City changes only support EDIT action type.");
+            return;
+        }
+
+        String json = pending.getContentDetails();
+        String cityIdStr = extractJsonValue(json, "cityId");
+        if (cityIdStr == null) {
+            System.err.println("No cityId found in city change request JSON.");
+            return;
+        }
+
+        int cityId = Integer.parseInt(cityIdStr);
+        City city = session.get(City.class, cityId);
+        if (city == null) {
+            System.err.println("City not found with ID: " + cityId);
+            return;
+        }
+
+        String name = extractJsonValue(json, "name");
+        if (name != null && !name.isEmpty()) {
+            city.setName(name);
+            System.out.println("Updated city name to: " + name);
+        }
+
+        String description = extractJsonValue(json, "description");
+        if (description != null && !description.isEmpty()) {
+            city.setDescription(description);
+            System.out.println("Updated city description for: " + city.getName());
+        }
+
+        session.merge(city);
+        System.out.println("City update applied for ID: " + cityId);
+    }
+
+    private void bumpMapVersion(GCMMap map) {
+        String ver = map.getVersion();
+        if (ver == null || ver.isEmpty()) {
+            map.setVersion("1.1");
+            return;
+        }
+        try {
+            double v = Double.parseDouble(ver);
+            map.setVersion(String.format("%.1f", v + 0.1));
+        } catch (NumberFormatException e) {
+            map.setVersion(ver + ".1");
         }
     }
 

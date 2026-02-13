@@ -52,7 +52,7 @@
 
         <HBox alignment="CENTER_RIGHT" layoutX="580.0" layoutY="105.0" prefHeight="40.0" spacing="10.0" translateY="2.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="105.0">
             <children>
-                <Button fx:id="btnEditCity" managed="false" mnemonicParsing="false" onAction="#onEditCity" prefHeight="30.0" text="Edit City" visible="false" />
+                <Button fx:id="btnEditCity" managed="false" mnemonicParsing="false" onAction="#onEditCity" prefHeight="30.0" text="Edit Mode" visible="false" />
                 <Button fx:id="btnCreateTour" managed="false" mnemonicParsing="false" onAction="#onCreateTour" prefHeight="30.0" text="Create Tour" visible="false" />
                 <Button fx:id="btnAddMap" managed="false" mnemonicParsing="false" onAction="#onAddMap" prefHeight="30.0" text="Add Map" visible="false" />
                 <Button fx:id="btnUpdateMap" managed="false" mnemonicParsing="false" onAction="#onUpdateMap" prefHeight="30.0" text="Edit Map" visible="false" />
