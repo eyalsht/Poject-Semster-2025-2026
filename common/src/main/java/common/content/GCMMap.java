@@ -48,6 +48,7 @@ public class GCMMap extends ContentItem implements Serializable {
         joinColumns = @JoinColumn(name = "map_id"),
         inverseJoinColumns = @JoinColumn(name = "site_id")
     )
+    @OrderColumn(name = "display_order")
     private List<Site> sites = new ArrayList<>();
 
     // ==================== CONSTRUCTORS ====================
