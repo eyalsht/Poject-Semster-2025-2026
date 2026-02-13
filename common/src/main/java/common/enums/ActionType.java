@@ -116,9 +116,12 @@ public enum ActionType {
     UPDATE_PAYMENT_DETAILS_REQUEST,
     UPDATE_PAYMENT_DETAILS_RESPONSE,
 
-    //Purchase report
+    //Purchase report +other reports
     GET_PURCHASES_REPORT_REQUEST,
     GET_PURCHASES_REPORT_RESPONSE,
+    //Support request report
+    GET_SUPPORT_REQUESTS_REPORT_REQUEST,
+    GET_SUPPORT_REQUESTS_REPORT_RESPONSE,
 
     //Bot+ Support
     SUBMIT_SUPPORT_REQUEST,

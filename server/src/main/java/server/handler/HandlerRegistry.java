@@ -84,6 +84,9 @@ public class HandlerRegistry {
                 new LogMapDownloadHandler(HibernateUtil.getSessionFactory()));
         register(ActionType.GET_PURCHASES_REPORT_REQUEST,
                 new GetPurchasesReportHandler(reportManager));
+        register(ActionType.GET_SUPPORT_REQUESTS_REPORT_REQUEST,
+                new GetSupportRequestsReportHandler());
+
 
         //Support
         register(ActionType.SUBMIT_SUPPORT_REQUEST, new SubmitSupportHandler());

@@ -1,56 +1,51 @@
 package controllers;
 
-import javafx.scene.Parent;
 import client.GCMClient;
 import common.content.City;
+import common.dto.SubscriptionStatusDTO;
 import common.enums.ActionType;
 import common.messaging.Message;
-import common.report.AllClientsReport;
+import common.purchase.PurchasedMapSnapshot;
 import common.report.ActivityReport;
+import common.report.AllClientsReport;
+import common.report.SupportRequestsReport;
+import common.support.SupportTicketRowDTO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import javafx.scene.layout.StackPane;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.image.WritableImage;
-import javafx.stage.FileChooser;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import common.dto.SubscriptionStatusDTO;
-import common.purchase.PurchasedMapSnapshot;
+public class ReportPageController {
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
-
-public class ReportPageController
-{
-
+    // ===== UI =====
     @FXML private ComboBox<String> cmbReportType;
     @FXML private ComboBox<City> cmbCity;
     @FXML private Button btnGenerate;
@@ -64,87 +59,174 @@ public class ReportPageController
     @FXML private BarChart<String, Number> barChart;
     @FXML private StackPane reportArea;
 
-    @FXML private TableView<AllClientsReport.ClientRow> tableView;
-    @FXML private TableColumn<AllClientsReport.ClientRow, Number> colId;
-    @FXML private TableColumn<AllClientsReport.ClientRow, String> colUsername;
-    @FXML private TableColumn<AllClientsReport.ClientRow, String> colEmail;
-    @FXML private TableColumn<AllClientsReport.ClientRow, String> colFirstName;
-    @FXML private TableColumn<AllClientsReport.ClientRow, String> colLastName;
-    @FXML private TableColumn<AllClientsReport.ClientRow, String> colCreatedAt;
+    // IMPORTANT: Generic table so CellValueFactory lambdas work
+    @FXML private TableView<Object> tableView;
+
+    @FXML private TableColumn<Object, Number> colId;
+    @FXML private TableColumn<Object, String> colUsername;
+    @FXML private TableColumn<Object, String> colEmail;
+    @FXML private TableColumn<Object, String> colFirstName;
+    @FXML private TableColumn<Object, String> colLastName;
+    @FXML private TableColumn<Object, String> colCreatedAt;
 
     @FXML private Button btnExportPdf;
 
+    // ===== STATE =====
     private long currentRequestId = 0;
-
+    private String displayedReport = null;
 
     private static final DateTimeFormatter CREATED_FMT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    // ✅ The report currently shown on screen (changes only after Generate)
-    private String displayedReport = null;
-
+    // ===== INIT =====
     @FXML
-    public void initialize()
-    {
+    public void initialize() {
 
         cmbReportType.setItems(FXCollections.observableArrayList(
                 "Clients report",
                 "Sales report",
                 "Purchases report",
                 "Users report",
-                "Activity report"
+                "Activity report",
+                "Support Requests report"   // <-- EXACT string used in switch
         ));
 
-        // Start state
         cmbReportType.getSelectionModel().clearSelection();
-        cmbReportType.setDisable(false);
-
         cmbCity.setDisable(true);
         btnGenerate.setDisable(true);
+
+        dpFrom.setDisable(true);
+        dpTo.setDisable(true);
+
+        // defaults (last 7 days)
+        dpTo.setValue(LocalDate.now());
+        dpFrom.setValue(LocalDate.now().minusDays(6));
 
         cmbCity.setConverter(new StringConverter<>() {
             @Override public String toString(City city) {
                 return (city == null) ? "" : city.getName();
             }
             @Override public City fromString(String s) { return null; }
-
         });
 
+        // initial table mode = clients (safe default)
         setupClientsTableColumns();
         setupClientsTableInteractions();
 
         wireUiStateListeners();
         applyUiState();
 
-        // ✅ initial view: placeholder only
         displayedReport = null;
         applyReportLayout();
 
         loadCitiesFromServer();
 
-        dpFrom.setDisable(true);
-        dpTo.setDisable(true);
-
-        // nice defaults (last 7 days)
-        dpTo.setValue(LocalDate.now());
-        dpFrom.setValue(LocalDate.now().minusDays(6));
-
+        // sizing
         barChart.prefHeightProperty().bind(reportArea.heightProperty());
         tableView.prefHeightProperty().bind(reportArea.heightProperty());
     }
 
-    private void setupClientsTableColumns() {
-        colId.setCellValueFactory(data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().userId));
-        colUsername.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().username));
-        colEmail.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().email));
-        colFirstName.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().firstName));
-        colLastName.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().lastName));
-        colCreatedAt.setCellValueFactory(data -> {
-            var dt = data.getValue().createdAt;
-            return new javafx.beans.property.SimpleStringProperty(dt == null ? "" : CREATED_FMT.format(dt));
+    // ===== UI STATE =====
+    private void wireUiStateListeners() {
+
+        cmbReportType.valueProperty().addListener((obs, oldV, newV) -> {
+            // city selection logic
+            if ("Clients report".equals(newV)) {
+                cmbCity.getSelectionModel().clearSelection();
+            } else {
+                if (cmbCity.getValue() == null && cmbCity.getItems() != null && !cmbCity.getItems().isEmpty()) {
+                    cmbCity.getSelectionModel().select(0);
+                }
+            }
+            applyUiState();
         });
+
+        cmbCity.valueProperty().addListener((obs, o, n) -> applyUiState());
+        dpFrom.valueProperty().addListener((obs, o, n) -> applyUiState());
+        dpTo.valueProperty().addListener((obs, o, n) -> applyUiState());
     }
 
+    private void applyUiState() {
+        String report = cmbReportType.getValue();
+
+        boolean hasReport = report != null && !report.isBlank();
+        boolean isClients = "Clients report".equals(report);
+
+        boolean supportsDateRange = "Activity report".equals(report) || "Purchases report".equals(report);
+
+        dpFrom.setDisable(!supportsDateRange);
+        dpTo.setDisable(!supportsDateRange);
+
+        cmbCity.setDisable(!hasReport || isClients);
+
+        boolean cityChosen = cmbCity.getValue() != null;
+
+        boolean datesOk = true;
+        if (supportsDateRange) {
+            LocalDate from = dpFrom.getValue();
+            LocalDate to = dpTo.getValue();
+            datesOk = (from != null && to != null && !from.isAfter(to));
+        }
+
+        btnGenerate.setDisable(!hasReport || (!isClients && (!cityChosen || !datesOk)));
+    }
+
+    // layout changes only after Generate
+    private void applyReportLayout() {
+        String report = displayedReport;
+
+        boolean hasReport = report != null && !report.isBlank();
+        boolean isClients = "Clients report".equals(report);
+        boolean isActivity = "Activity report".equals(report);
+        boolean isPurchases = "Purchases report".equals(report);
+        boolean isSupport = "Support Requests report".equals(report);
+
+        lblChooseReport.setVisible(!hasReport);
+        lblChooseReport.setManaged(!hasReport);
+
+        reportContent.setVisible(hasReport);
+        reportContent.setManaged(hasReport);
+
+        barChart.setVisible(false);
+        barChart.setManaged(false);
+
+        tableView.setVisible(false);
+        tableView.setManaged(false);
+
+        if (isClients || isSupport) {
+            barChart.setVisible(true);
+            barChart.setManaged(true);
+            barChart.setPrefWidth(285);
+
+            tableView.setVisible(true);
+            tableView.setManaged(true);
+
+            reportContent.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            reportContent.setSpacing(20);
+
+        } else if (isActivity || isPurchases) {
+            barChart.setVisible(true);
+            barChart.setManaged(true);
+            barChart.setPrefWidth(650);
+
+            reportContent.setAlignment(javafx.geometry.Pos.CENTER);
+            reportContent.setSpacing(0);
+
+            tableView.getItems().clear();
+
+        } else if (hasReport) {
+            lblChooseReport.setText("This report is not implemented yet.");
+            lblChooseReport.setVisible(true);
+            lblChooseReport.setManaged(true);
+
+            reportContent.setVisible(false);
+            reportContent.setManaged(false);
+        } else {
+            lblChooseReport.setText("Choose a report!");
+        }
+    }
+
+    // ===== LOAD CITIES =====
     private void loadCitiesFromServer() {
         new Thread(() -> {
             try {
@@ -167,13 +249,13 @@ public class ReportPageController
         }).start();
     }
 
+    // ===== GENERATE =====
     @FXML
     private void onGenerate() {
 
         String selected = cmbReportType.getValue();
         if (selected == null || selected.isBlank()) return;
 
-        // ✅ NEW: create a unique request id for THIS generate click
         long reqId = ++currentRequestId;
 
         displayedReport = selected;
@@ -190,6 +272,7 @@ public class ReportPageController
             case "Clients report" -> generateClientsReport(reqId);
             case "Activity report" -> generateActivityReport(reqId);
             case "Purchases report" -> generatePurchasesReport(reqId);
+            case "Support Requests report" -> generateSupportRequestsReport(reqId);
             default -> {
                 lblChooseReport.setText("This report is not implemented yet.");
                 lblChooseReport.setVisible(true);
@@ -201,22 +284,24 @@ public class ReportPageController
         }
     }
 
-
-    private void generateClientsReport(long reqId)
-    {
+    // ===== CLIENTS REPORT =====
+    private void generateClientsReport(long reqId) {
         new Thread(() -> {
             try {
                 Message req = new Message(ActionType.GET_ALL_CLIENTS_REPORT_REQUEST, null);
                 Message res = (Message) GCMClient.getInstance().sendRequest(req);
 
                 Platform.runLater(() -> {
+                    if (reqId != currentRequestId) return;
 
                     if (res != null && res.getAction() == ActionType.GET_ALL_CLIENTS_REPORT_RESPONSE) {
                         AllClientsReport report = (AllClientsReport) res.getMessage();
 
-                        // Hide loading text
                         lblChooseReport.setVisible(false);
                         lblChooseReport.setManaged(false);
+
+                        setupClientsTableColumns();
+                        setupClientsTableInteractions();
 
                         fillClientsTable(report);
                         fillClientsBarChart(report);
@@ -257,8 +342,65 @@ public class ReportPageController
         barChart.getData().add(series);
     }
 
-    private void generateActivityReport(long reqId)
-    {
+    private void setupClientsTableColumns() {
+
+        colId.setText("ID");
+        colUsername.setText("Username");
+        colEmail.setText("Email");
+        colFirstName.setText("First name");
+        colLastName.setText("Last name");
+        colCreatedAt.setText("Created");
+
+        colId.setCellValueFactory(data -> {
+            AllClientsReport.ClientRow r = (AllClientsReport.ClientRow) data.getValue();
+            return new javafx.beans.property.SimpleIntegerProperty(r.userId);
+        });
+
+        colUsername.setCellValueFactory(data -> {
+            AllClientsReport.ClientRow r = (AllClientsReport.ClientRow) data.getValue();
+            return new javafx.beans.property.SimpleStringProperty(r.username);
+        });
+
+        colEmail.setCellValueFactory(data -> {
+            AllClientsReport.ClientRow r = (AllClientsReport.ClientRow) data.getValue();
+            return new javafx.beans.property.SimpleStringProperty(r.email);
+        });
+
+        colFirstName.setCellValueFactory(data -> {
+            AllClientsReport.ClientRow r = (AllClientsReport.ClientRow) data.getValue();
+            return new javafx.beans.property.SimpleStringProperty(r.firstName);
+        });
+
+        colLastName.setCellValueFactory(data -> {
+            AllClientsReport.ClientRow r = (AllClientsReport.ClientRow) data.getValue();
+            return new javafx.beans.property.SimpleStringProperty(r.lastName);
+        });
+
+        colCreatedAt.setCellValueFactory(data -> {
+            AllClientsReport.ClientRow r = (AllClientsReport.ClientRow) data.getValue();
+            var dt = r.createdAt;
+            return new javafx.beans.property.SimpleStringProperty(dt == null ? "" : CREATED_FMT.format(dt));
+        });
+    }
+
+    private void setupClientsTableInteractions() {
+        tableView.setRowFactory(tv -> {
+            TableRow<Object> row = new TableRow<>();
+            row.setOnMouseClicked(e -> {
+                if (e.getClickCount() == 2 && !row.isEmpty()) {
+                    Object item = row.getItem();
+                    if (item instanceof AllClientsReport.ClientRow clientRow) {
+                        openClientPurchaseHistory(clientRow);
+                    }
+                }
+            });
+            return row;
+        });
+    }
+
+    // ===== ACTIVITY REPORT =====
+    private void generateActivityReport(long reqId) {
+
         City city = cmbCity.getValue();
         if (city == null) {
             showAlert("Missing city", "Please choose a city for Activity report.");
@@ -288,10 +430,11 @@ public class ReportPageController
                 Message res = (Message) GCMClient.getInstance().sendRequest(req);
 
                 Platform.runLater(() -> {
+                    if (reqId != currentRequestId) return;
+
                     if (res != null && res.getAction() == ActionType.GET_ACTIVITY_REPORT_RESPONSE) {
                         ActivityReport report = (ActivityReport) res.getMessage();
 
-                        // Hide loading text
                         lblChooseReport.setVisible(false);
                         lblChooseReport.setManaged(false);
 
@@ -303,13 +446,12 @@ public class ReportPageController
                 });
 
             } catch (Exception e) {
-                Platform.runLater(() -> showAlert("Network Error", "Could not generate activity report: " + e.getMessage()));
+                Platform.runLater(() -> showAlert("Network Error", "Could not generate report: " + e.getMessage()));
             }
         }).start();
     }
 
-    private void fillActivityBarChart(ActivityReport report)
-    {
+    private void fillActivityBarChart(ActivityReport report) {
         barChart.getData().clear();
         barChart.setAnimated(false);
 
@@ -330,128 +472,7 @@ public class ReportPageController
         barChart.getData().add(s);
     }
 
-    private void showAlert(String title, String msg)
-    {
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.setTitle(title);
-        a.setHeaderText(null);
-        a.setContentText(msg);
-        a.showAndWait();
-    }
-
-    private void applyUiState()
-    {
-        String report = cmbReportType.getValue();
-
-        boolean hasReport = report != null && !report.isBlank();
-        boolean isClients = "Clients report".equals(report);
-
-        boolean supportsDateRange = "Activity report".equals(report) || "Purchases report".equals(report);
-
-        // Enable/disable date pickers
-        dpFrom.setDisable(!supportsDateRange);
-        dpTo.setDisable(!supportsDateRange);
-
-        // City enabled only for non-clients reports
-        cmbCity.setDisable(!hasReport || isClients);
-
-        boolean cityChosen = cmbCity.getValue() != null;
-
-        // Date validation only when date range is required
-        boolean datesOk = true;
-        if (supportsDateRange) {
-            LocalDate from = dpFrom.getValue();
-            LocalDate to = dpTo.getValue();
-
-            datesOk = (from != null && to != null && !from.isAfter(to));
-        }
-
-        // Generate enabled:
-        // - Clients report: as soon as selected
-        // - Others: need city, and if date-range report -> valid dates too
-        btnGenerate.setDisable(!hasReport || (!isClients && (!cityChosen || !datesOk)));
-    }
-
-
-    // ✅ Layout is based on displayedReport (changes only after Generate)
-    private void applyReportLayout()
-    {
-        String report = displayedReport;
-
-        boolean hasReport = report != null && !report.isBlank();
-        boolean isClients = "Clients report".equals(report);
-        boolean isActivity = "Activity report".equals(report);
-        boolean isPurchases = "Purchases report".equals(report);
-
-        // Placeholder visible only when no displayed report
-        lblChooseReport.setVisible(!hasReport);
-        lblChooseReport.setManaged(!hasReport);
-
-        // Content visible only when a report is displayed
-        reportContent.setVisible(hasReport);
-        reportContent.setManaged(hasReport);
-
-        barChart.setVisible(false);
-        barChart.setManaged(false);
-
-        tableView.setVisible(false);
-        tableView.setManaged(false);
-
-        if (isClients) {
-            barChart.setVisible(true);
-            barChart.setManaged(true);
-            barChart.setPrefWidth(285);
-
-            tableView.setVisible(true);
-            tableView.setManaged(true);
-
-            reportContent.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-            reportContent.setSpacing(20);
-
-        } else if (isActivity || isPurchases) {
-            barChart.setVisible(true);
-            barChart.setManaged(true);
-            barChart.setPrefWidth(650);
-
-            reportContent.setAlignment(javafx.geometry.Pos.CENTER);
-            reportContent.setSpacing(0);
-
-            tableView.getItems().clear();
-
-        } else if (hasReport) {
-            lblChooseReport.setText("This report is not implemented yet.");
-            lblChooseReport.setVisible(true);
-            lblChooseReport.setManaged(true);
-            reportContent.setVisible(false);
-            reportContent.setManaged(false);
-        } else {
-            lblChooseReport.setText("Choose a report!");
-        }
-    }
-
-    private void wireUiStateListeners()
-    {
-
-        cmbReportType.valueProperty().addListener((obs, oldV, newV) -> {
-
-            // Keep city selection logic (but do NOT change layout here)
-            if ("Clients report".equals(newV)) {
-                cmbCity.getSelectionModel().clearSelection();
-            } else {
-                if (cmbCity.getValue() == null && cmbCity.getItems() != null && !cmbCity.getItems().isEmpty()) {
-                    cmbCity.getSelectionModel().select(0);
-                }
-            }
-
-            applyUiState();
-            // ❌ no applyReportLayout() here (layout changes only on Generate)
-        });
-
-        cmbCity.valueProperty().addListener((obs, oldV, newV) -> applyUiState());
-
-        dpFrom.valueProperty().addListener((obs, oldV, newV) -> applyUiState());
-        dpTo.valueProperty().addListener((obs, oldV, newV) -> applyUiState());
-    }
+    // ===== PURCHASES REPORT =====
     private void generatePurchasesReport(long reqId) {
 
         City city = cmbCity.getValue();
@@ -483,6 +504,7 @@ public class ReportPageController
                 Message res = (Message) GCMClient.getInstance().sendRequest(req);
 
                 Platform.runLater(() -> {
+                    if (reqId != currentRequestId) return;
 
                     if (res != null && res.getAction() == ActionType.GET_PURCHASES_REPORT_RESPONSE) {
                         common.report.PurchasesReport report = (common.report.PurchasesReport) res.getMessage();
@@ -491,7 +513,6 @@ public class ReportPageController
                         lblChooseReport.setVisible(false);
                         lblChooseReport.setManaged(false);
                     } else {
-                        if (reqId == currentRequestId)
                         showAlert("Error", "Failed to generate purchases report.");
                     }
                 });
@@ -501,6 +522,7 @@ public class ReportPageController
             }
         }).start();
     }
+
     private void fillPurchasesBarChart(common.report.PurchasesReport report) {
         barChart.getData().clear();
         barChart.setAnimated(false);
@@ -517,84 +539,151 @@ public class ReportPageController
         barChart.getData().add(s);
     }
 
-    @FXML
-    private void onExportPdf() {
+    // ===== SUPPORT REQUESTS REPORT =====
+    private void generateSupportRequestsReport(long reqId) {
 
-        // You export exactly what user sees in the report area (chart + table)
-        if (reportArea == null) {
-            showAlert("Error", "Nothing to export.");
-            return;
-        }
+        new Thread(() -> {
+            try {
+                Message req = new Message(ActionType.GET_SUPPORT_REQUESTS_REPORT_REQUEST, null);
+                Message res = (Message) GCMClient.getInstance().sendRequest(req);
 
-        FileChooser fc = new FileChooser();
-        fc.setTitle("Save report as PDF");
-        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf"));
-        fc.setInitialFileName("report.pdf");
+                Platform.runLater(() -> {
+                    if (reqId != currentRequestId) return;
 
-        File out = fc.showSaveDialog(reportArea.getScene().getWindow());
-        if (out == null) return;
+                    if (res != null && res.getAction() == ActionType.GET_SUPPORT_REQUESTS_REPORT_RESPONSE) {
 
-        try {
-            // 1) snapshot of the report area
-            SnapshotParameters params = new SnapshotParameters();
-            WritableImage fxImg = reportArea.snapshot(params, null);
-            BufferedImage bImg = SwingFXUtils.fromFXImage(fxImg, null);
+                        SupportRequestsReport report = (SupportRequestsReport) res.getMessage();
 
-            // 2) create pdf and draw the image
-            try (PDDocument doc = new PDDocument()) {
+                        lblChooseReport.setVisible(false);
+                        lblChooseReport.setManaged(false);
 
-                // A4 page
-                PDPage page = new PDPage(PDRectangle.A4);
-                doc.addPage(page);
+                        setupSupportTableColumns();
+                        setupSupportTableInteractions();
 
-                var pdImage = LosslessFactory.createFromImage(doc, bImg);
+                        fillSupportRequestsTable(report);
+                        fillSupportRequestsBarChart(report);
 
-                float pageW = page.getMediaBox().getWidth();
-                float pageH = page.getMediaBox().getHeight();
+                    } else {
+                        showAlert("Error", "Failed to generate support requests report.");
+                    }
+                });
 
-                float imgW = pdImage.getWidth();
-                float imgH = pdImage.getHeight();
-
-                // scale to fit page with margins
-                float margin = 36; // 0.5 inch
-                float maxW = pageW - 2 * margin;
-                float maxH = pageH - 2 * margin;
-
-                float scale = Math.min(maxW / imgW, maxH / imgH);
-
-                float drawW = imgW * scale;
-                float drawH = imgH * scale;
-
-                float x = (pageW - drawW) / 2;
-                float y = (pageH - drawH) / 2;
-
-                try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
-                    cs.drawImage(pdImage, x, y, drawW, drawH);
-                }
-
-                doc.save(out);
+            } catch (Exception e) {
+                Platform.runLater(() -> showAlert("Network Error", "Could not generate report: " + e.getMessage()));
             }
-
-            showAlert("Saved", "PDF exported:\n" + out.getAbsolutePath());
-
-        } catch (IOException ex) {
-            showAlert("Export failed", ex.getMessage());
-        }
+        }).start();
     }
 
-    private void setupClientsTableInteractions() {
+    private void setupSupportTableColumns() {
+
+        colId.setText("Ticket");
+        colUsername.setText("Client");
+        colEmail.setText("Topic");
+        colFirstName.setText("Status");
+        colLastName.setText("Created");
+        colCreatedAt.setText("Preview");
+
+        colId.setCellValueFactory(data -> {
+            SupportTicketRowDTO r = (SupportTicketRowDTO) data.getValue();
+            return new javafx.beans.property.SimpleIntegerProperty(r.getTicketId());
+        });
+
+        colUsername.setCellValueFactory(data -> {
+            SupportTicketRowDTO r = (SupportTicketRowDTO) data.getValue();
+            return new javafx.beans.property.SimpleStringProperty(r.getClientUsername()); // ✅ correct
+        });
+
+        colEmail.setCellValueFactory(data -> {
+            SupportTicketRowDTO r = (SupportTicketRowDTO) data.getValue();
+            return new javafx.beans.property.SimpleStringProperty(r.getTopic());
+        });
+
+        colFirstName.setCellValueFactory(data -> {
+            SupportTicketRowDTO r = (SupportTicketRowDTO) data.getValue();
+            return new javafx.beans.property.SimpleStringProperty(
+                    r.getStatus() == null ? "" : r.getStatus().name()
+            );
+        });
+
+        colLastName.setCellValueFactory(data -> {
+            SupportTicketRowDTO r = (SupportTicketRowDTO) data.getValue();
+            return new javafx.beans.property.SimpleStringProperty(
+                    r.getCreatedAt() == null ? "" : CREATED_FMT.format(r.getCreatedAt())
+            );
+        });
+
+        colCreatedAt.setCellValueFactory(data -> {
+            SupportTicketRowDTO r = (SupportTicketRowDTO) data.getValue();
+            String txt = r.getClientText();
+            if (txt == null) txt = "";
+            txt = txt.replace("\n", " ").trim();
+            if (txt.length() > 35) txt = txt.substring(0, 35) + "...";
+            return new javafx.beans.property.SimpleStringProperty(txt);
+        });
+    }
+
+    private void fillSupportRequestsTable(SupportRequestsReport report) {
+        if (report == null || report.rows == null) {
+            tableView.setItems(FXCollections.observableArrayList());
+            return;
+        }
+        tableView.setItems(FXCollections.observableArrayList(report.rows));
+    }
+
+    private void fillSupportRequestsBarChart(SupportRequestsReport report) {
+        barChart.getData().clear();
+        barChart.setAnimated(false);
+
+        if (report == null) return;
+
+        XYChart.Series<String, Number> s = new XYChart.Series<>();
+        s.setName("Support requests");
+
+        s.getData().add(new XYChart.Data<>("Pending", report.pendingCount));
+        s.getData().add(new XYChart.Data<>("Done", report.doneCount));
+
+        barChart.getData().add(s);
+    }
+
+    private void setupSupportTableInteractions() {
         tableView.setRowFactory(tv -> {
-            TableRow<AllClientsReport.ClientRow> row = new TableRow<>();
+            TableRow<Object> row = new TableRow<>();
             row.setOnMouseClicked(e -> {
                 if (e.getClickCount() == 2 && !row.isEmpty()) {
-                    AllClientsReport.ClientRow selected = row.getItem();
-                    openClientPurchaseHistory(selected);
+                    Object item = row.getItem();
+                    if (item instanceof SupportTicketRowDTO dto) {
+                        openSupportTicketPopup(dto);
+                    }
                 }
             });
             return row;
         });
     }
 
+    private void openSupportTicketPopup(SupportTicketRowDTO row) {
+
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Ticket #" + row.getTicketId());
+
+        TextArea clientBody = new TextArea(row.getClientText() == null ? "" : row.getClientText());
+        clientBody.setEditable(false);
+        clientBody.setWrapText(true);
+
+        TextArea agentBody = new TextArea(row.getAgentReply() == null ? "" : row.getAgentReply());
+        agentBody.setEditable(false);
+        agentBody.setWrapText(true);
+
+        VBox box = new VBox(10,
+                new Label("Client request:"), clientBody,
+                new Label("Support response:"), agentBody
+        );
+
+        dialog.getDialogPane().setContent(box);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        dialog.showAndWait();
+    }
+
+    // ===== CLIENT PURCHASE HISTORY POPUP =====
     private void openClientPurchaseHistory(AllClientsReport.ClientRow clientRow) {
         if (clientRow == null) return;
 
@@ -602,7 +691,6 @@ public class ReportPageController
 
         new Thread(() -> {
             try {
-                // 1) subscriptions
                 Message subReq = new Message(ActionType.GET_USER_SUBSCRIPTIONS_REQUEST, userId);
                 Message subRes = (Message) GCMClient.getInstance().sendRequest(subReq);
 
@@ -611,7 +699,6 @@ public class ReportPageController
                     subs = (List<SubscriptionStatusDTO>) subRes.getMessage();
                 }
 
-                // 2) purchases
                 Message purReq = new Message(ActionType.GET_USER_PURCHASED_MAPS_REQUEST, userId);
                 Message purRes = (Message) GCMClient.getInstance().sendRequest(purReq);
 
@@ -656,4 +743,73 @@ public class ReportPageController
         }
     }
 
+    // ===== EXPORT PDF =====
+    @FXML
+    private void onExportPdf() {
+
+        if (reportArea == null) {
+            showAlert("Error", "Nothing to export.");
+            return;
+        }
+
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Save report as PDF");
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf"));
+        fc.setInitialFileName("report.pdf");
+
+        File out = fc.showSaveDialog(reportArea.getScene().getWindow());
+        if (out == null) return;
+
+        try {
+            SnapshotParameters params = new SnapshotParameters();
+            WritableImage fxImg = reportArea.snapshot(params, null);
+            BufferedImage bImg = SwingFXUtils.fromFXImage(fxImg, null);
+
+            try (PDDocument doc = new PDDocument()) {
+
+                PDPage page = new PDPage(PDRectangle.A4);
+                doc.addPage(page);
+
+                var pdImage = LosslessFactory.createFromImage(doc, bImg);
+
+                float pageW = page.getMediaBox().getWidth();
+                float pageH = page.getMediaBox().getHeight();
+
+                float imgW = pdImage.getWidth();
+                float imgH = pdImage.getHeight();
+
+                float margin = 36;
+                float maxW = pageW - 2 * margin;
+                float maxH = pageH - 2 * margin;
+
+                float scale = Math.min(maxW / imgW, maxH / imgH);
+
+                float drawW = imgW * scale;
+                float drawH = imgH * scale;
+
+                float x = (pageW - drawW) / 2;
+                float y = (pageH - drawH) / 2;
+
+                try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
+                    cs.drawImage(pdImage, x, y, drawW, drawH);
+                }
+
+                doc.save(out);
+            }
+
+            showAlert("Saved", "PDF exported:\n" + out.getAbsolutePath());
+
+        } catch (IOException ex) {
+            showAlert("Export failed", ex.getMessage());
+        }
+    }
+
+    // ===== UTILS =====
+    private void showAlert(String title, String msg) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
+    }
 }
