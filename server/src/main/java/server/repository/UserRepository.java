@@ -53,7 +53,13 @@ public class UserRepository extends BaseRepository<User, Integer> {
                    .uniqueResultOptional()
         );
     }
-
+    public Optional <String> findEmailByUserID(int userID)
+    {
+        return executeQuery(session ->
+            session.createQuery("SELECT u.email FROM User u WHERE u.id= :uid", String.class)
+                    .setParameter("uid",userID)
+                    .uniqueResultOptional());
+    }
     /**
      * Check if email is already registered.
      */
