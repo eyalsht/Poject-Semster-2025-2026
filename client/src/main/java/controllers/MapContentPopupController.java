@@ -148,6 +148,12 @@ public class MapContentPopupController {
 
         markerOverlay.getChildren().clear();
 
+        // Constrain overlay to match ImageView size so they overlap perfectly in the StackPane
+        markerOverlay.setMaxWidth(imgMapView.getFitWidth());
+        markerOverlay.setMaxHeight(imgMapView.getFitHeight());
+        markerOverlay.setPrefWidth(imgMapView.getFitWidth());
+        markerOverlay.setPrefHeight(imgMapView.getFitHeight());
+
         Image img = imgMapView.getImage();
         if (img == null) return;
 

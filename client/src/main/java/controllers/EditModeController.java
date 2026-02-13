@@ -342,9 +342,11 @@ public class EditModeController {
         mapImageView.setPreserveRatio(true);
 
         markerOverlayPane = new Pane();
-        markerOverlayPane.setPickOnBounds(false);
+        markerOverlayPane.setPickOnBounds(true);
         markerOverlayPane.prefWidthProperty().bind(mapImageView.fitWidthProperty());
         markerOverlayPane.prefHeightProperty().bind(mapImageView.fitHeightProperty());
+        markerOverlayPane.maxWidthProperty().bind(mapImageView.fitWidthProperty());
+        markerOverlayPane.maxHeightProperty().bind(mapImageView.fitHeightProperty());
 
         if (pendingMapImage != null && pendingMapImage.length > 0) {
             Image img = new Image(new ByteArrayInputStream(pendingMapImage));
@@ -358,9 +360,9 @@ public class EditModeController {
 
         imageContainer.getChildren().addAll(mapImageView, markerOverlayPane);
 
-        // Click handler on the StackPane (same coordinate space as the marker overlay)
-        // This ensures click coordinates align with marker rendering coordinates
-        imageContainer.setOnMouseClicked(event -> {
+        // Click handler on the overlay pane (same coordinate space as marker rendering)
+        // Overlay is sized to match ImageView fitWidth/fitHeight, so coordinates align exactly
+        markerOverlayPane.setOnMouseClicked(event -> {
             if (mapImageView.getImage() == null || lvOnMapSites == null) return;
             Site selected = lvOnMapSites.getSelectionModel().getSelectedItem();
             if (selected == null) {
@@ -380,11 +382,12 @@ public class EditModeController {
             double offsetX = (fitW - renderedW) / 2.0;
             double offsetY = (fitH - renderedH) / 2.0;
 
-            // event coordinates are relative to imageContainer = same as overlay space
+            // event coordinates are relative to markerOverlayPane = same as ImageView fitWidth/fitHeight space
             double relX = (event.getX() - offsetX) / renderedW;
             double relY = (event.getY() - offsetY) / renderedH;
-            relX = Math.max(0, Math.min(1, relX));
-            relY = Math.max(0, Math.min(1, relY));
+
+            // Reject clicks outside the actual rendered image area
+            if (relX < 0 || relX > 1 || relY < 0 || relY > 1) return;
 
             // Place or move marker for the selected site
             pendingMarkers.removeIf(m -> m.getSiteId() == selected.getId());
