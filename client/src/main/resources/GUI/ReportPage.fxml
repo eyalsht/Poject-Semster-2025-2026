@@ -90,7 +90,7 @@
 
 
         <!-- Big placeholder -->
-            <Label fx:id="lblChooseReport" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #666;" text="Choose a report!" StackPane.alignment="TOP_CENTER" />
+            <Label fx:id="lblChooseReport" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #8e44ad; " text="Choose a report!" StackPane.alignment="TOP_CENTER" />
 
             <!-- Actual content -->
             <HBox fx:id="reportContent" alignment="CENTER_LEFT" spacing="20">

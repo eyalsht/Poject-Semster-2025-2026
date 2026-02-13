@@ -131,7 +131,7 @@ public class ReportPageController {
 
         cmbReportType.valueProperty().addListener((obs, oldV, newV) -> {
             // city selection logic
-            if ("Clients report".equals(newV)) {
+            if ("Clients report".equals(newV) || "Support Requests report".equals(newV)) {
                 cmbCity.getSelectionModel().clearSelection();
             } else {
                 if (cmbCity.getValue() == null && cmbCity.getItems() != null && !cmbCity.getItems().isEmpty()) {
@@ -151,13 +151,16 @@ public class ReportPageController {
 
         boolean hasReport = report != null && !report.isBlank();
         boolean isClients = "Clients report".equals(report);
+        boolean isSupport = "Support Requests report".equals(report);
 
         boolean supportsDateRange = "Activity report".equals(report) || "Purchases report".equals(report);
 
         dpFrom.setDisable(!supportsDateRange);
         dpTo.setDisable(!supportsDateRange);
 
-        cmbCity.setDisable(!hasReport || isClients);
+        // City should be disabled for Clients + Support Requests
+        boolean needsCity = !(isClients || isSupport);
+        cmbCity.setDisable(!hasReport || !needsCity);
 
         boolean cityChosen = cmbCity.getValue() != null;
 
@@ -168,8 +171,13 @@ public class ReportPageController {
             datesOk = (from != null && to != null && !from.isAfter(to));
         }
 
-        btnGenerate.setDisable(!hasReport || (!isClients && (!cityChosen || !datesOk)));
+        // Generate enabled when:
+        // - report chosen
+        // - if city is needed -> city chosen
+        // - if dates are needed -> dates ok
+        btnGenerate.setDisable(!hasReport || (needsCity && !cityChosen) || (supportsDateRange && !datesOk));
     }
+
 
     // layout changes only after Generate
     private void applyReportLayout() {
@@ -639,11 +647,24 @@ public class ReportPageController {
         XYChart.Series<String, Number> s = new XYChart.Series<>();
         s.setName("Support requests");
 
-        s.getData().add(new XYChart.Data<>("Pending", report.pendingCount));
-        s.getData().add(new XYChart.Data<>("Done", report.doneCount));
+        XYChart.Data<String, Number> pending = new XYChart.Data<>("Pending", report.pendingCount);
+        XYChart.Data<String, Number> done    = new XYChart.Data<>("Done", report.doneCount);
+
+        // Color each bar separately (JavaFX creates the Node later, so we hook nodeProperty)
+        pending.nodeProperty().addListener((obs, oldNode, newNode) -> {
+            if (newNode != null) newNode.setStyle("-fx-bar-fill: #8e44ad;"); // purple
+        });
+
+        done.nodeProperty().addListener((obs, oldNode, newNode) -> {
+            if (newNode != null) newNode.setStyle("-fx-bar-fill: #2ecc71;"); // green
+        });
+
+        s.getData().add(pending);
+        s.getData().add(done);
 
         barChart.getData().add(s);
     }
+
 
     private void setupSupportTableInteractions() {
         tableView.setRowFactory(tv -> {
