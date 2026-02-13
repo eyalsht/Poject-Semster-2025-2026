@@ -215,24 +215,37 @@ public class ApprovalPendingPageController {
             return;
         }
 
-        boolean success = false;
-        if (response.getMessage() instanceof Boolean) {
-            success = (Boolean) response.getMessage();
-        }
-        
-        if (success)
-        {
-            setStatus(wasApprove ? "Approved successfully!" : "Denied successfully!");
-            loadPendingApprovals();
-            
-            if (catalogController != null) {
-                catalogController.refreshPendingApprovalsCount();
+        Object msg = response.getMessage();
+
+        // New format: String "OK" for success, or error message string
+        if (msg instanceof String strMsg) {
+            if ("OK".equals(strMsg)) {
+                setStatus(wasApprove ? "Approved successfully!" : "Denied successfully!");
+                loadPendingApprovals();
+                if (catalogController != null) {
+                    catalogController.refreshPendingApprovalsCount();
+                }
+            } else {
+                setStatus("Failed: " + strMsg);
             }
+            return;
         }
-        else
-        {
-            setStatus("Operation failed. Please try again.");
+
+        // Legacy format: Boolean
+        if (msg instanceof Boolean success) {
+            if (success) {
+                setStatus(wasApprove ? "Approved successfully!" : "Denied successfully!");
+                loadPendingApprovals();
+                if (catalogController != null) {
+                    catalogController.refreshPendingApprovalsCount();
+                }
+            } else {
+                setStatus("Operation failed. Please try again.");
+            }
+            return;
         }
+
+        setStatus("Unexpected response from server.");
     }
 
     @FXML

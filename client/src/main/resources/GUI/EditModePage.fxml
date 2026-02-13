@@ -100,6 +100,6 @@
         <Label fx:id="lblStatus" text="Select a city to begin editing" styleClass="status-label"/>
         <Region HBox.hgrow="ALWAYS"/>
         <Label fx:id="lblChangeCount" text="0 changes" styleClass="change-count-label"/>
-        <Button fx:id="btnSubmitAll" text="Submit All" onAction="#onSubmitAll" styleClass="submit-all-button" disable="true"/>
+        <Button fx:id="btnSubmitAll" text="Submit Changes" onAction="#onSubmitAll" styleClass="submit-all-button" disable="true"/>
     </HBox>
 </VBox>

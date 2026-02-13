@@ -88,10 +88,18 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
      */
     public boolean approve(int pendingId, User approver)
     {
+        return approveWithError(pendingId, approver) == null;
+    }
+
+    /**
+     * Approve a pending request. Returns null on success, or an error message string on failure.
+     */
+    public String approveWithError(int pendingId, User approver)
+    {
         try {
             executeInTransaction(session -> {
                 PendingContentRequest pending = session.get(PendingContentRequest.class, pendingId);
-                
+
                 if (pending == null || pending.getStatus() != RequestStatus.OPEN) {
                     throw new RuntimeException("Pending request not found or already processed");
                 }
@@ -105,10 +113,10 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
                 //TODO implent the approver pending.setProcessedBy(approver);
                 session.merge(pending);
             });
-            return true;
+            return null; // success
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return e.getMessage();
         }
     }
 

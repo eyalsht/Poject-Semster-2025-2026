@@ -17,23 +17,25 @@ public class ApproveContentHandler implements RequestHandler {
     public Message handle(Message request) {
         try {
             int pendingId = (Integer) request.getMessage();
-            
+
             // TODO: Get the approver user from the request if needed
             // For now, passing null as approver
-            boolean success = repository.approve(pendingId, null);
+            String error = repository.approveWithError(pendingId, null);
 
-            if (success) {
+            if (error == null) {
                 GcmServer server = GcmServer.getInstance();
                 if (server != null) {
                     server.sendToAllClients(new Message(ActionType.CATALOG_UPDATED_NOTIFICATION, null));
                 }
+                return new Message(ActionType.APPROVE_CONTENT_RESPONSE, "OK");
+            } else {
+                System.err.println("Approval failed for ID " + pendingId + ": " + error);
+                return new Message(ActionType.APPROVE_CONTENT_RESPONSE, error);
             }
-
-            return new Message(ActionType.APPROVE_CONTENT_RESPONSE, success);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new Message(ActionType.ERROR, "Error approving content request: " + e.getMessage());
+            return new Message(ActionType.APPROVE_CONTENT_RESPONSE, "Exception: " + e.getMessage());
         }
     }
 }
