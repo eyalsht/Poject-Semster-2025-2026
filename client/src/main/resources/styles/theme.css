@@ -152,7 +152,6 @@
     -fx-border-color: rgba(255,255,255,0.12);
     -fx-border-width: 1;
 
-    /* cleaner grid */
     -fx-table-cell-border-color: transparent;
     -fx-cell-size: 34px;
 }
@@ -175,7 +174,7 @@
     -fx-font-weight: 700;
 }
 
-/* Cells: black text (because unread/read rows are light) */
+/* Base cells (default text) */
 .table-view .table-cell {
     -fx-text-fill: #111;
     -fx-font-size: 13px;
@@ -193,6 +192,7 @@
     -fx-border-color: transparent;
 }
 
+/* Hover */
 .table-row-cell:filled:hover {
     -fx-background-color: rgba(255,255,255,0.08);
 }
@@ -202,23 +202,18 @@
     -fx-font-weight: bold;
 }
 
+/* Selected row background */
 .table-row-cell:filled:selected {
     -fx-background-color: rgba(52,152,219,0.35);
 }
 
-/* Selected row = same "hover" style (green + bold) */
+/* ✅ Selected row text = GREEN (including inbox read/unread) */
 .table-row-cell:filled:selected .table-cell {
     -fx-text-fill: #bff2bf;
     -fx-font-weight: bold;
 }
-/* If row has light background, keep text dark even when selected */
-.table-row-cell:unread:selected .table-cell,
-.table-row-cell:read:selected .table-cell {
-    -fx-text-fill: #111;
-    -fx-font-weight: bold;
-}
 
-
+/* keep focus clean */
 .table-view:focused {
     -fx-background-insets: 0;
     -fx-background-radius: 12;
@@ -231,6 +226,13 @@
 
 .table-row-cell:unread { -fx-background-color: #bff2bf; } /* green */
 .table-row-cell:read   { -fx-background-color: #f2f2f2; } /* grey */
+
+/* ✅ IMPORTANT: when unread/read row is selected, keep it readable */
+.table-row-cell:unread:selected,
+.table-row-cell:read:selected {
+    -fx-background-color: rgba(52,152,219,0.35);
+}
+
 
 
 /* =========================================================
