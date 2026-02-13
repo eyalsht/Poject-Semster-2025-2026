@@ -10,7 +10,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -367,9 +366,11 @@ public class EditModeController {
         lblInstruction.setId("markerInstruction");
         lblInstruction.getStyleClass().add("marker-instruction");
 
-        // Click handler — places/moves marker for whichever site is selected in the On Map list
-        // Uses same offset math as renderMarkersOnOverlay for accurate coordinates
-        mapImageView.setOnMouseClicked(event -> {
+        imageContainer.getChildren().addAll(mapImageView, markerOverlayPane);
+
+        // Click handler on the StackPane (same coordinate space as the marker overlay)
+        // This ensures click coordinates align with marker rendering coordinates
+        imageContainer.setOnMouseClicked(event -> {
             if (mapImageView.getImage() == null || lvOnMapSites == null) return;
             Site selected = lvOnMapSites.getSelectionModel().getSelectedItem();
             if (selected == null) {
@@ -377,7 +378,7 @@ public class EditModeController {
                 return;
             }
 
-            // Compute relative position accounting for preserveRatio offset
+            // Compute relative position — same offset math as renderMarkersOnOverlay
             Image img = mapImageView.getImage();
             double imgW = img.getWidth();
             double imgH = img.getHeight();
@@ -389,6 +390,7 @@ public class EditModeController {
             double offsetX = (fitW - renderedW) / 2.0;
             double offsetY = (fitH - renderedH) / 2.0;
 
+            // event coordinates are relative to imageContainer = same as overlay space
             double relX = (event.getX() - offsetX) / renderedW;
             double relY = (event.getY() - offsetY) / renderedH;
             relX = Math.max(0, Math.min(1, relX));
@@ -401,11 +403,8 @@ public class EditModeController {
             renderMarkersOnOverlay();
             lblInstruction.setText("Marker placed for: " + selected.getName() + "  \u2014  click again to reposition");
             recalculateChangeCount();
-            // Refresh On Map list to update "(no marker)" hints
             if (lvOnMapSites != null) lvOnMapSites.refresh();
         });
-
-        imageContainer.getChildren().addAll(mapImageView, markerOverlayPane);
 
         Button btnUpload = new Button("Upload Image");
         btnUpload.getStyleClass().add("upload-button");
@@ -1332,8 +1331,9 @@ public class EditModeController {
         sb.append("\"mapName\":\"").append(escapeJson(name != null ? name : "")).append("\"");
         sb.append(",\"description\":\"").append(escapeJson(description != null ? description : "")).append("\"");
 
-        // Map image (Base64)
-        if (pendingMapImage != null && pendingMapImage.length > 0) {
+        // Map image (Base64) — only include if actually changed from original
+        boolean imageChanged = !Arrays.equals(pendingMapImage, originalMapImage);
+        if (imageChanged && pendingMapImage != null && pendingMapImage.length > 0) {
             String base64 = Base64.getEncoder().encodeToString(pendingMapImage);
             sb.append(",\"mapImage\":\"").append(base64).append("\"");
         }

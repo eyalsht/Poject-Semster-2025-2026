@@ -41,7 +41,7 @@ public class PendingContentRequest implements Serializable {
     private String targetName;  // Human-readable name (e.g., "Haifa - Downtown")
 
     @Lob
-    @Column(name = "content_details", columnDefinition = "TEXT")
+    @Column(name = "content_details", columnDefinition = "LONGTEXT")
     private String contentDetails;  // JSON representation of the change
 
     @Enumerated(EnumType.STRING)
