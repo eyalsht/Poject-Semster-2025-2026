@@ -474,28 +474,66 @@
     -fx-background-insets: 0;
 }
 
-/* Support "Other" TextArea - more visible */
+/* ============================= */
+/* Support Page - OTHER TextArea */
+/* ============================= */
 .support-other-area {
-    -fx-border-color: rgba(255,255,255,0.75);
+    -fx-background-color: rgba(0,0,0,0.75);
+    -fx-control-inner-background: rgba(0,0,0,0.75);
+
+    -fx-border-color: rgba(255,255,255,0.85);
     -fx-border-width: 2;
-    -fx-background-color: rgba(0,0,0,0.60);
-    -fx-control-inner-background: rgba(0,0,0,0.60);
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
 
     -fx-text-fill: white;
     -fx-prompt-text-fill: rgba(255,255,255,0.70);
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10;
 }
 
 .support-other-area .content {
-    -fx-background-color: rgba(0,0,0,0.55);
+    -fx-background-color: transparent;
 }
 
 .support-other-area:focused {
-    -fx-border-color: rgba(255,255,255,0.95);
+    -fx-border-color: #2ecc71; /* green glow */
 }
 
-/* optional: keep disabled readable */
 .support-other-area:disabled {
-    -fx-opacity: 0.65;
+    -fx-opacity: 0.85; /* still readable */
+}
+
+
+/* Support city choice buttons */
+.support-city-btn {
+    -fx-background-color: rgba(0, 160, 80, 0.95); /* green */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-width: 1.5;
+    -fx-border-color: rgba(255,255,255,0.40);
+
+    -fx-padding: 6 14 6 14;
+    -fx-cursor: hand;
+}
+
+.support-city-btn:hover {
+    -fx-border-color: rgba(255,255,255,0.85);
+}
+
+.support-city-btn:pressed {
+    -fx-opacity: 0.9;
+}
+
+/* Make sure selection highlight doesn't "wash out" the buttons */
+.list-cell:filled:selected .support-city-btn,
+.list-cell:filled:selected:hover .support-city-btn {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
 }
 
 

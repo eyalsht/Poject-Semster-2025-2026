@@ -60,7 +60,7 @@ public class SupportPageController
     }
 
 
-    @FXML
+
     public void initialize() {
 
         questionsCombo.setItems(FXCollections.observableArrayList(
@@ -72,37 +72,80 @@ public class SupportPageController
                 "Other"
         ));
 
-        suppressAutoSend = true;                 // ✅ prevent auto-send during init
-        questionsCombo.getSelectionModel().selectFirst();
+        // Attach list items
+        chatList.setItems(chatItems);
 
-        detailsArea.setDisable(true);
-        btnSend.setDisable(true);                // ✅ Send disabled unless Other
+        // ✅ IMPORTANT: keep the custom renderer, otherwise you get ChatItem@xxxx
+        chatList.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(ChatItem item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    return;
+                }
+
+                Text t = new Text(item.text);
+                t.setFill(item.isBot ? Color.GREEN : Color.BLACK);
+
+                TextFlow flow = new TextFlow(t);
+                flow.setPrefWidth(0);
+
+                if (item.choices != null && !item.choices.isEmpty()) {
+                    javafx.scene.layout.FlowPane btnPane = new javafx.scene.layout.FlowPane(8, 8);
+
+                    for (SupportChoice c : item.choices) {
+                        Button b = new Button(c.getLabel());
+                        b.getStyleClass().add("support-city-btn");
+                        b.setOnAction(e -> onCityChoiceClicked(c));
+                        btnPane.getChildren().add(b);
+                    }
+
+
+                    javafx.scene.layout.VBox box = new javafx.scene.layout.VBox(6, flow, btnPane);
+                    setGraphic(box);
+                    return;
+                }
+
+                setGraphic(flow);
+            }
+        });
+
+        // Initial UI state
+        suppressAutoSend = true;
+        questionsCombo.getSelectionModel().selectFirst();
+        updateInputState();
 
         questionsCombo.valueProperty().addListener((obs, oldV, newV) -> {
-            if (newV == null) return;
+            updateInputState();
 
+            if (newV == null) return;
             boolean isOther = "Other".equals(newV);
 
-            detailsArea.setDisable(!isOther);
-            btnSend.setDisable(!isOther);        // ✅ only enabled for Other
-
-            if (!isOther) detailsArea.clear();
-
-            // ✅ auto-send for any non-Other selection (but not on first init selection)
+            // ✅ auto-send for predefined questions
             if (!suppressAutoSend && !isOther) {
                 handleSend();
             }
         });
 
-        // Attach list items
-        chatList.setItems(chatItems);
-
-        // (your existing cell factory stays the same...)
-
         addBot("Hi! Choose a question above 🙂");
 
-        suppressAutoSend = false;                // ✅ now auto-send is allowed
+        suppressAutoSend = false;
     }
+
+    // enable typing + Send only for "Other"
+    private void updateInputState() {
+        String selected = questionsCombo.getValue();
+        boolean isOther = "Other".equals(selected);
+
+        detailsArea.setDisable(!isOther);
+        btnSend.setDisable(!isOther);
+
+        if (!isOther) detailsArea.clear();
+    }
+
 
 
     @FXML
