@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fillWidth="true" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SupportPageController">
+<VBox alignment="TOP_RIGHT" fillWidth="true" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SupportPageController">
 
     <children>
 
@@ -37,7 +37,6 @@
                 <ComboBox fx:id="questionsCombo" prefWidth="380.0" />
 
                 <HBox HBox.hgrow="ALWAYS" />
-                <Button fx:id="btnSend" mnemonicParsing="false" onAction="#handleSend" text="Send" />
             </children>
             <padding>
                 <Insets left="30.0" right="20.0" />
@@ -51,7 +50,7 @@
                <font>
                   <Font name="System Bold" size="12.0" />
                </font></Label>
-                <ListView fx:id="chatList" VBox.vgrow="ALWAYS" />
+                <ListView fx:id="chatList" prefHeight="314.0" prefWidth="591.0" VBox.vgrow="ALWAYS" />
             </children>
             <padding>
                 <Insets left="30.0" right="20.0" />
@@ -59,17 +58,25 @@
         </VBox>
 
         <!-- Other details -->
-        <TextArea fx:id="detailsArea" disable="true" prefRowCount="3" promptText="Choose &quot;Other&quot; to write details here..." wrapText="true">
+        <TextArea fx:id="detailsArea"
+                  disable="true"
+                  prefRowCount="3"
+                  promptText="Choose &quot;Other&quot; to write details here..."
+                  wrapText="true">
+            styleClass="support-other-area"
             <VBox.margin>
                 <Insets left="30.0" right="20.0" />
             </VBox.margin>
         </TextArea>
 
+        <Button fx:id="btnSend" mnemonicParsing="false" onAction="#handleSend" text="Send">
+         <VBox.margin>
+            <Insets right="10.0" />
+         </VBox.margin>
+      </Button>
+
         <!-- Back button -->
         <HBox alignment="CENTER_RIGHT" spacing="10.0">
-            <children>
-                <Button mnemonicParsing="false" onAction="#handleBack" text="Back" />
-            </children>
             <padding>
                 <Insets bottom="10.0" left="30.0" right="20.0" />
             </padding>

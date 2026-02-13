@@ -474,3 +474,28 @@
     -fx-background-insets: 0;
 }
 
+/* Support "Other" TextArea - more visible */
+.support-other-area {
+    -fx-border-color: rgba(255,255,255,0.75);
+    -fx-border-width: 2;
+    -fx-background-color: rgba(0,0,0,0.60);
+    -fx-control-inner-background: rgba(0,0,0,0.60);
+
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.70);
+}
+
+.support-other-area .content {
+    -fx-background-color: rgba(0,0,0,0.55);
+}
+
+.support-other-area:focused {
+    -fx-border-color: rgba(255,255,255,0.95);
+}
+
+/* optional: keep disabled readable */
+.support-other-area:disabled {
+    -fx-opacity: 0.65;
+}
+
+

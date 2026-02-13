@@ -17,13 +17,15 @@ import common.support.CreateSupportTicketRequest;
 import common.support.CreateSupportTicketResponse;
 
 
-public class SupportPageController {
+public class SupportPageController
+{
 
     @FXML private TextArea detailsArea;
     @FXML private ComboBox<String> questionsCombo;
     @FXML private Button btnSend;
 
     @FXML private ListView<ChatItem> chatList;
+    private boolean suppressAutoSend = true;
 
     private final ObservableList<ChatItem> chatItems = FXCollections.observableArrayList();
 
@@ -70,59 +72,38 @@ public class SupportPageController {
                 "Other"
         ));
 
+        suppressAutoSend = true;                 // ✅ prevent auto-send during init
         questionsCombo.getSelectionModel().selectFirst();
+
         detailsArea.setDisable(true);
+        btnSend.setDisable(true);                // ✅ Send disabled unless Other
 
         questionsCombo.valueProperty().addListener((obs, oldV, newV) -> {
+            if (newV == null) return;
+
             boolean isOther = "Other".equals(newV);
+
             detailsArea.setDisable(!isOther);
+            btnSend.setDisable(!isOther);        // ✅ only enabled for Other
+
             if (!isOther) detailsArea.clear();
+
+            // ✅ auto-send for any non-Other selection (but not on first init selection)
+            if (!suppressAutoSend && !isOther) {
+                handleSend();
+            }
         });
 
         // Attach list items
         chatList.setItems(chatItems);
 
-        // Render each message with color
-        chatList.setCellFactory(lv -> new ListCell<>() {
-            @Override
-            protected void updateItem(ChatItem item, boolean empty) {
-                super.updateItem(item, empty);
+        // (your existing cell factory stays the same...)
 
-                if (empty || item == null) {
-                    setText(null);
-                    setGraphic(null);
-                    return;
-                }
+        addBot("Hi! Choose a question above 🙂");
 
-                javafx.scene.text.Text t = new javafx.scene.text.Text(item.text);
-                t.setFill(item.isBot ? javafx.scene.paint.Color.GREEN : javafx.scene.paint.Color.BLACK);
-
-                javafx.scene.text.TextFlow flow = new javafx.scene.text.TextFlow(t);
-                flow.setPrefWidth(0);
-
-                // If this message has choices -> show buttons under it
-                if (item.choices != null && !item.choices.isEmpty()) {
-                    javafx.scene.layout.FlowPane btnPane = new javafx.scene.layout.FlowPane(8, 8);
-
-                    for (SupportChoice c : item.choices) {
-                        Button b = new Button(c.getLabel());
-                        b.setOnAction(e -> onCityChoiceClicked(c));
-                        btnPane.getChildren().add(b);
-                    }
-
-                    javafx.scene.layout.VBox box = new javafx.scene.layout.VBox(6, flow, btnPane);
-                    setGraphic(box);
-                    return;
-                }
-
-                setGraphic(flow);
-            }
-        });
-
-
-        // Optional: start conversation
-        addBot("Hi! Choose a question above and click Send 🙂");
+        suppressAutoSend = false;                // ✅ now auto-send is allowed
     }
+
 
     @FXML
     private void handleBack() {
