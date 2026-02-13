@@ -51,6 +51,6 @@ public class appServer {
                 System.err.println("[Scheduler] Error during daily check: " + e.getMessage());
                 e.printStackTrace();
             }
-        }, 1, 24, TimeUnit.HOURS);
+        }, 0, 24, TimeUnit.HOURS);
     }
 }

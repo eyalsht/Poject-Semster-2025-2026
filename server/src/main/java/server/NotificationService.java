@@ -6,6 +6,8 @@ import com.twilio.type.PhoneNumber;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Properties;
 
 public class NotificationService
@@ -93,7 +95,7 @@ public class NotificationService
     public static void sendRegistrationAlert(String email, String phone, String firstName) {
 
         String subject = "GCM Registration";
-        String message = "Hello " + firstName + ",\n\n" +
+        String message = "Hello " + firstName + ",\n" +
                 "Welcome to GCM Services!\n" +
                 "We're so excited you joined us.";
 
@@ -101,6 +103,17 @@ public class NotificationService
         if (phone != null && !phone.isEmpty()) {
             sendSMS(phone, message);
         }
+    }
+
+    public static void sendSubscriptionAlert(String email,String phone, String firstName, String city, double price, LocalDate expirationDate)
+    {
+        String subject = "GCM Subscription Payment receipt";
+        String message = "Hello "+firstName+",/n"+
+                "Thank you for your purchase!\n"+
+                "Your subscription to "+city+ " will expire in "+expirationDate+"\n"+
+                "Price: "+price;
+        sendEmail(email,subject, message);
+        //OPTIONAL - SEND SMS...
     }
     public static String formatPhoneNumberToInternational(String phoneNumber) {
         if (phoneNumber == null || phoneNumber.isEmpty()) {

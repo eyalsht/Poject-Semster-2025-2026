@@ -14,10 +14,14 @@ import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import server.NotificationService;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
+import static server.NotificationService.sendSubscriptionAlert;
 
 
 /**
@@ -99,8 +103,8 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
                 ps.setInt(1, userId);
                 ps.setInt(2, cityId);
                 ps.setDouble(3, totalPrice);
-                ps.setDate(4, java.sql.Date.valueOf(today));
-                ps.setDate(5, java.sql.Date.valueOf(newExpiration));
+                ps.setDate(4, Date.valueOf(today));
+                ps.setDate(5, Date.valueOf(newExpiration));
                 ps.setBoolean(6, isRenewal);
                 ps.executeUpdate();
             }
@@ -112,6 +116,11 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
             subscription.setPurchaseDate(today);
             subscription.setExpirationDate(newExpiration);
             subscription.setRenewal(isRenewal);
+            Optional<String> email = findEmailByUserId(userId);
+            Optional<String> phone = findPhoneByUserId(userId);
+            Optional<String> firstName = findNameByUserId(userId);
+            Optional<String> cityName = findCityNameByCityID(cityId);
+            sendSubscriptionAlert(email.orElse(null),phone.orElse(null),firstName.orElse(null),cityName.orElse(null),totalPrice,newExpiration);
 
         } catch (Exception e) {
             if (conn != null) try { conn.rollback(); } catch (Exception ignored) {}
@@ -122,6 +131,35 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
         return subscription;
     }
 
+    private Optional<String> findEmailByUserId(int userId)
+    {
+        return executeQuery(session ->
+                session.createQuery("SELECT u.email FROM User u WHERE u.id= :uid", String.class)
+                        .setParameter("uid",userId)
+                        .uniqueResultOptional());
+    }
+    private Optional<String> findPhoneByUserId(int userId)
+    {
+        return executeQuery(session ->
+                session.createQuery("SELECT u.phoneNumber FROM Client u WHERE u.id= :uid", String.class)
+                        .setParameter("uid",userId)
+                        .uniqueResultOptional());
+    }
+    private Optional<String> findNameByUserId(int userId)
+    {
+        return executeQuery(session ->
+                session.createQuery("SELECT u.firstName FROM User u WHERE u.id= :uid", String.class)
+                        .setParameter("uid",userId)
+                        .uniqueResultOptional());
+    }
+
+    private Optional<String> findCityNameByCityID(int cityId)
+    {
+        return executeQuery(session ->
+                session.createQuery("SELECT c.name FROM City c WHERE c.id= :cid", String.class)
+                        .setParameter("cid",cityId)
+                        .uniqueResultOptional());
+    }
     /**
      * Log a new one-time purchase for a map.
      * Creates a snapshot of the map at purchase time.
@@ -321,15 +359,15 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
             String firstName = (String) row[2];
             String cityName = (String) row[3];
 
-            NotificationService.sendSubscriptionAlert(
+            sendSubscriptionAlert(
                     email,
                     phone,
                     firstName,
                     3,
                     cityName
             );
-
             System.out.println("[Notification] Sent 3-day reminder to: " + email + " (Phone: " + phone + ") for city: " + cityName);
         }
+
     }
 }
