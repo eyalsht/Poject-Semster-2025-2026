@@ -51,8 +51,6 @@ public class PurchaseHistoryDialogController {
                     ? user.getFirstName() : user.getUsername();
             lblTitle.setText(name + "'s Purchase History");
         }
-
-        loadData();
     }
 
     private void setupSubscriptionTable() {
@@ -112,42 +110,86 @@ public class PurchaseHistoryDialogController {
     }
 
     @SuppressWarnings("unchecked")
-    private void loadData() {
-        User user = GCMClient.getInstance().getCurrentUser();
-        if (user == null) return;
+    private void loadDataForUser(int userId) {
 
         new Thread(() -> {
             try {
-                Message subReq = new Message(ActionType.GET_USER_SUBSCRIPTIONS_REQUEST, user.getId());
+                Message subReq = new Message(ActionType.GET_USER_SUBSCRIPTIONS_REQUEST, userId);
                 Message subResp = (Message) GCMClient.getInstance().sendRequest(subReq);
 
-                Message mapReq = new Message(ActionType.GET_USER_PURCHASED_MAPS_REQUEST, user.getId());
+                Message mapReq = new Message(ActionType.GET_USER_PURCHASED_MAPS_REQUEST, userId);
                 Message mapResp = (Message) GCMClient.getInstance().sendRequest(mapReq);
 
-                Platform.runLater(() -> {
-                    // Subscriptions
-                    if (subResp != null && subResp.getMessage() instanceof ArrayList<?> list && !list.isEmpty()) {
-                        tblSubscriptions.setItems(FXCollections.observableArrayList((List<SubscriptionStatusDTO>) list));
-                    } else {
-                        tblSubscriptions.setVisible(false);
-                        tblSubscriptions.setManaged(false);
-                        lblNoSubs.setVisible(true);
-                        lblNoSubs.setManaged(true);
-                    }
+                List<SubscriptionStatusDTO> subs = java.util.Collections.emptyList();
+                if (subResp != null && subResp.getMessage() instanceof ArrayList<?> list && !list.isEmpty()) {
+                    subs = (List<SubscriptionStatusDTO>) list;
+                }
 
-                    // Purchased maps
-                    if (mapResp != null && mapResp.getMessage() instanceof ArrayList<?> list2 && !list2.isEmpty()) {
-                        tblPurchases.setItems(FXCollections.observableArrayList((List<PurchasedMapSnapshot>) list2));
-                    } else {
-                        tblPurchases.setVisible(false);
-                        tblPurchases.setManaged(false);
-                        lblNoPurchases.setVisible(true);
-                        lblNoPurchases.setManaged(true);
-                    }
-                });
+                List<PurchasedMapSnapshot> maps = java.util.Collections.emptyList();
+                if (mapResp != null && mapResp.getMessage() instanceof ArrayList<?> list2 && !list2.isEmpty()) {
+                    maps = (List<PurchasedMapSnapshot>) list2;
+                }
+
+                List<SubscriptionStatusDTO> finalSubs = subs;
+                List<PurchasedMapSnapshot> finalMaps = maps;
+
+                Platform.runLater(() -> applyData(finalSubs, finalMaps));
+
             } catch (Exception ignored) {}
         }).start();
     }
+
+    private void applyData(List<SubscriptionStatusDTO> subscriptions,
+                           List<PurchasedMapSnapshot> purchases) {
+
+        // Subscriptions
+        if (subscriptions != null && !subscriptions.isEmpty()) {
+            tblSubscriptions.setVisible(true);
+            tblSubscriptions.setManaged(true);
+            lblNoSubs.setVisible(false);
+            lblNoSubs.setManaged(false);
+            tblSubscriptions.setItems(FXCollections.observableArrayList(subscriptions));
+        } else {
+            tblSubscriptions.setVisible(false);
+            tblSubscriptions.setManaged(false);
+            lblNoSubs.setVisible(true);
+            lblNoSubs.setManaged(true);
+        }
+
+        // Purchases
+        if (purchases != null && !purchases.isEmpty()) {
+            tblPurchases.setVisible(true);
+            tblPurchases.setManaged(true);
+            lblNoPurchases.setVisible(false);
+            lblNoPurchases.setManaged(false);
+            tblPurchases.setItems(FXCollections.observableArrayList(purchases));
+        } else {
+            tblPurchases.setVisible(false);
+            tblPurchases.setManaged(false);
+            lblNoPurchases.setVisible(true);
+            lblNoPurchases.setManaged(true);
+        }
+    }
+
+    public void initForCurrentUser() {
+        User user = GCMClient.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        String name = (user.getFirstName() != null && !user.getFirstName().isBlank())
+                ? user.getFirstName() : user.getUsername();
+
+        lblTitle.setText(name + "'s Purchase History");
+        loadDataForUser(user.getId());
+    }
+
+    public void initForClient(String displayName,
+                              List<SubscriptionStatusDTO> subscriptions,
+                              List<PurchasedMapSnapshot> purchases) {
+
+        lblTitle.setText(displayName + "'s Purchase History");
+        applyData(subscriptions, purchases);
+    }
+
 
     @FXML
     private void onClose() {

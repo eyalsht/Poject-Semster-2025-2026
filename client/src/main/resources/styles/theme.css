@@ -206,9 +206,18 @@
     -fx-background-color: rgba(52,152,219,0.35);
 }
 
+/* Selected row = same "hover" style (green + bold) */
 .table-row-cell:filled:selected .table-cell {
-    -fx-text-fill: #111;
+    -fx-text-fill: #bff2bf;
+    -fx-font-weight: bold;
 }
+/* If row has light background, keep text dark even when selected */
+.table-row-cell:unread:selected .table-cell,
+.table-row-cell:read:selected .table-cell {
+    -fx-text-fill: #111;
+    -fx-font-weight: bold;
+}
+
 
 .table-view:focused {
     -fx-background-insets: 0;

@@ -167,6 +167,8 @@ public class ProfilePageController {
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
                     getClass().getResource("/GUI/PurchaseHistoryDialog.fxml"));
             javafx.scene.Parent root = loader.load();
+            PurchaseHistoryDialogController controller = loader.getController();
+            controller.initForCurrentUser();
 
             javafx.stage.Stage stage = new javafx.stage.Stage();
             stage.setTitle("Purchase History");
@@ -177,6 +179,7 @@ public class ProfilePageController {
             e.printStackTrace();
         }
     }
+
 
     // ==================== PAYMENT ====================
 

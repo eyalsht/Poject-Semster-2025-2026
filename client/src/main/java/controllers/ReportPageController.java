@@ -1,5 +1,6 @@
 package controllers;
 
+import javafx.scene.Parent;
 import client.GCMClient;
 import common.content.City;
 import common.enums.ActionType;
@@ -9,10 +10,14 @@ import common.report.ActivityReport;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.scene.layout.StackPane;
 import javafx.embed.swing.SwingFXUtils;
@@ -629,89 +634,26 @@ public class ReportPageController
     private void showClientPurchaseHistoryDialog(AllClientsReport.ClientRow clientRow,
                                                  List<SubscriptionStatusDTO> subscriptions,
                                                  List<PurchasedMapSnapshot> purchases) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/PurchaseHistoryDialog.fxml"));
+            Parent root = loader.load();
 
-        Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle("Client purchase history");
+            PurchaseHistoryDialogController controller = loader.getController();
 
-        String displayName = (clientRow.firstName != null && !clientRow.firstName.isBlank())
-                ? clientRow.firstName
-                : clientRow.username;
+            String displayName = (clientRow.firstName != null && !clientRow.firstName.isBlank())
+                    ? clientRow.firstName : clientRow.username;
 
-        Label title = new Label(displayName + ", here is your purchase history");
-        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+            controller.initForClient(displayName, subscriptions, purchases);
 
-        // LEFT: Subscriptions
-        TableView<SubscriptionStatusDTO> tblSubs = new TableView<>();
-        tblSubs.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+            Stage stage = new Stage();
+            stage.setTitle("Client purchase history");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
 
-        TableColumn<SubscriptionStatusDTO, String> colCity = new TableColumn<>("City");
-        colCity.setCellValueFactory(d -> new SimpleStringProperty(
-                d.getValue().getCityName() == null ? "" : d.getValue().getCityName()
-        ));
-
-        TableColumn<SubscriptionStatusDTO, String> colExpiry = new TableColumn<>("Expires");
-        colExpiry.setCellValueFactory(d -> new SimpleStringProperty(
-                d.getValue().getExpirationDate() == null ? "" : d.getValue().getExpirationDate().toString()
-        ));
-
-        TableColumn<SubscriptionStatusDTO, String> colActive = new TableColumn<>("Active");
-        colActive.setCellValueFactory(d -> new SimpleStringProperty(
-                d.getValue().isActive() ? "YES" : "NO"
-        ));
-
-        TableColumn<SubscriptionStatusDTO, String> colPrice = new TableColumn<>("Price/mo");
-        colPrice.setCellValueFactory(d -> new SimpleStringProperty(
-                String.format("%.2f", d.getValue().getPricePerMonth())
-        ));
-
-        tblSubs.getColumns().addAll(colCity, colExpiry, colActive, colPrice);
-        tblSubs.setItems(FXCollections.observableList(subscriptions));
-
-        VBox left = new VBox(8, new Label("Subscriptions"), tblSubs);
-        left.setPrefWidth(430);
-
-        // RIGHT: One-time purchases
-        TableView<PurchasedMapSnapshot> tblMaps = new TableView<>();
-        tblMaps.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        TableColumn<PurchasedMapSnapshot, String> colPCity = new TableColumn<>("City");
-        colPCity.setCellValueFactory(d -> new SimpleStringProperty(
-                d.getValue().getCityName() == null ? "" : d.getValue().getCityName()
-        ));
-
-        TableColumn<PurchasedMapSnapshot, String> colMap = new TableColumn<>("Map");
-        colMap.setCellValueFactory(d -> new SimpleStringProperty(
-                d.getValue().getMapName() == null ? "" : d.getValue().getMapName()
-        ));
-
-        TableColumn<PurchasedMapSnapshot, String> colVer = new TableColumn<>("Version");
-        colVer.setCellValueFactory(d -> new SimpleStringProperty(
-                d.getValue().getPurchasedVersion() == null ? "" : d.getValue().getPurchasedVersion()
-        ));
-
-        TableColumn<PurchasedMapSnapshot, String> colDate = new TableColumn<>("Date");
-        colDate.setCellValueFactory(d -> new SimpleStringProperty(
-                d.getValue().getPurchaseDate() == null ? "" : d.getValue().getPurchaseDate().toString()
-        ));
-
-        TableColumn<PurchasedMapSnapshot, String> colPaid = new TableColumn<>("Paid");
-        colPaid.setCellValueFactory(d -> new SimpleStringProperty(
-                String.format("%.2f", d.getValue().getPricePaid())
-        ));
-
-        tblMaps.getColumns().addAll(colPCity, colMap, colVer, colDate, colPaid);
-        tblMaps.setItems(FXCollections.observableList(purchases));
-
-        VBox right = new VBox(8, new Label("One-time purchases"), tblMaps);
-        right.setPrefWidth(430);
-
-        HBox tables = new HBox(12, left, right);
-
-        VBox root = new VBox(12, title, tables);
-        root.setPrefSize(920, 520);
-
-        dialog.getDialogPane().setContent(root);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        dialog.showAndWait();
+        } catch (Exception e) {
+            showAlert("Error", "Could not open history window: " + e.getMessage());
+        }
     }
+
 }
