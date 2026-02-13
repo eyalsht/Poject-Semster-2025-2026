@@ -55,7 +55,6 @@
                 <Button fx:id="btnEditCity" managed="false" mnemonicParsing="false" onAction="#onEditCity" prefHeight="30.0" text="Edit Mode" visible="false" />
                 <Button fx:id="btnCreateTour" managed="false" mnemonicParsing="false" onAction="#onCreateTour" prefHeight="30.0" text="Create Tour" visible="false" />
                 <Button fx:id="btnAddMap" managed="false" mnemonicParsing="false" onAction="#onAddMap" prefHeight="30.0" text="Add Map" visible="false" />
-                <Button fx:id="btnUpdateMap" managed="false" mnemonicParsing="false" onAction="#onUpdateMap" prefHeight="30.0" text="Edit Map" visible="false" />
                 <Button fx:id="btnDeleteMap" managed="false" mnemonicParsing="false" onAction="#onDeleteMap" prefHeight="30.0" text="Delete Map" visible="false" />
                 <Button fx:id="btnPriceUpdate" mnemonicParsing="false" onAction="#onPriceUpdate" prefHeight="30.0" text="Price Update" />
                 <Button fx:id="btnApprovals" managed="false" mnemonicParsing="false" onAction="#onApprovals" prefHeight="30.0" text="Approvals (0)" visible="false" />

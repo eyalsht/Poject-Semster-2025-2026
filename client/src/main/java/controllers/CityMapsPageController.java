@@ -48,7 +48,6 @@ public class CityMapsPageController {
     @FXML private ComboBox<String> cbMap;
     @FXML private ComboBox<String> cbCity;
 
-    @FXML private Button btnUpdateMap;
     @FXML private Button btnPriceUpdate;
     @FXML private Button btnApprovals;
     @FXML private Button btnEditCity;
@@ -62,6 +61,17 @@ public class CityMapsPageController {
     @FXML
     public void initialize() {
         applyRolePermissions();
+
+        // Listen for server-pushed notifications to refresh approval counts
+        GCMClient.getInstance().addNotificationListener((Message msg) -> {
+            if (msg.getAction() == ActionType.CATALOG_UPDATED_NOTIFICATION) {
+                Platform.runLater(() -> {
+                    if (btnApprovals != null && btnApprovals.getScene() != null) {
+                        refreshPendingApprovalsCount();
+                    }
+                });
+            }
+        });
     }
     private City selectedCity;
 
@@ -265,7 +275,6 @@ public class CityMapsPageController {
 
     private void setManagementButtonsVisible(boolean visible) {
         setButtonState(btnEditCity, visible);
-        setButtonState(btnUpdateMap, visible);
         setButtonState(btnPriceUpdate, visible);
     }
     private void setButtonState(Button btn, boolean visible) {
@@ -416,7 +425,6 @@ public class CityMapsPageController {
         }
         if (selectedCity != null) renderMapCards(selectedCity.getMaps());
     }
-    @FXML private void onUpdateMap() {}
     @FXML private void onAddMap() {}
     @FXML private void onDeleteMap() {}
 

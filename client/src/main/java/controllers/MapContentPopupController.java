@@ -148,14 +148,30 @@ public class MapContentPopupController {
 
         markerOverlay.getChildren().clear();
 
+        Image img = imgMapView.getImage();
+        if (img == null) return;
+
+        double imgW = img.getWidth();
+        double imgH = img.getHeight();
+        double fitW = imgMapView.getFitWidth();
+        double fitH = imgMapView.getFitHeight();
+
+        // Account for preserveRatio — actual rendered size may differ from fitWidth/fitHeight
+        double scale = Math.min(fitW / imgW, fitH / imgH);
+        double renderedW = imgW * scale;
+        double renderedH = imgH * scale;
+        double offsetX = (fitW - renderedW) / 2.0;
+        double offsetY = (fitH - renderedH) / 2.0;
+
         for (SiteMarker marker : markers) {
             int index = findSiteIndex(sites, marker.getSiteId());
             if (index < 0) continue;
 
             StackPane pin = createMarkerPin(index + 1);
-            // Position at relative coords — bind to image actual dimensions
-            pin.layoutXProperty().bind(imgMapView.fitWidthProperty().multiply(marker.getX()).subtract(12));
-            pin.layoutYProperty().bind(imgMapView.fitHeightProperty().multiply(marker.getY()).subtract(12));
+            double px = offsetX + marker.getX() * renderedW - 12;
+            double py = offsetY + marker.getY() * renderedH - 12;
+            pin.setLayoutX(px);
+            pin.setLayoutY(py);
             markerOverlay.getChildren().add(pin);
         }
     }
