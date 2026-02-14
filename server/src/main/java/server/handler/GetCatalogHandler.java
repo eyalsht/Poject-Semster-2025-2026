@@ -15,6 +15,9 @@ import java.util.List;
 /**
  * Consolidated handler for all catalog-related queries.
  * Returns cities, maps, and filter options in a single response.
+ *
+ * Builds lightweight detached copies to avoid serializing heavy blob data
+ * and the full EAGER-loaded city object graph.
  */
 public class GetCatalogHandler implements RequestHandler {
 
@@ -47,13 +50,12 @@ public class GetCatalogHandler implements RequestHandler {
                 filter.getVersion()
             );
 
-            // Strip heavy blob data before sending — catalog only needs name/price/imagePath
+            // Build lightweight copies — no blobs, no deep city graph
+            List<GCMMap> lightMaps = new ArrayList<>();
             for (GCMMap map : maps) {
-                map.setMapImage(null);
-                map.setSiteMarkersJson(null);
+                lightMaps.add(toLightweight(map));
             }
-
-            response.setMaps(new ArrayList<>(maps));
+            response.setMaps(lightMaps);
 
             // Populate available map names (for selected city, or all if no city selected)
             if (filter.getCityName() != null) {
@@ -93,16 +95,11 @@ public class GetCatalogHandler implements RequestHandler {
             Long siteCount = (Long) row[2];
             Long tourCount = (Long) row[3];
 
-            // Strip heavy blob data from eagerly-loaded maps
-            if (city.getMaps() != null) {
-                for (GCMMap m : city.getMaps()) {
-                    m.setMapImage(null);
-                    m.setSiteMarkersJson(null);
-                }
-            }
+            // Build lightweight city copy (no deep collections)
+            City lightCity = toLightweightCity(city);
 
             CatalogResponse.CitySearchResult result = new CatalogResponse.CitySearchResult();
-            result.setCity(city);
+            result.setCity(lightCity);
             result.setMapCount(mapCount.intValue());
             result.setSiteCount(siteCount.intValue());
             result.setTourCount(tourCount.intValue());
@@ -119,17 +116,52 @@ public class GetCatalogHandler implements RequestHandler {
     }
 
     /**
+     * Create a lightweight GCMMap copy for catalog display.
+     * Excludes mapImage blob, siteMarkersJson, and deep city collections.
+     */
+    private GCMMap toLightweight(GCMMap map) {
+        GCMMap light = new GCMMap();
+        light.setId(map.getId());
+        light.setName(map.getName());
+        light.setDescription(map.getDescription());
+        light.setVersion(map.getVersion());
+        light.setPrice(map.getPrice());
+        light.setStatus(map.getStatus());
+        light.setImagePath(map.getImagePath());
+        // Intentionally skip: mapImage, siteMarkersJson, sites
+
+        if (map.getCity() != null) {
+            light.setCity(toLightweightCity(map.getCity()));
+        }
+        return light;
+    }
+
+    /**
+     * Create a lightweight City copy (name, price, imagePath only — no collections).
+     */
+    private City toLightweightCity(City city) {
+        City light = new City();
+        light.setId(city.getId());
+        light.setName(city.getName());
+        light.setDescription(city.getDescription());
+        light.setPriceSub(city.getPriceSub());
+        light.setImagePath(city.getImagePath());
+        // Intentionally skip: maps, sites, tours
+        return light;
+    }
+
+    /**
      * Parse filter from various input formats for backward compatibility.
      */
     private CatalogFilter parseFilter(Object message) {
         if (message == null) {
             return new CatalogFilter();
         }
-        
+
         if (message instanceof CatalogFilter) {
             return (CatalogFilter) message;
         }
-        
+
         // Backward compatibility: support old List<String> format
         if (message instanceof List<?> list) {
             String city = list.size() > 0 ? (String) list.get(0) : null;
@@ -137,7 +169,7 @@ public class GetCatalogHandler implements RequestHandler {
             String version = list.size() > 2 ? (String) list.get(2) : null;
             return new CatalogFilter(city, map, version);
         }
-        
+
         return new CatalogFilter();
     }
 }

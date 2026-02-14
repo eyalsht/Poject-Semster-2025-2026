@@ -23,6 +23,11 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import client.GCMClient;
+import common.enums.ActionType;
+import common.messaging.Message;
+import javafx.application.Platform;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -52,20 +57,45 @@ public class MapContentPopupController {
             lblMapName.setText(currentMap.getName());
         }
 
-        applyAccessLevel();
+        // Fetch full map details from server (includes image, sites, markers)
+        new Thread(() -> {
+            try {
+                Message request = new Message(ActionType.GET_MAP_DETAILS_REQUEST, currentMap.getId());
+                Message response = (Message) GCMClient.getInstance().sendRequest(request);
 
-        try {
-            displaySites(currentMap.getSites());
-            if (accessLevel == MapAccessLevel.FULL_ACCESS) {
-                displayTours(currentMap.getAvailableTours());
+                Platform.runLater(() -> {
+                    if (response != null && response.getAction() == ActionType.GET_MAP_DETAILS_RESPONSE) {
+                        GCMMap fullMap = (GCMMap) response.getMessage();
+                        this.currentMap = fullMap;
+                    }
+                    // Apply access level and display content (with full or partial data)
+                    applyAccessLevel();
+                    try {
+                        displaySites(this.currentMap.getSites());
+                        if (this.accessLevel == MapAccessLevel.FULL_ACCESS) {
+                            displayTours(this.currentMap.getAvailableTours());
+                        }
+                    } catch (Exception e) {
+                        if (vboxSites != null) {
+                            vboxSites.getChildren().clear();
+                            vboxSites.getChildren().add(new Label("Content loading error"));
+                        }
+                        e.printStackTrace();
+                    }
+                });
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    // Fallback: use whatever data we have
+                    applyAccessLevel();
+                    try {
+                        displaySites(this.currentMap.getSites());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                });
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            if (vboxSites != null) {
-                vboxSites.getChildren().clear();
-                vboxSites.getChildren().add(new Label("Content loading error (Lazy Loading)"));
-            }
-            e.printStackTrace();
-        }
+        }).start();
     }
 
     /**

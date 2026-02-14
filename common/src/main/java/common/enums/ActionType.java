@@ -44,6 +44,10 @@ public enum ActionType {
     // Get full city data including map images, markers, sites, tours (for Edit Mode)
     GET_CITY_FULL_DETAILS_REQUEST,
     GET_CITY_FULL_DETAILS_RESPONSE,
+
+    // Get a single map with full data (image, sites, markers) for map popup
+    GET_MAP_DETAILS_REQUEST,
+    GET_MAP_DETAILS_RESPONSE,
     
     // ==================== PRICE MANAGEMENT ====================
 
