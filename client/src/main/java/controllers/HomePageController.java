@@ -1,12 +1,13 @@
 package controllers;
 
+import javafx.scene.layout.BorderPane;
+import javafx.scene.Node;
 import client.GCMClient;
 import client.MainApplication;
 import common.enums.ActionType;
 import common.messaging.Message;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import common.user.User;
@@ -35,6 +36,7 @@ public class HomePageController
     @FXML private Button btnSupport;
     @FXML private Button btnMySubscriptions;
     @FXML private Button btnMyMaps;
+    @FXML private BorderPane rootPane;
 
     private User currentUser = null;
 
@@ -286,4 +288,26 @@ public class HomePageController
         btnReports.setManaged(show);
         btnReports.setDisable(!show);
     }
+    @FXML
+    private void onPickBackground(ActionEvent event) {
+        if (rootPane == null) return;
+
+        Object ud = ((Node) event.getSource()).getUserData();
+        if (ud == null) return;
+
+        String newClass = ud.toString();
+
+        // remove previous bg classes
+        rootPane.getStyleClass().removeIf(c ->
+                c.equals("bg-fog-city") || c.startsWith("bg-home"));
+
+        // add the new one
+        rootPane.getStyleClass().add(newClass);
+        // mark active button
+        Node src = (Node) event.getSource();
+        src.getParent().lookupAll(".button").forEach(b -> b.getStyleClass().remove("bg-picker-btn-active"));
+        src.getStyleClass().add("bg-picker-btn-active");
+
+    }
+
 }

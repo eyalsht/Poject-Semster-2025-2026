@@ -1,5 +1,6 @@
 package controllers;
 
+import javafx.scene.input.MouseButton;
 import client.GCMClient;
 import common.enums.ActionType;
 import common.enums.EmployeeRole;
@@ -45,6 +46,12 @@ public class SupportTasksPageController {
         colPreview.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getPreview()));
 
         TableRowHighlighter.apply(tblTickets, t -> t.getStatus() != SupportTicketStatus.DONE);
+        tblTickets.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
+                SupportTicketRowDTO selected = tblTickets.getSelectionModel().getSelectedItem();
+                if (selected != null) onOpen(); // reuse same logic as the button
+            }
+        });
 
         refresh();
     }

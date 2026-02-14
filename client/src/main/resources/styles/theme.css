@@ -84,6 +84,16 @@
     -fx-background-blend-mode: multiply;
 }
 
+.bg-home7 {
+    -fx-background-image: url("../images/backgrounds/home_bg7.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+
+    -fx-background-color: rgba(0,0,0,0.35);
+    -fx-background-blend-mode: multiply;
+}
+
 
 /* Utility: keep background visible through panes */
 .transparent-pane,
@@ -608,6 +618,11 @@
 .list-cell:filled:selected:hover .support-city-btn {
     -fx-text-fill: white;
     -fx-font-weight: bold;
+}
+
+.bg-picker-btn-active {
+    -fx-border-color: rgba(46,204,113,0.95); /* green */
+    -fx-background-color: rgba(46,204,113,0.18);
 }
 
 

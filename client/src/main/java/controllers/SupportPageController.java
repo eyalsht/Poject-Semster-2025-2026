@@ -25,6 +25,8 @@ public class SupportPageController
     @FXML private Button btnSend;
 
     @FXML private ListView<ChatItem> chatList;
+    private static final String DEFAULT_QUESTION = "Choose your question here :)";
+
     private boolean suppressAutoSend = true;
 
     private final ObservableList<ChatItem> chatItems = FXCollections.observableArrayList();
@@ -64,6 +66,7 @@ public class SupportPageController
     public void initialize() {
 
         questionsCombo.setItems(FXCollections.observableArrayList(
+                DEFAULT_QUESTION,
                 "I can’t log in",
                 "Payment issue",
                 "Subscription problem",
@@ -115,20 +118,28 @@ public class SupportPageController
 
         // Initial UI state
         suppressAutoSend = true;
-        questionsCombo.getSelectionModel().selectFirst();
+        questionsCombo.getSelectionModel().select(DEFAULT_QUESTION);
         updateInputState();
 
         questionsCombo.valueProperty().addListener((obs, oldV, newV) -> {
             updateInputState();
 
             if (newV == null) return;
+
+            // If user picked the default placeholder again
+            if (DEFAULT_QUESTION.equals(newV)) {
+                addBot("Please choose a question from the list or write your own by choosing \"Other\" :)");
+                return;
+            }
+
             boolean isOther = "Other".equals(newV);
 
-            // ✅ auto-send for predefined questions
+            // auto-send for predefined questions (but not for "Other")
             if (!suppressAutoSend && !isOther) {
                 handleSend();
             }
         });
+
 
         addBot("Hi! Choose a question above 🙂");
 
@@ -136,15 +147,21 @@ public class SupportPageController
     }
 
     // enable typing + Send only for "Other"
-    private void updateInputState() {
+    void updateInputState() {
         String selected = questionsCombo.getValue();
+
+        boolean isDefault = DEFAULT_QUESTION.equals(selected) || selected == null;
         boolean isOther = "Other".equals(selected);
 
+        // details + send allowed only for "Other"
         detailsArea.setDisable(!isOther);
+
+        // Send button should be enabled only for "Other"
         btnSend.setDisable(!isOther);
 
         if (!isOther) detailsArea.clear();
     }
+
 
 
 
@@ -157,6 +174,10 @@ public class SupportPageController
     private void handleSend() {
 
         String selected = questionsCombo.getValue();
+        if (selected == null || DEFAULT_QUESTION.equals(selected)) {
+            addBot("Please choose a question from the list or write your own by choosing \"Other\" :)");
+            return;
+        }
 
         String userText;
         if ("Other".equals(selected)) {

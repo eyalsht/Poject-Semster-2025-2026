@@ -35,9 +35,9 @@
                <font><Font name="System Bold" size="12.0" /></font></Label>
 
             <!-- Row 2: Role (employees only, hidden by default) -->
-            <Label fx:id="lblRoleLabel" text="Role:" textFill="#388e3c" visible="false" managed="false" GridPane.columnIndex="0" GridPane.rowIndex="2">
+            <Label fx:id="lblRoleLabel" managed="false" text="Role:" textFill="#388e3c" visible="false" GridPane.columnIndex="0" GridPane.rowIndex="2">
                <font><Font name="System Bold" size="12.0" /></font></Label>
-            <Label fx:id="lblRoleValue" text="-" textFill="#2e7d32" visible="false" managed="false" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <Label fx:id="lblRoleValue" managed="false" text="-" textFill="#2e7d32" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <font><Font name="System Bold" size="12.0" /></font></Label>
 
             <!-- Row 3: Payment (clients only) -->
@@ -52,13 +52,9 @@
                <font><Font name="System Bold" size="12.0" /></font></Label>
             <Label fx:id="lblInbox" text="You have 0 new messages" textFill="#388e3c" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <font><Font name="System Bold" size="12.0" /></font></Label>
-            <Button fx:id="btnOpenInbox" onAction="#onOpenInbox" text="Open" GridPane.columnIndex="2" GridPane.rowIndex="4" />
 
             <!-- Row 5: Purchase History button (clients only, hidden by default) -->
-            <Button fx:id="btnPurchaseHistory" mnemonicParsing="false" onAction="#onPurchaseHistory"
-                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"
-                    text="Purchase History" visible="false" managed="false"
-                    GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2" />
+            <Button fx:id="btnPurchaseHistory" managed="false" mnemonicParsing="false" onAction="#onPurchaseHistory" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="Purchase History" visible="false" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="5" />
          </children>
          <columnConstraints>
             <ColumnConstraints />
