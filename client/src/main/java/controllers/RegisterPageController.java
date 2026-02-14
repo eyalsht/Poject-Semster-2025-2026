@@ -184,18 +184,13 @@ public class RegisterPageController {
     // --- Final Submission ---
 
     @FXML
+    private void handleSkip() {
+        submitRegistration(null);
+    }
+
+    @FXML
     private void handleFinish() {
         if (!validateStep2()) return;
-
-        showMessage("Processing registration...", Color.web("#5dade2"));
-
-        // Prepare data
-        String firstName = txtFirstName.getText().trim();
-        String lastName = txtLastName.getText().trim();
-        String email = txtEmail.getText().trim();
-        String username = txtUsername.getText().trim();
-        String password = txtPassword.getText();
-        String phone = txtPhoneNumber.getText().trim();
 
         PaymentDetails payment = new PaymentDetails(
                 txtCardNumber.getText().trim(),
@@ -204,7 +199,19 @@ public class RegisterPageController {
                 txtExpiryYear.getText().trim()
         );
 
-        // Send to Server
+        submitRegistration(payment);
+    }
+
+    private void submitRegistration(PaymentDetails payment) {
+        showMessage("Processing registration...", Color.web("#5dade2"));
+
+        String firstName = txtFirstName.getText().trim();
+        String lastName = txtLastName.getText().trim();
+        String email = txtEmail.getText().trim();
+        String username = txtUsername.getText().trim();
+        String password = txtPassword.getText();
+        String phone = txtPhoneNumber.getText().trim();
+
         new Thread(() -> {
             try {
                 ArrayList<Object> data = new ArrayList<>();

@@ -38,8 +38,8 @@ public class RegisterHandler implements RequestHandler {
                         AuthResponse.failure("Email already registered."));
             }
 
-            // 2. Validate against external credit system (Mock)
-            if (!validatePaymentWithExternalSystem(payment)) {
+            // 2. Validate against external credit system (Mock) — skip if no payment provided
+            if (payment != null && !validatePaymentWithExternalSystem(payment)) {
                 return new Message(ActionType.REGISTER_RESPONSE,
                         AuthResponse.failure("Credit card authorization failed."));
             }
