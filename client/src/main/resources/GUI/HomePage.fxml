@@ -15,7 +15,7 @@
 <?import javafx.scene.paint.Color?>
 
 
-<BorderPane style="-fx-background-color: transparent;" styleClass="bg-home-dim" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.HomePageController">
+<BorderPane style="-fx-background-color: transparent;" styleClass="bg-home4" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.HomePageController">
    <top>
       <AnchorPane style="-fx-background-color: transparent;" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>

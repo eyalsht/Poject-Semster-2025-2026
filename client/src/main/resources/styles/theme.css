@@ -22,6 +22,69 @@
     -fx-background-blend-mode: multiply;
 }
 
+.bg-home1 {
+    -fx-background-image: url("../images/backgrounds/home_bg1.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+
+    -fx-background-color: rgba(0,0,0,0.35);
+    -fx-background-blend-mode: multiply;
+}
+
+.bg-home2 {
+    -fx-background-image: url("../images/backgrounds/home_bg2.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+
+    -fx-background-color: rgba(0,0,0,0.35);
+    -fx-background-blend-mode: multiply;
+}
+
+.bg-home3 {
+    -fx-background-image: url("../images/backgrounds/home_bg3.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+
+    -fx-background-color: rgba(0,0,0,0.35);
+    -fx-background-blend-mode: multiply;
+}
+
+.bg-home4 {
+    -fx-background-image: url("../images/backgrounds/home_bg4.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+
+    -fx-background-color: rgba(0,0,0,0.35);
+    -fx-background-blend-mode: multiply;
+}
+
+
+.bg-home5 {
+    -fx-background-image: url("../images/backgrounds/home_bg5.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+
+    -fx-background-color: rgba(0,0,0,0.35);
+    -fx-background-blend-mode: multiply;
+}
+
+
+.bg-home6 {
+    -fx-background-image: url("../images/backgrounds/home_bg6.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+
+    -fx-background-color: rgba(0,0,0,0.35);
+    -fx-background-blend-mode: multiply;
+}
+
+
 /* Utility: keep background visible through panes */
 .transparent-pane,
 .transparent-page,

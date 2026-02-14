@@ -15,7 +15,7 @@
 <?import javafx.scene.paint.Color?>
 
 
-<BorderPane style="-fx-background-color: transparent;" styleClass="bg-home-dim" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.HomePageController">
+<BorderPane style="-fx-background-color: transparent;" styleClass="bg-home4" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.HomePageController">
    <top>
       <AnchorPane style="-fx-background-color: transparent;" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
@@ -66,6 +66,18 @@
                </VBox.margin></Button>
 
             <Button fx:id="btnCatalog" mnemonicParsing="false" onAction="#onCatalog" prefHeight="30.0" prefWidth="150.0" text="Catalog">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+
+            <Button fx:id="btnMySubscriptions" managed="false" mnemonicParsing="false" onAction="#onMySubscriptions" prefHeight="30.0" prefWidth="150.0" text="Subscriptions" visible="false">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+
+            <Button fx:id="btnMyMaps" managed="false" mnemonicParsing="false" onAction="#onMyMaps" prefHeight="30.0" prefWidth="150.0" text="My Maps" visible="false">
                <VBox.margin>
                   <Insets left="5.0" right="5.0" top="10.0" />
                </VBox.margin>

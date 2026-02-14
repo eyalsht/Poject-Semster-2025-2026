@@ -10,43 +10,61 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ApprovalPendingPageController">
+<?import java.lang.String?>
+<AnchorPane prefHeight="650.0" prefWidth="500.0" style="-fx-background-color: rgba(0,0,0,0.65);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ApprovalPendingPageController">
+   <stylesheets>
+      <String fx:value="@../styles/theme.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1"/>
+   </stylesheets>
    <children>
       <!-- Title -->
-      <HBox alignment="CENTER" prefHeight="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
+      <VBox alignment="CENTER" spacing="4.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
          <children>
-            <Label text="Pending Approvals">
+            <Label fx:id="lblTitle" text="Pending Approvals" style="-fx-text-fill: white;">
                <font>
                   <Font name="System Bold" size="24.0" />
                </font>
             </Label>
+            <Label fx:id="lblSubtitle" text="" style="-fx-text-fill: rgba(255,255,255,0.50); -fx-font-style: italic;">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
          </children>
-      </HBox>
-      
-      <!-- Table -->
-      <VBox AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="70.0" AnchorPane.bottomAnchor="100.0">
+         <padding>
+            <Insets bottom="10.0" />
+         </padding>
+      </VBox>
+
+      <!-- Table wrapped in glass card -->
+      <VBox style="-fx-background-color: rgba(0,0,0,0.30); -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: rgba(255,255,255,0.12); -fx-border-width: 1; -fx-padding: 8;" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="85.0" AnchorPane.bottomAnchor="110.0">
          <children>
              <TableView fx:id="tblPending" VBox.vgrow="ALWAYS">
                  <columns>
                      <TableColumn fx:id="colType" prefWidth="80.0" text="Type"/>
-                     <TableColumn fx:id="colTarget" prefWidth="250.0" text="Target"/>
+                     <TableColumn fx:id="colTarget" prefWidth="220.0" text="Target"/>
                      <TableColumn fx:id="colInfo" prefWidth="150.0" text="Info"/>
                  </columns>
              </TableView>
          </children>
       </VBox>
-      
+
       <!-- Status Label -->
-      <Label fx:id="lblStatus" layoutY="320.0" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="20.0"/>
-      
+      <Label fx:id="lblStatus" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="20.0" style="-fx-text-fill: white; -fx-font-size: 13;"/>
+
       <!-- Buttons -->
       <HBox alignment="CENTER_RIGHT" spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0">
          <children>
-            <Button fx:id="btnApprove" mnemonicParsing="false" onAction="#onApprove" prefWidth="100.0" 
-                    style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Approve"/>
-            <Button fx:id="btnDeny" mnemonicParsing="false" onAction="#onDeny" prefWidth="100.0" 
-                    style="-fx-background-color: #f44336; -fx-text-fill: white;" text="Deny"/>
-            <Button mnemonicParsing="false" onAction="#onClose" prefWidth="100.0" text="Close">
+            <Button fx:id="btnApprove" mnemonicParsing="false" onAction="#onApprove" prefWidth="100.0"
+                    style="-fx-background-color: rgba(76,175,80,0.55); -fx-text-fill: white; -fx-border-color: rgba(76,175,80,0.80); -fx-border-radius: 10; -fx-background-radius: 10; -fx-cursor: hand;" text="Approve">
+               <font><Font name="System Bold" size="13.0" /></font>
+            </Button>
+            <Button fx:id="btnDeny" mnemonicParsing="false" onAction="#onDeny" prefWidth="100.0"
+                    style="-fx-background-color: rgba(244,67,54,0.55); -fx-text-fill: white; -fx-border-color: rgba(244,67,54,0.80); -fx-border-radius: 10; -fx-background-radius: 10; -fx-cursor: hand;" text="Deny">
+               <font><Font name="System Bold" size="13.0" /></font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#onClose" prefWidth="100.0"
+                    style="-fx-background-color: rgba(255,255,255,0.10); -fx-text-fill: white; -fx-border-color: rgba(255,255,255,0.20); -fx-border-radius: 10; -fx-background-radius: 10; -fx-cursor: hand;" text="Close">
+               <font><Font name="System Bold" size="13.0" /></font>
                <HBox.margin>
                   <Insets left="20.0"/>
                </HBox.margin>

@@ -1,50 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.effect.DropShadow?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
 
-<VBox fx:id="mapCardRoot" alignment="TOP_CENTER" prefHeight="260.0" prefWidth="200.0"
-      spacing="8.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #dcdde1;"
-      xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="controllers.MapCardController" onMouseClicked="#onMapClicked">
+<HBox fx:id="mapCardRoot" alignment="CENTER_LEFT" onMouseClicked="#onMapClicked" prefHeight="140.0" prefWidth="900.0" spacing="0.0" style="-fx-background-color: #ffffff; -fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: #dcdde1; -fx-cursor: hand;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MapCardController">
     <children>
-        <ImageView fx:id="imgMap" fitHeight="130.0" fitWidth="170.0" pickOnBounds="true" preserveRatio="true">
-            <VBox.margin>
-                <Insets top="10.0" />
-            </VBox.margin>
-        </ImageView>
 
-        <Label fx:id="lblMapName" text="Map Name" textFill="#2f3640">
-            <font>
-                <Font name="System Bold" size="16.0" />
-            </font>
-        </Label>
+        <VBox alignment="TOP_LEFT" HBox.hgrow="ALWAYS" spacing="10.0">
+            <children>
+                <Label fx:id="lblMapName" text="Map Name" style="-fx-text-fill: #2f3640; -fx-font-size: 22px; -fx-font-weight: bold;" />
 
-        <Label fx:id="lblVersion" text="Version: 1.0" textFill="#7f8c8d">
-            <font>
-                <Font size="12.0" />
-            </font>
-        </Label>
+                <Label fx:id="lblDescription" lineSpacing="1.2" text="Full detailed description will appear here, stretching across multiple lines to provide all the rich information about the map." style="-fx-text-fill: #7f8c8d; -fx-font-size: 15px;" wrapText="true" />
+            </children>
+            <padding>
+                <Insets bottom="15.0" left="25.0" right="20.0" top="15.0" />
+            </padding>
+        </VBox>
 
-        <Label fx:id="lblMapPrice" text="Price: $0.00" textFill="#e67e22">
-            <font>
-                <Font name="System Bold" size="14.0" />
-            </font>
-        </Label>
+        <VBox minWidth="1.5" prefWidth="1.5" style="-fx-background-color: #f1f2f6;">
+            <HBox.margin>
+                <Insets bottom="20.0" top="20.0" />
+            </HBox.margin>
+        </VBox>
+
+        <VBox alignment="CENTER" minWidth="180.0" prefWidth="180.0" spacing="10.0" style="-fx-background-color: #fafafa; -fx-background-radius: 0 15 15 0;">
+            <children>
+                <Label fx:id="lblMapPrice" text="Price: $0.00" style="-fx-text-fill: #e67e22; -fx-font-size: 18px; -fx-font-weight: bold;" />
+                <Label fx:id="lblVersion" text="Version: 1.0" style="-fx-text-fill: #bdc3c7; -fx-font-size: 13px;" />
+                <Button fx:id="btnBuy" managed="false" mnemonicParsing="false" onAction="#onBuy" prefHeight="32.0" prefWidth="140.0" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand;" text="Buy" visible="false" />
+                <Label fx:id="lblSubscription" managed="false" text="Via Subscription" style="-fx-text-fill: #2980b9; -fx-font-size: 12px; -fx-font-weight: bold;" visible="false" />
+            </children>
+            <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+            </padding>
+        </VBox>
+
     </children>
-    <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
-    </padding>
     <effect>
-        <DropShadow blurType="GAUSSIAN" height="10.0" radius="4.5" width="10.0">
+        <DropShadow blurType="GAUSSIAN" height="20.0" radius="9.5" width="20.0">
             <color>
-                <Color opacity="0.1" />
+                <Color opacity="0.12" />
             </color>
         </DropShadow>
     </effect>
-</VBox>
+</HBox>

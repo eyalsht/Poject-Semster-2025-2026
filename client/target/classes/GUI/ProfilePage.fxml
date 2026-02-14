@@ -20,50 +20,45 @@
          </font></Label>
 
       <!-- Profile info -->
-      <GridPane hgap="15" layoutX="140.0" layoutY="100.0" vgap="12">
+      <GridPane hgap="15" layoutX="140.0" layoutY="80.0" vgap="12">
          <children>
+            <!-- Row 0: Name -->
             <Label text="Name:" textFill="#388e3c" GridPane.columnIndex="0" GridPane.rowIndex="0">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
+               <font><Font name="System Bold" size="12.0" /></font></Label>
             <Label fx:id="lblName" text="-" textFill="#2e7d32" GridPane.columnIndex="1" GridPane.rowIndex="0">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
+               <font><Font name="System Bold" size="12.0" /></font></Label>
 
+            <!-- Row 1: Email -->
             <Label text="Email:" textFill="#388e3c" GridPane.columnIndex="0" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
+               <font><Font name="System Bold" size="12.0" /></font></Label>
             <Label fx:id="lblEmail" text="-" textFill="#2e7d32" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
+               <font><Font name="System Bold" size="12.0" /></font></Label>
 
-            <Label text="Payment:" textFill="#388e3c" GridPane.columnIndex="0" GridPane.rowIndex="2">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
-            <Label fx:id="lblPayment" text="-" textFill="#2e7d32" GridPane.columnIndex="1" GridPane.rowIndex="2">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
+            <!-- Row 2: Role (employees only, hidden by default) -->
+            <Label fx:id="lblRoleLabel" text="Role:" textFill="#388e3c" visible="false" managed="false" GridPane.columnIndex="0" GridPane.rowIndex="2">
+               <font><Font name="System Bold" size="12.0" /></font></Label>
+            <Label fx:id="lblRoleValue" text="-" textFill="#2e7d32" visible="false" managed="false" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <font><Font name="System Bold" size="12.0" /></font></Label>
 
-            <Label text="Inbox:" textFill="#388e3c" GridPane.columnIndex="0" GridPane.rowIndex="3">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
-            <Label fx:id="lblInbox" text="You have 0 new messages" textFill="#388e3c" GridPane.columnIndex="1" GridPane.rowIndex="3">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
-            <Button fx:id="btnOpenInbox" onAction="#onOpenInbox" text="Open" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <!-- Row 3: Payment (clients only) -->
+            <Label fx:id="lblPaymentLabel" text="Payment:" textFill="#388e3c" GridPane.columnIndex="0" GridPane.rowIndex="3">
+               <font><Font name="System Bold" size="12.0" /></font></Label>
+            <Label fx:id="lblPayment" text="-" textFill="#2e7d32" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <font><Font name="System Bold" size="12.0" /></font></Label>
+            <Button fx:id="btnChangePayment" managed="false" mnemonicParsing="false" onAction="#onChangePayment" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5;" text="Change" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="3" />
 
-            <Label text="Purchase history:" textFill="#388e3c" GridPane.columnIndex="0" GridPane.rowIndex="4">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
-            <Label fx:id="lblHistory" text="(coming soon)" textFill="#388e3c" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <!-- Row 4: Inbox -->
+            <Label text="Inbox:" textFill="#388e3c" GridPane.columnIndex="0" GridPane.rowIndex="4">
+               <font><Font name="System Bold" size="12.0" /></font></Label>
+            <Label fx:id="lblInbox" text="You have 0 new messages" textFill="#388e3c" GridPane.columnIndex="1" GridPane.rowIndex="4">
+               <font><Font name="System Bold" size="12.0" /></font></Label>
+            <Button fx:id="btnOpenInbox" onAction="#onOpenInbox" text="Open" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+
+            <!-- Row 5: Purchase History button (clients only, hidden by default) -->
+            <Button fx:id="btnPurchaseHistory" mnemonicParsing="false" onAction="#onPurchaseHistory"
+                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"
+                    text="Purchase History" visible="false" managed="false"
+                    GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2" />
          </children>
          <columnConstraints>
             <ColumnConstraints />
@@ -76,14 +71,14 @@
             <RowConstraints />
             <RowConstraints />
             <RowConstraints />
+            <RowConstraints />
          </rowConstraints>
       </GridPane>
 
       <!-- Inbox table -->
-      <Label layoutX="140.0" layoutY="280.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Inbox messages:" />
+      <Label layoutX="140.0" layoutY="320.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Inbox messages:" textFill="#a0b0a0" />
 
-      <TableView fx:id="tblInbox" layoutX="140.0" layoutY="310.0" prefHeight="330.0" prefWidth="720.0">
-
+      <TableView fx:id="tblInbox" layoutX="140.0" layoutY="350.0" prefHeight="300.0" prefWidth="720.0">
          <columns>
             <TableColumn fx:id="colFrom" prefWidth="140.0" text="From" />
             <TableColumn fx:id="colSubject" prefWidth="260.0" text="Topic" />

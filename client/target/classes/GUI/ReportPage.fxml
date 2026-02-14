@@ -24,7 +24,7 @@
         <!-- ===== TITLE ===== -->
         <HBox alignment="CENTER" prefHeight="40.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0">
             <children>
-                <Label text="Welcome to report generator!">
+                <Label text="Welcome to report generator!" textFill="#388e3c">
                     <font>
                         <Font name="System Bold" size="16.0" />
                     </font>
@@ -35,28 +35,40 @@
         <!-- ===== CONTROLS ===== -->
         <VBox layoutY="45.0" spacing="5" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
 
-            <HBox spacing="20">
+            <HBox prefHeight="53.0" prefWidth="879.0" spacing="20">
 
                 <VBox>
-                    <Label text="Choose Report:" />
+                    <Label text="Choose Report:" textFill="#388e3c">
+                  <font>
+                     <Font name="System Bold" size="12.0" />
+                  </font></Label>
                     <ComboBox fx:id="cmbReportType" prefWidth="180.0" />
                 </VBox>
 
                 <VBox>
-                    <Label text="Choose City:" />
+                    <Label text="Choose City:" textFill="#388e3c">
+                  <font>
+                     <Font name="System Bold" size="12.0" />
+                  </font></Label>
                     <ComboBox fx:id="cmbCity" prefWidth="180.0" />
                 </VBox>
             <VBox>
                <children>
       
-                      <Label text="From:" />
+                      <Label text="From:" textFill="#388e3c">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Label>
                       <DatePicker fx:id="dpFrom" prefWidth="140.0" />
                </children>
             </VBox>
             <VBox>
                <children>
       
-                      <Label text="To:" />
+                      <Label text="To:" textFill="#388e3c">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Label>
                       <DatePicker fx:id="dpTo" prefWidth="140.0" />
                </children>
             </VBox>
@@ -70,19 +82,15 @@
             </HBox>
         </VBox>
 
-        <Separator layoutX="10.0" layoutY="96.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.799999999999955" />
+        <Separator layoutX="10.0" layoutY="109.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.799999999999955" />
 
         <!-- ===== CHARTS ===== -->
         <!-- ===== REPORT AREA (reactive) ===== -->
-        <StackPane fx:id="reportArea"
-                   AnchorPane.topAnchor="125.0"
-                   AnchorPane.bottomAnchor="55.0"
-                   AnchorPane.leftAnchor="11.0"
-                   AnchorPane.rightAnchor="11.0">
+        <StackPane fx:id="reportArea" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="125.0">
 
 
         <!-- Big placeholder -->
-            <Label fx:id="lblChooseReport" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #666;" text="Choose a report!" StackPane.alignment="TOP_CENTER" />
+            <Label fx:id="lblChooseReport" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #8e44ad; " text="Choose a report!" StackPane.alignment="TOP_CENTER" />
 
             <!-- Actual content -->
             <HBox fx:id="reportContent" alignment="CENTER_LEFT" spacing="20">
@@ -114,8 +122,7 @@
 
 
         <!-- ===== EXPORT BUTTON ===== -->
-        <Button fx:id="btnExportPdf" text="Export as PDF" onAction="#onExportPdf"
-                AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="20.0" />
+        <Button fx:id="btnExportPdf" onAction="#onExportPdf" text="Export as PDF" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="20.0" />
 
 
     </children>

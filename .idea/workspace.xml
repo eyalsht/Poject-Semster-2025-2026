@@ -4,15 +4,38 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="STYLE CHANGE! Tables+Buttons">
+    <list default="true" id="daf1f094-a012-43d8-ac64-4db916cff039" name="Changes" comment="Reports changes">
+      <change afterPath="$PROJECT_DIR$/client/src/main/resources/images/backgrounds/home_bg1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/resources/images/backgrounds/home_bg2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/resources/images/backgrounds/home_bg3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/resources/images/backgrounds/home_bg4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/resources/images/backgrounds/home_bg5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/resources/images/backgrounds/home_bg6.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/LoginPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/LoginPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/WelcomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/WelcomePage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/resources/GUI/HomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/GUI/HomePage.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/resources/styles/theme.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/resources/styles/theme.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/LoginPage.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/WelcomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/WelcomePage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ApprovalPendingPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/ApprovalPendingPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/CatalogPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/CatalogPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/HomePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/HomePage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/MapCard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/MapCard.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ProfilePage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/ProfilePage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/RegisterPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/RegisterPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/GUI/ReportPage.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/client/GCMClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/client/GCMClient.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ApprovalPendingPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ApprovalPendingPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CatalogPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/CityCardController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/HomePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/HomePageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/MapCardController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/MapCardController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/ProfilePageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/classes/controllers/RegisterPageController.class" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/classes/controllers/RegisterPageController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/client-1.0-SNAPSHOT.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/client/target/original-client-1.0-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/server/ocsf/ConnectionToClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/server/ocsf/ConnectionToClient.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -230,111 +253,8 @@
       <workItem from="1768902974675" duration="8851000" />
       <workItem from="1769289038709" duration="7298000" />
       <workItem from="1769619561728" duration="8610000" />
-      <workItem from="1769692062871" duration="18717000" />
-    </task>
-    <task id="LOCAL-00006" summary="New image">
-      <option name="closed" value="true" />
-      <created>1767162931929</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1767162931929</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Login change">
-      <option name="closed" value="true" />
-      <created>1767165302761</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1767165302761</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Home page change buttons">
-      <option name="closed" value="true" />
-      <created>1767167274314</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1767167274314</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Home page change buttons">
-      <option name="closed" value="true" />
-      <created>1767168154291</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1767168154291</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Server + DB update and close button closes both main and server">
-      <option name="closed" value="true" />
-      <created>1767188480490</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1767188480490</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Server + DB update and close button closes both main and server">
-      <option name="closed" value="true" />
-      <created>1767188751116</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1767188751116</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Server + DB update and close button closes both main and server">
-      <option name="closed" value="true" />
-      <created>1767188800152</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1767188800152</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Server + DB update and close button closes both main and server">
-      <option name="closed" value="true" />
-      <created>1767262518662</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1767262518662</updated>
-    </task>
-    <task id="LOCAL-00014" summary="User Role file">
-      <option name="closed" value="true" />
-      <created>1767262751104</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1767262751104</updated>
-    </task>
-    <task id="LOCAL-00015" summary="Add map page">
-      <option name="closed" value="true" />
-      <created>1767262863410</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1767262863410</updated>
-    </task>
-    <task id="LOCAL-00016" summary="Additional windowses+login+profile+catalog">
-      <option name="closed" value="true" />
-      <created>1767533389757</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1767533389757</updated>
-    </task>
-    <task id="LOCAL-00017" summary="Additional windowses+login+profile+catalog">
-      <option name="closed" value="true" />
-      <created>1767533436615</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1767533436615</updated>
-    </task>
-    <task id="LOCAL-00018" summary="Additional windowses+login+profile+catalog">
-      <option name="closed" value="true" />
-      <created>1767533480838</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1767533480838</updated>
+      <workItem from="1769692062871" duration="74583000" />
+      <workItem from="1770997589064" duration="1645000" />
     </task>
     <task id="LOCAL-00019" summary="new data">
       <option name="closed" value="true" />
@@ -624,7 +544,111 @@
       <option name="project" value="LOCAL" />
       <updated>1769898304364</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="STYLE CHANGE! Tables+Buttons 2">
+      <option name="closed" value="true" />
+      <created>1769924898535</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1769924898535</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Support update +Profile change to messeges">
+      <option name="closed" value="true" />
+      <created>1770847843739</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1770847843739</updated>
+    </task>
+    <task id="LOCAL-00057" summary="Profile change to purchase history">
+      <option name="closed" value="true" />
+      <created>1770848994500</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1770848994500</updated>
+    </task>
+    <task id="LOCAL-00058" summary="Reports changes">
+      <option name="closed" value="true" />
+      <created>1770851164752</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1770851164752</updated>
+    </task>
+    <task id="LOCAL-00059" summary="Reports changes">
+      <option name="closed" value="true" />
+      <created>1770852487181</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1770852487181</updated>
+    </task>
+    <task id="LOCAL-00060" summary="Reports changes">
+      <option name="closed" value="true" />
+      <created>1770852930716</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1770852930716</updated>
+    </task>
+    <task id="LOCAL-00061" summary="Reports changes">
+      <option name="closed" value="true" />
+      <created>1770856815988</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1770856815988</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Support changes">
+      <option name="closed" value="true" />
+      <created>1770966828370</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1770966828370</updated>
+    </task>
+    <task id="LOCAL-00063" summary="Support changes">
+      <option name="closed" value="true" />
+      <created>1770970223487</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1770970223487</updated>
+    </task>
+    <task id="LOCAL-00064" summary="Support changes">
+      <option name="closed" value="true" />
+      <created>1770972006606</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1770972006606</updated>
+    </task>
+    <task id="LOCAL-00065" summary="Support changes">
+      <option name="closed" value="true" />
+      <created>1770972661556</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1770972661556</updated>
+    </task>
+    <task id="LOCAL-00066" summary="Support changes">
+      <option name="closed" value="true" />
+      <created>1770985302165</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1770985302165</updated>
+    </task>
+    <task id="LOCAL-00067" summary="Reports changes">
+      <option name="closed" value="true" />
+      <created>1770986817840</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1770986817840</updated>
+    </task>
+    <option name="localTasksCounter" value="68" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -642,11 +666,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="new data" />
-    <MESSAGE value="new windows" />
-    <MESSAGE value="new" />
-    <MESSAGE value="small changes" />
-    <MESSAGE value="small changes +Reports" />
     <MESSAGE value="Client report ver 0.1 - Reports" />
     <MESSAGE value="Client report ver 0.2 - Reports" />
     <MESSAGE value="Activity report ver 0.1 - Reports" />
@@ -667,6 +686,11 @@
     <MESSAGE value="STYLE CHANGE!!!!" />
     <MESSAGE value="STYLE CHANGE!!!! Fade testing" />
     <MESSAGE value="STYLE CHANGE! Tables+Buttons" />
-    <option name="LAST_COMMIT_MESSAGE" value="STYLE CHANGE! Tables+Buttons" />
+    <MESSAGE value="STYLE CHANGE! Tables+Buttons 2" />
+    <MESSAGE value="Support update +Profile change to messeges" />
+    <MESSAGE value="Profile change to purchase history" />
+    <MESSAGE value="Support changes" />
+    <MESSAGE value="Reports changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Reports changes" />
   </component>
 </project>
