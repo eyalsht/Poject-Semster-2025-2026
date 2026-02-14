@@ -46,6 +46,13 @@ public class GetCatalogHandler implements RequestHandler {
                 filter.getMapName(),
                 filter.getVersion()
             );
+
+            // Strip heavy blob data before sending — catalog only needs name/price/imagePath
+            for (GCMMap map : maps) {
+                map.setMapImage(null);
+                map.setSiteMarkersJson(null);
+            }
+
             response.setMaps(new ArrayList<>(maps));
 
             // Populate available map names (for selected city, or all if no city selected)
@@ -85,6 +92,14 @@ public class GetCatalogHandler implements RequestHandler {
             Long mapCount = (Long) row[1];
             Long siteCount = (Long) row[2];
             Long tourCount = (Long) row[3];
+
+            // Strip heavy blob data from eagerly-loaded maps
+            if (city.getMaps() != null) {
+                for (GCMMap m : city.getMaps()) {
+                    m.setMapImage(null);
+                    m.setSiteMarkersJson(null);
+                }
+            }
 
             CatalogResponse.CitySearchResult result = new CatalogResponse.CitySearchResult();
             result.setCity(city);
