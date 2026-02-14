@@ -35,7 +35,12 @@
 
                     <children>
                         <Label text="Card Number:" textFill="WHITE" GridPane.rowIndex="0" />
-                        <TextField fx:id="txtCardNumber" promptText="XXXXXXXXXXXXXXXX" style="-fx-control-inner-background: rgba(0,0,0,0.45); -fx-background-color: rgba(0,0,0,0.45); -fx-text-fill: white; -fx-prompt-text-fill: rgba(255,255,255,0.45); -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: rgba(255,255,255,0.18); -fx-padding: 8;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <TextField fx:id="txtCardNumber" promptText="XXXXXXXXXXXXXXXX" style="-fx-control-inner-background: rgba(0,0,0,0.45); -fx-background-color: rgba(0,0,0,0.45); -fx-text-fill: white; -fx-prompt-text-fill: rgba(255,255,255,0.45); -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: rgba(255,255,255,0.18); -fx-padding: 8;" />
+                            <Label text="16 digits" textFill="#8899aa">
+                                <font><Font size="10.0" /></font>
+                            </Label>
+                        </VBox>
 
                         <Label text="Expiry (MM/YY):" textFill="WHITE" GridPane.rowIndex="1" />
                         <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -43,11 +48,22 @@
                                 <TextField fx:id="txtExpiryMonth" prefWidth="55.0" promptText="MM" style="-fx-control-inner-background: rgba(0,0,0,0.45); -fx-background-color: rgba(0,0,0,0.45); -fx-text-fill: white; -fx-prompt-text-fill: rgba(255,255,255,0.45); -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: rgba(255,255,255,0.18); -fx-padding: 8;" />
                                 <Label text="/" textFill="WHITE" />
                                 <TextField fx:id="txtExpiryYear" prefWidth="55.0" promptText="YY" style="-fx-control-inner-background: rgba(0,0,0,0.45); -fx-background-color: rgba(0,0,0,0.45); -fx-text-fill: white; -fx-prompt-text-fill: rgba(255,255,255,0.45); -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: rgba(255,255,255,0.18); -fx-padding: 8;" />
+                                <Label text="(e.g. 05 / 28)" textFill="#8899aa">
+                                    <padding><Insets left="10.0" /></padding>
+                                    <font><Font size="10.0" /></font>
+                                </Label>
                             </children>
                         </HBox>
 
                         <Label text="CVV:" textFill="WHITE" GridPane.rowIndex="2" />
-                        <TextField fx:id="txtCVV" prefWidth="70.0" promptText="123" style="-fx-control-inner-background: rgba(0,0,0,0.45); -fx-background-color: rgba(0,0,0,0.45); -fx-text-fill: white; -fx-prompt-text-fill: rgba(255,255,255,0.45); -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: rgba(255,255,255,0.18); -fx-padding: 8;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <children>
+                                <TextField fx:id="txtCVV" prefWidth="70.0" promptText="123" style="-fx-control-inner-background: rgba(0,0,0,0.45); -fx-background-color: rgba(0,0,0,0.45); -fx-text-fill: white; -fx-prompt-text-fill: rgba(255,255,255,0.45); -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: rgba(255,255,255,0.18); -fx-padding: 8;" />
+                                <Label text="3 digits on back" textFill="#8899aa">
+                                    <font><Font size="10.0" /></font>
+                                </Label>
+                            </children>
+                        </HBox>
                     </children>
                 </GridPane>
 
