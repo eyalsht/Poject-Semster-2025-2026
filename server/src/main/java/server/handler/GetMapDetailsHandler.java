@@ -94,15 +94,26 @@ public class GetMapDetailsHandler implements RequestHandler {
                     ct.setDescription(t.getDescription());
                     ct.setRecommendedDuration(t.getRecommendedDuration());
 
-                    // Map tour sites to clean site references
+                    // Include ALL tour sites so getAvailableTours() containsAll() works correctly.
+                    // Reuse clean site refs for sites on this map; create standalone copies for others.
                     List<Site> tourSites = new ArrayList<>();
                     if (t.getSites() != null) {
                         for (Site ts : t.getSites()) {
+                            Site matched = null;
                             for (Site cs : cleanSites) {
                                 if (cs.getId() == ts.getId()) {
-                                    tourSites.add(cs);
+                                    matched = cs;
                                     break;
                                 }
+                            }
+                            if (matched != null) {
+                                tourSites.add(matched);
+                            } else {
+                                // Site not on this map — still include it so containsAll returns false
+                                Site other = new Site();
+                                other.setId(ts.getId());
+                                other.setName(ts.getName());
+                                tourSites.add(other);
                             }
                         }
                     }

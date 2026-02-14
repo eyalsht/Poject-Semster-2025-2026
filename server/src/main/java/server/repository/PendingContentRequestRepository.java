@@ -440,6 +440,15 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
                 tour.addSite(site);
             }
         }
+
+        // Use manually-set duration if provided, otherwise auto-calculate from sites
+        String duration = extractJsonValue(json, "recommendedDuration");
+        if (duration != null && !duration.trim().isEmpty()) {
+            tour.setRecommendedDuration(duration);
+        } else {
+            updateTourDuration(tour);
+        }
+
         city.addTour(tour);
 
         session.persist(tour);
@@ -480,7 +489,13 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
                 }
             }
 
-            updateTourDuration(existingTour);
+            // Use manually-set duration if provided, otherwise auto-calculate from sites
+            String duration = extractJsonValue(json, "recommendedDuration");
+            if (duration != null && !duration.trim().isEmpty()) {
+                existingTour.setRecommendedDuration(duration);
+            } else {
+                updateTourDuration(existingTour);
+            }
             session.merge(existingTour);
             session.merge(existingTour);
             System.out.println("Approved Update: Tour " + existingTour.getName() + " (ID: " + targetId + ")");

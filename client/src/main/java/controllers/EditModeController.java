@@ -712,6 +712,10 @@ public class EditModeController {
         HBox descRow = createEditableTextAreaRow("Description", isNewTour ? "" : tour.getDescription(), prefix + "_desc");
         vboxTourEditor.getChildren().add(descRow);
 
+        // Duration
+        HBox durRow = createEditableFieldRow("Duration", isNewTour ? "" : tour.getRecommendedDuration(), prefix + "_dur");
+        vboxTourEditor.getChildren().add(durRow);
+
         // Tour sites section with ordering
         vboxTourEditor.getChildren().add(createTourSitesSection(tour));
 
@@ -1241,6 +1245,7 @@ public class EditModeController {
 
         String name = getFieldValue(prefix + "_name");
         String desc = getTextAreaValue(prefix + "_desc");
+        String duration = getFieldValue(prefix + "_dur");
         if (name == null || name.trim().isEmpty()) return null;
 
         String siteIds = "";
@@ -1249,7 +1254,7 @@ public class EditModeController {
                     .map(s -> String.valueOf(s.getId()))
                     .collect(Collectors.joining(","));
         }
-        String json = buildTourJson(name, desc, siteIds);
+        String json = buildTourJson(name, desc, duration, siteIds);
 
         User currentUser = client.getCurrentUser();
         Integer requesterId = currentUser != null ? currentUser.getId() : null;
@@ -1443,10 +1448,11 @@ public class EditModeController {
         return sb.toString();
     }
 
-    private String buildTourJson(String name, String description, String siteIds) {
+    private String buildTourJson(String name, String description, String duration, String siteIds) {
         StringBuilder sb = new StringBuilder("{");
         sb.append("\"name\":\"").append(escapeJson(name != null ? name : "")).append("\"");
         sb.append(",\"description\":\"").append(escapeJson(description != null ? description : "")).append("\"");
+        sb.append(",\"recommendedDuration\":\"").append(escapeJson(duration != null ? duration : "")).append("\"");
         sb.append(",\"siteIds\":\"").append(siteIds != null ? siteIds : "").append("\"");
         sb.append("}");
         return sb.toString();
