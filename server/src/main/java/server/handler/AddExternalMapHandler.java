@@ -28,28 +28,35 @@ public class AddExternalMapHandler implements RequestHandler {
             byte[] imageBytes = (byte[]) params.get(3);
 
             if (mapName == null || mapName.isBlank() || cityName == null || cityName.isBlank()) {
+                System.err.println("AddExternalMap: mapName or cityName is blank");
                 return new Message(ActionType.ADD_EXTERNAL_MAP_RESPONSE, false);
             }
 
             if (imageBytes == null || imageBytes.length == 0) {
+                System.err.println("AddExternalMap: imageBytes is null or empty");
                 return new Message(ActionType.ADD_EXTERNAL_MAP_RESPONSE, false);
             }
 
             try (Session session = HibernateUtil.getSessionFactory().openSession()) {
                 session.beginTransaction();
 
-                // Find or create city
-                City city = session.createQuery("FROM City c WHERE c.name = :name", City.class)
+                // Use a lightweight query to find city ID by name (avoids loading eager collections)
+                Integer cityId = (Integer) session.createNativeQuery(
+                        "SELECT id FROM cities WHERE name = :name")
                         .setParameter("name", cityName)
-                        .uniqueResultOptional()
-                        .orElse(null);
+                        .uniqueResult();
 
-                if (city == null) {
+                City city;
+                if (cityId != null) {
+                    // Use getReference to avoid loading the full entity graph
+                    city = session.getReference(City.class, cityId);
+                } else {
                     city = new City();
                     city.setName(cityName);
                     city.setDescription("Auto-created for external map: " + mapName);
                     city.setPriceSub(0);
                     session.persist(city);
+                    session.flush();
                 }
 
                 // Create external map
@@ -70,6 +77,7 @@ public class AddExternalMapHandler implements RequestHandler {
             }
 
         } catch (Exception e) {
+            System.err.println("AddExternalMap FAILED: " + e.getMessage());
             e.printStackTrace();
             return new Message(ActionType.ADD_EXTERNAL_MAP_RESPONSE, false);
         }
