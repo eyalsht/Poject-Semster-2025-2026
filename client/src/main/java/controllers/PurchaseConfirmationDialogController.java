@@ -240,6 +240,8 @@ public class PurchaseConfirmationDialogController {
             if (controller.isSaved()) {
                 lblStatus.setText("Payment updated! Click Retry to continue.");
                 lblStatus.setTextFill(javafx.scene.paint.Color.web("#2ecc71"));
+                btnUpdatePayment.setVisible(false);
+                btnUpdatePayment.setManaged(false);
             }
         } catch (Exception e) {
             e.printStackTrace();
