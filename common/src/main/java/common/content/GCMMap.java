@@ -33,7 +33,7 @@ public class GCMMap extends ContentItem implements Serializable {
     private String siteMarkersJson;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", columnDefinition = "VARCHAR(255)")
     private MapStatus status;
 
     // MANY Maps belong to ONE City
