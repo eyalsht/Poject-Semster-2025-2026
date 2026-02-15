@@ -187,16 +187,23 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
 
     private void createNewMap(org.hibernate.Session session, String json)
     {
+        // Check if this is an import from external repository
+        String externalMapIdStr = extractJsonValue(json, "externalMapId");
+        if (externalMapIdStr != null && !externalMapIdStr.isEmpty()) {
+            importExternalMap(session, Integer.parseInt(externalMapIdStr));
+            return;
+        }
+
         String cityName = extractJsonValue(json, "cityName");
         String mapName = extractJsonValue(json, "mapName");
         String description = extractJsonValue(json, "description");
-        
+
         // Find or create the city
         City city = session.createQuery("FROM City c WHERE c.name = :name", City.class)
             .setParameter("name", cityName)
             .uniqueResultOptional()
             .orElse(null);
-        
+
         if (city == null) {
             // Create new city if it doesn't exist
             city = new City();
@@ -204,7 +211,7 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
             city.setDescription("Auto-created for map: " + mapName);
             session.persist(city);
         }
-        
+
         // Create the new map
         GCMMap newMap = new GCMMap();
         newMap.setName(mapName);
@@ -213,9 +220,27 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
         newMap.setStatus(MapStatus.PUBLISHED);
         newMap.setPrice(0.0);  // Default price, to be set via price update workflow
         newMap.setCity(city);
-        
+
         session.persist(newMap);
         System.out.println("Created new map: " + mapName + " in city: " + cityName);
+    }
+
+    /**
+     * Import a map from the external repository into GCM.
+     * Changes status from EXTERNAL to PUBLISHED (price remains 0, set via Price Update).
+     */
+    private void importExternalMap(org.hibernate.Session session, int externalMapId) {
+        GCMMap map = session.get(GCMMap.class, externalMapId);
+        if (map == null) {
+            throw new RuntimeException("External map not found with ID: " + externalMapId);
+        }
+        if (map.getStatus() != MapStatus.EXTERNAL) {
+            throw new RuntimeException("Map ID " + externalMapId + " is not in EXTERNAL status");
+        }
+
+        map.setStatus(MapStatus.PUBLISHED);
+        session.merge(map);
+        System.out.println("Imported external map: " + map.getName() + " (ID: " + externalMapId + ") -> PUBLISHED");
     }
 
     private void updateExistingMap(org.hibernate.Session session, Integer mapId, String json)
@@ -293,19 +318,30 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
         System.out.println("Map update applied for ID: " + mapId);
     }
 
+    /**
+     * Revert a map back to the external repository instead of hard-deleting.
+     * Clears GCM-specific data (sites, markers, price) but keeps raw data (name, description, image, city).
+     */
     private void deleteMap(org.hibernate.Session session, Integer mapId)
     {
         if (mapId == null) {
             throw new RuntimeException("Cannot delete map: targetId is null");
         }
-        
+
         GCMMap map = session.get(GCMMap.class, mapId);
         if (map != null) {
             String mapName = map.getName();
-            session.remove(map);
-            System.out.println("Deleted map: " + mapName + " (ID: " + mapId + ")");
+            // Clear GCM-specific data
+            map.getSites().clear();
+            map.setSiteMarkersJson(null);
+            map.setPrice(0);
+            map.setVersion("1.0");
+            map.setStatus(MapStatus.EXTERNAL);
+            // Keep: name, description, mapImage, city (the "raw" external data)
+            session.merge(map);
+            System.out.println("Reverted map to external: " + mapName + " (ID: " + mapId + ")");
         } else {
-            System.out.println("Map not found for deletion, ID: " + mapId);
+            System.out.println("Map not found for revert, ID: " + mapId);
         }
     }
 

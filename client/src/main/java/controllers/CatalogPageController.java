@@ -64,6 +64,12 @@ public class CatalogPageController {
     private Button btnApprovals;
     @FXML
     private Button btnEditCity;
+    @FXML
+    private Button btnImportMap;
+    @FXML
+    private Button btnAddExternalMap;
+    @FXML
+    private Button btnAddCity;
 
 
     private final GCMClient client = GCMClient.getInstance();
@@ -333,6 +339,9 @@ public class CatalogPageController {
         setButtonState(btnEditCity, false);
         setButtonState(btnPriceUpdate, false);
         setButtonState(btnApprovals, false);
+        setButtonState(btnImportMap, false);
+        setButtonState(btnAddExternalMap, false);
+        setButtonState(btnAddCity, false);
 
         setManagementButtonsVisible(false);
 
@@ -347,12 +356,18 @@ public class CatalogPageController {
             switch (role) {
                 case CONTENT_WORKER:
                     setButtonState(btnEditCity, true);
+                    setButtonState(btnImportMap, true);
+                    setButtonState(btnAddExternalMap, true);
+                    setButtonState(btnAddCity, true);
                     break;
 
                 case CONTENT_MANAGER:
                     setButtonState(btnEditCity, true);
                     setButtonState(btnPriceUpdate, true);
                     setButtonState(btnApprovals, true);
+                    setButtonState(btnImportMap, true);
+                    setButtonState(btnAddExternalMap, true);
+                    setButtonState(btnAddCity, true);
                     break;
 
                 case COMPANY_MANAGER:
@@ -568,6 +583,92 @@ public class CatalogPageController {
         } else {
             showAlert("Error", "Failed to submit deletion request.");
         }
+    }
+
+    @FXML
+    private void onImportMap() {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/GUI/ImportMapDialog.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("Import Map from External System");
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            refreshCatalog();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not open Import Map dialog: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void onAddExternalMap() {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/GUI/AddExternalMapDialog.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("[TEMP] Add External Map");
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not open Add External Map dialog: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void onAddCity() {
+        TextInputDialog nameDialog = new TextInputDialog();
+        nameDialog.setTitle("[TEMP] Add City");
+        nameDialog.setHeaderText("Create a new city");
+        nameDialog.setContentText("City name:");
+
+        nameDialog.showAndWait().ifPresent(cityName -> {
+            if (cityName.isBlank()) {
+                showAlert("Error", "City name cannot be empty.");
+                return;
+            }
+
+            TextInputDialog descDialog = new TextInputDialog();
+            descDialog.setTitle("[TEMP] Add City");
+            descDialog.setHeaderText("City: " + cityName);
+            descDialog.setContentText("Description (optional):");
+
+            String description = descDialog.showAndWait().orElse("");
+
+            new Thread(() -> {
+                try {
+                    java.util.List<String> params = new java.util.ArrayList<>();
+                    params.add(cityName);
+                    params.add(description);
+
+                    Message request = new Message(ActionType.ADD_CITY_REQUEST, params);
+                    Message response = (Message) client.sendRequest(request);
+
+                    Platform.runLater(() -> {
+                        if (response != null && response.getAction() == ActionType.ADD_CITY_RESPONSE) {
+                            boolean success = (Boolean) response.getMessage();
+                            if (success) {
+                                showAlert("Success", "City '" + cityName + "' created successfully.");
+                            } else {
+                                showAlert("Error", "Failed to create city.");
+                            }
+                        } else if (response != null && response.getAction() == ActionType.ERROR) {
+                            showAlert("Error", String.valueOf(response.getMessage()));
+                        } else {
+                            showAlert("Error", "Unexpected server response.");
+                        }
+                    });
+                } catch (Exception e) {
+                    Platform.runLater(() -> showAlert("Error", "Error: " + e.getMessage()));
+                }
+            }).start();
+        });
     }
 
     @FXML

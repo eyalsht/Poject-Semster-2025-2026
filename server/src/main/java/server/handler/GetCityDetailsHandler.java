@@ -3,6 +3,7 @@ package server.handler;
 import common.content.City;
 import common.content.GCMMap;
 import common.enums.ActionType;
+import common.enums.MapStatus;
 import common.messaging.Message;
 import server.repository.CityRepository;
 
@@ -43,6 +44,9 @@ public class GetCityDetailsHandler implements RequestHandler {
             List<GCMMap> cleanMaps = new ArrayList<>();
             if (dbCity.getMaps() != null) {
                 for (GCMMap m : dbCity.getMaps()) {
+                    // Filter out EXTERNAL maps (they belong to the external repository)
+                    if (m.getStatus() == MapStatus.EXTERNAL) continue;
+
                     GCMMap cleanMap = new GCMMap();
                     cleanMap.setId(m.getId());
                     cleanMap.setName(m.getName());

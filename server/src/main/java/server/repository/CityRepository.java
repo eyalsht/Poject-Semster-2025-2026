@@ -1,6 +1,7 @@
 package server.repository;
 
 import common.content.City;
+import common.enums.MapStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,6 +62,23 @@ public class CityRepository extends BaseRepository<City, Integer> {
     }
 
     /**
+     * Get city names visible in the catalog:
+     * - priceSub > 0
+     * - has at least one non-EXTERNAL map with price > 0
+     */
+    public List<String> findCatalogCityNames() {
+        return executeQuery(session ->
+            session.createQuery(
+                "SELECT c.name FROM City c " +
+                "WHERE c.priceSub > 0 " +
+                "AND EXISTS (SELECT 1 FROM GCMMap m WHERE m.city = c AND m.status != :extStatus AND m.price > 0) " +
+                "ORDER BY c.name", String.class)
+                   .setParameter("extStatus", MapStatus.EXTERNAL)
+                   .getResultList()
+        );
+    }
+
+    /**
      * Get city with all its maps loaded (eager fetch).
      */
     public Optional<City> findByIdWithMaps(int cityId) {
@@ -97,22 +115,25 @@ public class CityRepository extends BaseRepository<City, Integer> {
             String pattern = "%" + searchQuery.toLowerCase() + "%";
             String hql = """
                 SELECT DISTINCT c,
-                       (SELECT COUNT(m) FROM GCMMap m WHERE m.city = c),
+                       (SELECT COUNT(m) FROM GCMMap m WHERE m.city = c AND m.status != :extStatus AND m.price > 0),
                        (SELECT COUNT(s) FROM Site s WHERE s.city = c),
                        (SELECT COUNT(t) FROM Tour t WHERE t.city = c)
                 FROM City c
                 LEFT JOIN c.sites s
                 LEFT JOIN c.tours t
-                WHERE LOWER(c.name) LIKE :pattern
+                WHERE c.priceSub > 0
+                  AND EXISTS (SELECT 1 FROM GCMMap m2 WHERE m2.city = c AND m2.status != :extStatus AND m2.price > 0)
+                  AND (LOWER(c.name) LIKE :pattern
                    OR LOWER(c.description) LIKE :pattern
                    OR LOWER(s.name) LIKE :pattern
                    OR LOWER(s.description) LIKE :pattern
                    OR LOWER(t.name) LIKE :pattern
-                   OR LOWER(t.description) LIKE :pattern
+                   OR LOWER(t.description) LIKE :pattern)
                 ORDER BY c.name
                 """;
             return session.createQuery(hql, Object[].class)
                 .setParameter("pattern", pattern)
+                .setParameter("extStatus", MapStatus.EXTERNAL)
                 .getResultList();
         });
     }

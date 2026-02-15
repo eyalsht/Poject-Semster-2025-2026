@@ -90,6 +90,11 @@ public class HandlerRegistry {
                 new GetSupportRequestsReportHandler());
 
 
+        // External Map System
+        register(ActionType.GET_EXTERNAL_MAPS_REQUEST, new GetExternalMapsHandler());
+        register(ActionType.ADD_EXTERNAL_MAP_REQUEST, new AddExternalMapHandler());
+        register(ActionType.ADD_CITY_REQUEST, new AddCityHandler());
+
         //Support
         register(ActionType.SUBMIT_SUPPORT_REQUEST, new SubmitSupportHandler());
         register(ActionType.CREATE_SUPPORT_TICKET, new CreateSupportTicketHandler());

@@ -141,6 +141,16 @@ public enum ActionType {
     REPLY_SUPPORT_TICKET,
     LIST_CLIENT_SUPPORT_REPLIES,
     MARK_SUPPORT_REPLY_READ,
+    // ==================== EXTERNAL MAP SYSTEM ====================
+    GET_EXTERNAL_MAPS_REQUEST,
+    GET_EXTERNAL_MAPS_RESPONSE,
+
+    ADD_EXTERNAL_MAP_REQUEST,       // Temp: add map to external repository
+    ADD_EXTERNAL_MAP_RESPONSE,
+
+    ADD_CITY_REQUEST,               // Temp: create a new city
+    ADD_CITY_RESPONSE,
+
     // ==================== NOTIFICATIONS ====================
     CATALOG_UPDATED_NOTIFICATION,
 

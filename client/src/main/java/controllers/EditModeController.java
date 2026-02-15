@@ -309,15 +309,14 @@ public class EditModeController {
         // Map-Site assignment section
         vboxMapEditor.getChildren().add(createMapSiteAssignmentSection(map));
 
-        // Delete button only — submit via "Submit Changes" in status bar
+        // Delete button — reverts map back to external system
         HBox btnBox = new HBox(10);
         btnBox.setAlignment(Pos.CENTER_RIGHT);
         btnBox.setPadding(new Insets(10, 0, 0, 0));
 
         Button btnDeleteMap = new Button("Delete Map");
         btnDeleteMap.getStyleClass().add("delete-button");
-        btnDeleteMap.setDisable(true);
-        btnDeleteMap.setTooltip(new Tooltip("Coming soon - requires transfer destination"));
+        btnDeleteMap.setOnAction(e -> onDeleteMap(map));
 
         btnBox.getChildren().add(btnDeleteMap);
         vboxMapEditor.getChildren().add(btnBox);
@@ -1297,6 +1296,27 @@ public class EditModeController {
                 submitContentChange(ContentActionType.DELETE, ContentType.TOUR, tour.getId(),
                         currentCity.getName() + " - " + tour.getName(), json,
                         "Tour deletion submitted for approval.");
+            }
+        });
+    }
+
+    private void onDeleteMap(GCMMap map) {
+        if (map == null || currentCity == null) return;
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirm Map Deletion");
+        confirm.setHeaderText("Delete Map: " + map.getName());
+        confirm.setContentText(
+                "This will revert the map to the external system, removing all GCM-specific data " +
+                "(sites, markers, price). Continue?");
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                String json = "{\"mapId\":" + map.getId() +
+                        ",\"mapName\":\"" + escapeJson(map.getName()) +
+                        "\",\"version\":\"" + escapeJson(map.getVersion()) + "\"}";
+                submitContentChange(ContentActionType.DELETE, ContentType.MAP, map.getId(),
+                        currentCity.getName() + " - " + map.getName(), json,
+                        "Map deletion (revert to external) submitted for approval.");
             }
         });
     }

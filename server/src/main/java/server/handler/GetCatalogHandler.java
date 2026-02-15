@@ -40,7 +40,7 @@ public class GetCatalogHandler implements RequestHandler {
 
             // Regular catalog mode
             // Always include all city names for the dropdown
-            List<String> allCityNames = cityRepository.findAllCityNames();
+            List<String> allCityNames = cityRepository.findCatalogCityNames();
             response.setAvailableCities(new ArrayList<>(allCityNames));
 
             // Get filtered maps

@@ -58,6 +58,9 @@
                 <Button fx:id="btnDeleteMap" managed="false" mnemonicParsing="false" onAction="#onDeleteMap" prefHeight="30.0" text="Delete Map" visible="false" />
                 <Button fx:id="btnPriceUpdate" mnemonicParsing="false" onAction="#onPriceUpdate" prefHeight="30.0" text="Price Update" />
                 <Button fx:id="btnApprovals" managed="false" mnemonicParsing="false" onAction="#onApprovals" prefHeight="30.0" text="Approvals (0)" visible="false" />
+                <Button fx:id="btnImportMap" managed="false" mnemonicParsing="false" onAction="#onImportMap" prefHeight="30.0" text="Import Map" visible="false" />
+                <Button fx:id="btnAddExternalMap" managed="false" mnemonicParsing="false" onAction="#onAddExternalMap" prefHeight="30.0" text="[TEMP] Add External Map" visible="false" style="-fx-background-color: #9b59b6; -fx-text-fill: white;" />
+                <Button fx:id="btnAddCity" managed="false" mnemonicParsing="false" onAction="#onAddCity" prefHeight="30.0" text="[TEMP] Add City" visible="false" style="-fx-background-color: #9b59b6; -fx-text-fill: white;" />
             </children>
         </HBox>
       <ScrollPane fx:id="scrollPaneCities" fitToWidth="true" layoutX="20.0" layoutY="170.0" prefHeight="401.0" prefWidth="1014.0">

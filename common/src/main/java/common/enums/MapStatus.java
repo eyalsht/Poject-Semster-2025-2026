@@ -6,5 +6,6 @@ public enum MapStatus
     UPDATE,
     PRICE_UPDATE_REQUEST,
     APPROVAL_REVIEW,
-    PUBLISHED
+    PUBLISHED,
+    EXTERNAL
 }

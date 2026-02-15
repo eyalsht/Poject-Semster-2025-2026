@@ -2,6 +2,7 @@ package server.handler;
 
 import common.content.*;
 import common.enums.ActionType;
+import common.enums.MapStatus;
 import common.messaging.Message;
 import org.hibernate.Session;
 import server.HibernateUtil;
@@ -75,6 +76,8 @@ public class GetCityFullDetailsHandler implements RequestHandler {
                 List<GCMMap> cleanMaps = new ArrayList<>();
                 if (cityWithMaps != null && cityWithMaps.getMaps() != null) {
                     for (GCMMap m : cityWithMaps.getMaps()) {
+                        // Filter out EXTERNAL maps (they belong to the external repository)
+                        if (m.getStatus() == MapStatus.EXTERNAL) continue;
                         GCMMap cleanMap = new GCMMap();
                         cleanMap.setId(m.getId());
                         cleanMap.setName(m.getName());

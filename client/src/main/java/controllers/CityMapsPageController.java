@@ -52,6 +52,9 @@ public class CityMapsPageController {
     @FXML private Button btnApprovals;
     @FXML private Button btnEditCity;
     @FXML private Button btnSubscribe;
+    @FXML private Button btnImportMap;
+    @FXML private Button btnAddExternalMap;
+    @FXML private Button btnAddCity;
     private boolean isLoading = false;
     private SubscriptionStatusDTO subscriptionStatus;
 
@@ -236,33 +239,38 @@ public class CityMapsPageController {
     private void applyRolePermissions() {
         User user = GCMClient.getInstance().getCurrentUser();
 
-        // הסתרת כל כפתורי הניהול כברירת מחדל (לאורחים ולקוחות)
         setManagementButtonsVisible(false);
         setButtonState(btnApprovals, false);
+        setButtonState(btnImportMap, false);
+        setButtonState(btnAddExternalMap, false);
+        setButtonState(btnAddCity, false);
 
         if (user instanceof Employee employee) {
             EmployeeRole role = employee.getRole();
 
             switch (role) {
                 case CONTENT_WORKER:
-                    // עובד תוכן יכול לערוך אך לא לאשר מחירים או גרסאות
                     setManagementButtonsVisible(true);
                     setButtonState(btnPriceUpdate, false);
                     setButtonState(btnApprovals, false);
+                    setButtonState(btnImportMap, true);
+                    setButtonState(btnAddExternalMap, true);
+                    setButtonState(btnAddCity, true);
                     break;
 
                 case CONTENT_MANAGER:
-                    // מנהל תוכן רואה הכל כולל כפתור אישורים
                     setManagementButtonsVisible(true);
                     setButtonState(btnApprovals, true);
+                    setButtonState(btnImportMap, true);
+                    setButtonState(btnAddExternalMap, true);
+                    setButtonState(btnAddCity, true);
                     btnApprovals.setText("Content Approvals");
                     refreshPendingApprovalsCount();
                     break;
 
                 case COMPANY_MANAGER:
-                    // מנהל חברה רואה רק אישורי מחירים
                     setManagementButtonsVisible(false);
-                    setButtonState(btnApprovals, true); // עבור אישורי מחירים בלבד
+                    setButtonState(btnApprovals, true);
                     btnApprovals.setText("Price Approvals");
                     refreshPendingApprovalsCount();
                     break;
@@ -478,6 +486,94 @@ public class CityMapsPageController {
         }
     }
     @FXML private void onCreateTour() {}
+
+    @FXML
+    private void onImportMap() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/ImportMapDialog.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Import Map from External System");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            if (selectedCity != null) {
+                loadMapsFromServer(selectedCity.getName());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not open Import Map dialog: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void onAddExternalMap() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/AddExternalMapDialog.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("[TEMP] Add External Map");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not open Add External Map dialog: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void onAddCity() {
+        javafx.scene.control.TextInputDialog nameDialog = new javafx.scene.control.TextInputDialog();
+        nameDialog.setTitle("[TEMP] Add City");
+        nameDialog.setHeaderText("Create a new city");
+        nameDialog.setContentText("City name:");
+
+        nameDialog.showAndWait().ifPresent(cityName -> {
+            if (cityName.isBlank()) {
+                showAlert("Error", "City name cannot be empty.");
+                return;
+            }
+
+            javafx.scene.control.TextInputDialog descDialog = new javafx.scene.control.TextInputDialog();
+            descDialog.setTitle("[TEMP] Add City");
+            descDialog.setHeaderText("City: " + cityName);
+            descDialog.setContentText("Description (optional):");
+
+            String description = descDialog.showAndWait().orElse("");
+
+            new Thread(() -> {
+                try {
+                    java.util.List<String> params = new java.util.ArrayList<>();
+                    params.add(cityName);
+                    params.add(description);
+
+                    Message request = new Message(ActionType.ADD_CITY_REQUEST, params);
+                    Message response = (Message) GCMClient.getInstance().sendRequest(request);
+
+                    Platform.runLater(() -> {
+                        if (response != null && response.getAction() == ActionType.ADD_CITY_RESPONSE) {
+                            boolean success = (Boolean) response.getMessage();
+                            if (success) {
+                                showAlert("Success", "City '" + cityName + "' created successfully.");
+                            } else {
+                                showAlert("Error", "Failed to create city.");
+                            }
+                        } else if (response != null && response.getAction() == ActionType.ERROR) {
+                            showAlert("Error", String.valueOf(response.getMessage()));
+                        } else {
+                            showAlert("Error", "Unexpected server response.");
+                        }
+                    });
+                } catch (Exception e) {
+                    Platform.runLater(() -> showAlert("Error", "Error: " + e.getMessage()));
+                }
+            }).start();
+        });
+    }
 
     @FXML
     private void onApprovals() {
