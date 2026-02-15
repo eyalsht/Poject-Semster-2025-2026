@@ -7,11 +7,16 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import server.HibernateUtil;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.List;
 
 /**
  * Temporary handler for adding maps to the simulated external repository.
  * Receives a List containing: [mapName, description, cityName, imageBytes].
+ * Uses raw JDBC via session.doWork() to avoid all Hibernate eager-loading issues.
  */
 public class AddExternalMapHandler implements RequestHandler {
 
@@ -45,50 +50,71 @@ public class AddExternalMapHandler implements RequestHandler {
             session = HibernateUtil.getSessionFactory().openSession();
             tx = session.beginTransaction();
 
-            // 100% native SQL — do NOT load City entity (has 3 EAGER collections
-            // that cause MultipleBagFetchException).
+            // Use raw JDBC to completely bypass Hibernate entity loading
+            final int[] cityIdHolder = new int[1];
+            final boolean[] success = {false};
 
-            // Find city ID by name
-            Object existingCityId = session.createNativeQuery(
-                    "SELECT id FROM cities WHERE name = :name")
-                    .setParameter("name", cityName)
-                    .uniqueResult();
+            session.doWork((Connection connection) -> {
+                // Step 1: Find city by name
+                int cityId = -1;
+                try (PreparedStatement ps = connection.prepareStatement(
+                        "SELECT id FROM cities WHERE name = ?")) {
+                    ps.setString(1, cityName);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            cityId = rs.getInt(1);
+                            System.out.println("AddExternalMap: found city '" + cityName + "' id=" + cityId);
+                        }
+                    }
+                }
 
-            int cityId;
-            if (existingCityId != null) {
-                cityId = ((Number) existingCityId).intValue();
-                System.out.println("AddExternalMap: found existing city '" + cityName + "' with id=" + cityId);
-            } else {
-                // Create city
-                session.createNativeQuery(
-                    "INSERT INTO cities (name, description, price_sub) VALUES (:name, :desc, :price)")
-                    .setParameter("name", cityName)
-                    .setParameter("desc", "Auto-created for external map: " + mapName)
-                    .setParameter("price", 0.0)
-                    .executeUpdate();
-                Object newId = session.createNativeQuery("SELECT LAST_INSERT_ID()").getSingleResult();
-                cityId = ((Number) newId).intValue();
-                System.out.println("AddExternalMap: created new city '" + cityName + "' with id=" + cityId);
-            }
+                // Step 2: Create city if not found
+                if (cityId == -1) {
+                    try (PreparedStatement ps = connection.prepareStatement(
+                            "INSERT INTO cities (name, description, price_sub) VALUES (?, ?, ?)",
+                            Statement.RETURN_GENERATED_KEYS)) {
+                        ps.setString(1, cityName);
+                        ps.setString(2, "Auto-created for external map: " + mapName);
+                        ps.setDouble(3, 0.0);
+                        ps.executeUpdate();
+                        try (ResultSet keys = ps.getGeneratedKeys()) {
+                            if (keys.next()) {
+                                cityId = keys.getInt(1);
+                                System.out.println("AddExternalMap: created city '" + cityName + "' id=" + cityId);
+                            }
+                        }
+                    }
+                }
 
-            // Create external map
-            session.createNativeQuery(
-                "INSERT INTO maps (name, description, version, status, price, city_id, map_image) " +
-                "VALUES (:name, :desc, :ver, :status, :price, :cityId, :img)")
-                .setParameter("name", mapName)
-                .setParameter("desc", description != null ? description : "")
-                .setParameter("ver", "1.0")
-                .setParameter("status", MapStatus.EXTERNAL.name())
-                .setParameter("price", 0.0)
-                .setParameter("cityId", cityId)
-                .setParameter("img", imageBytes)
-                .executeUpdate();
+                // Step 3: Insert the map
+                try (PreparedStatement ps = connection.prepareStatement(
+                        "INSERT INTO maps (name, description, version, status, price, city_id, map_image) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+                    ps.setString(1, mapName);
+                    ps.setString(2, description != null ? description : "");
+                    ps.setString(3, "1.0");
+                    ps.setString(4, MapStatus.EXTERNAL.name());
+                    ps.setDouble(5, 0.0);
+                    ps.setInt(6, cityId);
+                    ps.setBytes(7, imageBytes);
+                    ps.executeUpdate();
+                    System.out.println("AddExternalMap: inserted map '" + mapName + "' for city id=" + cityId);
+                }
+
+                cityIdHolder[0] = cityId;
+                success[0] = true;
+            });
 
             tx.commit();
             session.close();
 
-            System.out.println("Added external map: " + mapName + " in city: " + cityName);
-            return new Message(ActionType.ADD_EXTERNAL_MAP_RESPONSE, true);
+            if (success[0]) {
+                System.out.println("Added external map: " + mapName + " in city: " + cityName);
+                return new Message(ActionType.ADD_EXTERNAL_MAP_RESPONSE, true);
+            } else {
+                System.err.println("AddExternalMap: doWork completed but success flag not set");
+                return new Message(ActionType.ADD_EXTERNAL_MAP_RESPONSE, false);
+            }
 
         } catch (Exception e) {
             if (tx != null && tx.isActive()) tx.rollback();
