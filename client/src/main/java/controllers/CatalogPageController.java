@@ -146,24 +146,6 @@ public class CatalogPageController {
         Platform.runLater(() -> {
             flowPaneCities.getChildren().setAll(cityCards);
         });
-           /* for (GCMMap gcmMap : maps) {
-                City city = gcmMap.getCity();
-                if (city != null && !displayedCityIds.contains(city.getId())) {
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityCard.fxml"));
-                        Parent card = loader.load();
-
-                        CityCardController controller = loader.getController();
-                        controller.setData(gcmMap, this); // Injecting map and city data
-
-                        flowPaneCities.getChildren().add(card);
-                        displayedCityIds.add(city.getId());
-                    } catch (Exception e) {
-                        System.err.println("Error loading city card: " + e.getMessage());
-                        e.printStackTrace();
-                    }
-                }
-            }*/
     }
 
     /**
@@ -272,31 +254,6 @@ public class CatalogPageController {
                 flowPaneCities.getChildren().add(new Label("No results found."));
             }
         });
-      /*  Platform.runLater(() -> {
-            flowPaneCities.getChildren().clear();
-
-            if (searchResults.isEmpty()) {
-                Label noResults = new Label("No results found.");
-                noResults.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
-                flowPaneCities.getChildren().add(noResults);
-                return;
-            }
-
-            for (CatalogResponse.CitySearchResult result : searchResults) {
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityCard.fxml"));
-                    Parent card = loader.load();
-
-                    CityCardController controller = loader.getController();
-                    controller.setSearchData(result, this);
-
-                    flowPaneCities.getChildren().add(card);
-                } catch (Exception e) {
-                    System.err.println("Error loading city card for search: " + e.getMessage());
-                    e.printStackTrace();
-                }
-            }
-        });*/
     }
 
     public CatalogResponse getLastCatalogResponse() {
@@ -376,42 +333,6 @@ public class CatalogPageController {
             }
         }
     }
-
-     /*   if (user instanceof Employee employee) {
-            EmployeeRole role = employee.getRole();
-            if (role != null) {
-                switch (role) {
-                    case CONTENT_WORKER:
-                        // Can add/edit/delete content (as pending requests)
-                        // CANNOT approve or change prices
-
-                        btnEditCity.setVisible(true);
-                        btnPriceUpdate.setVisible(false);
-                        btnApprovals.setVisible(false);
-                        break;
-
-                    case CONTENT_MANAGER:
-                        // Can do everything a worker does
-                        // PLUS: approve content, request price changes
-
-                        btnPriceUpdate.setVisible(true);
-                        btnEditCity.setVisible(true);
-                        btnApprovals.setVisible(true);  // Shows content approvals
-                        break;
-
-                    case COMPANY_MANAGER:
-                        // CANNOT edit content
-                        // ONLY approves price changes
-
-                        btnPriceUpdate.setVisible(false);
-                        btnApprovals.setVisible(true);  // Shows price approvals only
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        }*/
 
 
     // ==================== SEARCH HANDLERS ====================
@@ -499,42 +420,7 @@ public class CatalogPageController {
     private void onEditCity() {
         openEditModeWindow(null);
     }
-   /*
-    @FXML
-    private void onCreateCity() { OpenCityUpdateWindow("create");}
-    @FXML
-    private void onAddMap() {
-        openMapUpdateWindow("add", null);
-    }
-    @FXML
-    private void onCreateTour() { OpenCityUpdateWindow("create");}
-    @FXML
-    private void onEditTour() {
-        OpenCityUpdateWindow("edit");
-    }
-/*
-  /*  @FXML Using Table info - which no longer exist
-    private void onDeleteMap() {
-        GCMMap selected = tblCatalog.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showAlert("Selection Required", "Please select a map to delete.");
-            return;
-        }
 
-        // Confirm deletion
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Confirm Deletion Request");
-        confirm.setHeaderText("Request to Delete Map");
-        confirm.setContentText("This will submit a deletion request for:\n" +
-                selected.getCityName() + " - " + selected.getName() +
-                "\n\nThe request will need to be approved by a Content Manager.");
-
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                submitDeleteRequest(selected);
-            }
-        });
-    }*/
   @FXML
   private void onDeleteMap() {
       // NEW: Placeholder method to resolve FXML error
