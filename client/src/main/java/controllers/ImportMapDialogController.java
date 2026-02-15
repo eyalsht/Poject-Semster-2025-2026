@@ -78,6 +78,7 @@ public class ImportMapDialogController {
     private VBox createMapCard(GCMMap map) {
         VBox card = new VBox(5);
         card.setPrefWidth(200);
+        card.setPrefHeight(150);
         card.setPadding(new Insets(10));
         card.setStyle("-fx-background-color: #3d566e; -fx-background-radius: 8; -fx-border-color: #4a6785; -fx-border-radius: 8;");
 
@@ -95,6 +96,10 @@ public class ImportMapDialogController {
         descLabel.setWrapText(true);
         descLabel.setMaxHeight(40);
 
+        // Spacer to push the button to the bottom
+        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+        javafx.scene.layout.VBox.setVgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
         Button btnImport = new Button("Import");
         btnImport.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;");
         btnImport.setMaxWidth(Double.MAX_VALUE);
@@ -105,7 +110,7 @@ public class ImportMapDialogController {
         btnBox.setPadding(new Insets(5, 0, 0, 0));
         HBox.setHgrow(btnImport, javafx.scene.layout.Priority.ALWAYS);
 
-        card.getChildren().addAll(nameLabel, cityLabel, descLabel, btnBox);
+        card.getChildren().addAll(nameLabel, cityLabel, descLabel, spacer, btnBox);
         return card;
     }
 
