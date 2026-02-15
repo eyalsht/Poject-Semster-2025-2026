@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -25,8 +26,8 @@
                 <Label text="Map Name *" textFill="#bdc3c7" />
                 <TextField fx:id="txtMapName" promptText="Enter map name" />
 
-                <Label text="City Name *" textFill="#bdc3c7" />
-                <TextField fx:id="txtCityName" promptText="Enter city name (creates if new)" />
+                <Label text="City *  (select existing or type new)" textFill="#bdc3c7" />
+                <ComboBox fx:id="cbCityName" editable="true" promptText="Select or type city name" maxWidth="1.7976931348623157E308" />
 
                 <Label text="Description" textFill="#bdc3c7" />
                 <TextArea fx:id="txtDescription" prefRowCount="3" promptText="Map description" wrapText="true" />

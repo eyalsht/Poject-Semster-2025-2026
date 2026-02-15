@@ -1,9 +1,11 @@
 package controllers;
 
 import client.GCMClient;
+import common.content.City;
 import common.enums.ActionType;
 import common.messaging.Message;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -24,7 +26,7 @@ import java.util.List;
 public class AddExternalMapDialogController {
 
     @FXML private TextField txtMapName;
-    @FXML private TextField txtCityName;
+    @FXML private ComboBox<String> cbCityName;
     @FXML private TextArea txtDescription;
     @FXML private Button btnUploadImage;
     @FXML private Button btnSubmit;
@@ -38,14 +40,57 @@ public class AddExternalMapDialogController {
 
     @FXML
     public void initialize() {
-        // Enable submit button only when required fields are filled and image is selected
+        // Validate on map name change
         txtMapName.textProperty().addListener((obs, o, n) -> validateForm());
-        txtCityName.textProperty().addListener((obs, o, n) -> validateForm());
+
+        // Validate when a city is selected from dropdown
+        cbCityName.setOnAction(e -> validateForm());
+
+        // Validate when the user types into the editable combo box
+        cbCityName.getEditor().textProperty().addListener((obs, o, n) -> validateForm());
+
+        // Load existing cities into the dropdown
+        loadCities();
+    }
+
+    private void loadCities() {
+        new Thread(() -> {
+            try {
+                Message request = new Message(ActionType.GET_CITIES_REQUEST, null);
+                Message response = (Message) client.sendRequest(request);
+
+                if (response != null && response.getAction() == ActionType.GET_CITIES_RESPONSE) {
+                    @SuppressWarnings("unchecked")
+                    List<City> cities = (List<City>) response.getMessage();
+                    List<String> cityNames = new ArrayList<>();
+                    for (City c : cities) {
+                        cityNames.add(c.getName());
+                    }
+
+                    Platform.runLater(() ->
+                        cbCityName.setItems(FXCollections.observableArrayList(cityNames))
+                    );
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private String getCityName() {
+        // Editable ComboBox: the typed/selected value lives in the editor
+        String editorText = cbCityName.getEditor().getText();
+        if (editorText != null && !editorText.isBlank()) {
+            return editorText.trim();
+        }
+        // Fallback to selected value
+        String selected = cbCityName.getValue();
+        return selected != null ? selected.trim() : "";
     }
 
     private void validateForm() {
         boolean valid = !txtMapName.getText().isBlank()
-                && !txtCityName.getText().isBlank()
+                && !getCityName().isEmpty()
                 && selectedImageBytes != null;
         btnSubmit.setDisable(!valid);
     }
@@ -82,7 +127,7 @@ public class AddExternalMapDialogController {
     @FXML
     private void onSubmit() {
         String mapName = txtMapName.getText().trim();
-        String cityName = txtCityName.getText().trim();
+        String cityName = getCityName();
         String description = txtDescription.getText() != null ? txtDescription.getText().trim() : "";
 
         if (mapName.isEmpty() || cityName.isEmpty() || selectedImageBytes == null) {
