@@ -1,14 +1,16 @@
 package server.handler;
 
 import common.content.City;
-import common.content.GCMMap;
 import common.enums.ActionType;
 import common.enums.MapStatus;
 import common.messaging.Message;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import server.HibernateUtil;
+import server.repository.CityRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Temporary handler for adding maps to the simulated external repository.
@@ -16,8 +18,11 @@ import java.util.List;
  */
 public class AddExternalMapHandler implements RequestHandler {
 
+    private final CityRepository cityRepository = CityRepository.getInstance();
+
     @Override
     public Message handle(Message request) {
+        Transaction tx = null;
         try {
             @SuppressWarnings("unchecked")
             List<Object> params = (List<Object>) request.getMessage();
@@ -26,6 +31,10 @@ public class AddExternalMapHandler implements RequestHandler {
             String description = (String) params.get(1);
             String cityName = (String) params.get(2);
             byte[] imageBytes = (byte[]) params.get(3);
+
+            System.out.println("AddExternalMap: received request - map=" + mapName
+                    + ", city=" + cityName
+                    + ", imageSize=" + (imageBytes != null ? imageBytes.length : "null"));
 
             if (mapName == null || mapName.isBlank() || cityName == null || cityName.isBlank()) {
                 System.err.println("AddExternalMap: mapName or cityName is blank");
@@ -37,47 +46,51 @@ public class AddExternalMapHandler implements RequestHandler {
                 return new Message(ActionType.ADD_EXTERNAL_MAP_RESPONSE, false);
             }
 
-            try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-                session.beginTransaction();
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            tx = session.beginTransaction();
 
-                // Use a lightweight query to find city ID by name (avoids loading eager collections)
-                Integer cityId = (Integer) session.createNativeQuery(
-                        "SELECT id FROM cities WHERE name = :name")
-                        .setParameter("name", cityName)
-                        .uniqueResult();
-
-                City city;
-                if (cityId != null) {
-                    // Use getReference to avoid loading the full entity graph
-                    city = session.getReference(City.class, cityId);
-                } else {
-                    city = new City();
-                    city.setName(cityName);
-                    city.setDescription("Auto-created for external map: " + mapName);
-                    city.setPriceSub(0);
-                    session.persist(city);
-                    session.flush();
-                }
-
-                // Create external map
-                GCMMap newMap = new GCMMap();
-                newMap.setName(mapName);
-                newMap.setDescription(description != null ? description : "");
-                newMap.setVersion("1.0");
-                newMap.setStatus(MapStatus.EXTERNAL);
-                newMap.setPrice(0.0);
-                newMap.setCity(city);
-                newMap.setMapImage(imageBytes);
-
-                session.persist(newMap);
-                session.getTransaction().commit();
-
-                System.out.println("Added external map: " + mapName + " in city: " + cityName);
-                return new Message(ActionType.ADD_EXTERNAL_MAP_RESPONSE, true);
+            // Find existing city ID or create new one
+            // IMPORTANT: Do NOT load City entity via session.get() — City has 3 EAGER
+            // collections (maps, sites, tours) which causes MultipleBagFetchException.
+            int cityId;
+            Optional<City> existingCity = cityRepository.findByName(cityName);
+            if (existingCity.isPresent()) {
+                cityId = existingCity.get().getId();
+            } else {
+                // Create city via native SQL to avoid eager-loading issues
+                session.createNativeQuery(
+                    "INSERT INTO cities (name, description, price_sub) VALUES (:name, :desc, :price)")
+                    .setParameter("name", cityName)
+                    .setParameter("desc", "Auto-created for external map: " + mapName)
+                    .setParameter("price", 0.0)
+                    .executeUpdate();
+                // Retrieve the auto-generated ID
+                Object newId = session.createNativeQuery("SELECT LAST_INSERT_ID()").getSingleResult();
+                cityId = ((Number) newId).intValue();
             }
 
+            // Create external map using native SQL to avoid eager-loading issues
+            session.createNativeQuery(
+                "INSERT INTO maps (name, description, version, status, price, city_id, map_image) " +
+                "VALUES (:name, :desc, :ver, :status, :price, :cityId, :img)")
+                .setParameter("name", mapName)
+                .setParameter("desc", description != null ? description : "")
+                .setParameter("ver", "1.0")
+                .setParameter("status", MapStatus.EXTERNAL.name())
+                .setParameter("price", 0.0)
+                .setParameter("cityId", cityId)
+                .setParameter("img", imageBytes)
+                .executeUpdate();
+
+            tx.commit();
+            session.close();
+
+            System.out.println("Added external map: " + mapName + " in city: " + cityName);
+            return new Message(ActionType.ADD_EXTERNAL_MAP_RESPONSE, true);
+
         } catch (Exception e) {
-            System.err.println("AddExternalMap FAILED: " + e.getMessage());
+            if (tx != null && tx.isActive()) tx.rollback();
+            System.err.println("AddExternalMap FAILED: " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace();
             return new Message(ActionType.ADD_EXTERNAL_MAP_RESPONSE, false);
         }
