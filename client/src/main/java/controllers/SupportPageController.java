@@ -284,19 +284,19 @@ public class SupportPageController
         String t = userText.toLowerCase();
 
         if (t.contains("log in")) {
-            return "Try: 1) check caps lock 2) retype password 3) restart app. If it still fails, choose 'Other' and write your username + exact error.";
+            return "Try: 1) check caps lock 2) retype password 3) restart app. If it still fails, choose 'Other' and write your username + exact error below.";
         }
         if (t.contains("payment")) {
-            return "Payment issues: please verify your card details and try again. If you were charged but didn't get access, write purchase date + city name in 'Other'.";
+            return "Payment issues: please verify your card details and try again. If you were charged but didn't get access, choose 'Other' and write purchase date + city name below.";
         }
         if (t.contains("subscription") || t.contains("membership")) {
             return "Subscription help: If you tell me the city name, I can check what you currently have (when we connect this to the server).";
         }
         if (t.contains("bug")) {
-            return "Please write what screen you were in + what button you clicked + what happened. A screenshot helps a lot.";
+            return "Please choose 'Other' and write what screen you were in + what button you clicked + what happened.";
         }
 
-        return "I’m not sure I can answer this automatically. Please write details in 'Other' and a support agent will handle it.";
+        return "I’m not sure I can answer this automatically. Please choose 'Other' and write details below. Support agent will handle it within 24 hours.";
     }
 
     private void onCityChoiceClicked(SupportChoice choice) {
