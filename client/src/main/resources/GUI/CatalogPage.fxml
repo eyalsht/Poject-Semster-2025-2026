@@ -59,13 +59,14 @@
             </opaqueInsets>
         </GridPane>
 
-        <!-- Temp buttons row (above main management buttons) -->
+        <!-- [COMMENTED OUT] Temp buttons - kept for easy reactivation
         <HBox alignment="CENTER_RIGHT" prefHeight="30.0" spacing="10.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="70.0">
             <children>
                 <Button fx:id="btnAddExternalMap" managed="false" mnemonicParsing="false" onAction="#onAddExternalMap" prefHeight="26.0" text="[TEMP] Add External Map" visible="false" style="-fx-background-color: #9b59b6; -fx-text-fill: white;" />
                 <Button fx:id="btnAddCity" managed="false" mnemonicParsing="false" onAction="#onAddCity" prefHeight="26.0" text="[TEMP] Add City" visible="false" style="-fx-background-color: #9b59b6; -fx-text-fill: white;" />
             </children>
         </HBox>
+        -->
 
         <!-- Main management buttons row -->
         <HBox alignment="CENTER_RIGHT" prefHeight="40.0" spacing="10.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="105.0">

@@ -53,8 +53,9 @@ public class CityMapsPageController {
     @FXML private Button btnEditCity;
     @FXML private Button btnSubscribe;
     @FXML private Button btnImportMap;
-    @FXML private Button btnAddExternalMap;
-    @FXML private Button btnAddCity;
+    // [COMMENTED OUT] Temp buttons - kept for easy reactivation
+    // @FXML private Button btnAddExternalMap;
+    // @FXML private Button btnAddCity;
     private boolean isLoading = false;
     private SubscriptionStatusDTO subscriptionStatus;
 
@@ -242,8 +243,9 @@ public class CityMapsPageController {
         setManagementButtonsVisible(false);
         setButtonState(btnApprovals, false);
         setButtonState(btnImportMap, false);
-        setButtonState(btnAddExternalMap, false);
-        setButtonState(btnAddCity, false);
+        // [COMMENTED OUT] Temp buttons
+        // setButtonState(btnAddExternalMap, false);
+        // setButtonState(btnAddCity, false);
 
         if (user instanceof Employee employee) {
             EmployeeRole role = employee.getRole();
@@ -254,16 +256,18 @@ public class CityMapsPageController {
                     setButtonState(btnPriceUpdate, false);
                     setButtonState(btnApprovals, false);
                     setButtonState(btnImportMap, true);
-                    setButtonState(btnAddExternalMap, true);
-                    setButtonState(btnAddCity, true);
+                    // [COMMENTED OUT] Temp buttons
+                    // setButtonState(btnAddExternalMap, true);
+                    // setButtonState(btnAddCity, true);
                     break;
 
                 case CONTENT_MANAGER:
                     setManagementButtonsVisible(true);
                     setButtonState(btnApprovals, true);
                     setButtonState(btnImportMap, true);
-                    setButtonState(btnAddExternalMap, true);
-                    setButtonState(btnAddCity, true);
+                    // [COMMENTED OUT] Temp buttons
+                    // setButtonState(btnAddExternalMap, true);
+                    // setButtonState(btnAddCity, true);
                     btnApprovals.setText("Content Approvals");
                     refreshPendingApprovalsCount();
                     break;
@@ -508,6 +512,8 @@ public class CityMapsPageController {
         }
     }
 
+    // [COMMENTED OUT] Temp buttons - kept for easy reactivation
+    /*
     @FXML
     private void onAddExternalMap() {
         try {
@@ -574,6 +580,7 @@ public class CityMapsPageController {
             }).start();
         });
     }
+    */
 
     @FXML
     private void onApprovals() {

@@ -21,12 +21,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -398,33 +395,7 @@ public class EditModeController {
             if (lvOnMapSites != null) lvOnMapSites.refresh();
         });
 
-        Button btnUpload = new Button("Upload Image");
-        btnUpload.getStyleClass().add("upload-button");
-        btnUpload.setOnAction(e -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Select Map Image");
-            fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
-            );
-            File file = fileChooser.showOpenDialog(btnUpload.getScene().getWindow());
-            if (file != null) {
-                try {
-                    long fileSize = file.length();
-                    if (fileSize > 5 * 1024 * 1024) {
-                        showAlert("File Too Large", "Image must be under 5 MB. Selected file is " + String.format("%.1f", fileSize / (1024.0 * 1024.0)) + " MB.");
-                        return;
-                    }
-                    pendingMapImage = Files.readAllBytes(file.toPath());
-                    Image img = new Image(new ByteArrayInputStream(pendingMapImage));
-                    mapImageView.setImage(img);
-                    recalculateChangeCount();
-                } catch (Exception ex) {
-                    showAlert("Error", "Could not load image: " + ex.getMessage());
-                }
-            }
-        });
-
-        section.getChildren().addAll(lbl, imageContainer, btnUpload, lblInstruction);
+        section.getChildren().addAll(lbl, imageContainer, lblInstruction);
 
         renderMarkersOnOverlay();
 
@@ -1073,15 +1044,7 @@ public class EditModeController {
             }
         }
 
-        // 4. Count map image changes
-        if (currentEditingMap != null) {
-            boolean imageChanged = !Arrays.equals(pendingMapImage, originalMapImage);
-            if (imageChanged) {
-                count++;
-            }
-        }
-
-        // 5. Count tour site changes (compare current vs original)
+        // 4. Count tour site changes (compare current vs original)
         if (currentEditingTour != null && currentTourSites != null && !isNewTour) {
             List<Integer> currentIds = new ArrayList<>();
             for (Site s : currentTourSites) currentIds.add(s.getId());
@@ -1158,8 +1121,6 @@ public class EditModeController {
         }
         List<SiteMarker> origMarkers = originalMapMarkers.getOrDefault(currentEditingMap.getId(), new ArrayList<>());
         if (!markersEqual(pendingMarkers, origMarkers)) changed = true;
-        if (!Arrays.equals(pendingMapImage, originalMapImage)) changed = true;
-
         if (!changed) return null;
 
         String name = getFieldValue("mapName_" + currentEditingMap.getId());
@@ -1422,13 +1383,6 @@ public class EditModeController {
         StringBuilder sb = new StringBuilder("{");
         sb.append("\"mapName\":\"").append(escapeJson(name != null ? name : "")).append("\"");
         sb.append(",\"description\":\"").append(escapeJson(description != null ? description : "")).append("\"");
-
-        // Map image (Base64) — only include if actually changed from original
-        boolean imageChanged = !Arrays.equals(pendingMapImage, originalMapImage);
-        if (imageChanged && pendingMapImage != null && pendingMapImage.length > 0) {
-            String base64 = Base64.getEncoder().encodeToString(pendingMapImage);
-            sb.append(",\"mapImage\":\"").append(base64).append("\"");
-        }
 
         // Site markers JSON (unquoted array)
         if (!pendingMarkers.isEmpty()) {

@@ -66,10 +66,11 @@ public class CatalogPageController {
     private Button btnEditCity;
     @FXML
     private Button btnImportMap;
-    @FXML
-    private Button btnAddExternalMap;
-    @FXML
-    private Button btnAddCity;
+    // [COMMENTED OUT] Temp buttons - kept for easy reactivation
+    // @FXML
+    // private Button btnAddExternalMap;
+    // @FXML
+    // private Button btnAddCity;
 
 
     private final GCMClient client = GCMClient.getInstance();
@@ -297,8 +298,9 @@ public class CatalogPageController {
         setButtonState(btnPriceUpdate, false);
         setButtonState(btnApprovals, false);
         setButtonState(btnImportMap, false);
-        setButtonState(btnAddExternalMap, false);
-        setButtonState(btnAddCity, false);
+        // [COMMENTED OUT] Temp buttons
+        // setButtonState(btnAddExternalMap, false);
+        // setButtonState(btnAddCity, false);
 
         setManagementButtonsVisible(false);
 
@@ -314,8 +316,9 @@ public class CatalogPageController {
                 case CONTENT_WORKER:
                     setButtonState(btnEditCity, true);
                     setButtonState(btnImportMap, true);
-                    setButtonState(btnAddExternalMap, true);
-                    setButtonState(btnAddCity, true);
+                    // [COMMENTED OUT] Temp buttons
+                    // setButtonState(btnAddExternalMap, true);
+                    // setButtonState(btnAddCity, true);
                     break;
 
                 case CONTENT_MANAGER:
@@ -323,8 +326,9 @@ public class CatalogPageController {
                     setButtonState(btnPriceUpdate, true);
                     setButtonState(btnApprovals, true);
                     setButtonState(btnImportMap, true);
-                    setButtonState(btnAddExternalMap, true);
-                    setButtonState(btnAddCity, true);
+                    // [COMMENTED OUT] Temp buttons
+                    // setButtonState(btnAddExternalMap, true);
+                    // setButtonState(btnAddCity, true);
                     break;
 
                 case COMPANY_MANAGER:
@@ -490,6 +494,8 @@ public class CatalogPageController {
         }
     }
 
+    // [COMMENTED OUT] Temp buttons - kept for easy reactivation
+    /*
     @FXML
     private void onAddExternalMap() {
         try {
@@ -556,6 +562,7 @@ public class CatalogPageController {
             }).start();
         });
     }
+    */
 
     @FXML
     private void onApprovals() {
