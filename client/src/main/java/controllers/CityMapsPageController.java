@@ -613,9 +613,11 @@ public class CityMapsPageController {
             stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
             stage.showAndWait();
 
-            // Refresh subscription status after dialog
+            // Refresh subscription status and map cards after successful subscription
             if (controller.isPurchaseComplete()) {
                 checkSubscriptionStatus(selectedCity);
+                // Re-render map cards so they pick up the new subscription status
+                displayMaps(selectedCity.getMaps());
             }
         } catch (Exception e) {
             e.printStackTrace();
