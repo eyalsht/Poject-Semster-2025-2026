@@ -1,16 +1,13 @@
 package server.handler;
 
-import common.content.City;
 import common.enums.ActionType;
 import common.enums.MapStatus;
 import common.messaging.Message;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import server.HibernateUtil;
-import server.repository.CityRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Temporary handler for adding maps to the simulated external repository.
@@ -18,11 +15,10 @@ import java.util.Optional;
  */
 public class AddExternalMapHandler implements RequestHandler {
 
-    private final CityRepository cityRepository = CityRepository.getInstance();
-
     @Override
     public Message handle(Message request) {
         Transaction tx = null;
+        Session session = null;
         try {
             @SuppressWarnings("unchecked")
             List<Object> params = (List<Object>) request.getMessage();
@@ -46,30 +42,36 @@ public class AddExternalMapHandler implements RequestHandler {
                 return new Message(ActionType.ADD_EXTERNAL_MAP_RESPONSE, false);
             }
 
-            Session session = HibernateUtil.getSessionFactory().openSession();
+            session = HibernateUtil.getSessionFactory().openSession();
             tx = session.beginTransaction();
 
-            // Find existing city ID or create new one
-            // IMPORTANT: Do NOT load City entity via session.get() — City has 3 EAGER
-            // collections (maps, sites, tours) which causes MultipleBagFetchException.
+            // 100% native SQL — do NOT load City entity (has 3 EAGER collections
+            // that cause MultipleBagFetchException).
+
+            // Find city ID by name
+            Object existingCityId = session.createNativeQuery(
+                    "SELECT id FROM cities WHERE name = :name")
+                    .setParameter("name", cityName)
+                    .uniqueResult();
+
             int cityId;
-            Optional<City> existingCity = cityRepository.findByName(cityName);
-            if (existingCity.isPresent()) {
-                cityId = existingCity.get().getId();
+            if (existingCityId != null) {
+                cityId = ((Number) existingCityId).intValue();
+                System.out.println("AddExternalMap: found existing city '" + cityName + "' with id=" + cityId);
             } else {
-                // Create city via native SQL to avoid eager-loading issues
+                // Create city
                 session.createNativeQuery(
                     "INSERT INTO cities (name, description, price_sub) VALUES (:name, :desc, :price)")
                     .setParameter("name", cityName)
                     .setParameter("desc", "Auto-created for external map: " + mapName)
                     .setParameter("price", 0.0)
                     .executeUpdate();
-                // Retrieve the auto-generated ID
                 Object newId = session.createNativeQuery("SELECT LAST_INSERT_ID()").getSingleResult();
                 cityId = ((Number) newId).intValue();
+                System.out.println("AddExternalMap: created new city '" + cityName + "' with id=" + cityId);
             }
 
-            // Create external map using native SQL to avoid eager-loading issues
+            // Create external map
             session.createNativeQuery(
                 "INSERT INTO maps (name, description, version, status, price, city_id, map_image) " +
                 "VALUES (:name, :desc, :ver, :status, :price, :cityId, :img)")
@@ -90,6 +92,7 @@ public class AddExternalMapHandler implements RequestHandler {
 
         } catch (Exception e) {
             if (tx != null && tx.isActive()) tx.rollback();
+            if (session != null && session.isOpen()) session.close();
             System.err.println("AddExternalMap FAILED: " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace();
             return new Message(ActionType.ADD_EXTERNAL_MAP_RESPONSE, false);
