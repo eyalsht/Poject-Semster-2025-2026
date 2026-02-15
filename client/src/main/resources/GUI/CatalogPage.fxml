@@ -67,15 +67,22 @@
             </opaqueInsets>
         </GridPane>
 
-        <HBox alignment="CENTER_RIGHT" layoutX="580.0" layoutY="105.0" prefHeight="40.0" spacing="10.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="105.0">
+        <!-- Temp buttons row (above main management buttons) -->
+        <HBox alignment="CENTER_RIGHT" prefHeight="30.0" spacing="10.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="70.0">
+            <children>
+                <Button fx:id="btnAddExternalMap" managed="false" mnemonicParsing="false" onAction="#onAddExternalMap" prefHeight="26.0" text="[TEMP] Add External Map" visible="false" style="-fx-background-color: #9b59b6; -fx-text-fill: white;" />
+                <Button fx:id="btnAddCity" managed="false" mnemonicParsing="false" onAction="#onAddCity" prefHeight="26.0" text="[TEMP] Add City" visible="false" style="-fx-background-color: #9b59b6; -fx-text-fill: white;" />
+            </children>
+        </HBox>
+
+        <!-- Main management buttons row -->
+        <HBox alignment="CENTER_RIGHT" prefHeight="40.0" spacing="10.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="105.0">
             <children>
                 <Button fx:id="btnEditCity" managed="false" mnemonicParsing="false" onAction="#onEditCity" prefHeight="30.0" text="Edit Mode" visible="false" />
                 <Button fx:id="btnUpdateMap" managed="false" mnemonicParsing="false" onAction="#onUpdateMap" prefHeight="30.0" text="Edit Map" visible="false" />
                 <Button fx:id="btnPriceUpdate" managed="false" mnemonicParsing="false" onAction="#onPriceUpdate" prefHeight="30.0" text="Price Update" visible="false" />
                 <Button fx:id="btnApprovals" managed="false" mnemonicParsing="false" onAction="#onApprovals" prefHeight="30.0" text="Approvals (0)" visible="false" />
                 <Button fx:id="btnImportMap" managed="false" mnemonicParsing="false" onAction="#onImportMap" prefHeight="30.0" text="Import Map" visible="false" />
-                <Button fx:id="btnAddExternalMap" managed="false" mnemonicParsing="false" onAction="#onAddExternalMap" prefHeight="30.0" text="[TEMP] Add External Map" visible="false" style="-fx-background-color: #9b59b6; -fx-text-fill: white;" />
-                <Button fx:id="btnAddCity" managed="false" mnemonicParsing="false" onAction="#onAddCity" prefHeight="30.0" text="[TEMP] Add City" visible="false" style="-fx-background-color: #9b59b6; -fx-text-fill: white;" />
             </children>
         </HBox>
 
