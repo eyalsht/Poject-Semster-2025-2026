@@ -84,6 +84,25 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
     }
 
     /**
+     * Check if a pending (OPEN) request already exists for the given target, content type, and action.
+     */
+    public boolean hasPendingRequest(Integer targetId, ContentType contentType, ContentActionType actionType) {
+        return executeQuery(session -> {
+            Long count = session.createQuery(
+                "SELECT COUNT(p) FROM PendingContentRequest p " +
+                "WHERE p.status = :status AND p.targetId = :targetId " +
+                "AND p.contentType = :contentType AND p.actionType = :actionType",
+                Long.class)
+                .setParameter("status", RequestStatus.OPEN)
+                .setParameter("targetId", targetId)
+                .setParameter("contentType", contentType)
+                .setParameter("actionType", actionType)
+                .uniqueResult();
+            return count != null && count > 0;
+        });
+    }
+
+    /**
      * Approve a pending content request.
      */
     public boolean approve(int pendingId, User approver)
@@ -112,12 +131,45 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
                 pending.setProcessedAt(LocalDateTime.now());
                 //TODO implent the approver pending.setProcessedBy(approver);
                 session.merge(pending);
+
+                // If this was a DELETE, auto-deny all other OPEN requests for the same target
+                if (pending.getActionType() == ContentActionType.DELETE) {
+                    int denied = denyAllPendingForTarget(session, pending.getTargetId(),
+                            pending.getContentType(), pending.getId());
+                    if (denied > 0) {
+                        System.out.println("Auto-denied " + denied + " stale request(s) for deleted " +
+                                pending.getContentType() + " ID " + pending.getTargetId());
+                    }
+                }
             });
             return null; // success
         } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage();
         }
+    }
+
+    /**
+     * Deny all OPEN requests for the same target/contentType, excluding the given request ID.
+     * Called within an existing transaction after a DELETE is approved.
+     */
+    private int denyAllPendingForTarget(Session session, Integer targetId, ContentType contentType, int excludeId) {
+        List<PendingContentRequest> staleRequests = session.createQuery(
+            "FROM PendingContentRequest p WHERE p.status = :status " +
+            "AND p.targetId = :targetId AND p.contentType = :contentType AND p.id != :excludeId",
+            PendingContentRequest.class)
+            .setParameter("status", RequestStatus.OPEN)
+            .setParameter("targetId", targetId)
+            .setParameter("contentType", contentType)
+            .setParameter("excludeId", excludeId)
+            .getResultList();
+
+        for (PendingContentRequest stale : staleRequests) {
+            stale.setStatus(RequestStatus.DENIED);
+            stale.setProcessedAt(LocalDateTime.now());
+            session.merge(stale);
+        }
+        return staleRequests.size();
     }
 
     /**
@@ -171,7 +223,19 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
     private void applyMapChange(org.hibernate.Session session, PendingContentRequest pending)
     {
         String json = pending.getContentDetails();
-        
+
+        // Validate target state for EDIT/DELETE
+        if (pending.getActionType() == ContentActionType.EDIT || pending.getActionType() == ContentActionType.DELETE) {
+            GCMMap map = session.get(GCMMap.class, pending.getTargetId());
+            if (map == null) {
+                throw new RuntimeException("Map not found with ID: " + pending.getTargetId());
+            }
+            if (map.getStatus() == MapStatus.EXTERNAL) {
+                throw new RuntimeException("Cannot " + pending.getActionType().name().toLowerCase() +
+                        " map '" + map.getName() + "': map is in EXTERNAL status");
+            }
+        }
+
         switch (pending.getActionType()) {
             case ADD:
                 createNewMap(session, json);
@@ -347,6 +411,14 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
 
     private void applySiteChange(org.hibernate.Session session, PendingContentRequest pending)
     {
+        // Validate target exists for EDIT/DELETE
+        if (pending.getActionType() == ContentActionType.EDIT || pending.getActionType() == ContentActionType.DELETE) {
+            Site site = session.get(Site.class, pending.getTargetId());
+            if (site == null) {
+                throw new RuntimeException("Site not found with ID: " + pending.getTargetId());
+            }
+        }
+
         switch (pending.getActionType()) {
             case ADD:
                 createNewSite(session, pending);
@@ -431,6 +503,14 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
 
     private void applyTourChange(org.hibernate.Session session, PendingContentRequest pending)
     {
+        // Validate target exists for EDIT/DELETE
+        if (pending.getActionType() == ContentActionType.EDIT || pending.getActionType() == ContentActionType.DELETE) {
+            Tour tour = session.get(Tour.class, pending.getTargetId());
+            if (tour == null) {
+                throw new RuntimeException("Tour not found with ID: " + pending.getTargetId());
+            }
+        }
+
         switch (pending.getActionType()) {
             case ADD:
                 createNewTour(session, pending);

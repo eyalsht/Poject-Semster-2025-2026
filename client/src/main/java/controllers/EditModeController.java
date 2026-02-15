@@ -72,6 +72,10 @@ public class EditModeController {
     private ImageView mapImageView;
     private ListView<Site> lvOnMapSites; // reference to On Map list for marker placement
 
+    // Per-map state storage (for multi-map editing across map switches)
+    private final Map<Integer, List<SiteMarker>> pendingMarkersPerMap = new HashMap<>();
+    private final Map<Integer, List<Site>> savedMapSitesPerMap = new HashMap<>();
+
     // Site/Tour editing state
     private Site currentEditingSite;
     private Tour currentEditingTour;
@@ -280,11 +284,29 @@ public class EditModeController {
 
     // ==================== TAB 2: MAPS ====================
 
+    /**
+     * Save the current map's markers and site assignments before switching to another map.
+     */
+    private void saveCurrentMapState() {
+        if (currentEditingMap == null) return;
+        int mapId = currentEditingMap.getId();
+        pendingMarkersPerMap.put(mapId, new ArrayList<>(pendingMarkers));
+        if (currentMapOnMapSites != null) {
+            savedMapSitesPerMap.put(mapId, new ArrayList<>(currentMapOnMapSites));
+        }
+    }
+
     private void populateMapEditor(GCMMap map) {
+        saveCurrentMapState();
         currentEditingMap = map;
         pendingMapImage = map.getMapImage();
         originalMapImage = map.getMapImage();
-        pendingMarkers = map.getSiteMarkers() != null ? new ArrayList<>(map.getSiteMarkers()) : new ArrayList<>();
+        // Restore markers from saved state if available, otherwise use map's original markers
+        if (pendingMarkersPerMap.containsKey(map.getId())) {
+            pendingMarkers = new ArrayList<>(pendingMarkersPerMap.get(map.getId()));
+        } else {
+            pendingMarkers = map.getSiteMarkers() != null ? new ArrayList<>(map.getSiteMarkers()) : new ArrayList<>();
+        }
 
         vboxMapEditor.getChildren().clear();
 
@@ -479,13 +501,17 @@ public class EditModeController {
         Label lbl = new Label("Sites on this Map");
         lbl.getStyleClass().add("field-label");
 
-        // Current map sites
+        // Current map sites — restore from saved state if available
         ListView<Site> lvOnMap = new ListView<>();
         lvOnMap.setPrefHeight(120);
         lvOnMap.getStyleClass().add("edit-list");
-        currentMapOnMapSites = FXCollections.observableArrayList(
-                map.getSites() != null ? map.getSites() : new ArrayList<>()
-        );
+        if (savedMapSitesPerMap.containsKey(map.getId())) {
+            currentMapOnMapSites = FXCollections.observableArrayList(savedMapSitesPerMap.get(map.getId()));
+        } else {
+            currentMapOnMapSites = FXCollections.observableArrayList(
+                    map.getSites() != null ? map.getSites() : new ArrayList<>()
+            );
+        }
         lvOnMap.setItems(currentMapOnMapSites);
         lvOnMap.setCellFactory(lv -> new ListCell<Site>() {
             @Override
@@ -1026,25 +1052,41 @@ public class EditModeController {
             }
         }
 
-        // 2. Count map site assignment changes (compare current vs original)
-        if (currentEditingMap != null && currentMapOnMapSites != null) {
-            Set<Integer> currentIds = new HashSet<>();
-            for (Site s : currentMapOnMapSites) currentIds.add(s.getId());
-            Set<Integer> origIds = originalMapSiteIds.getOrDefault(currentEditingMap.getId(), new HashSet<>());
-            if (!currentIds.equals(origIds)) {
+        // 2. Count map site assignment and marker changes for ALL maps
+        for (GCMMap map : cityMaps) {
+            int mapId = map.getId();
+
+            // Determine sites for this map: live state if current, saved state otherwise
+            List<Site> sites;
+            List<SiteMarker> markers;
+            if (currentEditingMap != null && currentEditingMap.getId() == mapId) {
+                sites = currentMapOnMapSites != null ? new ArrayList<>(currentMapOnMapSites) : null;
+                markers = pendingMarkers;
+            } else if (savedMapSitesPerMap.containsKey(mapId) || pendingMarkersPerMap.containsKey(mapId)) {
+                sites = savedMapSitesPerMap.get(mapId);
+                markers = pendingMarkersPerMap.getOrDefault(mapId, new ArrayList<>());
+            } else {
+                continue; // never edited
+            }
+
+            // Site assignment changes
+            if (sites != null) {
+                Set<Integer> currentIds = new HashSet<>();
+                for (Site s : sites) currentIds.add(s.getId());
+                Set<Integer> origIds = originalMapSiteIds.getOrDefault(mapId, new HashSet<>());
+                if (!currentIds.equals(origIds)) {
+                    count++;
+                }
+            }
+
+            // Marker changes
+            List<SiteMarker> origMarkers = originalMapMarkers.getOrDefault(mapId, new ArrayList<>());
+            if (!markersEqual(markers, origMarkers)) {
                 count++;
             }
         }
 
-        // 3. Count map marker changes
-        if (currentEditingMap != null) {
-            List<SiteMarker> origMarkers = originalMapMarkers.getOrDefault(currentEditingMap.getId(), new ArrayList<>());
-            if (!markersEqual(pendingMarkers, origMarkers)) {
-                count++;
-            }
-        }
-
-        // 4. Count tour site changes (compare current vs original)
+        // 3. Count tour site changes (compare current vs original)
         if (currentEditingTour != null && currentTourSites != null && !isNewTour) {
             List<Integer> currentIds = new ArrayList<>();
             for (Site s : currentTourSites) currentIds.add(s.getId());
@@ -1100,36 +1142,47 @@ public class EditModeController {
     }
 
     /**
-     * Build a ContentChangeRequest for the currently selected map, or null if nothing changed.
+     * Build a ContentChangeRequest for a specific map, or null if nothing changed.
+     * Uses per-map saved state for markers and sites.
      */
-    private ContentChangeRequest buildMapChangeRequest() {
-        if (currentEditingMap == null || currentCity == null) return null;
+    private ContentChangeRequest buildMapChangeRequestForMap(GCMMap map) {
+        if (map == null || currentCity == null) return null;
+        int mapId = map.getId();
 
-        // Check if any map field, sites, markers, or image changed
+        // Determine markers and sites for this map
+        List<SiteMarker> markers = pendingMarkersPerMap.getOrDefault(mapId, new ArrayList<>());
+        List<Site> sites = savedMapSitesPerMap.get(mapId);
+
+        // Check if any map field changed
         boolean changed = false;
-        for (String key : fieldRows.keySet()) {
-            if (key.startsWith("map") && fieldRows.get(key).getStyleClass().contains("field-row-changed")) {
-                changed = true;
-                break;
-            }
-        }
-        if (currentMapOnMapSites != null) {
+        String nameKey = "mapName_" + mapId;
+        String descKey = "mapDesc_" + mapId;
+        HBox nameRow = fieldRows.get(nameKey);
+        HBox descRow = fieldRows.get(descKey);
+        if (nameRow != null && nameRow.getStyleClass().contains("field-row-changed")) changed = true;
+        if (descRow != null && descRow.getStyleClass().contains("field-row-changed")) changed = true;
+
+        // Check site assignment changes
+        if (sites != null) {
             Set<Integer> currentIds = new HashSet<>();
-            for (Site s : currentMapOnMapSites) currentIds.add(s.getId());
-            Set<Integer> origIds = originalMapSiteIds.getOrDefault(currentEditingMap.getId(), new HashSet<>());
+            for (Site s : sites) currentIds.add(s.getId());
+            Set<Integer> origIds = originalMapSiteIds.getOrDefault(mapId, new HashSet<>());
             if (!currentIds.equals(origIds)) changed = true;
         }
-        List<SiteMarker> origMarkers = originalMapMarkers.getOrDefault(currentEditingMap.getId(), new ArrayList<>());
-        if (!markersEqual(pendingMarkers, origMarkers)) changed = true;
+
+        // Check marker changes
+        List<SiteMarker> origMarkers = originalMapMarkers.getOrDefault(mapId, new ArrayList<>());
+        if (!markersEqual(markers, origMarkers)) changed = true;
+
         if (!changed) return null;
 
-        String name = getFieldValue("mapName_" + currentEditingMap.getId());
-        String desc = getTextAreaValue("mapDesc_" + currentEditingMap.getId());
-        String json = buildMapJson(currentEditingMap, name, desc);
+        String name = getFieldValue(nameKey);
+        String desc = getTextAreaValue(descKey);
+        String json = buildMapJsonForMap(map, name, desc, markers, sites);
         User currentUser = client.getCurrentUser();
         Integer requesterId = currentUser != null ? currentUser.getId() : null;
         return new ContentChangeRequest(requesterId, ContentActionType.EDIT, ContentType.MAP,
-                currentEditingMap.getId(), currentCity.getName() + " - " + currentEditingMap.getName(), json);
+                mapId, currentCity.getName() + " - " + map.getName(), json);
     }
 
     /**
@@ -1284,14 +1337,20 @@ public class EditModeController {
 
     @FXML
     private void onSubmitAll() {
+        // Flush current map's state before collecting
+        saveCurrentMapState();
+
         // Collect all change requests from current state
         List<ContentChangeRequest> toSubmit = new ArrayList<>();
 
         ContentChangeRequest cityReq = buildCityChangeRequest();
         if (cityReq != null) toSubmit.add(cityReq);
 
-        ContentChangeRequest mapReq = buildMapChangeRequest();
-        if (mapReq != null) toSubmit.add(mapReq);
+        // Build change requests for ALL maps (not just current)
+        for (GCMMap map : cityMaps) {
+            ContentChangeRequest mapReq = buildMapChangeRequestForMap(map);
+            if (mapReq != null) toSubmit.add(mapReq);
+        }
 
         ContentChangeRequest siteReq = buildSiteChangeRequest();
         if (siteReq != null) toSubmit.add(siteReq);
@@ -1379,16 +1438,17 @@ public class EditModeController {
         return sb.toString();
     }
 
-    private String buildMapJson(GCMMap map, String name, String description) {
+    private String buildMapJsonForMap(GCMMap map, String name, String description,
+                                      List<SiteMarker> markers, List<Site> sites) {
         StringBuilder sb = new StringBuilder("{");
         sb.append("\"mapName\":\"").append(escapeJson(name != null ? name : "")).append("\"");
         sb.append(",\"description\":\"").append(escapeJson(description != null ? description : "")).append("\"");
 
         // Site markers JSON (unquoted array)
-        if (!pendingMarkers.isEmpty()) {
+        if (markers != null && !markers.isEmpty()) {
             StringBuilder markersSb = new StringBuilder("[");
-            for (int i = 0; i < pendingMarkers.size(); i++) {
-                SiteMarker mk = pendingMarkers.get(i);
+            for (int i = 0; i < markers.size(); i++) {
+                SiteMarker mk = markers.get(i);
                 if (i > 0) markersSb.append(",");
                 markersSb.append(String.format(java.util.Locale.US, "{\"siteId\":%d,\"x\":%.4f,\"y\":%.4f}",
                         mk.getSiteId(), mk.getX(), mk.getY()));
@@ -1397,9 +1457,9 @@ public class EditModeController {
             sb.append(",\"siteMarkersJson\":").append(markersSb);
         }
 
-        // Site IDs (comma-separated) — use the live list
-        if (currentMapOnMapSites != null && !currentMapOnMapSites.isEmpty()) {
-            String siteIds = currentMapOnMapSites.stream()
+        // Site IDs (comma-separated)
+        if (sites != null && !sites.isEmpty()) {
+            String siteIds = sites.stream()
                     .map(s -> String.valueOf(s.getId()))
                     .collect(Collectors.joining(","));
             sb.append(",\"siteIds\":\"").append(siteIds).append("\"");
@@ -1480,6 +1540,8 @@ public class EditModeController {
         pendingMapImage = null;
         originalMapImage = null;
         pendingMarkers.clear();
+        pendingMarkersPerMap.clear();
+        savedMapSitesPerMap.clear();
         lvOnMapSites = null;
         currentMapOnMapSites = null;
         currentTourSites = null;

@@ -2,6 +2,7 @@ package server.handler;
 
 import common.dto.ContentChangeRequest;
 import common.enums.ActionType;
+import common.enums.ContentActionType;
 import common.messaging.Message;
 import common.user.User;
 import server.GcmServer;
@@ -17,6 +18,26 @@ public class SubmitContentChangeHandler implements RequestHandler {
     public Message handle(Message request) {
         try {
             ContentChangeRequest changeRequest = (ContentChangeRequest) request.getMessage();
+
+            // Duplicate/conflict detection for non-ADD actions
+            if (changeRequest.getActionType() != ContentActionType.ADD) {
+                // Block exact duplicate (same target, type, action already OPEN)
+                if (repository.hasPendingRequest(changeRequest.getTargetId(),
+                        changeRequest.getContentType(), changeRequest.getActionType())) {
+                    System.out.println("Blocked duplicate " + changeRequest.getActionType() +
+                            " request for " + changeRequest.getContentType() +
+                            " ID " + changeRequest.getTargetId());
+                    return new Message(ActionType.SUBMIT_CONTENT_CHANGE_RESPONSE, false);
+                }
+                // Block EDIT if a DELETE is already pending for the same target
+                if (changeRequest.getActionType() == ContentActionType.EDIT &&
+                        repository.hasPendingRequest(changeRequest.getTargetId(),
+                                changeRequest.getContentType(), ContentActionType.DELETE)) {
+                    System.out.println("Blocked EDIT request — DELETE already pending for " +
+                            changeRequest.getContentType() + " ID " + changeRequest.getTargetId());
+                    return new Message(ActionType.SUBMIT_CONTENT_CHANGE_RESPONSE, false);
+                }
+            }
 
             User requester = null;
             if (changeRequest.getRequesterId() != null) {
