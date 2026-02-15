@@ -19,12 +19,12 @@
     <children>
 
         <!-- Top selection area -->
-        <GridPane hgap="20.0" layoutX="27.0" layoutY="24.0" prefHeight="115.0" prefWidth="547.0" vgap="12.0">
+        <GridPane hgap="8.0" layoutX="27.0" layoutY="24.0" prefHeight="115.0" prefWidth="470.0" vgap="12.0">
             <columnConstraints>
-                <ColumnConstraints prefWidth="120.0" />
-                <ColumnConstraints maxWidth="222.0" minWidth="168.66668701171875" prefWidth="205.3333740234375" />
-                <ColumnConstraints maxWidth="159.33331298828125" minWidth="10.0" prefWidth="122.6666259765625" />
-                <ColumnConstraints maxWidth="159.33331298828125" minWidth="10.0" prefWidth="122.6666259765625" />
+                <ColumnConstraints prefWidth="80.0" />
+                <ColumnConstraints minWidth="150.0" prefWidth="180.0" />
+                <ColumnConstraints minWidth="10.0" prefWidth="80.0" />
+                <ColumnConstraints minWidth="10.0" prefWidth="80.0" />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints prefHeight="30.0" />
@@ -51,16 +51,8 @@
                     </font></Label>
                 <HBox prefHeight="37.0" prefWidth="226.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <TextField fx:id="txtSearch" prefHeight="26.0" prefWidth="147.0" promptText="Search cities, sites..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="27.0" prefWidth="74.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" GridPane.columnIndex="2" GridPane.rowIndex="2">
-                    <GridPane.margin>
-                        <Insets left="-10.0" />
-                    </GridPane.margin>
-                </Button>
-                <Button fx:id="btnClearSearch" mnemonicParsing="false" onAction="#onClearSearch" prefHeight="27.0" prefWidth="74.0" text="Clear" GridPane.columnIndex="3" GridPane.rowIndex="2">
-                    <GridPane.margin>
-                        <Insets left="-45.0" />
-                    </GridPane.margin>
-                </Button>
+                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="27.0" prefWidth="74.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <Button fx:id="btnClearSearch" mnemonicParsing="false" onAction="#onClearSearch" prefHeight="27.0" prefWidth="74.0" text="Clear" GridPane.columnIndex="3" GridPane.rowIndex="2" />
             </children>
             <opaqueInsets>
                 <Insets />

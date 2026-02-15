@@ -15,12 +15,12 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CityMapsPageController">
     <children>
-        <GridPane hgap="20.0" layoutX="27.0" layoutY="68.0" prefHeight="73.0" prefWidth="545.0" translateX="5.8" translateY="2.7" vgap="12.0">
+        <GridPane hgap="8.0" layoutX="27.0" layoutY="68.0" prefHeight="73.0" prefWidth="470.0" translateX="5.8" translateY="2.7" vgap="12.0">
             <columnConstraints>
-                <ColumnConstraints maxWidth="120.0" prefWidth="120.0" />
-                <ColumnConstraints maxWidth="222.0" minWidth="168.0" prefWidth="205.0" />
-                <ColumnConstraints maxWidth="159.0" minWidth="10.0" prefWidth="122.0" />
-                <ColumnConstraints maxWidth="159.0" minWidth="10.0" prefWidth="122.0" />
+                <ColumnConstraints maxWidth="80.0" prefWidth="80.0" />
+                <ColumnConstraints minWidth="150.0" prefWidth="180.0" />
+                <ColumnConstraints minWidth="10.0" prefWidth="80.0" />
+                <ColumnConstraints minWidth="10.0" prefWidth="80.0" />
             </columnConstraints>
             <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" />
@@ -35,18 +35,11 @@
                   <Insets />
                </GridPane.margin>
                 </Label>
-                <TextField fx:id="txtSearch" prefHeight="26.0" prefWidth="167.0" promptText="Search maps, sites..." translateX="-0.2" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <GridPane.margin>
-                  <Insets />
-               </GridPane.margin></TextField>
+                <TextField fx:id="txtSearch" prefHeight="26.0" prefWidth="167.0" promptText="Search maps, sites..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                <Button mnemonicParsing="false" onAction="#onSearch" prefHeight="27.0" prefWidth="74.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" translateX="0.2" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                    <GridPane.margin><Insets left="-10.0" /></GridPane.margin>
-                </Button>
+                <Button mnemonicParsing="false" onAction="#onSearch" prefHeight="27.0" prefWidth="74.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" GridPane.columnIndex="2" GridPane.rowIndex="1" />
 
-                <Button onAction="#onClearSearch" prefHeight="27.0" prefWidth="74.0" text="Clear" translateX="0.85" GridPane.columnIndex="3" GridPane.rowIndex="1">
-                    <GridPane.margin><Insets left="-45.0" /></GridPane.margin>
-                </Button>
+                <Button onAction="#onClearSearch" prefHeight="27.0" prefWidth="74.0" text="Clear" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             </children>
         </GridPane>
 
