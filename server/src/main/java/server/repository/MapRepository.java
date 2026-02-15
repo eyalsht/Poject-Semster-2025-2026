@@ -71,6 +71,7 @@ public class MapRepository extends BaseRepository<GCMMap, Integer> {
         return executeQuery(session -> {
             StringBuilder hql = new StringBuilder("FROM GCMMap m JOIN FETCH m.city WHERE 1=1");
             hql.append(" AND m.status != :extStatus AND m.price > 0");
+            hql.append(" AND m.city.priceSub > 0");
 
             if (cityName != null && !cityName.isBlank()) {
                 hql.append(" AND m.city.name = :cityName");
