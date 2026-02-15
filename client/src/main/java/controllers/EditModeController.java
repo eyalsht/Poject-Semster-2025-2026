@@ -1149,6 +1149,11 @@ public class EditModeController {
         if (map == null || currentCity == null) return null;
         int mapId = map.getId();
 
+        // Skip maps that were never opened in the editor
+        if (!pendingMarkersPerMap.containsKey(mapId) && !savedMapSitesPerMap.containsKey(mapId)) {
+            return null;
+        }
+
         // Determine markers and sites for this map
         List<SiteMarker> markers = pendingMarkersPerMap.getOrDefault(mapId, new ArrayList<>());
         List<Site> sites = savedMapSitesPerMap.get(mapId);
