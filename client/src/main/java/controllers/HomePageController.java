@@ -18,6 +18,11 @@ import javafx.scene.image.ImageView;
 import common.enums.EmployeeRole;
 import common.user.Client;
 import common.user.Employee;
+import javafx.application.Platform;
+import common.enums.SupportTicketStatus;
+import common.support.ListSupportTicketsRequest;
+import common.support.ListSupportTicketsResponse;
+
 
 public class HomePageController
 {
@@ -41,6 +46,8 @@ public class HomePageController
     private User currentUser = null;
 
     private boolean loggedIn = false;
+    private int openTasksCount = 0;
+    private volatile boolean fetchingTasksCount = false;
 
     @FXML
     public void initialize()
@@ -111,7 +118,8 @@ public class HomePageController
         loginBtn.setText(loggedIn ? "Profile" : "Login");
     }
     @FXML
-    private void onLogout(ActionEvent event) {
+    private void onLogout(ActionEvent event)
+    {
         // Notify server (fire-and-forget on background thread)
         new Thread(() -> {
             try {
@@ -125,6 +133,8 @@ public class HomePageController
         GCMClient.getInstance().setCurrentUser(null);
         this.currentUser = null;
         this.loggedIn = false;
+        openTasksCount = 0;
+        fetchingTasksCount = false;
         updateUI();
         showPage("/GUI/WelcomePage.fxml");
 
@@ -242,12 +252,60 @@ public class HomePageController
             btnMyMaps.setManaged(isClient);
         }
 
-        if (btnSupport != null) {
-            boolean isAgent = (currentUser instanceof Employee emp && emp.getRole() == EmployeeRole.SUPPORT_AGENT);
-            btnSupport.setText(isAgent ? "Tasks" : "Support");
-        }
+        updateSupportButtonText();
+        refreshOpenTasksCountAsync();
 
     }
+
+    private void updateSupportButtonText() {
+        if (btnSupport == null) return;
+
+        boolean isAgent = (currentUser instanceof Employee emp && emp.getRole() == EmployeeRole.SUPPORT_AGENT);
+        if (isAgent) {
+            btnSupport.setText("Tasks (" + openTasksCount + ")");
+        } else {
+            btnSupport.setText("Support");
+        }
+    }
+
+    private void refreshOpenTasksCountAsync() {
+        if (fetchingTasksCount) return;
+
+        if (!(currentUser instanceof Employee emp) || emp.getRole() != EmployeeRole.SUPPORT_AGENT) {
+            openTasksCount = 0;
+            updateSupportButtonText();
+            return;
+        }
+
+        fetchingTasksCount = true;
+
+        new Thread(() -> {
+            try {
+                GCMClient c = GCMClient.getInstance();
+                Message req = new Message(ActionType.LIST_SUPPORT_TICKETS, new ListSupportTicketsRequest(emp.getId()));
+                Message resp = c.sendMessage(req);
+
+                int count = 0;
+                if (resp != null && resp.getMessage() instanceof ListSupportTicketsResponse r && r.getRows() != null) {
+                    count = (int) r.getRows().stream()
+                            .filter(row -> row.getStatus() == SupportTicketStatus.OPEN)
+                            .count();
+                }
+
+                int finalCount = count;
+                Platform.runLater(() -> {
+                    openTasksCount = finalCount;
+                    updateSupportButtonText();
+                });
+
+            } catch (Exception e) {
+                System.err.println("Failed to fetch open tasks count: " + e.getMessage());
+            } finally {
+                fetchingTasksCount = false;
+            }
+        }).start();
+    }
+
 
     @FXML
     void onManagement(javafx.event.ActionEvent event) {
@@ -280,6 +338,7 @@ public class HomePageController
         this.currentUser = user;
         this.loggedIn=true;
         updateUI();
+        refreshOpenTasksCountAsync();
         showPage("/GUI/WelcomePage.fxml");
     }
     private void setReportsButton(boolean show) {
@@ -309,5 +368,4 @@ public class HomePageController
         src.getStyleClass().add("bg-picker-btn-active");
 
     }
-
 }

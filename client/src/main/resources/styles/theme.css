@@ -196,6 +196,17 @@
 .text-area .content {
     -fx-background-color: transparent;
 }
+/* Keep readonly text-areas same as normal (prevents ugly grey in dialogs) */
+.text-area:readonly {
+    -fx-control-inner-background: rgba(0,0,0,0.45);
+    -fx-background-color: rgba(0,0,0,0.45);
+    -fx-text-fill: white;
+}
+
+.text-area:readonly .content {
+    -fx-background-color: transparent;
+}
+
 
 
 /* =========================================================

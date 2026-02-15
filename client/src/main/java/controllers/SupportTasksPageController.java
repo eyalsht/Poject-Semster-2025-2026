@@ -111,29 +111,35 @@ public class SupportTasksPageController {
 
     private void openReplyDialog(SupportTicketRowDTO row) {
         Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Ticket #" + row.getTicketId());
+        dialog.getDialogPane().setStyle("-fx-background-color: #1e1e2e;");
 
-        String css = client.MainApplication.class.getResource("/styles/theme.css").toExternalForm();
 
-        // Apply to dialog pane (sometimes not enough alone)
-        dialog.getDialogPane().getStylesheets().add(css);
+        // Apply BOTH stylesheets (theme + purchase-history)
+        String themeCss = getClass().getResource("/styles/theme.css").toExternalForm();
+        String phCss = getClass().getResource("/styles/purchase-history.css").toExternalForm();
 
-        // GUARANTEED: apply to the Dialog's Scene once it exists
+        dialog.getDialogPane().getStylesheets().addAll(themeCss, phCss);
+
+        // Dialog creates its Scene late => make sure Scene also gets both CSS files
         dialog.getDialogPane().sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (newScene != null && !newScene.getStylesheets().contains(css)) {
-                newScene.getStylesheets().add(css);
+            if (newScene != null) {
+                if (!newScene.getStylesheets().contains(themeCss)) newScene.getStylesheets().add(themeCss);
+                if (!newScene.getStylesheets().contains(phCss)) newScene.getStylesheets().add(phCss);
             }
         });
 
-        dialog.setTitle("Ticket #" + row.getTicketId());
-
         String full = row.getClientText();
-        if (full == null || full.isBlank()) full = row.getPreview(); // fallback
-        TextArea clientText = new TextArea(full);
+        if (full == null || full.isBlank()) full = row.getPreview();
 
+        TextArea clientText = new TextArea(full);
         clientText.setEditable(false);
         clientText.setWrapText(true);
+        clientText.setPrefRowCount(8);
 
         TextArea replyText = new TextArea();
+        replyText.setWrapText(true);
+        replyText.setPrefRowCount(8);
 
         boolean done = row.getStatus() == SupportTicketStatus.DONE;
 
@@ -141,39 +147,43 @@ public class SupportTasksPageController {
             String existing = row.getAgentReply();
             replyText.setText(existing == null ? "" : existing);
             replyText.setEditable(false);
-            replyText.setWrapText(true);
         } else {
             replyText.setPromptText("Write reply...");
-            replyText.setWrapText(true);
         }
+
+        // IMPORTANT: DO NOT set inline styles here.
+        // Let theme.css control .text-area and .text-area:readonly so it won’t turn grey.
+
+        Label lblClient = new Label("Client message:");
+        lblClient.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
+
+        Label lblReply = new Label("Agent reply:");
+        lblReply.setStyle("-fx-text-fill: #e67e22; -fx-font-weight: bold;");
 
         ButtonType sendBtn = new ButtonType("Send", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(sendBtn, ButtonType.CLOSE);
 
         Button sendNode = (Button) dialog.getDialogPane().lookupButton(sendBtn);
-        sendNode.setDisable(done);
+        if (sendNode != null) {
+            sendNode.setDisable(done);
+            sendNode.setOnAction(e -> {
+                String text = replyText.getText() == null ? "" : replyText.getText().trim();
+                if (text.isEmpty()) {
+                    e.consume();
+                    return;
+                }
+                doReply(row.getTicketId(), text);
+            });
+        }
 
-        sendNode.setOnAction(e -> {
-            String text = replyText.getText() == null ? "" : replyText.getText().trim();
-            if (text.isEmpty()) {
-                e.consume();
-                return;
-            }
-            doReply(row.getTicketId(), text);
-        });
-
-        VBox box = new VBox(10,
-                new Label("Client message:"),
-                clientText,
-                new Label("Agent reply:"),
-                replyText
-        );
-
-        box.getStyleClass().add("welcome-card");
+        VBox box = new VBox(10, lblClient, clientText, lblReply, replyText);
+        box.setStyle("-fx-padding: 16;");
 
         dialog.getDialogPane().setContent(box);
         dialog.showAndWait();
     }
+
+
 
     private void doReply(int ticketId, String reply) {
         runAsync(

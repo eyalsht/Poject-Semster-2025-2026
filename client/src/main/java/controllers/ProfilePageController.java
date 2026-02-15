@@ -265,18 +265,39 @@ public class ProfilePageController {
     private void openMessage(SupportTicketRowDTO row) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Ticket #" + row.getTicketId());
+        dialog.getDialogPane().setStyle("-fx-background-color: #1e1e2e;");
+
+
+        // Apply BOTH stylesheets (theme + purchase-history)
+        String themeCss = getClass().getResource("/styles/theme.css").toExternalForm();
+        String phCss = getClass().getResource("/styles/purchase-history.css").toExternalForm();
+
+        dialog.getDialogPane().getStylesheets().addAll(themeCss, phCss);
+
+        // Dialog creates its Scene late => make sure Scene also gets both CSS files
+        dialog.getDialogPane().sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                if (!newScene.getStylesheets().contains(themeCss)) newScene.getStylesheets().add(themeCss);
+                if (!newScene.getStylesheets().contains(phCss)) newScene.getStylesheets().add(phCss);
+            }
+        });
 
         String from = (row.getAgentName() == null || row.getAgentName().isBlank())
                 ? "Support"
                 : row.getAgentName();
 
         String subject = "Ticket #" + row.getTicketId() + " - " + row.getTopic();
+        String dateStr = (row.getRepliedAt() == null ? "" : dtf.format(row.getRepliedAt()));
 
         Label lbl1 = new Label("From: " + from);
         Label lbl2 = new Label("Topic: " + subject);
-
-        String dateStr = (row.getRepliedAt() == null ? "" : dtf.format(row.getRepliedAt()));
         Label lbl3 = new Label("Date: " + dateStr);
+
+        Label lblYourMsg = new Label("Your message:");
+        lblYourMsg.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
+
+        Label lblReply = new Label("Support reply:");
+        lblReply.setStyle("-fx-text-fill: #e67e22; -fx-font-weight: bold;");
 
         TextArea clientBody = new TextArea();
         clientBody.setEditable(false);
@@ -294,20 +315,27 @@ public class ProfilePageController {
         agentBody.setText(replyText);
         agentBody.setPrefRowCount(8);
 
+        // IMPORTANT: DO NOT set inline styles here.
+        // Let theme.css control .text-area and .text-area:readonly so it won’t turn grey.
+
         VBox box = new VBox(10,
                 lbl1, lbl2, lbl3,
-                new Label("Your message:"), clientBody,
-                new Label("Support reply:"), agentBody
+                lblYourMsg, clientBody,
+                lblReply, agentBody
         );
+        box.setStyle("-fx-padding: 16;");
 
         dialog.getDialogPane().setContent(box);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
         dialog.showAndWait();
 
+        // mark read after closing
         if (!row.isReadByClient()) {
             markRead(row.getTicketId());
         }
     }
+
 
     private void markRead(int ticketId) {
         runAsync(
