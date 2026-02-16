@@ -43,7 +43,7 @@ public class appServer {
         });
         // הגדרה מפורשת לשעון ישראל
         java.time.ZonedDateTime now = java.time.ZonedDateTime.now(java.time.ZoneId.of("Asia/Jerusalem"));
-        java.time.ZonedDateTime nextRun = now.withHour(14).withMinute(7).withSecond(0).withNano(0);
+        java.time.ZonedDateTime nextRun = now.withHour(14).withMinute(30).withSecond(0).withNano(0);
         if (now.isAfter(nextRun)) {nextRun = nextRun.plusDays(1);}
         long initialDelay = java.time.Duration.between(now, nextRun).getSeconds();
         System.out.println("[Scheduler] Current time: " + now);
