@@ -21,6 +21,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import common.user.User;
+import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -185,8 +186,10 @@ public class MapCardController {
     }
 
     @FXML
-    private void onMapClicked()
+    private void onMapClicked(MouseEvent event)
     {
+        if (event != null) event.consume(); // ✅ prevent parent (city) click handler
+
         if (currentMap == null) return;
         logMapViewIfClient();
 
@@ -219,6 +222,7 @@ public class MapCardController {
             e.printStackTrace();
         }
     }
+
     private void logMapViewIfClient() {
         try {
             Object user = GCMClient.getInstance().getCurrentUser();
