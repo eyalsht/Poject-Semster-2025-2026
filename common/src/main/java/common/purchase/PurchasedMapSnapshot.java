@@ -53,7 +53,7 @@ public class PurchasedMapSnapshot implements Serializable {
     private String description;
 
     @Lob
-    @Column(name = "map_image_data")
+    @Column(name = "map_image_data", columnDefinition = "LONGBLOB")
     private byte[] mapImageData;
 
     @Column(name = "purchase_date")
