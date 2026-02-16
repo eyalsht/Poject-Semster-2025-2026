@@ -45,6 +45,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 public class MapContentPopupController {
@@ -173,6 +174,7 @@ public class MapContentPopupController {
                 showMapImage();
                 renderMarkers();
                 showToursTab(true);
+                showDownloadButton(true);
                 break;
 
             case MAP_PURCHASED:
@@ -180,6 +182,7 @@ public class MapContentPopupController {
                 showMapImage();
                 renderMarkers();
                 showToursTab(false);
+                showDownloadButton(true);
                 break;
 
             case NO_ACCESS:
@@ -187,7 +190,15 @@ public class MapContentPopupController {
                 // Show site list only, placeholder instead of image
                 showImagePlaceholder("Map Preview", "Purchase this map or subscribe to the city to view the full image.");
                 showToursTab(false);
+                showDownloadButton(false);
                 break;
+        }
+    }
+
+    private void showDownloadButton(boolean show) {
+        if (btnDownloadPdf != null) {
+            btnDownloadPdf.setVisible(show);
+            btnDownloadPdf.setManaged(show);
         }
     }
 
@@ -354,12 +365,39 @@ public class MapContentPopupController {
 
     @FXML
     private void onDownloadPdf() {
-        if (currentSnapshot == null) return;
+        // Resolve metadata from snapshot or live map
+        String mapName;
+        String cityName;
+        String version;
+        String description;
+        String dateLine;
+        List<Site> sites;
+        int mapId;
+
+        if (currentSnapshot != null) {
+            mapName = currentSnapshot.getMapName();
+            cityName = currentSnapshot.getCityName();
+            version = currentSnapshot.getPurchasedVersion();
+            description = currentSnapshot.getDescription();
+            dateLine = "Purchased: " + (currentSnapshot.getPurchaseDate() != null ? currentSnapshot.getPurchaseDate().toString() : "-");
+            sites = currentSnapshot.getSnapshotSitesAsSiteObjects();
+            mapId = currentSnapshot.getOriginalMapId();
+        } else if (currentMap != null) {
+            mapName = currentMap.getName();
+            cityName = currentMap.getCityName();
+            version = currentMap.getVersion();
+            description = currentMap.getDescription();
+            dateLine = "Downloaded: " + LocalDate.now();
+            sites = currentMap.getSites();
+            mapId = currentMap.getId();
+        } else {
+            return;
+        }
 
         FileChooser fc = new FileChooser();
         fc.setTitle("Save Map as PDF");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf"));
-        fc.setInitialFileName(currentSnapshot.getMapName() + ".pdf");
+        fc.setInitialFileName(mapName + ".pdf");
 
         File out = fc.showSaveDialog(lblMapName.getScene().getWindow());
         if (out == null) return;
@@ -370,8 +408,6 @@ public class MapContentPopupController {
             params.setFill(Color.web("#1a252f"));
             WritableImage fxImg = imageContainer.snapshot(params, null);
             BufferedImage mapImage = SwingFXUtils.fromFXImage(fxImg, null);
-
-            List<Site> sites = currentSnapshot.getSnapshotSitesAsSiteObjects();
 
             try (PDDocument doc = new PDDocument()) {
                 // Page 1: Map image + metadata
@@ -391,7 +427,7 @@ public class MapContentPopupController {
                     y -= 20;
                     cs.beginText();
                     cs.newLineAtOffset(margin, y);
-                    cs.showText(truncateText(currentSnapshot.getMapName(), 50));
+                    cs.showText(truncateText(mapName, 50));
                     cs.endText();
 
                     // Metadata line
@@ -399,9 +435,7 @@ public class MapContentPopupController {
                     y -= 18;
                     cs.beginText();
                     cs.newLineAtOffset(margin, y);
-                    String meta = "City: " + currentSnapshot.getCityName()
-                            + "  |  Version: " + currentSnapshot.getPurchasedVersion()
-                            + "  |  Purchased: " + (currentSnapshot.getPurchaseDate() != null ? currentSnapshot.getPurchaseDate().toString() : "-");
+                    String meta = "City: " + cityName + "  |  Version: " + version + "  |  " + dateLine;
                     cs.showText(truncateText(meta, 100));
                     cs.endText();
 
@@ -422,10 +456,10 @@ public class MapContentPopupController {
                     }
 
                     // Description
-                    if (currentSnapshot.getDescription() != null && !currentSnapshot.getDescription().isEmpty()) {
+                    if (description != null && !description.isEmpty()) {
                         cs.setFont(PDType1Font.HELVETICA_OBLIQUE, 10);
                         y -= 12;
-                        String desc = currentSnapshot.getDescription().replace("\n", " ").replace("\r", "");
+                        String desc = description.replace("\n", " ").replace("\r", "");
                         cs.beginText();
                         cs.newLineAtOffset(margin, y);
                         cs.showText(truncateText(desc, 120));
@@ -452,7 +486,7 @@ public class MapContentPopupController {
             }
 
             // Log download event
-            logMapDownload();
+            logMapDownload(mapId);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("PDF Saved");
@@ -537,14 +571,13 @@ public class MapContentPopupController {
         return text;
     }
 
-    private void logMapDownload() {
-        if (currentSnapshot == null) return;
+    private void logMapDownload(int mapId) {
+        if (mapId <= 0) return;
         new Thread(() -> {
             try {
-                Message request = new Message(ActionType.LOG_MAP_DOWNLOAD_REQUEST, currentSnapshot.getOriginalMapId());
+                Message request = new Message(ActionType.LOG_MAP_DOWNLOAD_REQUEST, mapId);
                 GCMClient.getInstance().sendRequest(request);
             } catch (Exception e) {
-                // Non-critical — just log
                 System.err.println("Failed to log map download: " + e.getMessage());
             }
         }).start();
