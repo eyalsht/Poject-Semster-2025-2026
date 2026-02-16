@@ -873,6 +873,7 @@ public class CatalogPageController {
             stage.setOnHidden(event -> {
                 if (GCMClient.isClientConnected()) {
                     refreshCatalog();
+                    refreshPendingApprovalsCount();
                 }
             });
 

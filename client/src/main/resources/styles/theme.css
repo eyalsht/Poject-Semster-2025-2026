@@ -305,6 +305,43 @@
 
 
 /* =========================================================
+   DARK TABLE VARIANT (for approval pages, etc.)
+   ========================================================= */
+
+.dark-table .table-row-cell:filled {
+    -fx-background-color: rgba(255,255,255,0.06);
+}
+
+.dark-table .table-row-cell:filled:odd {
+    -fx-background-color: rgba(255,255,255,0.10);
+}
+
+.dark-table .table-row-cell:filled:hover {
+    -fx-background-color: rgba(255,255,255,0.18);
+}
+
+.dark-table .table-row-cell:filled:selected {
+    -fx-background-color: rgba(52,152,219,0.45);
+}
+
+.dark-table .table-cell {
+    -fx-text-fill: #ecf0f1;
+}
+
+.dark-table .table-row-cell:filled:hover .table-cell {
+    -fx-text-fill: #bff2bf;
+}
+
+.dark-table .table-row-cell:filled:selected .table-cell {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.dark-table .table-row-cell:empty {
+    -fx-background-color: transparent;
+}
+
+/* =========================================================
    UNREAD / READ ROW HIGHLIGHT (pseudo-classes from Java)
    ========================================================= */
 
