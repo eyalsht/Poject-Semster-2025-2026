@@ -14,6 +14,7 @@ public class CatalogFilter implements Serializable {
     private String mapName;
     private String version;
     private String searchQuery;
+    private boolean detailedSearch;
 
     public CatalogFilter() {}
 
@@ -29,6 +30,15 @@ public class CatalogFilter implements Serializable {
         this.mapName = normalizeFilter(mapName);
         this.version = normalizeFilter(version);
         this.searchQuery = normalizeFilter(searchQuery);
+        this.detailedSearch = false;
+    }
+
+    public CatalogFilter(String cityName, String mapName, String version, String searchQuery, boolean detailedSearch) {
+        this.cityName = normalizeFilter(cityName);
+        this.mapName = normalizeFilter(mapName);
+        this.version = normalizeFilter(version);
+        this.searchQuery = normalizeFilter(searchQuery);
+        this.detailedSearch = detailedSearch;
     }
     
     /**
@@ -52,11 +62,18 @@ public class CatalogFilter implements Serializable {
     public String getSearchQuery() { return searchQuery; }
     public void setSearchQuery(String searchQuery) { this.searchQuery = normalizeFilter(searchQuery); }
 
+    public boolean isDetailedSearch() { return detailedSearch; }
+    public void setDetailedSearch(boolean detailedSearch) { this.detailedSearch = detailedSearch; }
+
     public boolean hasFilters() {
         return cityName != null || mapName != null || version != null || searchQuery != null;
     }
 
     public boolean isSearchMode() {
         return searchQuery != null;
+    }
+
+    public boolean isDetailedSearchMode() {
+        return detailedSearch && searchQuery != null;
     }
 }

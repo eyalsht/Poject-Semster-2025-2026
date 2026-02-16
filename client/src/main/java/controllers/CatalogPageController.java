@@ -30,7 +30,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
-import common.content.City; // NEW - Fixes "Cannot resolve symbol 'City'"
+import common.content.City;
+import common.content.Tour;
+import common.content.Site;
+import javafx.scene.control.Label;
 import java.util.function.Consumer;
 
 /**
@@ -89,14 +92,26 @@ public class CatalogPageController {
 
         // Listen for server-pushed catalog update notifications
         client.addNotificationListener((common.messaging.Message msg) -> {
-            if (msg.getAction() == ActionType.CATALOG_UPDATED_NOTIFICATION) {
-                Platform.runLater(() -> {
-                    if (flowPaneCities != null && flowPaneCities.getScene() != null) {
-                        refreshCatalog();
+            Platform.runLater(() -> {
+                if (flowPaneCities == null || flowPaneCities.getScene() == null) return;
+
+                if (msg.getAction() == ActionType.CATALOG_UPDATED_NOTIFICATION) {
+                    refreshCatalog();
+                }
+                if (msg.getAction() == ActionType.MAP_VERSION_UPDATED_NOTIFICATION) {
+                    refreshCatalog();
+                    if (msg.getMessage() instanceof common.messaging.MapVersionNotification notif) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Map Updated");
+                        alert.setHeaderText("New Version Available");
+                        alert.setContentText("Map '" + notif.getMapName() + "' in " +
+                            notif.getCityName() + " has been updated to version " +
+                            notif.getNewVersion() + ".");
+                        alert.showAndWait();
                         refreshPendingApprovalsCount();
                     }
-                });
-            }
+                }
+            });
         });
     }
 
@@ -200,7 +215,13 @@ public class CatalogPageController {
             CatalogResponse catalogResponse = (CatalogResponse) response.getMessage();
             this.lastCatalogResponse = catalogResponse;
 
-            // Check if this is a search response
+            // Check for detailed search mode (NEW)
+            if (catalogResponse.isDetailedSearchMode()) {
+                displayDetailedSearchResults(catalogResponse.getDetailedSearchResult());
+                return;
+            }
+
+            // Check for city-count search mode (EXISTING)
             if (catalogResponse.isSearchMode()) {
                 updateCityCardsFromSearch(catalogResponse.getSearchResults());
                 return;
@@ -255,6 +276,171 @@ public class CatalogPageController {
                 flowPaneCities.getChildren().add(new Label("No results found."));
             }
         });
+    }
+
+    /**
+     * Display detailed search results organized by content type with section headers.
+     */
+    private void displayDetailedSearchResults(CatalogResponse.DetailedSearchResult result) {
+        List<Parent> allComponents = new ArrayList<>();
+
+        // Maps section
+        if (!result.getMaps().isEmpty()) {
+            Label mapsHeader = new Label("MAPS (" + result.getTotalMaps() + ")");
+            mapsHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-padding: 10 0 5 0;");
+            allComponents.add(mapsHeader);
+
+            for (CatalogResponse.MapSearchItem mapItem : result.getMaps()) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
+                    Parent card = loader.load();
+                    MapCardController controller = loader.getController();
+                    controller.setData(toGCMMap(mapItem));
+                    allComponents.add(card);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        // Tours section
+        if (!result.getTours().isEmpty()) {
+            Label toursHeader = new Label("TOURS (" + result.getTotalTours() + ")");
+            toursHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #8e44ad; -fx-padding: 15 0 5 0;");
+            allComponents.add(toursHeader);
+
+            for (CatalogResponse.TourSearchItem tourItem : result.getTours()) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/TourMiniCard.fxml"));
+                    Parent card = loader.load();
+                    TourMiniCardController controller = loader.getController();
+                    controller.setTourData(toTour(tourItem));
+                    allComponents.add(card);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        // Sites section
+        if (!result.getSites().isEmpty()) {
+            Label sitesHeader = new Label("SITES (" + result.getTotalSites() + ")");
+            sitesHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #e67e22; -fx-padding: 15 0 5 0;");
+            allComponents.add(sitesHeader);
+
+            for (CatalogResponse.SiteSearchItem siteItem : result.getSites()) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/SiteMiniCard.fxml"));
+                    Parent card = loader.load();
+                    SiteMiniCardController controller = loader.getController();
+                    controller.setSiteData(toSite(siteItem), 0);
+                    allComponents.add(card);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        // Cities section
+        if (!result.getCities().isEmpty()) {
+            Label citiesHeader = new Label("CITIES (" + result.getTotalCities() + ")");
+            citiesHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #27ae60; -fx-padding: 15 0 5 0;");
+            allComponents.add(citiesHeader);
+
+            for (CatalogResponse.CitySearchItem cityItem : result.getCities()) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityCard.fxml"));
+                    Parent card = loader.load();
+                    CityCardController controller = loader.getController();
+                    controller.setSearchData(toCitySearchResult(cityItem), this);
+                    allComponents.add(card);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        Platform.runLater(() -> {
+            flowPaneCities.getChildren().setAll(allComponents);
+            if (allComponents.isEmpty()) {
+                flowPaneCities.getChildren().add(new Label("No results found."));
+            }
+        });
+    }
+
+    /**
+     * Convert MapSearchItem DTO to lightweight GCMMap entity for card display.
+     */
+    private GCMMap toGCMMap(CatalogResponse.MapSearchItem item) {
+        GCMMap map = new GCMMap();
+        map.setId(item.getId());
+        map.setName(item.getName());
+        map.setDescription(item.getDescription());
+        map.setVersion(item.getVersion());
+        map.setPrice(item.getPrice());
+        map.setImagePath(item.getImagePath());
+
+        if (item.getCityName() != null) {
+            City city = new City();
+            city.setName(item.getCityName());
+            map.setCity(city);
+        }
+        return map;
+    }
+
+    /**
+     * Convert TourSearchItem DTO to lightweight Tour entity for card display.
+     */
+    private Tour toTour(CatalogResponse.TourSearchItem item) {
+        Tour tour = new Tour();
+        tour.setId(item.getId());
+        tour.setName(item.getName());
+        tour.setDescription(item.getDescription());
+        tour.setRecommendedDuration(item.getDuration());
+
+        if (item.getCityName() != null) {
+            City city = new City();
+            city.setName(item.getCityName());
+            tour.setCity(city);
+        }
+        return tour;
+    }
+
+    /**
+     * Convert SiteSearchItem DTO to lightweight Site entity for card display.
+     */
+    private Site toSite(CatalogResponse.SiteSearchItem item) {
+        Site site = new Site();
+        site.setId(item.getId());
+        site.setName(item.getName());
+        site.setDescription(item.getDescription());
+        site.setLocation(item.getLocation());
+
+        if (item.getCityName() != null) {
+            City city = new City();
+            city.setName(item.getCityName());
+            site.setCity(city);
+        }
+        return site;
+    }
+
+    /**
+     * Convert CitySearchItem DTO to CitySearchResult for card display.
+     */
+    private CatalogResponse.CitySearchResult toCitySearchResult(CatalogResponse.CitySearchItem item) {
+        City city = new City();
+        city.setId(item.getId());
+        city.setName(item.getName());
+        city.setDescription(item.getDescription());
+        city.setPriceSub(item.getPriceSub());
+        city.setImagePath(item.getImagePath());
+
+        CatalogResponse.CitySearchResult result = new CatalogResponse.CitySearchResult();
+        result.setCity(city);
+        result.setMapCount(item.getMapCount());
+        result.setSiteCount(item.getSiteCount());
+        result.setTourCount(item.getTourCount());
+        return result;
     }
 
     public CatalogResponse getLastCatalogResponse() {
@@ -357,7 +543,10 @@ public class CatalogPageController {
 
         new Thread(() -> {
             try {
+                // Create filter with detailed search enabled
                 CatalogFilter filter = new CatalogFilter(null, null, null, searchText.trim());
+                filter.setDetailedSearch(true);  // Enable detailed mode
+
                 Message request = new Message(ActionType.GET_CATALOG_REQUEST, filter);
                 Message response = (Message) client.sendRequest(request);
 

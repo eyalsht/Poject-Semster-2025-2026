@@ -157,4 +157,24 @@ public class MapRepository extends BaseRepository<GCMMap, Integer> {
                    .getResultList()
         );
     }
+
+    /**
+     * Search maps by name or description across all cities.
+     * Filters out EXTERNAL maps and maps with price = 0.
+     */
+    public List<GCMMap> searchMaps(String searchQuery) {
+        return executeQuery(session -> {
+            String pattern = "%" + searchQuery.toLowerCase() + "%";
+            return session.createQuery(
+                "SELECT m FROM GCMMap m JOIN FETCH m.city " +
+                "WHERE m.status != :extStatus AND m.price > 0 " +
+                "AND (LOWER(m.name) LIKE :pattern " +
+                "     OR LOWER(m.description) LIKE :pattern) " +
+                "ORDER BY m.city.name, m.name",
+                GCMMap.class)
+                .setParameter("pattern", pattern)
+                .setParameter("extStatus", MapStatus.EXTERNAL)
+                .getResultList();
+        });
+    }
 }

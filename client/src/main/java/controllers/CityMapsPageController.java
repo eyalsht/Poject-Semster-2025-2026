@@ -2,6 +2,8 @@ package controllers;
 
 import common.content.City;
 import common.content.GCMMap;
+import common.content.Tour;
+import common.content.Site;
 import common.dto.CatalogFilter;
 import common.dto.CatalogResponse;
 import common.enums.ActionType;
@@ -402,14 +404,28 @@ public class CityMapsPageController {
     private void onSearch() {
         if (selectedCity == null || txtSearch == null) return;
 
-        String query = txtSearch.getText().toLowerCase();
-        List<GCMMap> filtered = selectedCity.getMaps().stream()
-                .filter(map -> map.getName().toLowerCase().contains(query) ||
-                        (map.getSites() != null && map.getSites().stream()
-                                .anyMatch(s -> s.getName().toLowerCase().contains(query))))
-                .toList();
+        String query = txtSearch.getText().trim();
+        if (query.isEmpty()) {
+            onClearSearch();
+            return;
+        }
 
-        renderMapCards(filtered);
+        String lowerQuery = query.toLowerCase();
+
+        // Search maps by: map name, map description, OR any site name/description within the map
+        List<GCMMap> filteredMaps = selectedCity.getMaps() != null ?
+            selectedCity.getMaps().stream()
+                .filter(map -> matchesMap(map, lowerQuery))
+                .toList() : new ArrayList<>();
+
+        // Search tours if available on the city object
+        List<Tour> filteredTours = selectedCity.getTours() != null ?
+            selectedCity.getTours().stream()
+                .filter(tour -> matchesTour(tour, lowerQuery))
+                .toList() : new ArrayList<>();
+
+        // Display organized results
+        displayCitySearchResults(filteredMaps, filteredTours);
         /*
         flowPaneMaps.getChildren().clear(); // ניקוי התצוגה לפני הצגת התוצאות
         java.util.Set<Integer> addedMapIds = new java.util.HashSet<>();
@@ -429,6 +445,90 @@ public class CityMapsPageController {
                 } catch (IOException e) { e.printStackTrace(); }
             }
         }*/
+    }
+
+    /**
+     * Check if a map matches the search query by name, description, or any of its sites.
+     */
+    private boolean matchesMap(GCMMap map, String lowerQuery) {
+        if (map.getName().toLowerCase().contains(lowerQuery)) return true;
+        if (map.getDescription() != null && map.getDescription().toLowerCase().contains(lowerQuery)) return true;
+
+        // Search through the map's sites
+        if (map.getSites() != null) {
+            for (Site site : map.getSites()) {
+                if (site.getName().toLowerCase().contains(lowerQuery)) return true;
+                if (site.getDescription() != null && site.getDescription().toLowerCase().contains(lowerQuery)) return true;
+                if (site.getLocation() != null && site.getLocation().toLowerCase().contains(lowerQuery)) return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if a tour matches the search query by name or description.
+     */
+    private boolean matchesTour(Tour tour, String lowerQuery) {
+        if (tour.getName().toLowerCase().contains(lowerQuery)) return true;
+        if (tour.getDescription() != null && tour.getDescription().toLowerCase().contains(lowerQuery)) return true;
+        return false;
+    }
+
+    /**
+     * Display city-level search results organized by content type.
+     */
+    private void displayCitySearchResults(List<GCMMap> maps, List<Tour> tours) {
+        Platform.runLater(() -> {
+            flowPaneMaps.getChildren().clear();
+            List<Parent> allComponents = new ArrayList<>();
+
+            // Maps section
+            if (!maps.isEmpty()) {
+                Label mapsHeader = new Label("MAPS (" + maps.size() + ")");
+                mapsHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-padding: 5 0 5 0;");
+                allComponents.add(mapsHeader);
+
+                for (GCMMap map : maps) {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
+                        Parent card = loader.load();
+                        MapCardController controller = loader.getController();
+                        controller.setData(map);
+                        controller.setLogViewsFromCatalogOnly(true);
+                        allComponents.add(card);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            // Tours section
+            if (!tours.isEmpty()) {
+                Label toursHeader = new Label("TOURS (" + tours.size() + ")");
+                toursHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #8e44ad; -fx-padding: 10 0 5 0;");
+                allComponents.add(toursHeader);
+
+                for (Tour tour : tours) {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/TourMiniCard.fxml"));
+                        Parent card = loader.load();
+                        TourMiniCardController controller = loader.getController();
+                        controller.setTourData(tour);
+                        allComponents.add(card);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            flowPaneMaps.getChildren().setAll(allComponents);
+
+            if (allComponents.isEmpty()) {
+                Label noResults = new Label("No results found for \"" + txtSearch.getText() + "\"");
+                noResults.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d; -fx-padding: 20;");
+                flowPaneMaps.getChildren().add(noResults);
+            }
+        });
     }
 
     @FXML

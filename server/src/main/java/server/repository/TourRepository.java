@@ -25,4 +25,21 @@ public class TourRepository extends BaseRepository<Tour,Integer>{
                         .getResultList()
         );
     }
+
+    /**
+     * Search tours by name or description across all cities.
+     */
+    public List<Tour> searchTours(String searchQuery) {
+        return executeQuery(session -> {
+            String pattern = "%" + searchQuery.toLowerCase() + "%";
+            return session.createQuery(
+                "SELECT DISTINCT t FROM Tour t JOIN FETCH t.city " +
+                "WHERE LOWER(t.name) LIKE :pattern " +
+                "   OR LOWER(t.description) LIKE :pattern " +
+                "ORDER BY t.city.name, t.name",
+                Tour.class)
+                .setParameter("pattern", pattern)
+                .getResultList();
+        });
+    }
 }
