@@ -12,8 +12,8 @@ import client.GCMClient;
 import common.enums.ActionType;
 import common.messaging.Message;
 import common.user.Client;
-
 import java.util.ArrayList;
+
 
 
 import java.util.List;
@@ -107,7 +107,8 @@ public class CityCardController {
     }
 
     @FXML
-    private void onCardClicked() {
+    private void onCardClicked()
+    {
         if (city == null) {
             System.err.println("DEBUG: Clicked on a card with NULL City"); //
             return;
@@ -120,6 +121,7 @@ public class CityCardController {
         if (mainController instanceof CatalogPageController catalog) {
             System.out.println("DEBUG: Navigating to city maps for: " + city.getName()); //
             logCityViewIfClient();
+            logCityEnterViewIfClient();
             catalog.showCityMaps(city);
         }
         else if (mainController instanceof CityMapsPageController) {
@@ -158,5 +160,29 @@ public class CityCardController {
 
         } catch (Exception ignored) {}
     }
+    private void logCityEnterViewIfClient() {
+        try {
+            Object user = GCMClient.getInstance().getCurrentUser();
+            if (!(user instanceof Client)) return; // only clients
+
+            if (city == null || city.getId() <= 0) return;
+
+            Integer userId = ((Client) user).getId();
+            Integer cityId = city.getId();
+
+            ArrayList<Object> payload = new ArrayList<>();
+            payload.add(userId);
+            payload.add(cityId);
+            payload.add(null); // mapId = null means "city enter"
+
+            new Thread(() -> {
+                try {
+                    GCMClient.getInstance().sendRequest(new Message(ActionType.LOG_MAP_VIEW_REQUEST, payload));
+                } catch (Exception ignored) {}
+            }).start();
+
+        } catch (Exception ignored) {}
+    }
+
 
 }

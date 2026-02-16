@@ -12,7 +12,6 @@ import common.report.SupportRequestsReport;
 import common.support.SupportTicketRowDTO;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
@@ -66,7 +65,7 @@ public class ReportPageController {
 
     @FXML private StackPane reportArea;
 
-    // Generic table
+    // Generic table (reused for all reports)
     @FXML private TableView<Object> tableView;
 
     @FXML private TableColumn<Object, Number> colId;
@@ -85,8 +84,8 @@ public class ReportPageController {
     private static final DateTimeFormatter CREATED_FMT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    // used to show "Haifa (25)" in All cities mode after report generated
-    private final Map<Integer, Integer> activityCityViews = new HashMap<>();
+    // City enter views (for showing "Haifa (25)" in the combo after Activity generated)
+    private final Map<Integer, Integer> cityEnterViewsByCityId = new HashMap<>();
 
     @FXML
     public void initialize() {
@@ -107,23 +106,19 @@ public class ReportPageController {
         dpFrom.setDisable(true);
         dpTo.setDisable(true);
 
-        // defaults (last 7 days)
+        // defaults: last 7 days
         dpTo.setValue(LocalDate.now());
         dpFrom.setValue(LocalDate.now().minusDays(6));
 
+        // default converter (will be replaced after Activity report)
         cmbCity.setConverter(new StringConverter<>() {
             @Override public String toString(City city) {
-                if (city == null) return "";
-                // show counts only when we have them AND only for real cities
-                if (activityCityViews.containsKey(city.getId()) && city.getId() > 0) {
-                    return city.getName() + " (" + activityCityViews.get(city.getId()) + ")";
-                }
-                return city.getName();
+                return (city == null) ? "" : city.getName();
             }
             @Override public City fromString(String s) { return null; }
         });
 
-        // Safe default
+        // Safe default table setup
         setupClientsTableColumns();
         setupClientsTableInteractions();
 
@@ -140,13 +135,12 @@ public class ReportPageController {
         tableView.prefHeightProperty().bind(reportArea.heightProperty());
     }
 
+    // ===== UI STATE =====
     private void wireUiStateListeners() {
         cmbReportType.valueProperty().addListener((obs, oldV, newV) -> {
-            // clear counts when switching reports
-            activityCityViews.clear();
-            cmbCity.setButtonCell(null);
-            cmbCity.setCellFactory(null);
-
+            // reset city-enter counts display when switching report type
+            cityEnterViewsByCityId.clear();
+            resetCityComboCells();
             applyUiState();
         });
 
@@ -182,6 +176,7 @@ public class ReportPageController {
         btnGenerate.setDisable(!hasReport || (needsCity && !cityChosen) || (supportsDateRange && !datesOk));
     }
 
+    // layout changes only after Generate
     private void applyReportLayout() {
         String report = displayedReport;
 
@@ -214,19 +209,26 @@ public class ReportPageController {
             reportContent.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
             reportContent.setSpacing(20);
 
-        } else if (isActivity || isPurchases) {
-            // show BOTH chart + table for Activity, chart only for Purchases
+        } else if (isActivity) {
+            // Activity: chart + table
             barChart.setVisible(true);
             barChart.setManaged(true);
             barChart.setPrefWidth(430);
 
-            if (isActivity) {
-                tableView.setVisible(true);
-                tableView.setManaged(true);
-            }
+            tableView.setVisible(true);
+            tableView.setManaged(true);
 
             reportContent.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
             reportContent.setSpacing(20);
+
+        } else if (isPurchases) {
+            // Purchases: chart only
+            barChart.setVisible(true);
+            barChart.setManaged(true);
+            barChart.setPrefWidth(650);
+
+            reportContent.setAlignment(javafx.geometry.Pos.CENTER);
+            reportContent.setSpacing(0);
 
             tableView.getItems().clear();
 
@@ -255,7 +257,7 @@ public class ReportPageController {
                         List<City> cities = (List<City>) res.getMessage();
 
                         ArrayList<City> uiCities = new ArrayList<>();
-                        uiCities.add(new City(-1, "All cities", 0));
+                        uiCities.add(new City(-1, "All cities", 0)); // special
                         if (cities != null) uiCities.addAll(cities);
 
                         cmbCity.setItems(FXCollections.observableArrayList(uiCities));
@@ -430,8 +432,8 @@ public class ReportPageController {
 
     // ===== ACTIVITY REPORT =====
     private void generateActivityReport(long reqId) {
-        City city = cmbCity.getValue(); // can be "All cities"
 
+        City selectedCity = cmbCity.getValue();
         LocalDate from = dpFrom.getValue();
         LocalDate to = dpTo.getValue();
 
@@ -445,7 +447,7 @@ public class ReportPageController {
         }
 
         // null => all cities
-        final Integer cityId = (city != null && city.getId() != -1) ? city.getId() : null;
+        final Integer cityId = (selectedCity != null && selectedCity.getId() != -1) ? selectedCity.getId() : null;
 
         new Thread(() -> {
             try {
@@ -466,16 +468,23 @@ public class ReportPageController {
                         lblChooseReport.setVisible(false);
                         lblChooseReport.setManaged(false);
 
-                        boolean isAll = (cityId == null);
+                        // IMPORTANT: never lock city selection
+                        cmbCity.setDisable(false);
 
-                        if (isAll) {
-                            fillActivityAllCities(report);
-                            // keep city enabled in All mode
-                            cmbCity.setDisable(false);
+                        // show "Haifa (25)" based on city-enter views (if report provides it)
+                        applyCityEnterCountsToCombo(report);
+
+                        // Chart: business metrics only (+ show city enters in title)
+                        fillActivityChart(report, cityId);
+
+                        // Table: ALWAYS Map | City | Downloads | Views (exact ask)
+                        setupActivityMapsTableColumns();
+                        tableView.getItems().clear();
+
+                        if (report != null && report.mapRows != null) {
+                            tableView.setItems(FXCollections.observableArrayList(report.mapRows));
                         } else {
-                            fillActivitySingleCity(report);
-                            // lock city in single city mode (as you requested)
-                            cmbCity.setDisable(true);
+                            tableView.setItems(FXCollections.observableArrayList());
                         }
 
                     } else {
@@ -489,55 +498,103 @@ public class ReportPageController {
         }).start();
     }
 
-    // Chart shows ONLY non-view metrics (views are too large and distort chart)
-    private void fillActivityChartNonViews(int maps, int oneTime, int subs, int renewals) {
+    private void fillActivityChart(ActivityReport report, Integer cityId) {
         barChart.getData().clear();
         barChart.setAnimated(false);
         setChartAxisLabels("Metric", "Count");
 
-        XYChart.Series<String, Number> s = new XYChart.Series<>();
-        s.setName("Activity");
+        String cityLabel;
+        if (cityId == null) cityLabel = "All cities";
+        else cityLabel = (cmbCity.getValue() == null) ? "" : cmbCity.getValue().getName();
 
-        s.getData().add(new XYChart.Data<>("Maps", maps));
-        s.getData().add(new XYChart.Data<>("One-time", oneTime));
-        s.getData().add(new XYChart.Data<>("Subscriptions", subs));
-        s.getData().add(new XYChart.Data<>("Renewals", renewals));
+        int cityEnters = (report == null) ? 0 : report.cityEnterViewsTotal;
+
+        XYChart.Series<String, Number> s = new XYChart.Series<>();
+        s.setName("Activity (" + cityLabel + ") - City enters: " + cityEnters);
+
+        if (report != null) {
+            s.getData().add(new XYChart.Data<>("Maps", report.maps));
+            s.getData().add(new XYChart.Data<>("One-time", report.oneTimePurchases));
+            s.getData().add(new XYChart.Data<>("Subscriptions", report.subscriptions));
+            s.getData().add(new XYChart.Data<>("Renewals", report.renewals));
+        }
 
         barChart.getData().add(s);
     }
 
-    // All cities mode: table shows cities (City, Views, Downloads)
-    private void fillActivityAllCities(ActivityReport report) {
-        activityCityViews.clear();
+    private void setupActivityMapsTableColumns() {
 
-        int maps = 0, oneTime = 0, subs = 0, renewals = 0;
+        // We use existing 6 columns as:
+        // colUsername  -> Map
+        // colEmail     -> City
+        // colFirstName -> Downloads
+        // colLastName  -> Views
+        //
+        // Hide: colId, colCreatedAt
 
-        if (report != null && report.rows != null) {
-            for (ActivityReport.CityRow r : report.rows) {
-                maps += r.maps;
-                oneTime += r.oneTimePurchases;
-                subs += r.subscriptions;
-                renewals += r.renewals;
+        colUsername.setText("Map");
+        colEmail.setText("City");
+        colFirstName.setText("Downloads");
+        colLastName.setText("Views");
 
-                activityCityViews.put(r.cityId, r.views);
+        colUsername.setVisible(true);
+        colEmail.setVisible(true);
+        colFirstName.setVisible(true);
+        colLastName.setVisible(true);
+
+        colId.setVisible(false);
+        colCreatedAt.setVisible(false);
+
+        colUsername.setCellValueFactory(data -> {
+            ActivityReport.MapRow r = (ActivityReport.MapRow) data.getValue();
+            return new SimpleStringProperty(r.mapName);
+        });
+
+        colEmail.setCellValueFactory(data -> {
+            ActivityReport.MapRow r = (ActivityReport.MapRow) data.getValue();
+            return new SimpleStringProperty(r.cityName);
+        });
+
+        colFirstName.setCellValueFactory(data -> {
+            ActivityReport.MapRow r = (ActivityReport.MapRow) data.getValue();
+            return new SimpleStringProperty(String.valueOf(r.downloads));
+        });
+
+        colLastName.setCellValueFactory(data -> {
+            ActivityReport.MapRow r = (ActivityReport.MapRow) data.getValue();
+            return new SimpleStringProperty(String.valueOf(r.views));
+        });
+    }
+
+    private void applyCityEnterCountsToCombo(ActivityReport report) {
+        cityEnterViewsByCityId.clear();
+
+        if (report != null && report.cityEnterRows != null) {
+            for (ActivityReport.CityEnterRow r : report.cityEnterRows) {
+                cityEnterViewsByCityId.put(r.cityId, r.cityEnterViews);
             }
         }
 
-        fillActivityChartNonViews(maps, oneTime, subs, renewals);
+        cmbCity.setConverter(new StringConverter<>() {
+            @Override public String toString(City city) {
+                if (city == null) return "";
+                if (city.getId() == -1) return city.getName(); // All cities
 
-        setupActivityCitiesTableColumns();
-        tableView.getItems().clear();
-        if (report != null && report.rows != null) {
-            tableView.setItems(FXCollections.observableArrayList(report.rows));
-        }
+                Integer cnt = cityEnterViewsByCityId.get(city.getId());
+                if (cnt == null) cnt = 0;
+                return city.getName() + " (" + cnt + ")";
+            }
+            @Override public City fromString(String s) { return null; }
+        });
 
-        // Make combo show "Haifa (25)" etc (after data exists)
+        // force redraw
         cmbCity.setButtonCell(new ListCell<>() {
             @Override protected void updateItem(City item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || item == null ? "" : cmbCity.getConverter().toString(item));
             }
         });
+
         cmbCity.setCellFactory(cb -> new ListCell<>() {
             @Override protected void updateItem(City item, boolean empty) {
                 super.updateItem(item, empty);
@@ -546,92 +603,15 @@ public class ReportPageController {
         });
     }
 
-    // Single city mode: table shows maps (Map, Views, Downloads)
-    private void fillActivitySingleCity(ActivityReport report) {
-        int maps = 0, oneTime = 0, subs = 0, renewals = 0;
-
-        if (report != null && report.rows != null && !report.rows.isEmpty()) {
-            ActivityReport.CityRow r = report.rows.get(0);
-            maps = r.maps;
-            oneTime = r.oneTimePurchases;
-            subs = r.subscriptions;
-            renewals = r.renewals;
-        }
-
-        fillActivityChartNonViews(maps, oneTime, subs, renewals);
-
-        setupActivityMapsTableColumns();
-        tableView.getItems().clear();
-
-        if (report != null && report.mapRows != null) {
-            tableView.setItems(FXCollections.observableArrayList(report.mapRows));
-        }
-    }
-
-    private void setupActivityCitiesTableColumns() {
-        // We will use:
-        // colUsername = City
-        // colId       = Views
-        // colEmail    = Downloads
-        colUsername.setText("City");
-        colId.setText("Views");
-        colEmail.setText("Downloads");
-
-        colUsername.setVisible(true);
-        colId.setVisible(true);
-        colEmail.setVisible(true);
-
-        colFirstName.setVisible(false);
-        colLastName.setVisible(false);
-        colCreatedAt.setVisible(false);
-
-        colUsername.setCellValueFactory(data -> {
-            ActivityReport.CityRow r = (ActivityReport.CityRow) data.getValue();
-            return new SimpleStringProperty(r.cityName);
+    private void resetCityComboCells() {
+        cmbCity.setConverter(new StringConverter<>() {
+            @Override public String toString(City city) {
+                return (city == null) ? "" : city.getName();
+            }
+            @Override public City fromString(String s) { return null; }
         });
-
-        colId.setCellValueFactory(data -> {
-            ActivityReport.CityRow r = (ActivityReport.CityRow) data.getValue();
-            return new SimpleLongProperty(r.views);
-        });
-
-        colEmail.setCellValueFactory(data -> {
-            ActivityReport.CityRow r = (ActivityReport.CityRow) data.getValue();
-            return new SimpleStringProperty(String.valueOf(r.downloads));
-        });
-    }
-
-    private void setupActivityMapsTableColumns() {
-        // We will use:
-        // colUsername = Map
-        // colId       = Views
-        // colEmail    = Downloads
-        colUsername.setText("Map");
-        colId.setText("Views");
-        colEmail.setText("Downloads");
-
-        colUsername.setVisible(true);
-        colId.setVisible(true);
-        colEmail.setVisible(true);
-
-        colFirstName.setVisible(false);
-        colLastName.setVisible(false);
-        colCreatedAt.setVisible(false);
-
-        colUsername.setCellValueFactory(data -> {
-            ActivityReport.MapRow r = (ActivityReport.MapRow) data.getValue();
-            return new SimpleStringProperty(r.mapName);
-        });
-
-        colId.setCellValueFactory(data -> {
-            ActivityReport.MapRow r = (ActivityReport.MapRow) data.getValue();
-            return new SimpleLongProperty(r.views);
-        });
-
-        colEmail.setCellValueFactory(data -> {
-            ActivityReport.MapRow r = (ActivityReport.MapRow) data.getValue();
-            return new SimpleStringProperty(String.valueOf(r.downloads));
-        });
+        cmbCity.setButtonCell(null);
+        cmbCity.setCellFactory(null);
     }
 
     // ===== PURCHASES REPORT =====

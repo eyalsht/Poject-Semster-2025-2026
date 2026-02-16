@@ -5,66 +5,69 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class ActivityReport implements Serializable {
+
     public LocalDate fromDate;
     public LocalDate toDate;
 
-    // Always returned (city aggregation)
-    public List<CityRow> rows;
+    // Chart (business metrics)
+    public int maps;
+    public int oneTimePurchases;
+    public int subscriptions;
+    public int renewals;
 
-    // Returned when a SINGLE city is requested (cityId != null)
-    public Integer tableCityId;
-    public String tableCityName;
+    // City-enter views count (map_id is null)
+    public int cityEnterViewsTotal;
+
+    // For combo display: cityId, cityName, cityEnterViews
+    public List<CityEnterRow> cityEnterRows;
+
+    // Table (always): maps rows
     public List<MapRow> mapRows;
 
-    public ActivityReport(LocalDate fromDate,
-                          LocalDate toDate,
-                          List<CityRow> rows,
-                          Integer tableCityId,
-                          String tableCityName,
+    public ActivityReport(LocalDate fromDate, LocalDate toDate,
+                          int maps, int oneTimePurchases, int subscriptions, int renewals,
+                          int cityEnterViewsTotal,
+                          List<CityEnterRow> cityEnterRows,
                           List<MapRow> mapRows) {
+
         this.fromDate = fromDate;
         this.toDate = toDate;
-        this.rows = rows;
-        this.tableCityId = tableCityId;
-        this.tableCityName = tableCityName;
+        this.maps = maps;
+        this.oneTimePurchases = oneTimePurchases;
+        this.subscriptions = subscriptions;
+        this.renewals = renewals;
+        this.cityEnterViewsTotal = cityEnterViewsTotal;
+        this.cityEnterRows = cityEnterRows;
         this.mapRows = mapRows;
     }
 
-    public static class CityRow implements Serializable {
+    public static class CityEnterRow implements Serializable {
         public int cityId;
         public String cityName;
+        public int cityEnterViews;
 
-        public int maps;
-        public int oneTimePurchases;
-        public int subscriptions;
-        public int renewals;
-        public int views;
-        public int downloads;
-
-        public CityRow(int cityId, String cityName, int maps, int oneTimePurchases,
-                       int subscriptions, int renewals, int views, int downloads) {
+        public CityEnterRow(int cityId, String cityName, int cityEnterViews) {
             this.cityId = cityId;
             this.cityName = cityName;
-            this.maps = maps;
-            this.oneTimePurchases = oneTimePurchases;
-            this.subscriptions = subscriptions;
-            this.renewals = renewals;
-            this.views = views;
-            this.downloads = downloads;
+            this.cityEnterViews = cityEnterViews;
         }
     }
 
     public static class MapRow implements Serializable {
         public int mapId;
         public String mapName;
-        public int views;
+        public int cityId;
+        public String cityName;
         public int downloads;
+        public int views;
 
-        public MapRow(int mapId, String mapName, int views, int downloads) {
+        public MapRow(int mapId, String mapName, int cityId, String cityName, int downloads, int views) {
             this.mapId = mapId;
             this.mapName = mapName;
-            this.views = views;
+            this.cityId = cityId;
+            this.cityName = cityName;
             this.downloads = downloads;
+            this.views = views;
         }
     }
 }

@@ -185,7 +185,8 @@ public class MapCardController {
     }
 
     @FXML
-    private void onMapClicked() {
+    private void onMapClicked()
+    {
         if (currentMap == null) return;
         logMapViewIfClient();
 
@@ -220,12 +221,12 @@ public class MapCardController {
     }
     private void logMapViewIfClient() {
         try {
-            User user = GCMClient.getInstance().getCurrentUser();
+            Object user = GCMClient.getInstance().getCurrentUser();
             if (!(user instanceof Client)) return; // only clients
 
             if (currentMap == null || currentMap.getCity() == null) return;
 
-            Integer userId = user.getId();
+            Integer userId = ((Client) user).getId();
             Integer cityId = currentMap.getCity().getId();
             Integer mapId  = currentMap.getId();
 
@@ -242,5 +243,6 @@ public class MapCardController {
 
         } catch (Exception ignored) {}
     }
+
 
 }
