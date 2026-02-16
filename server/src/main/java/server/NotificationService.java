@@ -79,12 +79,13 @@ public class NotificationService
         }
     }
 
-    public static void sendSubscriptionAlert(String email, String phone, String firstName, int days, String city) {
+    public static void sendSubscriptionAlert(String email, String phone, String firstName, int days, String city)
+    {
         String subject = "GCM Subscription Expiry Warning";
         String message = "Hello " + firstName + ",\n\n" +
                 "This is a reminder that your GCM city subscription to " + city + " will expire in " + days + " days.\n" +
                 "To ensure uninterrupted access to your maps, please renew your subscription soon.\n\n" +
-                "Best regards,\nGCM Team";
+                "Best regards,\nGCM Family";
 
         sendEmail(email, subject, message);
         if (phone != null && !phone.isEmpty()) {
@@ -92,11 +93,12 @@ public class NotificationService
         }
     }
 
-    public static void sendRegistrationAlert(String email, String phone, String firstName) {
+    public static void sendRegistrationAlert(String email, String phone, String firstName)
+    {
 
         String subject = "GCM Registration";
         String message = "Hello " + firstName + ",\n" +
-                "Welcome to GCM Services!\n" +
+                "Welcome to GCM family!\n" +
                 "We're so excited you joined us.";
 
         sendEmail(email, subject, message);
@@ -111,10 +113,13 @@ public class NotificationService
         String message = "Hello "+firstName+",\n\n"+
                 "Thank you for your purchase!\n"+
                 "Your subscription to "+city+ " will expire in "+expirationDate+"\n"+
-                "Price: "+price +"$";
+                "Price: "+price +"$\n"+
+                "Welcome to the GCM family!";
+
         sendEmail(email,subject, message);
         //OPTIONAL - SEND SMS...
     }
+
     public static void sendOneTimePurchaseAlert(String email,String phone,String firstName, String city,double price,String mapName, String mapVersion)
     {
         String subject = "GCM Map purchase receipt";
@@ -124,9 +129,23 @@ public class NotificationService
                 "City: "+city+
                 "\nMap name: "+mapName+
                 "\nMap version: "+mapVersion+
-                "\nPrice: "+price +"$";
+                "\nPrice: "+price +"$"+
+                "Enjoy your travels,\n" +
+                "The GCM Team";;
         sendEmail(email,subject, message);
         //OPTIONAL - SEND SMS...
+    }
+
+    public static void sendMapUpdateAlert(String email,String firstName, String city, String mapName, String mapVersion)
+    {
+        String subject = "Update Available: New version for " + mapName;
+        String message = "Hello " + firstName + ",\n\n" +
+                "Great news! A new update is available for your map: " + mapName + ".\n" +
+                "New Version: " + mapVersion + "\n"+
+                "You can purchase the updated version from the GCM app.\n\n" +
+                "Enjoy your travels,\n" +
+                "The GCM Team";
+        sendEmail(email,subject, message);
     }
     public static String formatPhoneNumberToInternational(String phoneNumber) {
         if (phoneNumber == null || phoneNumber.isEmpty()) {

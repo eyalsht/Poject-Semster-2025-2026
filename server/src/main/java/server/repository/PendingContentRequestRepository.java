@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static server.NotificationService.sendMapUpdateAlert;
+
 /**
  * Repository for PendingContentRequest entity operations.
  */
@@ -380,8 +382,29 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
 
         session.merge(map);
         System.out.println("Map update applied for ID: " + mapId);
+        List <Object[]> relevantUsers = findUsersByMapPurchase(mapId);
+        String currentVersion = map.getVersion();
+        String currentMapName = map.getName();
+        for (Object[] row : relevantUsers)
+        {
+            String email = (String) row[0];
+            String firstName = (String) row[1];
+            System.out.println("User Found: " + firstName + " (Email: " + email + ")");
+            sendMapUpdateAlert(email,firstName, map.getCityName(),currentMapName,currentVersion);
+        }
     }
-
+    public List<Object[]> findUsersByMapPurchase(int mapID) {
+        return executeQuery(session ->
+                session.createNativeQuery(
+                                "SELECT u.email,u.first_name " +
+                                        "FROM purchases p " +
+                                        "JOIN users u ON p.user_id = u.id " +
+                                        "WHERE p.purchase_type = 'ONE_TIME' " +
+                                        "AND p.map_id = :mapID")
+                        .setParameter("mapID", mapID)
+                        .getResultList()
+        );
+    }
     /**
      * Revert a map back to the external repository instead of hard-deleting.
      * Clears GCM-specific data (sites, markers, price) but keeps raw data (name, description, image, city).
