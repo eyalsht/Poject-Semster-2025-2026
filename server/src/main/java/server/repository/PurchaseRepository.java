@@ -51,8 +51,7 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
      *
      * @return a populated Subscription object (not managed by Hibernate)
      */
-    public Subscription createSubscription(int userId, int cityId, double monthlyPrice, int months)
-    {
+    public Subscription createSubscription(int userId, int cityId, double monthlyPrice, int months) {
         // Bypass Hibernate session management entirely - use raw JDBC
         // to avoid the persistent "connection is closed" issue
         SessionFactoryImplementor sfi = (SessionFactoryImplementor) HibernateUtil.getSessionFactory();
@@ -100,7 +99,7 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
             // 3. Insert (include map_id, purchased_version, snapshot_id as NULL for SINGLE_TABLE inheritance)
             try (PreparedStatement ps = conn.prepareStatement(
                     "INSERT INTO purchases (purchase_type, user_id, city_id, map_id, price, purchase_date, expiration_date, is_renewal, purchased_version, snapshot_id) " +
-                    "VALUES ('SUBSCRIPTION', ?, ?, NULL, ?, ?, ?, ?, NULL, NULL)")) {
+                            "VALUES ('SUBSCRIPTION', ?, ?, NULL, ?, ?, ?, ?, NULL, NULL)")) {
                 ps.setInt(1, userId);
                 ps.setInt(2, cityId);
                 ps.setDouble(3, totalPrice);
@@ -121,46 +120,51 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
             Optional<String> phone = findPhoneByUserId(userId);
             Optional<String> firstName = findNameByUserId(userId);
             Optional<String> cityName = findCityNameByCityID(cityId);
-            sendSubscriptionAlert(email.orElse(null),phone.orElse(null),firstName.orElse(null),cityName.orElse(null),totalPrice,newExpiration);
+            sendSubscriptionAlert(email.orElse(null), phone.orElse(null), firstName.orElse(null), cityName.orElse(null), totalPrice, newExpiration);
 
         } catch (Exception e) {
-            if (conn != null) try { conn.rollback(); } catch (Exception ignored) {}
+            if (conn != null) try {
+                conn.rollback();
+            } catch (Exception ignored) {
+            }
             throw new RuntimeException("Subscription creation failed: " + e.getMessage(), e);
         } finally {
-            if (conn != null) try { cp.closeConnection(conn); } catch (Exception ignored) {}
+            if (conn != null) try {
+                cp.closeConnection(conn);
+            } catch (Exception ignored) {
+            }
         }
         return subscription;
     }
 
-    private Optional<String> findEmailByUserId(int userId)
-    {
+    private Optional<String> findEmailByUserId(int userId) {
         return executeQuery(session ->
                 session.createQuery("SELECT u.email FROM User u WHERE u.id= :uid", String.class)
-                        .setParameter("uid",userId)
-                        .uniqueResultOptional());
-    }
-    private Optional<String> findPhoneByUserId(int userId)
-    {
-        return executeQuery(session ->
-                session.createQuery("SELECT u.phoneNumber FROM Client u WHERE u.id= :uid", String.class)
-                        .setParameter("uid",userId)
-                        .uniqueResultOptional());
-    }
-    private Optional<String> findNameByUserId(int userId)
-    {
-        return executeQuery(session ->
-                session.createQuery("SELECT u.firstName FROM User u WHERE u.id= :uid", String.class)
-                        .setParameter("uid",userId)
+                        .setParameter("uid", userId)
                         .uniqueResultOptional());
     }
 
-    private Optional<String> findCityNameByCityID(int cityId)
-    {
+    private Optional<String> findPhoneByUserId(int userId) {
         return executeQuery(session ->
-                session.createQuery("SELECT c.name FROM City c WHERE c.id= :cid", String.class)
-                        .setParameter("cid",cityId)
+                session.createQuery("SELECT u.phoneNumber FROM Client u WHERE u.id= :uid", String.class)
+                        .setParameter("uid", userId)
                         .uniqueResultOptional());
     }
+
+    private Optional<String> findNameByUserId(int userId) {
+        return executeQuery(session ->
+                session.createQuery("SELECT u.firstName FROM User u WHERE u.id= :uid", String.class)
+                        .setParameter("uid", userId)
+                        .uniqueResultOptional());
+    }
+
+    private Optional<String> findCityNameByCityID(int cityId) {
+        return executeQuery(session ->
+                session.createQuery("SELECT c.name FROM City c WHERE c.id= :cid", String.class)
+                        .setParameter("cid", cityId)
+                        .uniqueResultOptional());
+    }
+
     /**
      * Log a new one-time purchase for a map.
      * Creates a snapshot of the map at purchase time.
@@ -173,30 +177,30 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
 
             // Insert purchase record via native SQL
             session.createNativeQuery(
-                "INSERT INTO purchases (purchase_type, user_id, city_id, map_id, price, purchase_date, purchased_version, is_renewal) " +
-                "VALUES ('ONE_TIME', :userId, :cityId, :mapId, :price, :purchaseDate, :version, false)")
-                .setParameter("userId", user.getId())
-                .setParameter("cityId", map.getCity() != null ? map.getCity().getId() : null)
-                .setParameter("mapId", map.getId())
-                .setParameter("price", price)
-                .setParameter("purchaseDate", today)
-                .setParameter("version", map.getVersion())
-                .executeUpdate();
+                            "INSERT INTO purchases (purchase_type, user_id, city_id, map_id, price, purchase_date, purchased_version, is_renewal) " +
+                                    "VALUES ('ONE_TIME', :userId, :cityId, :mapId, :price, :purchaseDate, :version, false)")
+                    .setParameter("userId", user.getId())
+                    .setParameter("cityId", map.getCity() != null ? map.getCity().getId() : null)
+                    .setParameter("mapId", map.getId())
+                    .setParameter("price", price)
+                    .setParameter("purchaseDate", today)
+                    .setParameter("version", map.getVersion())
+                    .executeUpdate();
 
             // Create snapshot record if user is a Client
             if (user instanceof Client) {
                 session.createNativeQuery(
-                    "INSERT INTO purchased_map_snapshots (client_id, original_map_id, map_name, city_name, purchased_version, description, purchase_date, price_paid) " +
-                    "VALUES (:clientId, :mapId, :mapName, :cityName, :version, :desc, :purchaseDate, :price)")
-                    .setParameter("clientId", user.getId())
-                    .setParameter("mapId", map.getId())
-                    .setParameter("mapName", map.getName())
-                    .setParameter("cityName", map.getCityName())
-                    .setParameter("version", map.getVersion())
-                    .setParameter("desc", map.getDescription())
-                    .setParameter("purchaseDate", today)
-                    .setParameter("price", price)
-                    .executeUpdate();
+                                "INSERT INTO purchased_map_snapshots (client_id, original_map_id, map_name, city_name, purchased_version, description, purchase_date, price_paid) " +
+                                        "VALUES (:clientId, :mapId, :mapName, :cityName, :version, :desc, :purchaseDate, :price)")
+                        .setParameter("clientId", user.getId())
+                        .setParameter("mapId", map.getId())
+                        .setParameter("mapName", map.getName())
+                        .setParameter("cityName", map.getCityName())
+                        .setParameter("version", map.getVersion())
+                        .setParameter("desc", map.getDescription())
+                        .setParameter("purchaseDate", today)
+                        .setParameter("price", price)
+                        .executeUpdate();
             }
 
             // Populate returned object for logging
@@ -209,7 +213,7 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
             String cityName = map.getCityName();
             String mapName = map.getName();
             String mapVersion = map.getVersion();
-            sendOneTimePurchaseAlert(email.orElse(null),phone.orElse(null),firstName.orElse(null),cityName,price,mapName,mapVersion);
+            sendOneTimePurchaseAlert(email.orElse(null), phone.orElse(null), firstName.orElse(null), cityName, price, mapName, mapVersion);
         });
         return purchase;
     }
@@ -219,11 +223,11 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
      */
     public List<Purchase> findByUserId(int userId) {
         return executeQuery(session ->
-            session.createQuery(
-                "FROM Purchase p WHERE p.user.id = :userId ORDER BY p.purchaseDate DESC",
-                Purchase.class)
-                   .setParameter("userId", userId)
-                   .getResultList()
+                session.createQuery(
+                                "FROM Purchase p WHERE p.user.id = :userId ORDER BY p.purchaseDate DESC",
+                                Purchase.class)
+                        .setParameter("userId", userId)
+                        .getResultList()
         );
     }
 
@@ -232,12 +236,12 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
      */
     public List<Subscription> findActiveSubscriptionsByUserId(int userId) {
         return executeQuery(session ->
-            session.createQuery(
-                "FROM Subscription s WHERE s.user.id = :userId AND s.expirationDate >= :today ORDER BY s.expirationDate DESC",
-                Subscription.class)
-                   .setParameter("userId", userId)
-                   .setParameter("today", LocalDate.now())
-                   .getResultList()
+                session.createQuery(
+                                "FROM Subscription s WHERE s.user.id = :userId AND s.expirationDate >= :today ORDER BY s.expirationDate DESC",
+                                Subscription.class)
+                        .setParameter("userId", userId)
+                        .setParameter("today", LocalDate.now())
+                        .getResultList()
         );
     }
 
@@ -247,12 +251,12 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
     public Subscription findLatestSubscription(int userId, int cityId) {
         return executeQuery(session -> {
             List<Subscription> results = session.createQuery(
-                "FROM Subscription s WHERE s.user.id = :userId AND s.city.id = :cityId ORDER BY s.expirationDate DESC",
-                Subscription.class)
-                   .setParameter("userId", userId)
-                   .setParameter("cityId", cityId)
-                   .setMaxResults(1)
-                   .getResultList();
+                            "FROM Subscription s WHERE s.user.id = :userId AND s.city.id = :cityId ORDER BY s.expirationDate DESC",
+                            Subscription.class)
+                    .setParameter("userId", userId)
+                    .setParameter("cityId", cityId)
+                    .setMaxResults(1)
+                    .getResultList();
             return results.isEmpty() ? null : results.get(0);
         });
     }
@@ -263,10 +267,10 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
     public LocalDate findLatestExpirationDate(int userId, int cityId) {
         return executeQuery(session -> {
             Object result = session.createNativeQuery(
-                "SELECT MAX(expiration_date) FROM purchases WHERE purchase_type = 'SUBSCRIPTION' AND user_id = :userId AND city_id = :cityId")
-                .setParameter("userId", userId)
-                .setParameter("cityId", cityId)
-                .getSingleResult();
+                            "SELECT MAX(expiration_date) FROM purchases WHERE purchase_type = 'SUBSCRIPTION' AND user_id = :userId AND city_id = :cityId")
+                    .setParameter("userId", userId)
+                    .setParameter("cityId", cityId)
+                    .getSingleResult();
             if (result == null) return null;
             if (result instanceof java.sql.Date) return ((java.sql.Date) result).toLocalDate();
             if (result instanceof LocalDate) return (LocalDate) result;
@@ -279,11 +283,11 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
      */
     public List<PurchasedMapSnapshot> findPurchasedMapsByUserId(int userId) {
         return executeQuery(session ->
-            session.createQuery(
-                "FROM PurchasedMapSnapshot s WHERE s.client.id = :userId ORDER BY s.purchaseDate DESC",
-                PurchasedMapSnapshot.class)
-                   .setParameter("userId", userId)
-                   .getResultList()
+                session.createQuery(
+                                "FROM PurchasedMapSnapshot s WHERE s.client.id = :userId ORDER BY s.purchaseDate DESC",
+                                PurchasedMapSnapshot.class)
+                        .setParameter("userId", userId)
+                        .getResultList()
         );
     }
 
@@ -295,13 +299,13 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
     public Object[] checkSubscriptionStatusNative(int userId, int cityId) {
         return executeQuery(session -> {
             Object[] result = (Object[]) session.createNativeQuery(
-                "SELECT MAX(p.expiration_date), c.name, c.price_sub " +
-                "FROM purchases p JOIN cities c ON p.city_id = c.id " +
-                "WHERE p.purchase_type = 'SUBSCRIPTION' AND p.user_id = :userId AND p.city_id = :cityId " +
-                "GROUP BY c.name, c.price_sub")
-                .setParameter("userId", userId)
-                .setParameter("cityId", cityId)
-                .getSingleResultOrNull();
+                            "SELECT MAX(p.expiration_date), c.name, c.price_sub " +
+                                    "FROM purchases p JOIN cities c ON p.city_id = c.id " +
+                                    "WHERE p.purchase_type = 'SUBSCRIPTION' AND p.user_id = :userId AND p.city_id = :cityId " +
+                                    "GROUP BY c.name, c.price_sub")
+                    .setParameter("userId", userId)
+                    .setParameter("cityId", cityId)
+                    .getSingleResultOrNull();
             return result;
         });
     }
@@ -313,15 +317,15 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
     @SuppressWarnings("unchecked")
     public List<Object[]> findActiveSubscriptionDTOsNative(int userId) {
         return executeQuery(session ->
-            session.createNativeQuery(
-                "SELECT p.city_id, MAX(p.expiration_date) as expiry, c.name, c.price_sub " +
-                "FROM purchases p JOIN cities c ON p.city_id = c.id " +
-                "WHERE p.purchase_type = 'SUBSCRIPTION' AND p.user_id = :userId " +
-                "GROUP BY p.city_id, c.name, c.price_sub " +
-                "HAVING MAX(p.expiration_date) >= CURRENT_DATE " +
-                "ORDER BY expiry DESC")
-                .setParameter("userId", userId)
-                .getResultList()
+                session.createNativeQuery(
+                                "SELECT p.city_id, MAX(p.expiration_date) as expiry, c.name, c.price_sub " +
+                                        "FROM purchases p JOIN cities c ON p.city_id = c.id " +
+                                        "WHERE p.purchase_type = 'SUBSCRIPTION' AND p.user_id = :userId " +
+                                        "GROUP BY p.city_id, c.name, c.price_sub " +
+                                        "HAVING MAX(p.expiration_date) >= CURRENT_DATE " +
+                                        "ORDER BY expiry DESC")
+                        .setParameter("userId", userId)
+                        .getResultList()
         );
     }
 
@@ -331,51 +335,63 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
     public PurchasedMapSnapshot findPurchasedSnapshot(int userId, int mapId) {
         return executeQuery(session -> {
             List<PurchasedMapSnapshot> results = session.createQuery(
-                "FROM PurchasedMapSnapshot s WHERE s.client.id = :userId AND s.originalMap.id = :mapId ORDER BY s.purchaseDate DESC",
-                PurchasedMapSnapshot.class)
-                   .setParameter("userId", userId)
-                   .setParameter("mapId", mapId)
-                   .setMaxResults(1)
-                   .getResultList();
+                            "FROM PurchasedMapSnapshot s WHERE s.client.id = :userId AND s.originalMap.id = :mapId ORDER BY s.purchaseDate DESC",
+                            PurchasedMapSnapshot.class)
+                    .setParameter("userId", userId)
+                    .setParameter("mapId", mapId)
+                    .setMaxResults(1)
+                    .getResultList();
             return results.isEmpty() ? null : results.get(0);
         });
     }
+
     /**
      * סורק את מסד הנתונים ושולח התראות למשתמשים שהמנוי שלהם מסתיים בעוד 3 ימים.
      */
-    public void checkAndNotifyExpiringSubscriptions()
-    {
-        java.time.LocalDate targetDate = java.time.LocalDate.now().plusDays(3);
-
-        List<Object[]> results = executeQuery(session ->
-                session.createNativeQuery(
-                                "SELECT u.email, cl.phone_number, u.first_name, c.name as city_name " +
-                                        "FROM purchases p " +
-                                        "JOIN users u ON p.user_id = u.id " +
-                                        "JOIN cities c ON p.city_id = c.id " +
-                                        "JOIN clients cl ON u.id = cl.id " +
-                                        "WHERE p.purchase_type = 'SUBSCRIPTION' " +
-                                        "AND p.expiration_date = :targetDate")
-                        .setParameter("targetDate", java.sql.Date.valueOf(targetDate))
-                        .getResultList()
-        );
-
-        for (Object[] row : results)
-        {
-            String email = (String) row[0];
-            String phone = (String) row[1];
-            String firstName = (String) row[2];
-            String cityName = (String) row[3];
-
-            sendSubscriptionAlert(
-                    email,
-                    phone,
-                    firstName,
-                    3,
-                    cityName
+    public void checkAndNotifyExpiringSubscriptions() {
+        try {
+            java.time.LocalDate targetDate = java.time.LocalDate.now().plusDays(3);
+            System.out.println("[DEBUG-Scheduler] Starting check for targetDate: " + targetDate);
+            List<Object[]> results = executeQuery(session ->
+                    session.createNativeQuery(
+                                    "SELECT u.email, cl.phone_number, u.first_name, c.name as city_name " +
+                                            "FROM purchases p " +
+                                            "JOIN users u ON p.user_id = u.id " +
+                                            "JOIN cities c ON p.city_id = c.id " +
+                                            "LEFT JOIN clients cl ON u.id = cl.id " +
+                                            "WHERE p.purchase_type = 'SUBSCRIPTION' " +
+                                            "AND p.expiration_date = :targetDate")
+                            .setParameter("targetDate", java.sql.Date.valueOf(targetDate))
+                            .getResultList()
             );
-            System.out.println("[Notification] Sent 3-day reminder to: " + email + " (Phone: " + phone + ") for city: " + cityName);
-        }
 
+            System.out.println("[DEBUG-Scheduler] Query finished. Number of records found: " + (results != null ? results.size() : 0));
+
+            if (results == null || results.isEmpty()) {
+                System.out.println("[DEBUG-Scheduler] No expiring subscriptions found for " + targetDate);
+                return;
+            }
+
+            for (Object[] row : results) {
+                String email = (String) row[0];
+                String phone = (String) row[1];
+                String firstName = (String) row[2];
+                String cityName = (String) row[3];
+
+                System.out.println("[DEBUG-Scheduler] Processing notification for: " + email + " | Phone: " + phone);
+
+                NotificationService.sendSubscriptionAlert(
+                        email,
+                        phone,
+                        firstName,
+                        3,
+                        cityName
+                );
+                System.out.println("[Notification] Sent 3-day reminder successfully to: " + email);
+            }
+        } catch (Exception e) {
+            System.err.println("[DEBUG-Scheduler] ERROR in checkAndNotifyExpiringSubscriptions: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

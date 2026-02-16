@@ -29,7 +29,7 @@ public class NotificationService
         prop.put("mail.smtp.host", SMTP_HOST);
         prop.put("mail.smtp.port", "587");
         prop.put("mail.smtp.auth", "true");
-        prop.put("mail.smtp.starttls.enable", "true"); // אבטחה TLS
+        prop.put("mail.smtp.starttls.enable", "true");
         Session session = Session.getInstance(prop, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
