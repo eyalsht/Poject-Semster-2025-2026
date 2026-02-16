@@ -43,8 +43,7 @@ public class PurchaseConfirmationDialogController {
         cbMonths.getItems().addAll(
             "1 month",
             "3 months (5% off)",
-            "6 months (10% off)",
-            "12 months (15% off)"
+            "6 months (10% off)"
         );
         cbMonths.getSelectionModel().selectFirst();
         cbMonths.setOnAction(e -> updatePrice());
@@ -108,8 +107,7 @@ public class PurchaseConfirmationDialogController {
         int months = getSelectedMonths();
 
         double durationDiscount = 0;
-        if (months >= 12) durationDiscount = 0.15;
-        else if (months >= 6) durationDiscount = 0.10;
+        if (months >= 6) durationDiscount = 0.10;
         else if (months >= 3) durationDiscount = 0.05;
 
         double renewalDiscount = isRenewal ? 0.10 : 0;
@@ -140,7 +138,6 @@ public class PurchaseConfirmationDialogController {
         return switch (idx) {
             case 1 -> 3;
             case 2 -> 6;
-            case 3 -> 12;
             default -> 1;
         };
     }

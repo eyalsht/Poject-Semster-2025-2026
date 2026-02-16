@@ -91,8 +91,7 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
 
             // 2. Calculate discounts
             double durationDiscount = 0;
-            if (months >= 12) durationDiscount = 0.15;
-            else if (months >= 6) durationDiscount = 0.10;
+            if (months >= 6) durationDiscount = 0.10;
             else if (months >= 3) durationDiscount = 0.05;
             double renewalDiscount = isRenewal ? 0.10 : 0;
             double totalPrice = monthlyPrice * months * (1 - (durationDiscount + renewalDiscount));
