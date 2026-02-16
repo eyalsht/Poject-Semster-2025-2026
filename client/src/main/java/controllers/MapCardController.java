@@ -37,6 +37,7 @@ public class MapCardController {
     private MapPurchaseStatusDTO purchaseStatus;
     private boolean subscriptionActive = false;
     private boolean viewOnly = false;
+    private boolean logViewsFromCatalogOnly = false;
 
      public void setData(GCMMap gcmMap) {
          this.currentMap = gcmMap;
@@ -191,7 +192,9 @@ public class MapCardController {
         if (event != null) event.consume(); // ✅ prevent parent (city) click handler
 
         if (currentMap == null) return;
-        logMapViewIfClient();
+        if (logViewsFromCatalogOnly) {
+            logMapViewIfClient();
+        }
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapContentPopup.fxml"));
@@ -247,6 +250,10 @@ public class MapCardController {
 
         } catch (Exception ignored) {}
     }
+    public void setLogViewsFromCatalogOnly(boolean enabled) {
+        this.logViewsFromCatalogOnly = enabled;
+    }
+
 
 
 }

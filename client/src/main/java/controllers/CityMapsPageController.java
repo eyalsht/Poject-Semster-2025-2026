@@ -144,6 +144,7 @@ public class CityMapsPageController {
                     Parent card = loader.load();
                     MapCardController controller = loader.getController();
                     controller.setData(map);
+                    controller.setLogViewsFromCatalogOnly(true);
                     newCards.add(card);
                     seenMapIds.add(map.getId());
 
@@ -198,7 +199,7 @@ public class CityMapsPageController {
                         Parent card = loader.load();
                         MapCardController controller = loader.getController();
                         controller.setData(map);
-
+                        controller.setLogViewsFromCatalogOnly(true);
                         newCards.add(card);
                         seenIds.add(map.getId());
                     } catch (IOException e) {
@@ -227,7 +228,7 @@ public class CityMapsPageController {
 
                     MapCardController cardController = loader.getController();
                     cardController.setData(map);
-
+                    cardController.setLogViewsFromCatalogOnly(true);
                     flowPaneMaps.getChildren().add(card);
                 }
             } catch (Exception e) {
