@@ -75,6 +75,7 @@ public class EditModeController {
     // Per-map state storage (for multi-map editing across map switches)
     private final Map<Integer, List<SiteMarker>> pendingMarkersPerMap = new HashMap<>();
     private final Map<Integer, List<Site>> savedMapSitesPerMap = new HashMap<>();
+    private final Map<Integer, List<Site>> savedTourSitesPerTour = new HashMap<>();
 
     // Site/Tour editing state
     private Site currentEditingSite;
@@ -296,6 +297,16 @@ public class EditModeController {
         }
     }
 
+    /**
+     * Save the current tour's site list before switching to another tour.
+     */
+    private void saveCurrentTourState() {
+        if (currentEditingTour == null || currentEditingTour.getId() == 0) return;
+        if (currentTourSites != null) {
+            savedTourSitesPerTour.put(currentEditingTour.getId(), new ArrayList<>(currentTourSites));
+        }
+    }
+
     private void populateMapEditor(GCMMap map) {
         saveCurrentMapState();
         currentEditingMap = map;
@@ -314,13 +325,18 @@ public class EditModeController {
         title.getStyleClass().add("section-title");
         vboxMapEditor.getChildren().add(title);
 
-        // Map Name
-        HBox nameRow = createEditableFieldRow("Map Name", map.getName(), "mapName_" + map.getId());
-        vboxMapEditor.getChildren().add(nameRow);
-
-        // Map Description
-        HBox descRow = createEditableTextAreaRow("Description", map.getDescription(), "mapDesc_" + map.getId());
-        vboxMapEditor.getChildren().add(descRow);
+        // Map Name & Description — re-attach existing rows if previously edited
+        String nameKey = "mapName_" + map.getId();
+        String descKey = "mapDesc_" + map.getId();
+        if (fieldRows.containsKey(nameKey)) {
+            vboxMapEditor.getChildren().add(fieldRows.get(nameKey));
+            vboxMapEditor.getChildren().add(fieldRows.get(descKey));
+        } else {
+            HBox nameRow = createEditableFieldRow("Map Name", map.getName(), nameKey);
+            vboxMapEditor.getChildren().add(nameRow);
+            HBox descRow = createEditableTextAreaRow("Description", map.getDescription(), descKey);
+            vboxMapEditor.getChildren().add(descRow);
+        }
 
         // Map Image Section
         vboxMapEditor.getChildren().add(createMapImageSection(map));
@@ -636,32 +652,45 @@ public class EditModeController {
         vboxSiteEditor.getChildren().add(title);
 
         String prefix = "site_" + (isNewSite ? "new" : site.getId());
+        boolean hasExistingFields = !isNewSite && fieldRows.containsKey(prefix + "_name");
 
-        // Name
-        HBox nameRow = createEditableFieldRow("Name", isNewSite ? "" : site.getName(), prefix + "_name");
-        vboxSiteEditor.getChildren().add(nameRow);
+        if (hasExistingFields) {
+            // Re-attach previously created field rows (preserves all edits)
+            vboxSiteEditor.getChildren().addAll(
+                fieldRows.get(prefix + "_name"),
+                fieldRows.get(prefix + "_desc"),
+                fieldRows.get(prefix + "_cat"),
+                fieldRows.get(prefix + "_loc"),
+                fieldRows.get(prefix + "_acc"),
+                fieldRows.get(prefix + "_dur")
+            );
+        } else {
+            // Name
+            HBox nameRow = createEditableFieldRow("Name", isNewSite ? "" : site.getName(), prefix + "_name");
+            vboxSiteEditor.getChildren().add(nameRow);
 
-        // Description
-        HBox descRow = createEditableTextAreaRow("Description", isNewSite ? "" : site.getDescription(), prefix + "_desc");
-        vboxSiteEditor.getChildren().add(descRow);
+            // Description
+            HBox descRow = createEditableTextAreaRow("Description", isNewSite ? "" : site.getDescription(), prefix + "_desc");
+            vboxSiteEditor.getChildren().add(descRow);
 
-        // Category ComboBox
-        HBox catRow = createComboBoxRow("Category", SiteCategory.values(),
-                isNewSite ? null : site.getCategory(), prefix + "_cat");
-        vboxSiteEditor.getChildren().add(catRow);
+            // Category ComboBox
+            HBox catRow = createComboBoxRow("Category", SiteCategory.values(),
+                    isNewSite ? null : site.getCategory(), prefix + "_cat");
+            vboxSiteEditor.getChildren().add(catRow);
 
-        // Location
-        HBox locRow = createEditableFieldRow("Location", isNewSite ? "" : site.getLocation(), prefix + "_loc");
-        vboxSiteEditor.getChildren().add(locRow);
+            // Location
+            HBox locRow = createEditableFieldRow("Location", isNewSite ? "" : site.getLocation(), prefix + "_loc");
+            vboxSiteEditor.getChildren().add(locRow);
 
-        // Accessibility CheckBox
-        HBox accRow = createCheckBoxRow("Accessible", isNewSite ? false : site.isAccessible(), prefix + "_acc");
-        vboxSiteEditor.getChildren().add(accRow);
+            // Accessibility CheckBox
+            HBox accRow = createCheckBoxRow("Accessible", isNewSite ? false : site.isAccessible(), prefix + "_acc");
+            vboxSiteEditor.getChildren().add(accRow);
 
-        // Duration ComboBox
-        HBox durRow = createComboBoxRow("Visit Duration", SiteDuration.values(),
-                isNewSite ? null : site.getRecommendedVisitDuration(), prefix + "_dur");
-        vboxSiteEditor.getChildren().add(durRow);
+            // Duration ComboBox
+            HBox durRow = createComboBoxRow("Visit Duration", SiteDuration.values(),
+                    isNewSite ? null : site.getRecommendedVisitDuration(), prefix + "_dur");
+            vboxSiteEditor.getChildren().add(durRow);
+        }
 
         // Buttons
         HBox btnBox = new HBox(10);
@@ -690,6 +719,7 @@ public class EditModeController {
     }
 
     private void populateTourEditor(Tour tour) {
+        saveCurrentTourState();
         currentEditingTour = tour;
         vboxTourEditor.getChildren().clear();
 
@@ -699,18 +729,28 @@ public class EditModeController {
         vboxTourEditor.getChildren().add(title);
 
         String prefix = "tour_" + (isNewTour ? "new" : tour.getId());
+        boolean hasExistingFields = !isNewTour && fieldRows.containsKey(prefix + "_name");
 
-        // Name
-        HBox nameRow = createEditableFieldRow("Name", isNewTour ? "" : tour.getName(), prefix + "_name");
-        vboxTourEditor.getChildren().add(nameRow);
+        if (hasExistingFields) {
+            // Re-attach previously created field rows (preserves all edits)
+            vboxTourEditor.getChildren().addAll(
+                fieldRows.get(prefix + "_name"),
+                fieldRows.get(prefix + "_desc"),
+                fieldRows.get(prefix + "_dur")
+            );
+        } else {
+            // Name
+            HBox nameRow = createEditableFieldRow("Name", isNewTour ? "" : tour.getName(), prefix + "_name");
+            vboxTourEditor.getChildren().add(nameRow);
 
-        // Description
-        HBox descRow = createEditableTextAreaRow("Description", isNewTour ? "" : tour.getDescription(), prefix + "_desc");
-        vboxTourEditor.getChildren().add(descRow);
+            // Description
+            HBox descRow = createEditableTextAreaRow("Description", isNewTour ? "" : tour.getDescription(), prefix + "_desc");
+            vboxTourEditor.getChildren().add(descRow);
 
-        // Duration
-        HBox durRow = createEditableFieldRow("Duration", isNewTour ? "" : tour.getRecommendedDuration(), prefix + "_dur");
-        vboxTourEditor.getChildren().add(durRow);
+            // Duration
+            HBox durRow = createEditableFieldRow("Duration", isNewTour ? "" : tour.getRecommendedDuration(), prefix + "_dur");
+            vboxTourEditor.getChildren().add(durRow);
+        }
 
         // Tour sites section with ordering
         vboxTourEditor.getChildren().add(createTourSitesSection(tour));
@@ -743,9 +783,13 @@ public class EditModeController {
         ListView<Site> lvTourSitesView = new ListView<>();
         lvTourSitesView.setPrefHeight(150);
         lvTourSitesView.getStyleClass().add("edit-list");
-        currentTourSites = FXCollections.observableArrayList(
-                tour.getSites() != null ? tour.getSites() : new ArrayList<>()
-        );
+        if (!isNewTour && savedTourSitesPerTour.containsKey(tour.getId())) {
+            currentTourSites = FXCollections.observableArrayList(savedTourSitesPerTour.get(tour.getId()));
+        } else {
+            currentTourSites = FXCollections.observableArrayList(
+                    tour.getSites() != null ? tour.getSites() : new ArrayList<>()
+            );
+        }
         lvTourSitesView.setItems(currentTourSites);
         lvTourSitesView.setCellFactory(lv -> new ListCell<Site>() {
             @Override
@@ -1086,13 +1130,22 @@ public class EditModeController {
             }
         }
 
-        // 3. Count tour site changes (compare current vs original)
-        if (currentEditingTour != null && currentTourSites != null && !isNewTour) {
-            List<Integer> currentIds = new ArrayList<>();
-            for (Site s : currentTourSites) currentIds.add(s.getId());
-            List<Integer> origIds = originalTourSiteIds.getOrDefault(currentEditingTour.getId(), new ArrayList<>());
-            if (!currentIds.equals(origIds)) {
-                count++;
+        // 3. Count tour site changes for ALL tours (not just current)
+        for (Tour tour : cityTours) {
+            int tourId = tour.getId();
+            List<Site> tourSites;
+            if (currentEditingTour != null && currentEditingTour.getId() == tourId) {
+                tourSites = currentTourSites != null ? new ArrayList<>(currentTourSites) : null;
+            } else if (savedTourSitesPerTour.containsKey(tourId)) {
+                tourSites = savedTourSitesPerTour.get(tourId);
+            } else {
+                continue;
+            }
+            if (tourSites != null) {
+                List<Integer> currentIds = new ArrayList<>();
+                for (Site s : tourSites) currentIds.add(s.getId());
+                List<Integer> origIds = originalTourSiteIds.getOrDefault(tourId, new ArrayList<>());
+                if (!currentIds.equals(origIds)) count++;
             }
         }
 
@@ -1285,6 +1338,99 @@ public class EditModeController {
         }
     }
 
+    /**
+     * Build a ContentChangeRequest for a specific site (by reference), or null if nothing changed.
+     * Used by onSubmitAll to iterate all sites.
+     */
+    private ContentChangeRequest buildSiteChangeRequestForSite(Site site) {
+        if (site == null || currentCity == null) return null;
+        String prefix = "site_" + site.getId();
+
+        // Skip sites that were never opened in the editor
+        if (!fieldRows.containsKey(prefix + "_name")) return null;
+
+        // Check if any site field changed
+        boolean changed = false;
+        for (String key : fieldRows.keySet()) {
+            if (key.startsWith(prefix) && fieldRows.get(key).getStyleClass().contains("field-row-changed")) {
+                changed = true;
+                break;
+            }
+        }
+        if (!changed) return null;
+
+        String name = getFieldValue(prefix + "_name");
+        String desc = getTextAreaValue(prefix + "_desc");
+        String location = getFieldValue(prefix + "_loc");
+        if (name == null || name.trim().isEmpty()) return null;
+
+        SiteCategory category = getComboValue(prefix + "_cat");
+        Boolean accessible = getCheckBoxValue(prefix + "_acc");
+        SiteDuration duration = getComboValue(prefix + "_dur");
+        String json = buildSiteJson(name, desc, category, accessible, duration, location);
+
+        User currentUser = client.getCurrentUser();
+        Integer requesterId = currentUser != null ? currentUser.getId() : null;
+        return new ContentChangeRequest(requesterId, ContentActionType.EDIT, ContentType.SITE,
+                site.getId(), currentCity.getName() + " - " + site.getName(), json);
+    }
+
+    /**
+     * Build a ContentChangeRequest for a specific tour (by reference), or null if nothing changed.
+     * Used by onSubmitAll to iterate all tours.
+     */
+    private ContentChangeRequest buildTourChangeRequestForTour(Tour tour) {
+        if (tour == null || currentCity == null) return null;
+        int tourId = tour.getId();
+        String prefix = "tour_" + tourId;
+
+        // Skip tours that were never opened in the editor
+        if (!fieldRows.containsKey(prefix + "_name")) return null;
+
+        // Check if any tour field changed
+        boolean changed = false;
+        for (String key : fieldRows.keySet()) {
+            if (key.startsWith(prefix) && fieldRows.get(key).getStyleClass().contains("field-row-changed")) {
+                changed = true;
+                break;
+            }
+        }
+
+        // Check tour site list changes
+        List<Site> sites;
+        if (currentEditingTour != null && currentEditingTour.getId() == tourId) {
+            sites = currentTourSites != null ? new ArrayList<>(currentTourSites) : null;
+        } else {
+            sites = savedTourSitesPerTour.get(tourId);
+        }
+        if (sites != null) {
+            List<Integer> currentIds = new ArrayList<>();
+            for (Site s : sites) currentIds.add(s.getId());
+            List<Integer> origIds = originalTourSiteIds.getOrDefault(tourId, new ArrayList<>());
+            if (!currentIds.equals(origIds)) changed = true;
+        }
+
+        if (!changed) return null;
+
+        String name = getFieldValue(prefix + "_name");
+        String desc = getTextAreaValue(prefix + "_desc");
+        String duration = getFieldValue(prefix + "_dur");
+        if (name == null || name.trim().isEmpty()) return null;
+
+        String siteIds = "";
+        if (sites != null) {
+            siteIds = sites.stream()
+                    .map(s -> String.valueOf(s.getId()))
+                    .collect(Collectors.joining(","));
+        }
+        String json = buildTourJson(name, desc, duration, siteIds);
+
+        User currentUser = client.getCurrentUser();
+        Integer requesterId = currentUser != null ? currentUser.getId() : null;
+        return new ContentChangeRequest(requesterId, ContentActionType.EDIT, ContentType.TOUR,
+                tourId, currentCity.getName() + " - " + tour.getName(), json);
+    }
+
     private void onDeleteSite(Site site) {
         if (site == null || currentCity == null) return;
 
@@ -1342,8 +1488,9 @@ public class EditModeController {
 
     @FXML
     private void onSubmitAll() {
-        // Flush current map's state before collecting
+        // Flush current map/tour state before collecting
         saveCurrentMapState();
+        saveCurrentTourState();
 
         // Collect all change requests from current state
         List<ContentChangeRequest> toSubmit = new ArrayList<>();
@@ -1357,11 +1504,27 @@ public class EditModeController {
             if (mapReq != null) toSubmit.add(mapReq);
         }
 
-        ContentChangeRequest siteReq = buildSiteChangeRequest();
-        if (siteReq != null) toSubmit.add(siteReq);
+        // Build change requests for ALL sites (not just current)
+        for (Site site : citySites) {
+            ContentChangeRequest siteReq = buildSiteChangeRequestForSite(site);
+            if (siteReq != null) toSubmit.add(siteReq);
+        }
+        // Handle new site separately
+        if (isNewSite && currentEditingSite != null) {
+            ContentChangeRequest newSiteReq = buildSiteChangeRequest();
+            if (newSiteReq != null) toSubmit.add(newSiteReq);
+        }
 
-        ContentChangeRequest tourReq = buildTourChangeRequest();
-        if (tourReq != null) toSubmit.add(tourReq);
+        // Build change requests for ALL tours (not just current)
+        for (Tour tour : cityTours) {
+            ContentChangeRequest tourReq = buildTourChangeRequestForTour(tour);
+            if (tourReq != null) toSubmit.add(tourReq);
+        }
+        // Handle new tour separately
+        if (isNewTour && currentEditingTour != null) {
+            ContentChangeRequest newTourReq = buildTourChangeRequest();
+            if (newTourReq != null) toSubmit.add(newTourReq);
+        }
 
         if (toSubmit.isEmpty()) {
             showAlert("Info", "No changes to submit.");
@@ -1547,6 +1710,7 @@ public class EditModeController {
         pendingMarkers.clear();
         pendingMarkersPerMap.clear();
         savedMapSitesPerMap.clear();
+        savedTourSitesPerTour.clear();
         lvOnMapSites = null;
         currentMapOnMapSites = null;
         currentTourSites = null;
