@@ -32,6 +32,8 @@ public class ProfilePageController {
     @FXML private Label lblEmail;
     @FXML private Label lblPaymentLabel;
     @FXML private Label lblPayment;
+    @FXML private Label lblPhoneLabel;
+    @FXML private Label lblPhone;
     @FXML private Label lblRoleLabel;
     @FXML private Label lblRoleValue;
     @FXML private Label lblInbox;
@@ -104,6 +106,16 @@ public class ProfilePageController {
         lblEmail.setText(user.getEmail() != null ? user.getEmail() : user.getUsername());
 
         if (user instanceof Client client) {
+            // Phone number
+            String phone = client.getPhoneNumber();
+            if (phone != null && !phone.isBlank()) {
+                lblPhone.setText(phone);
+            } else {
+                lblPhone.setText("Not set");
+            }
+            setNodeVisible(lblPhoneLabel, true);
+            setNodeVisible(lblPhone, true);
+
             // Payment details
             PaymentDetails pd = client.getPaymentDetails();
             if (pd != null && pd.getCreditCardNumber() != null && !pd.getCreditCardNumber().isBlank()) {
@@ -133,6 +145,8 @@ public class ProfilePageController {
             lblRoleValue.setText(formatRole(employee.getRole()));
 
             // Hide client-specific elements
+            setNodeVisible(lblPhoneLabel, false);
+            setNodeVisible(lblPhone, false);
             setNodeVisible(lblPaymentLabel, false);
             setNodeVisible(lblPayment, false);
             setNodeVisible(btnChangePayment, false);

@@ -34,27 +34,33 @@
             <Label fx:id="lblEmail" text="-" textFill="#2e7d32" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <font><Font name="System Bold" size="14.0" /></font></Label>
 
-            <!-- Row 2: Role (employees only, hidden by default) -->
-            <Label fx:id="lblRoleLabel" managed="false" text="Role:" textFill="#388e3c" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" visible="false" GridPane.columnIndex="0" GridPane.rowIndex="2">
+            <!-- Row 2: Phone (clients only, hidden by default) -->
+            <Label fx:id="lblPhoneLabel" managed="false" text="Phone:" textFill="#388e3c" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" visible="false" GridPane.columnIndex="0" GridPane.rowIndex="2">
                <font><Font name="System Bold" size="14.0" /></font></Label>
-            <Label fx:id="lblRoleValue" managed="false" text="-" textFill="#2e7d32" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2">
-               <font><Font name="System Bold" size="14.0" /></font></Label>
-
-            <!-- Row 3: Payment (clients only) -->
-            <Label fx:id="lblPaymentLabel" text="Payment:" textFill="#388e3c" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" GridPane.columnIndex="0" GridPane.rowIndex="3">
-               <font><Font name="System Bold" size="14.0" /></font></Label>
-            <Label fx:id="lblPayment" text="-" textFill="#2e7d32" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" GridPane.columnIndex="1" GridPane.rowIndex="3">
-               <font><Font name="System Bold" size="14.0" /></font></Label>
-            <Button fx:id="btnChangePayment" managed="false" mnemonicParsing="false" onAction="#onChangePayment" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-size: 10px; -fx-padding: 3 8 3 8;" text="Change" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-
-            <!-- Row 4: Inbox -->
-            <Label text="Inbox:" textFill="#388e3c" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" GridPane.columnIndex="0" GridPane.rowIndex="4">
-               <font><Font name="System Bold" size="14.0" /></font></Label>
-            <Label fx:id="lblInbox" text="You have 0 new messages" textFill="#388e3c" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <Label fx:id="lblPhone" managed="false" text="-" textFill="#2e7d32" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <font><Font name="System Bold" size="14.0" /></font></Label>
 
-            <!-- Row 5: Purchase History button (clients only, hidden by default) -->
-            <Button fx:id="btnPurchaseHistory" managed="false" mnemonicParsing="false" onAction="#onPurchaseHistory" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="Purchase History" visible="false" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="6" />
+            <!-- Row 3: Role (employees only, hidden by default) -->
+            <Label fx:id="lblRoleLabel" managed="false" text="Role:" textFill="#388e3c" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" visible="false" GridPane.columnIndex="0" GridPane.rowIndex="3">
+               <font><Font name="System Bold" size="14.0" /></font></Label>
+            <Label fx:id="lblRoleValue" managed="false" text="-" textFill="#2e7d32" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <font><Font name="System Bold" size="14.0" /></font></Label>
+
+            <!-- Row 4: Payment (clients only) -->
+            <Label fx:id="lblPaymentLabel" text="Payment:" textFill="#388e3c" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" GridPane.columnIndex="0" GridPane.rowIndex="4">
+               <font><Font name="System Bold" size="14.0" /></font></Label>
+            <Label fx:id="lblPayment" text="-" textFill="#2e7d32" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" GridPane.columnIndex="1" GridPane.rowIndex="4">
+               <font><Font name="System Bold" size="14.0" /></font></Label>
+            <Button fx:id="btnChangePayment" managed="false" mnemonicParsing="false" onAction="#onChangePayment" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-size: 10px; -fx-padding: 3 8 3 8;" text="Change" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+
+            <!-- Row 5: Inbox -->
+            <Label text="Inbox:" textFill="#388e3c" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" GridPane.columnIndex="0" GridPane.rowIndex="5">
+               <font><Font name="System Bold" size="14.0" /></font></Label>
+            <Label fx:id="lblInbox" text="You have 0 new messages" textFill="#388e3c" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" GridPane.columnIndex="1" GridPane.rowIndex="5">
+               <font><Font name="System Bold" size="14.0" /></font></Label>
+
+            <!-- Row 7: Purchase History button (clients only, hidden by default) -->
+            <Button fx:id="btnPurchaseHistory" managed="false" mnemonicParsing="false" onAction="#onPurchaseHistory" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="Purchase History" visible="false" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="7" />
          </children>
          <columnConstraints>
             <ColumnConstraints />
@@ -62,6 +68,7 @@
             <ColumnConstraints />
          </columnConstraints>
          <rowConstraints>
+            <RowConstraints />
             <RowConstraints />
             <RowConstraints />
             <RowConstraints />
