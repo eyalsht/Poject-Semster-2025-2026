@@ -183,44 +183,27 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
                 .setParameter("version", map.getVersion())
                 .executeUpdate();
 
-            // Create snapshot record if user is a Client (use JDBC for BLOB + JSON fields)
+            // Create snapshot record if user is a Client
             if (user instanceof Client) {
-                session.doWork(connection -> {
-                    try (PreparedStatement ps = connection.prepareStatement(
-                            "INSERT INTO purchased_map_snapshots " +
-                            "(client_id, original_map_id, map_name, city_name, purchased_version, description, " +
-                            "map_image_data, purchase_date, price_paid, sites_json, site_markers_json, original_city_id) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                        ps.setInt(1, user.getId());
-                        ps.setInt(2, map.getId());
-                        ps.setString(3, map.getName());
-                        ps.setString(4, map.getCityName());
-                        ps.setString(5, map.getVersion());
-                        ps.setString(6, map.getDescription());
-                        byte[] imageData = map.getMapImage();
-                        if (imageData != null) {
-                            ps.setBytes(7, imageData);
-                        } else {
-                            ps.setNull(7, java.sql.Types.BLOB);
-                        }
-                        ps.setDate(8, Date.valueOf(today));
-                        ps.setDouble(9, price);
-                        String sitesJson = PurchasedMapSnapshot.serializeSites(map.getSites());
-                        if (sitesJson != null) {
-                            ps.setString(10, sitesJson);
-                        } else {
-                            ps.setNull(10, java.sql.Types.LONGVARCHAR);
-                        }
-                        String markersJson = map.getSiteMarkersJson();
-                        if (markersJson != null) {
-                            ps.setString(11, markersJson);
-                        } else {
-                            ps.setNull(11, java.sql.Types.LONGVARCHAR);
-                        }
-                        ps.setInt(12, map.getCity() != null ? map.getCity().getId() : 0);
-                        ps.executeUpdate();
-                    }
-                });
+                session.createNativeQuery(
+                    "INSERT INTO purchased_map_snapshots " +
+                    "(client_id, original_map_id, map_name, city_name, purchased_version, description, " +
+                    "map_image_data, purchase_date, price_paid, sites_json, site_markers_json, original_city_id) " +
+                    "VALUES (:clientId, :mapId, :mapName, :cityName, :version, :desc, " +
+                    ":imageData, :purchaseDate, :price, :sitesJson, :markersJson, :cityId)")
+                    .setParameter("clientId", user.getId())
+                    .setParameter("mapId", map.getId())
+                    .setParameter("mapName", map.getName())
+                    .setParameter("cityName", map.getCityName())
+                    .setParameter("version", map.getVersion())
+                    .setParameter("desc", map.getDescription())
+                    .setParameter("imageData", map.getMapImage())
+                    .setParameter("purchaseDate", today)
+                    .setParameter("price", price)
+                    .setParameter("sitesJson", PurchasedMapSnapshot.serializeSites(map.getSites()))
+                    .setParameter("markersJson", map.getSiteMarkersJson())
+                    .setParameter("cityId", map.getCity() != null ? map.getCity().getId() : 0)
+                    .executeUpdate();
             }
 
             // Populate returned object for logging
