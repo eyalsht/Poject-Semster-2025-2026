@@ -11,7 +11,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
@@ -20,6 +22,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -177,7 +181,36 @@ public class MyMapsPageController {
         lblPrice.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #e67e22;");
 
         card.getChildren().addAll(imgView, lblName, lblCity, lblVersion, lblDate, lblPrice);
+
+        card.setCursor(Cursor.HAND);
+        card.setOnMouseClicked(event -> openSnapshotPopup(snapshot));
+
         return card;
     }
 
+    private void openSnapshotPopup(PurchasedMapSnapshot snapshot) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapContentPopup.fxml"));
+            Parent root = loader.load();
+
+            MapContentPopupController controller = loader.getController();
+            if (controller != null) {
+                controller.setSnapshotData(snapshot);
+
+                Stage stage = new Stage();
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setTitle("Purchased Map - " + snapshot.getMapName());
+
+                Scene scene = new Scene(root, 900, 600);
+                scene.setFill(Color.web("#2c3e50"));
+
+                stage.setScene(scene);
+                stage.setResizable(true);
+                stage.show();
+            }
+        } catch (IOException e) {
+            System.err.println("Failed to open snapshot popup: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

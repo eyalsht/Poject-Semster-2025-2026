@@ -4,15 +4,22 @@ import common.content.GCMMap;
 import common.content.Site;
 import common.content.SiteMarker;
 import common.content.Tour;
+import common.enums.ActionType;
 import common.enums.MapAccessLevel;
+import common.messaging.Message;
+import common.purchase.PurchasedMapSnapshot;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -21,14 +28,22 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import client.GCMClient;
-import common.enums.ActionType;
-import common.messaging.Message;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -44,9 +59,11 @@ public class MapContentPopupController {
     @FXML private VBox imagePlaceholder;
     @FXML private Label lblPlaceholderTitle;
     @FXML private Label lblPlaceholderMessage;
+    @FXML private Button btnDownloadPdf;
 
     private MapAccessLevel accessLevel = MapAccessLevel.NO_ACCESS;
     private GCMMap currentMap;
+    private PurchasedMapSnapshot currentSnapshot;
 
     public void setMapData(GCMMap currentMap, MapAccessLevel accessLevel) {
         if (currentMap == null) return;
@@ -103,6 +120,50 @@ public class MapContentPopupController {
      */
     public void setMapData(GCMMap currentMap) {
         setMapData(currentMap, MapAccessLevel.NO_ACCESS);
+    }
+
+    /**
+     * Display a purchased map snapshot (no server fetch needed — all data is local).
+     */
+    public void setSnapshotData(PurchasedMapSnapshot snapshot) {
+        if (snapshot == null) return;
+        this.currentSnapshot = snapshot;
+        this.accessLevel = MapAccessLevel.MAP_PURCHASED;
+
+        if (lblMapName != null) {
+            lblMapName.setText(snapshot.getMapName());
+        }
+
+        // Show map image from snapshot bytes
+        byte[] imageData = snapshot.getMapImageData();
+        if (imageData != null && imageData.length > 0) {
+            Image image = new Image(new ByteArrayInputStream(imageData));
+            imgMapView.setImage(image);
+            imgMapView.setVisible(true);
+        } else {
+            showImagePlaceholder("No Image Available", "Map image was not captured at purchase time.");
+        }
+
+        // Parse and render markers from snapshot
+        List<SiteMarker> markers = snapshot.getSnapshotMarkers();
+        List<Site> sites = snapshot.getSnapshotSitesAsSiteObjects();
+
+        if (markers != null && !markers.isEmpty() && sites != null && !sites.isEmpty()
+                && imgMapView.getImage() != null) {
+            renderMarkersFromData(markers, sites);
+        }
+
+        // Display sites
+        displaySites(sites);
+
+        // Hide tours tab (purchased maps don't include tours)
+        showToursTab(false);
+
+        // Show download PDF button
+        if (btnDownloadPdf != null) {
+            btnDownloadPdf.setVisible(true);
+            btnDownloadPdf.setManaged(true);
+        }
     }
 
     private void applyAccessLevel() {
@@ -175,6 +236,15 @@ public class MapContentPopupController {
 
         List<Site> sites = currentMap.getSites();
         if (sites == null) return;
+
+        renderMarkersFromData(markers, sites);
+    }
+
+    /**
+     * Renders markers on the map overlay from provided data (used by both live maps and snapshots).
+     */
+    private void renderMarkersFromData(List<SiteMarker> markers, List<Site> sites) {
+        if (markerOverlay == null || imgMapView == null) return;
 
         markerOverlay.getChildren().clear();
 
@@ -278,6 +348,206 @@ public class MapContentPopupController {
                 e.printStackTrace();
             }
         }
+    }
+
+    // ==================== PDF DOWNLOAD ====================
+
+    @FXML
+    private void onDownloadPdf() {
+        if (currentSnapshot == null) return;
+
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Save Map as PDF");
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf"));
+        fc.setInitialFileName(currentSnapshot.getMapName() + ".pdf");
+
+        File out = fc.showSaveDialog(lblMapName.getScene().getWindow());
+        if (out == null) return;
+
+        try {
+            // Capture map image + markers as rendered
+            SnapshotParameters params = new SnapshotParameters();
+            params.setFill(Color.web("#1a252f"));
+            WritableImage fxImg = imageContainer.snapshot(params, null);
+            BufferedImage mapImage = SwingFXUtils.fromFXImage(fxImg, null);
+
+            List<Site> sites = currentSnapshot.getSnapshotSitesAsSiteObjects();
+
+            try (PDDocument doc = new PDDocument()) {
+                // Page 1: Map image + metadata
+                PDPage page = new PDPage(PDRectangle.A4);
+                doc.addPage(page);
+
+                float pageW = page.getMediaBox().getWidth();
+                float pageH = page.getMediaBox().getHeight();
+                float margin = 40;
+                float usableW = pageW - 2 * margin;
+
+                try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
+                    float y = pageH - margin;
+
+                    // Title
+                    cs.setFont(PDType1Font.HELVETICA_BOLD, 20);
+                    y -= 20;
+                    cs.beginText();
+                    cs.newLineAtOffset(margin, y);
+                    cs.showText(truncateText(currentSnapshot.getMapName(), 50));
+                    cs.endText();
+
+                    // Metadata line
+                    cs.setFont(PDType1Font.HELVETICA, 11);
+                    y -= 18;
+                    cs.beginText();
+                    cs.newLineAtOffset(margin, y);
+                    String meta = "City: " + currentSnapshot.getCityName()
+                            + "  |  Version: " + currentSnapshot.getPurchasedVersion()
+                            + "  |  Purchased: " + (currentSnapshot.getPurchaseDate() != null ? currentSnapshot.getPurchaseDate().toString() : "-");
+                    cs.showText(truncateText(meta, 100));
+                    cs.endText();
+
+                    y -= 10;
+
+                    // Map image
+                    if (mapImage != null) {
+                        var pdImage = LosslessFactory.createFromImage(doc, mapImage);
+                        float imgW = mapImage.getWidth();
+                        float imgH = mapImage.getHeight();
+                        float scale = Math.min(usableW / imgW, 350f / imgH);
+                        float drawW = imgW * scale;
+                        float drawH = imgH * scale;
+                        float imgX = margin + (usableW - drawW) / 2;
+                        y -= drawH + 5;
+                        cs.drawImage(pdImage, imgX, y, drawW, drawH);
+                        y -= 15;
+                    }
+
+                    // Description
+                    if (currentSnapshot.getDescription() != null && !currentSnapshot.getDescription().isEmpty()) {
+                        cs.setFont(PDType1Font.HELVETICA_OBLIQUE, 10);
+                        y -= 12;
+                        String desc = currentSnapshot.getDescription().replace("\n", " ").replace("\r", "");
+                        cs.beginText();
+                        cs.newLineAtOffset(margin, y);
+                        cs.showText(truncateText(desc, 120));
+                        cs.endText();
+                        y -= 10;
+                    }
+
+                    // Sites header
+                    if (sites != null && !sites.isEmpty()) {
+                        cs.setFont(PDType1Font.HELVETICA_BOLD, 14);
+                        y -= 20;
+                        cs.beginText();
+                        cs.newLineAtOffset(margin, y);
+                        cs.showText("Sites (" + sites.size() + ")");
+                        cs.endText();
+                        y -= 5;
+
+                        // Sites list on this page
+                        y = writeSitesToPdf(doc, cs, page, sites, 0, margin, y, usableW);
+                    }
+                }
+
+                doc.save(out);
+            }
+
+            // Log download event
+            logMapDownload();
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("PDF Saved");
+            alert.setHeaderText(null);
+            alert.setContentText("Map PDF saved successfully.");
+            alert.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Failed to save PDF: " + e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    /**
+     * Writes site entries to the PDF. Handles page overflow by creating new pages.
+     * Returns the final y position.
+     */
+    private float writeSitesToPdf(PDDocument doc, PDPageContentStream cs, PDPage currentPage,
+                                   List<Site> sites, int startIndex, float margin, float startY, float usableW) throws IOException {
+        float y = startY;
+        float bottomMargin = 50;
+        PDPageContentStream stream = cs;
+        boolean ownsStream = false;
+
+        for (int i = startIndex; i < sites.size(); i++) {
+            Site site = sites.get(i);
+
+            // Check if we need a new page (each site entry needs ~50px)
+            if (y < bottomMargin + 50) {
+                if (ownsStream) stream.close();
+                PDPage newPage = new PDPage(PDRectangle.A4);
+                doc.addPage(newPage);
+                stream = new PDPageContentStream(doc, newPage);
+                ownsStream = true;
+                y = newPage.getMediaBox().getHeight() - margin;
+            }
+
+            // Site number + name
+            stream.setFont(PDType1Font.HELVETICA_BOLD, 11);
+            y -= 18;
+            stream.beginText();
+            stream.newLineAtOffset(margin, y);
+            String siteHeader = (i + 1) + ". " + truncateText(site.getName() != null ? site.getName() : "Unknown", 60);
+            stream.showText(siteHeader);
+            stream.endText();
+
+            // Category + location
+            stream.setFont(PDType1Font.HELVETICA, 9);
+            y -= 13;
+            stream.beginText();
+            stream.newLineAtOffset(margin + 15, y);
+            String catLoc = "Category: " + (site.getCategory() != null ? site.getCategory().toString() : "-")
+                    + "  |  Location: " + (site.getLocation() != null && !site.getLocation().isEmpty() ? site.getLocation() : "-");
+            stream.showText(truncateText(catLoc, 90));
+            stream.endText();
+
+            // Description
+            if (site.getDescription() != null && !site.getDescription().isEmpty()) {
+                y -= 12;
+                stream.beginText();
+                stream.newLineAtOffset(margin + 15, y);
+                stream.showText(truncateText(site.getDescription().replace("\n", " "), 100));
+                stream.endText();
+            }
+
+            y -= 5;
+        }
+
+        if (ownsStream) stream.close();
+        return y;
+    }
+
+    private String truncateText(String text, int maxLen) {
+        if (text == null) return "";
+        // Remove characters that PDType1Font can't encode
+        text = text.replaceAll("[^\\x00-\\x7F]", "?");
+        if (text.length() > maxLen) return text.substring(0, maxLen - 3) + "...";
+        return text;
+    }
+
+    private void logMapDownload() {
+        if (currentSnapshot == null) return;
+        new Thread(() -> {
+            try {
+                Message request = new Message(ActionType.LOG_MAP_DOWNLOAD_REQUEST, currentSnapshot.getOriginalMapId());
+                GCMClient.getInstance().sendRequest(request);
+            } catch (Exception e) {
+                // Non-critical — just log
+                System.err.println("Failed to log map download: " + e.getMessage());
+            }
+        }).start();
     }
 
     @FXML
