@@ -284,6 +284,14 @@ public class CatalogPageController {
     private void displayDetailedSearchResults(CatalogResponse.DetailedSearchResult result) {
         List<Parent> allComponents = new ArrayList<>();
 
+        String query = txtSearch.getText().trim(); // Get Search string
+        double fullWidth = flowPaneCities.getWidth() - 50;
+
+        Label welcomeLabel = new Label("The search results for \"" + query + "\" are:");
+        welcomeLabel.setPrefWidth(fullWidth);
+        welcomeLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #34495e; -fx-padding: 10 0 5 0;");
+        allComponents.add(welcomeLabel);
+
         // Maps section
         if (!result.getMaps().isEmpty()) {
             Label mapsHeader = new Label("MAPS (" + result.getTotalMaps() + ")");
