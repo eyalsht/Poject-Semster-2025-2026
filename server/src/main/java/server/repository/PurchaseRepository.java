@@ -167,44 +167,74 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
      */
     public OneTimePurchase createOneTimePurchase(User user, GCMMap map, double price) {
         final OneTimePurchase purchase = new OneTimePurchase();
-        // Use native SQL to avoid Hibernate detached entity / closed connection issues
-        executeInTransaction(session -> {
+
+        // Bypass Hibernate session entirely — use raw JDBC (same pattern as createSubscription)
+        SessionFactoryImplementor sfi = (SessionFactoryImplementor) HibernateUtil.getSessionFactory();
+        ConnectionProvider cp = sfi.getServiceRegistry().getService(ConnectionProvider.class);
+
+        Connection conn = null;
+        try {
+            conn = cp.getConnection();
+            conn.setAutoCommit(false);
+
             LocalDate today = LocalDate.now();
 
-            // Insert purchase record via native SQL
-            session.createNativeQuery(
-                "INSERT INTO purchases (purchase_type, user_id, city_id, map_id, price, purchase_date, purchased_version, is_renewal) " +
-                "VALUES ('ONE_TIME', :userId, :cityId, :mapId, :price, :purchaseDate, :version, false)")
-                .setParameter("userId", user.getId())
-                .setParameter("cityId", map.getCity() != null ? map.getCity().getId() : null)
-                .setParameter("mapId", map.getId())
-                .setParameter("price", price)
-                .setParameter("purchaseDate", today)
-                .setParameter("version", map.getVersion())
-                .executeUpdate();
-
-            // Create snapshot record if user is a Client
-            if (user instanceof Client) {
-                session.createNativeQuery(
-                    "INSERT INTO purchased_map_snapshots " +
-                    "(client_id, original_map_id, map_name, city_name, purchased_version, description, " +
-                    "map_image_data, purchase_date, price_paid, sites_json, site_markers_json, original_city_id) " +
-                    "VALUES (:clientId, :mapId, :mapName, :cityName, :version, :desc, " +
-                    ":imageData, :purchaseDate, :price, :sitesJson, :markersJson, :cityId)")
-                    .setParameter("clientId", user.getId())
-                    .setParameter("mapId", map.getId())
-                    .setParameter("mapName", map.getName())
-                    .setParameter("cityName", map.getCityName())
-                    .setParameter("version", map.getVersion())
-                    .setParameter("desc", map.getDescription())
-                    .setParameter("imageData", map.getMapImage())
-                    .setParameter("purchaseDate", today)
-                    .setParameter("price", price)
-                    .setParameter("sitesJson", PurchasedMapSnapshot.serializeSites(map.getSites()))
-                    .setParameter("markersJson", map.getSiteMarkersJson())
-                    .setParameter("cityId", map.getCity() != null ? map.getCity().getId() : 0)
-                    .executeUpdate();
+            // 1. Insert purchase record
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "INSERT INTO purchases (purchase_type, user_id, city_id, map_id, price, purchase_date, purchased_version, is_renewal) " +
+                    "VALUES ('ONE_TIME', ?, ?, ?, ?, ?, ?, false)")) {
+                ps.setInt(1, user.getId());
+                if (map.getCity() != null) {
+                    ps.setInt(2, map.getCity().getId());
+                } else {
+                    ps.setNull(2, java.sql.Types.INTEGER);
+                }
+                ps.setInt(3, map.getId());
+                ps.setDouble(4, price);
+                ps.setDate(5, Date.valueOf(today));
+                ps.setString(6, map.getVersion());
+                ps.executeUpdate();
             }
+
+            // 2. Create snapshot record if user is a Client
+            if (user instanceof Client) {
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "INSERT INTO purchased_map_snapshots " +
+                        "(client_id, original_map_id, map_name, city_name, purchased_version, description, " +
+                        "map_image_data, purchase_date, price_paid, sites_json, site_markers_json, original_city_id) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                    ps.setInt(1, user.getId());
+                    ps.setInt(2, map.getId());
+                    ps.setString(3, map.getName());
+                    ps.setString(4, map.getCityName());
+                    ps.setString(5, map.getVersion());
+                    ps.setString(6, map.getDescription());
+                    byte[] imageData = map.getMapImage();
+                    if (imageData != null) {
+                        ps.setBytes(7, imageData);
+                    } else {
+                        ps.setNull(7, java.sql.Types.BLOB);
+                    }
+                    ps.setDate(8, Date.valueOf(today));
+                    ps.setDouble(9, price);
+                    String sitesJson = PurchasedMapSnapshot.serializeSites(map.getSites());
+                    if (sitesJson != null) {
+                        ps.setString(10, sitesJson);
+                    } else {
+                        ps.setNull(10, java.sql.Types.LONGVARCHAR);
+                    }
+                    String markersJson = map.getSiteMarkersJson();
+                    if (markersJson != null) {
+                        ps.setString(11, markersJson);
+                    } else {
+                        ps.setNull(11, java.sql.Types.LONGVARCHAR);
+                    }
+                    ps.setInt(12, map.getCity() != null ? map.getCity().getId() : 0);
+                    ps.executeUpdate();
+                }
+            }
+
+            conn.commit();
 
             // Populate returned object for logging
             purchase.setPricePaid(price);
@@ -216,8 +246,14 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
             String cityName = map.getCityName();
             String mapName = map.getName();
             String mapVersion = map.getVersion();
-            sendOneTimePurchaseAlert(email.orElse(null),phone.orElse(null),firstName.orElse(null),cityName,price,mapName,mapVersion);
-        });
+            sendOneTimePurchaseAlert(email.orElse(null), phone.orElse(null), firstName.orElse(null), cityName, price, mapName, mapVersion);
+
+        } catch (Exception e) {
+            if (conn != null) try { conn.rollback(); } catch (Exception ignored) {}
+            throw new RuntimeException("Map purchase failed: " + e.getMessage(), e);
+        } finally {
+            if (conn != null) try { cp.closeConnection(conn); } catch (Exception ignored) {}
+        }
         return purchase;
     }
 
