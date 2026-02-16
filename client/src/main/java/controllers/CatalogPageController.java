@@ -98,7 +98,7 @@ public class CatalogPageController {
                 if (msg.getAction() == ActionType.CATALOG_UPDATED_NOTIFICATION) {
                     refreshCatalog();
                 }
-                if (msg.getAction() == ActionType.MAP_VERSION_UPDATED_NOTIFICATION) {
+                /*if (msg.getAction() == ActionType.MAP_VERSION_UPDATED_NOTIFICATION) {
                     refreshCatalog();
                     if (msg.getMessage() instanceof common.messaging.MapVersionNotification notif) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -110,7 +110,7 @@ public class CatalogPageController {
                         alert.showAndWait();
                         refreshPendingApprovalsCount();
                     }
-                }
+                }*/
             });
         });
     }
