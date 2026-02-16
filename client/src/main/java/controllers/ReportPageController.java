@@ -92,9 +92,7 @@ public class ReportPageController {
 
         cmbReportType.setItems(FXCollections.observableArrayList(
                 "Clients report",
-                "Sales report",
                 "Purchases report",
-                "Users report",
                 "Activity report",
                 "Support Requests report"
         ));

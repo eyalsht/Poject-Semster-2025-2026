@@ -120,8 +120,7 @@ public class CityCardController {
 
         if (mainController instanceof CatalogPageController catalog) {
             System.out.println("DEBUG: Navigating to city maps for: " + city.getName()); //
-            logCityViewIfClient();
-            logCityEnterViewIfClient();
+            logCityEnterViewIfClient();   // ✅ only once
             catalog.showCityMaps(city);
         }
         else if (mainController instanceof CityMapsPageController) {
