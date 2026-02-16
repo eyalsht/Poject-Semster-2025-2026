@@ -130,6 +130,10 @@ public class PurchaseConfirmationDialogController {
             lblDiscount.setText(discountText);
             lblDiscount.setVisible(true);
             lblDiscount.setManaged(true);
+        } else {
+            lblDiscount.setText("");
+            lblDiscount.setVisible(false);
+            lblDiscount.setManaged(false);
         }
     }
 
