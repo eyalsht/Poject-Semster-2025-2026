@@ -35,7 +35,7 @@
                   <Insets />
                </GridPane.margin>
                 </Label>
-                <TextField fx:id="txtSearch" prefHeight="26.0" prefWidth="167.0" promptText="Search maps, sites..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <TextField fx:id="txtSearch" prefHeight="26.0" prefWidth="167.0" promptText="Search maps, sites, tours..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                 <Button mnemonicParsing="false" onAction="#onSearch" prefHeight="27.0" prefWidth="74.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" GridPane.columnIndex="2" GridPane.rowIndex="1" />
 
@@ -64,7 +64,20 @@
                 <Button fx:id="btnImportMap" managed="false" mnemonicParsing="false" onAction="#onImportMap" prefHeight="30.0" text="Import Map" visible="false" />
             </children>
         </HBox>
-      <ScrollPane fx:id="scrollPaneCities" fitToWidth="true" layoutX="20.0" layoutY="170.0" prefHeight="401.0" prefWidth="1014.0">
+
+        <!-- Maps / Tours tab toggle -->
+        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="148.0" spacing="0">
+            <children>
+                <Button fx:id="btnShowMaps" mnemonicParsing="false" onAction="#onShowMapsView" prefHeight="30.0" prefWidth="100.0"
+                        style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-font-weight: bold;"
+                        text="Maps" />
+                <Button fx:id="btnShowTours" mnemonicParsing="false" onAction="#onShowToursView" prefHeight="30.0" prefWidth="100.0"
+                        style="-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-border-color: #bdc3c7; -fx-font-weight: bold;"
+                        text="Tours" />
+            </children>
+        </HBox>
+
+      <ScrollPane fx:id="scrollPaneCities" fitToWidth="true" layoutX="20.0" layoutY="178.0" prefHeight="393.0" prefWidth="1014.0">
          <content>
             <FlowPane fx:id="flowPaneMaps" hgap="20.0" prefHeight="45.0" prefWidth="848.0" prefWrapLength="800.0" vgap="20.0">
                <padding>
