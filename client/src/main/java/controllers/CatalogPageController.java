@@ -294,8 +294,10 @@ public class CatalogPageController {
 
         // Maps section
         if (!result.getMaps().isEmpty()) {
-            Label mapsHeader = new Label("MAPS (" + result.getTotalMaps() + ")");
+            Label mapsHeader = new Label(result.getTotalMaps() + " Maps:");
+            mapsHeader.setPrefWidth(fullWidth);
             mapsHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-padding: 10 0 5 0;");
+            mapsHeader.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
             allComponents.add(mapsHeader);
 
             for (CatalogResponse.MapSearchItem mapItem : result.getMaps()) {
@@ -313,7 +315,7 @@ public class CatalogPageController {
 
         // Tours section
         if (!result.getTours().isEmpty()) {
-            Label toursHeader = new Label("TOURS (" + result.getTotalTours() + ")");
+            Label toursHeader = new Label(result.getTotalTours() +  " Tours:");
             toursHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #8e44ad; -fx-padding: 15 0 5 0;");
             allComponents.add(toursHeader);
 
@@ -332,8 +334,8 @@ public class CatalogPageController {
 
         // Sites section
         if (!result.getSites().isEmpty()) {
-            Label sitesHeader = new Label("SITES (" + result.getTotalSites() + ")");
-            sitesHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #e67e22; -fx-padding: 15 0 5 0;");
+            Label sitesHeader = new Label( result.getTotalSites() + " Sites:");
+            sitesHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #8e44ad; -fx-padding: 15 0 5 0;");
             allComponents.add(sitesHeader);
 
             for (CatalogResponse.SiteSearchItem siteItem : result.getSites()) {
@@ -351,7 +353,7 @@ public class CatalogPageController {
 
         // Cities section
         if (!result.getCities().isEmpty()) {
-            Label citiesHeader = new Label("CITIES (" + result.getTotalCities() + ")");
+            Label citiesHeader = new Label(result.getTotalCities() +" Cities:");
             citiesHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #27ae60; -fx-padding: 15 0 5 0;");
             allComponents.add(citiesHeader);
 
