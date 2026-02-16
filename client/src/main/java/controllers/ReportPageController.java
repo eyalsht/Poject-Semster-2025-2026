@@ -11,6 +11,9 @@ import common.report.AllClientsReport;
 import common.report.SupportRequestsReport;
 import common.support.SupportTicketRowDTO;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -19,6 +22,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
@@ -34,16 +39,13 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
-import common.report.MapCountReport;
-
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ReportPageController {
 
@@ -59,9 +61,12 @@ public class ReportPageController {
     @FXML private DatePicker dpTo;
 
     @FXML private BarChart<String, Number> barChart;
+    @FXML private CategoryAxis barXAxis;
+    @FXML private NumberAxis barYAxis;
+
     @FXML private StackPane reportArea;
 
-    // IMPORTANT: Generic table so CellValueFactory lambdas work
+    // Generic table
     @FXML private TableView<Object> tableView;
 
     @FXML private TableColumn<Object, Number> colId;
@@ -80,7 +85,9 @@ public class ReportPageController {
     private static final DateTimeFormatter CREATED_FMT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    // ===== INIT =====
+    // used to show "Haifa (25)" in All cities mode after report generated
+    private final Map<Integer, Integer> activityCityViews = new HashMap<>();
+
     @FXML
     public void initialize() {
 
@@ -88,9 +95,9 @@ public class ReportPageController {
                 "Clients report",
                 "Sales report",
                 "Purchases report",
+                "Users report",
                 "Activity report",
-                "Map Count report",
-                "Support Requests report"   // <-- EXACT string used in switch
+                "Support Requests report"
         ));
 
         cmbReportType.getSelectionModel().clearSelection();
@@ -106,12 +113,17 @@ public class ReportPageController {
 
         cmbCity.setConverter(new StringConverter<>() {
             @Override public String toString(City city) {
-                return (city == null) ? "" : city.getName();
+                if (city == null) return "";
+                // show counts only when we have them AND only for real cities
+                if (activityCityViews.containsKey(city.getId()) && city.getId() > 0) {
+                    return city.getName() + " (" + activityCityViews.get(city.getId()) + ")";
+                }
+                return city.getName();
             }
             @Override public City fromString(String s) { return null; }
         });
 
-        // initial table mode = clients (safe default)
+        // Safe default
         setupClientsTableColumns();
         setupClientsTableInteractions();
 
@@ -128,20 +140,13 @@ public class ReportPageController {
         tableView.prefHeightProperty().bind(reportArea.heightProperty());
     }
 
-    // ===== UI STATE =====
     private void wireUiStateListeners() {
-
         cmbReportType.valueProperty().addListener((obs, oldV, newV) -> {
-            // city selection logic
-            if ("Clients report".equals(newV)
-                    || "Support Requests report".equals(newV)
-                    || "Map Count report".equals(newV)) {
-                cmbCity.getSelectionModel().clearSelection();
-            } else {
-                if (cmbCity.getValue() == null && cmbCity.getItems() != null && !cmbCity.getItems().isEmpty()) {
-                    cmbCity.getSelectionModel().select(0);
-                }
-            }
+            // clear counts when switching reports
+            activityCityViews.clear();
+            cmbCity.setButtonCell(null);
+            cmbCity.setCellFactory(null);
+
             applyUiState();
         });
 
@@ -150,22 +155,19 @@ public class ReportPageController {
         dpTo.valueProperty().addListener((obs, o, n) -> applyUiState());
     }
 
-    private void applyUiState()
-    {
+    private void applyUiState() {
         String report = cmbReportType.getValue();
 
         boolean hasReport = report != null && !report.isBlank();
-        boolean isClients = "Clients report".equals(report);
-        boolean isSupport = "Support Requests report".equals(report);
-        boolean isMapCount = "Map Count report".equals(report);
-
         boolean supportsDateRange = "Activity report".equals(report) || "Purchases report".equals(report);
 
         dpFrom.setDisable(!supportsDateRange);
         dpTo.setDisable(!supportsDateRange);
 
-        // City should be disabled for Clients + Support Requests
-        boolean needsCity = !(isClients || isSupport || isMapCount);
+        boolean isClients = "Clients report".equals(report);
+        boolean isSupport = "Support Requests report".equals(report);
+
+        boolean needsCity = !(isClients || isSupport);
         cmbCity.setDisable(!hasReport || !needsCity);
 
         boolean cityChosen = cmbCity.getValue() != null;
@@ -177,15 +179,9 @@ public class ReportPageController {
             datesOk = (from != null && to != null && !from.isAfter(to));
         }
 
-        // Generate enabled when:
-        // - report chosen
-        // - if city is needed -> city chosen
-        // - if dates are needed -> dates ok
         btnGenerate.setDisable(!hasReport || (needsCity && !cityChosen) || (supportsDateRange && !datesOk));
     }
 
-
-    // layout changes only after Generate
     private void applyReportLayout() {
         String report = displayedReport;
 
@@ -194,7 +190,6 @@ public class ReportPageController {
         boolean isActivity = "Activity report".equals(report);
         boolean isPurchases = "Purchases report".equals(report);
         boolean isSupport = "Support Requests report".equals(report);
-        boolean isMapCount = "Map Count report".equals(report);
 
         lblChooseReport.setVisible(!hasReport);
         lblChooseReport.setManaged(!hasReport);
@@ -207,16 +202,8 @@ public class ReportPageController {
 
         tableView.setVisible(false);
         tableView.setManaged(false);
-        if (isMapCount) {
-            tableView.setVisible(true);
-            tableView.setManaged(true);
 
-            reportContent.setAlignment(javafx.geometry.Pos.CENTER);
-            reportContent.setSpacing(20);
-
-        }
-
-        else if (isClients || isSupport) {
+        if (isClients || isSupport) {
             barChart.setVisible(true);
             barChart.setManaged(true);
             barChart.setPrefWidth(285);
@@ -228,12 +215,18 @@ public class ReportPageController {
             reportContent.setSpacing(20);
 
         } else if (isActivity || isPurchases) {
+            // show BOTH chart + table for Activity, chart only for Purchases
             barChart.setVisible(true);
             barChart.setManaged(true);
-            barChart.setPrefWidth(650);
+            barChart.setPrefWidth(430);
 
-            reportContent.setAlignment(javafx.geometry.Pos.CENTER);
-            reportContent.setSpacing(0);
+            if (isActivity) {
+                tableView.setVisible(true);
+                tableView.setManaged(true);
+            }
+
+            reportContent.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            reportContent.setSpacing(20);
 
             tableView.getItems().clear();
 
@@ -258,9 +251,16 @@ public class ReportPageController {
 
                 Platform.runLater(() -> {
                     if (res != null && res.getAction() == ActionType.GET_CITIES_RESPONSE) {
+
                         List<City> cities = (List<City>) res.getMessage();
-                        cmbCity.setItems(FXCollections.observableArrayList(cities));
-                        if (cities != null && !cities.isEmpty()) cmbCity.getSelectionModel().select(0);
+
+                        ArrayList<City> uiCities = new ArrayList<>();
+                        uiCities.add(new City(-1, "All cities", 0));
+                        if (cities != null) uiCities.addAll(cities);
+
+                        cmbCity.setItems(FXCollections.observableArrayList(uiCities));
+                        cmbCity.getSelectionModel().select(0);
+
                     } else {
                         showAlert("Error", "Failed to load cities (GET_CITIES_RESPONSE not received).");
                     }
@@ -274,9 +274,7 @@ public class ReportPageController {
 
     // ===== GENERATE =====
     @FXML
-    private void onGenerate()
-    {
-
+    private void onGenerate() {
         String selected = cmbReportType.getValue();
         if (selected == null || selected.isBlank()) return;
 
@@ -297,7 +295,6 @@ public class ReportPageController {
             case "Activity report" -> generateActivityReport(reqId);
             case "Purchases report" -> generatePurchasesReport(reqId);
             case "Support Requests report" -> generateSupportRequestsReport(reqId);
-            case "Map Count report" -> generateMapCountReport(reqId);
             default -> {
                 lblChooseReport.setText("This report is not implemented yet.");
                 lblChooseReport.setVisible(true);
@@ -353,6 +350,7 @@ public class ReportPageController {
     private void fillClientsBarChart(AllClientsReport report) {
         barChart.getData().clear();
         barChart.setAnimated(false);
+        setChartAxisLabels("Month", "New clients");
 
         if (report == null || report.last5Months == null) return;
 
@@ -367,9 +365,15 @@ public class ReportPageController {
         barChart.getData().add(series);
     }
 
-    private void setupClientsTableColumns()
-    {
+    private void setupClientsTableColumns() {
         colCreatedAt.setVisible(true);
+
+        colId.setVisible(true);
+        colUsername.setVisible(true);
+        colEmail.setVisible(true);
+        colFirstName.setVisible(true);
+        colLastName.setVisible(true);
+
         colId.setText("ID");
         colUsername.setText("Username");
         colEmail.setText("Email");
@@ -379,33 +383,33 @@ public class ReportPageController {
 
         colId.setCellValueFactory(data -> {
             AllClientsReport.ClientRow r = (AllClientsReport.ClientRow) data.getValue();
-            return new javafx.beans.property.SimpleIntegerProperty(r.userId);
+            return new SimpleIntegerProperty(r.userId);
         });
 
         colUsername.setCellValueFactory(data -> {
             AllClientsReport.ClientRow r = (AllClientsReport.ClientRow) data.getValue();
-            return new javafx.beans.property.SimpleStringProperty(r.username);
+            return new SimpleStringProperty(r.username);
         });
 
         colEmail.setCellValueFactory(data -> {
             AllClientsReport.ClientRow r = (AllClientsReport.ClientRow) data.getValue();
-            return new javafx.beans.property.SimpleStringProperty(r.email);
+            return new SimpleStringProperty(r.email);
         });
 
         colFirstName.setCellValueFactory(data -> {
             AllClientsReport.ClientRow r = (AllClientsReport.ClientRow) data.getValue();
-            return new javafx.beans.property.SimpleStringProperty(r.firstName);
+            return new SimpleStringProperty(r.firstName);
         });
 
         colLastName.setCellValueFactory(data -> {
             AllClientsReport.ClientRow r = (AllClientsReport.ClientRow) data.getValue();
-            return new javafx.beans.property.SimpleStringProperty(r.lastName);
+            return new SimpleStringProperty(r.lastName);
         });
 
         colCreatedAt.setCellValueFactory(data -> {
             AllClientsReport.ClientRow r = (AllClientsReport.ClientRow) data.getValue();
             var dt = r.createdAt;
-            return new javafx.beans.property.SimpleStringProperty(dt == null ? "" : CREATED_FMT.format(dt));
+            return new SimpleStringProperty(dt == null ? "" : CREATED_FMT.format(dt));
         });
     }
 
@@ -426,12 +430,7 @@ public class ReportPageController {
 
     // ===== ACTIVITY REPORT =====
     private void generateActivityReport(long reqId) {
-
-        City city = cmbCity.getValue();
-        if (city == null) {
-            showAlert("Missing city", "Please choose a city for Activity report.");
-            return;
-        }
+        City city = cmbCity.getValue(); // can be "All cities"
 
         LocalDate from = dpFrom.getValue();
         LocalDate to = dpTo.getValue();
@@ -445,12 +444,15 @@ public class ReportPageController {
             return;
         }
 
+        // null => all cities
+        final Integer cityId = (city != null && city.getId() != -1) ? city.getId() : null;
+
         new Thread(() -> {
             try {
                 ArrayList<Object> payload = new ArrayList<>();
                 payload.add(from);
                 payload.add(to);
-                payload.add(city.getId());
+                payload.add(cityId);
 
                 Message req = new Message(ActionType.GET_ACTIVITY_REPORT_REQUEST, payload);
                 Message res = (Message) GCMClient.getInstance().sendRequest(req);
@@ -464,7 +466,17 @@ public class ReportPageController {
                         lblChooseReport.setVisible(false);
                         lblChooseReport.setManaged(false);
 
-                        fillActivityBarChart(report);
+                        boolean isAll = (cityId == null);
+
+                        if (isAll) {
+                            fillActivityAllCities(report);
+                            // keep city enabled in All mode
+                            cmbCity.setDisable(false);
+                        } else {
+                            fillActivitySingleCity(report);
+                            // lock city in single city mode (as you requested)
+                            cmbCity.setDisable(true);
+                        }
 
                     } else {
                         showAlert("Error", "Failed to generate activity report.");
@@ -477,33 +489,157 @@ public class ReportPageController {
         }).start();
     }
 
-    private void fillActivityBarChart(ActivityReport report) {
+    // Chart shows ONLY non-view metrics (views are too large and distort chart)
+    private void fillActivityChartNonViews(int maps, int oneTime, int subs, int renewals) {
         barChart.getData().clear();
         barChart.setAnimated(false);
-
-        if (report == null || report.rows == null || report.rows.isEmpty()) return;
-
-        ActivityReport.CityRow row = report.rows.get(0);
+        setChartAxisLabels("Metric", "Count");
 
         XYChart.Series<String, Number> s = new XYChart.Series<>();
-        s.setName("Activity (" + row.cityName + ")");
+        s.setName("Activity");
 
-        s.getData().add(new XYChart.Data<>("Maps", row.maps));
-        s.getData().add(new XYChart.Data<>("One-time", row.oneTimePurchases));
-        s.getData().add(new XYChart.Data<>("Subscriptions", row.subscriptions));
-        s.getData().add(new XYChart.Data<>("Renewals", row.renewals));
-        s.getData().add(new XYChart.Data<>("Views", row.views));
-        s.getData().add(new XYChart.Data<>("Downloads", row.downloads));
+        s.getData().add(new XYChart.Data<>("Maps", maps));
+        s.getData().add(new XYChart.Data<>("One-time", oneTime));
+        s.getData().add(new XYChart.Data<>("Subscriptions", subs));
+        s.getData().add(new XYChart.Data<>("Renewals", renewals));
 
         barChart.getData().add(s);
+    }
+
+    // All cities mode: table shows cities (City, Views, Downloads)
+    private void fillActivityAllCities(ActivityReport report) {
+        activityCityViews.clear();
+
+        int maps = 0, oneTime = 0, subs = 0, renewals = 0;
+
+        if (report != null && report.rows != null) {
+            for (ActivityReport.CityRow r : report.rows) {
+                maps += r.maps;
+                oneTime += r.oneTimePurchases;
+                subs += r.subscriptions;
+                renewals += r.renewals;
+
+                activityCityViews.put(r.cityId, r.views);
+            }
+        }
+
+        fillActivityChartNonViews(maps, oneTime, subs, renewals);
+
+        setupActivityCitiesTableColumns();
+        tableView.getItems().clear();
+        if (report != null && report.rows != null) {
+            tableView.setItems(FXCollections.observableArrayList(report.rows));
+        }
+
+        // Make combo show "Haifa (25)" etc (after data exists)
+        cmbCity.setButtonCell(new ListCell<>() {
+            @Override protected void updateItem(City item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : cmbCity.getConverter().toString(item));
+            }
+        });
+        cmbCity.setCellFactory(cb -> new ListCell<>() {
+            @Override protected void updateItem(City item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : cmbCity.getConverter().toString(item));
+            }
+        });
+    }
+
+    // Single city mode: table shows maps (Map, Views, Downloads)
+    private void fillActivitySingleCity(ActivityReport report) {
+        int maps = 0, oneTime = 0, subs = 0, renewals = 0;
+
+        if (report != null && report.rows != null && !report.rows.isEmpty()) {
+            ActivityReport.CityRow r = report.rows.get(0);
+            maps = r.maps;
+            oneTime = r.oneTimePurchases;
+            subs = r.subscriptions;
+            renewals = r.renewals;
+        }
+
+        fillActivityChartNonViews(maps, oneTime, subs, renewals);
+
+        setupActivityMapsTableColumns();
+        tableView.getItems().clear();
+
+        if (report != null && report.mapRows != null) {
+            tableView.setItems(FXCollections.observableArrayList(report.mapRows));
+        }
+    }
+
+    private void setupActivityCitiesTableColumns() {
+        // We will use:
+        // colUsername = City
+        // colId       = Views
+        // colEmail    = Downloads
+        colUsername.setText("City");
+        colId.setText("Views");
+        colEmail.setText("Downloads");
+
+        colUsername.setVisible(true);
+        colId.setVisible(true);
+        colEmail.setVisible(true);
+
+        colFirstName.setVisible(false);
+        colLastName.setVisible(false);
+        colCreatedAt.setVisible(false);
+
+        colUsername.setCellValueFactory(data -> {
+            ActivityReport.CityRow r = (ActivityReport.CityRow) data.getValue();
+            return new SimpleStringProperty(r.cityName);
+        });
+
+        colId.setCellValueFactory(data -> {
+            ActivityReport.CityRow r = (ActivityReport.CityRow) data.getValue();
+            return new SimpleLongProperty(r.views);
+        });
+
+        colEmail.setCellValueFactory(data -> {
+            ActivityReport.CityRow r = (ActivityReport.CityRow) data.getValue();
+            return new SimpleStringProperty(String.valueOf(r.downloads));
+        });
+    }
+
+    private void setupActivityMapsTableColumns() {
+        // We will use:
+        // colUsername = Map
+        // colId       = Views
+        // colEmail    = Downloads
+        colUsername.setText("Map");
+        colId.setText("Views");
+        colEmail.setText("Downloads");
+
+        colUsername.setVisible(true);
+        colId.setVisible(true);
+        colEmail.setVisible(true);
+
+        colFirstName.setVisible(false);
+        colLastName.setVisible(false);
+        colCreatedAt.setVisible(false);
+
+        colUsername.setCellValueFactory(data -> {
+            ActivityReport.MapRow r = (ActivityReport.MapRow) data.getValue();
+            return new SimpleStringProperty(r.mapName);
+        });
+
+        colId.setCellValueFactory(data -> {
+            ActivityReport.MapRow r = (ActivityReport.MapRow) data.getValue();
+            return new SimpleLongProperty(r.views);
+        });
+
+        colEmail.setCellValueFactory(data -> {
+            ActivityReport.MapRow r = (ActivityReport.MapRow) data.getValue();
+            return new SimpleStringProperty(String.valueOf(r.downloads));
+        });
     }
 
     // ===== PURCHASES REPORT =====
     private void generatePurchasesReport(long reqId) {
 
         City city = cmbCity.getValue();
-        if (city == null) {
-            showAlert("Missing city", "Please choose a city for Purchases report.");
+        if (city == null || city.getId() == -1) {
+            showAlert("Missing city", "Please choose a specific city for Purchases report.");
             return;
         }
 
@@ -552,6 +688,7 @@ public class ReportPageController {
     private void fillPurchasesBarChart(common.report.PurchasesReport report) {
         barChart.getData().clear();
         barChart.setAnimated(false);
+        setChartAxisLabels("Type", "Count");
 
         if (report == null) return;
 
@@ -601,7 +738,6 @@ public class ReportPageController {
     }
 
     private void setupSupportTableColumns() {
-
         colId.setText("Ticket");
         colUsername.setText("Client");
         colEmail.setText("Topic");
@@ -609,33 +745,36 @@ public class ReportPageController {
         colLastName.setText("Created");
         colCreatedAt.setText("Preview");
 
+        colId.setVisible(true);
+        colUsername.setVisible(true);
+        colEmail.setVisible(true);
+        colFirstName.setVisible(true);
+        colLastName.setVisible(true);
+        colCreatedAt.setVisible(true);
+
         colId.setCellValueFactory(data -> {
             SupportTicketRowDTO r = (SupportTicketRowDTO) data.getValue();
-            return new javafx.beans.property.SimpleIntegerProperty(r.getTicketId());
+            return new SimpleIntegerProperty(r.getTicketId());
         });
 
         colUsername.setCellValueFactory(data -> {
             SupportTicketRowDTO r = (SupportTicketRowDTO) data.getValue();
-            return new javafx.beans.property.SimpleStringProperty(r.getClientUsername()); // ✅ correct
+            return new SimpleStringProperty(r.getClientUsername());
         });
 
         colEmail.setCellValueFactory(data -> {
             SupportTicketRowDTO r = (SupportTicketRowDTO) data.getValue();
-            return new javafx.beans.property.SimpleStringProperty(r.getTopic());
+            return new SimpleStringProperty(r.getTopic());
         });
 
         colFirstName.setCellValueFactory(data -> {
             SupportTicketRowDTO r = (SupportTicketRowDTO) data.getValue();
-            return new javafx.beans.property.SimpleStringProperty(
-                    r.getStatus() == null ? "" : r.getStatus().name()
-            );
+            return new SimpleStringProperty(r.getStatus() == null ? "" : r.getStatus().name());
         });
 
         colLastName.setCellValueFactory(data -> {
             SupportTicketRowDTO r = (SupportTicketRowDTO) data.getValue();
-            return new javafx.beans.property.SimpleStringProperty(
-                    r.getCreatedAt() == null ? "" : CREATED_FMT.format(r.getCreatedAt())
-            );
+            return new SimpleStringProperty(r.getCreatedAt() == null ? "" : CREATED_FMT.format(r.getCreatedAt()));
         });
 
         colCreatedAt.setCellValueFactory(data -> {
@@ -644,7 +783,7 @@ public class ReportPageController {
             if (txt == null) txt = "";
             txt = txt.replace("\n", " ").trim();
             if (txt.length() > 35) txt = txt.substring(0, 35) + "...";
-            return new javafx.beans.property.SimpleStringProperty(txt);
+            return new SimpleStringProperty(txt);
         });
     }
 
@@ -659,6 +798,7 @@ public class ReportPageController {
     private void fillSupportRequestsBarChart(SupportRequestsReport report) {
         barChart.getData().clear();
         barChart.setAnimated(false);
+        setChartAxisLabels("Status", "Tickets");
 
         if (report == null) return;
 
@@ -668,13 +808,12 @@ public class ReportPageController {
         XYChart.Data<String, Number> pending = new XYChart.Data<>("Pending", report.pendingCount);
         XYChart.Data<String, Number> done    = new XYChart.Data<>("Done", report.doneCount);
 
-        // Color each bar separately (JavaFX creates the Node later, so we hook nodeProperty)
         pending.nodeProperty().addListener((obs, oldNode, newNode) -> {
-            if (newNode != null) newNode.setStyle("-fx-bar-fill: #8e44ad;"); // purple
+            if (newNode != null) newNode.setStyle("-fx-bar-fill: #8e44ad;");
         });
 
         done.nodeProperty().addListener((obs, oldNode, newNode) -> {
-            if (newNode != null) newNode.setStyle("-fx-bar-fill: #2ecc71;"); // green
+            if (newNode != null) newNode.setStyle("-fx-bar-fill: #2ecc71;");
         });
 
         s.getData().add(pending);
@@ -682,7 +821,6 @@ public class ReportPageController {
 
         barChart.getData().add(s);
     }
-
 
     private void setupSupportTableInteractions() {
         tableView.setRowFactory(tv -> {
@@ -700,7 +838,6 @@ public class ReportPageController {
     }
 
     private void openSupportTicketPopup(SupportTicketRowDTO row) {
-
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Ticket #" + row.getTicketId());
 
@@ -733,7 +870,7 @@ public class ReportPageController {
                 Message subReq = new Message(ActionType.GET_USER_SUBSCRIPTIONS_REQUEST, userId);
                 Message subRes = (Message) GCMClient.getInstance().sendRequest(subReq);
 
-                List<SubscriptionStatusDTO> subs = java.util.Collections.emptyList();
+                List<SubscriptionStatusDTO> subs = Collections.emptyList();
                 if (subRes != null && subRes.getAction() == ActionType.GET_USER_SUBSCRIPTIONS_RESPONSE) {
                     subs = (List<SubscriptionStatusDTO>) subRes.getMessage();
                 }
@@ -741,13 +878,13 @@ public class ReportPageController {
                 Message purReq = new Message(ActionType.GET_USER_PURCHASED_MAPS_REQUEST, userId);
                 Message purRes = (Message) GCMClient.getInstance().sendRequest(purReq);
 
-                List<PurchasedMapSnapshot> purchases = java.util.Collections.emptyList();
+                List<PurchasedMapSnapshot> purchases = Collections.emptyList();
                 if (purRes != null && purRes.getAction() == ActionType.GET_USER_PURCHASED_MAPS_RESPONSE) {
                     purchases = (List<PurchasedMapSnapshot>) purRes.getMessage();
                 }
 
-                List<SubscriptionStatusDTO> finalSubs = (subs == null) ? java.util.Collections.emptyList() : subs;
-                List<PurchasedMapSnapshot> finalPurchases = (purchases == null) ? java.util.Collections.emptyList() : purchases;
+                List<SubscriptionStatusDTO> finalSubs = (subs == null) ? Collections.emptyList() : subs;
+                List<PurchasedMapSnapshot> finalPurchases = (purchases == null) ? Collections.emptyList() : purchases;
 
                 Platform.runLater(() -> showClientPurchaseHistoryDialog(clientRow, finalSubs, finalPurchases));
 
@@ -785,7 +922,6 @@ public class ReportPageController {
     // ===== EXPORT PDF =====
     @FXML
     private void onExportPdf() {
-
         if (reportArea == null) {
             showAlert("Error", "Nothing to export.");
             return;
@@ -805,7 +941,6 @@ public class ReportPageController {
             BufferedImage bImg = SwingFXUtils.fromFXImage(fxImg, null);
 
             try (PDDocument doc = new PDDocument()) {
-
                 PDPage page = new PDPage(PDRectangle.A4);
                 doc.addPage(page);
 
@@ -843,6 +978,11 @@ public class ReportPageController {
         }
     }
 
+    private void setChartAxisLabels(String x, String y) {
+        if (barXAxis != null) barXAxis.setLabel(x);
+        if (barYAxis != null) barYAxis.setLabel(y);
+    }
+
     // ===== UTILS =====
     private void showAlert(String title, String msg) {
         Alert a = new Alert(Alert.AlertType.INFORMATION);
@@ -851,92 +991,4 @@ public class ReportPageController {
         a.setContentText(msg);
         a.showAndWait();
     }
-    private void generateMapCountReport(long reqId) {
-        // table columns
-        setupMapCountTableColumns();
-
-        new Thread(() -> {
-            try {
-                Message resp = GCMClient.getInstance().sendMessage(
-                        new Message(ActionType.GET_MAP_COUNT_REPORT_REQUEST, null)
-                );
-
-                if (resp == null || resp.getAction() != ActionType.GET_MAP_COUNT_REPORT_RESPONSE) {
-                    Platform.runLater(() -> lblChooseReport.setText("Failed to load Map Count report."));
-                    return;
-                }
-
-                MapCountReport report = (MapCountReport) resp.getMessage();
-                if (report == null || report.rows == null) {
-                    Platform.runLater(() -> lblChooseReport.setText("No data."));
-                    return;
-                }
-
-                Platform.runLater(() -> {
-                    if (reqId != currentRequestId) return;
-
-                    lblChooseReport.setVisible(false);
-                    lblChooseReport.setManaged(false);
-
-                    tableView.getItems().setAll(new ArrayList<>(report.rows));
-                });
-
-            } catch (Exception e) {
-                Platform.runLater(() -> lblChooseReport.setText("Error: " + e.getMessage()));
-            }
-        }).start();
-    }
-    private void setupMapCountTableColumns() {
-
-        // We will use:
-        // colUsername = City
-        // colId       = Maps
-        // colEmail    = Tours
-        // colFirstName= Maps bought
-        // colLastName = Subs bought
-        // hide colCreatedAt
-
-        colUsername.setText("City");
-        colId.setText("Maps");
-        colEmail.setText("Tours");
-        colFirstName.setText("Maps bought");
-        colLastName.setText("Subs bought");
-
-        colCreatedAt.setVisible(false); // ✅ only this
-
-        colUsername.setCellValueFactory(data -> {
-            MapCountReport.CityRow r = (MapCountReport.CityRow) data.getValue();
-            return new javafx.beans.property.SimpleStringProperty(r.cityName);
-        });
-
-        colId.setCellValueFactory(data -> {
-            MapCountReport.CityRow r = (MapCountReport.CityRow) data.getValue();
-            return new javafx.beans.property.SimpleLongProperty(r.mapsCount);
-        });
-
-        colEmail.setCellValueFactory(data -> {
-            MapCountReport.CityRow r = (MapCountReport.CityRow) data.getValue();
-            return new javafx.beans.property.SimpleStringProperty(String.valueOf(r.toursCount));
-        });
-
-        colFirstName.setCellValueFactory(data -> {
-            MapCountReport.CityRow r = (MapCountReport.CityRow) data.getValue();
-            return new javafx.beans.property.SimpleStringProperty(String.valueOf(r.mapsBoughtCount));
-        });
-
-        colLastName.setCellValueFactory(data -> {
-            MapCountReport.CityRow r = (MapCountReport.CityRow) data.getValue();
-            return new javafx.beans.property.SimpleStringProperty(String.valueOf(r.subscriptionsBoughtCount));
-        });
-
-        // make sure columns are visible (if another report hid them)
-        colUsername.setVisible(true);
-        colId.setVisible(true);
-        colEmail.setVisible(true);
-        colFirstName.setVisible(true);
-        colLastName.setVisible(true);
-    }
-
-
-
 }

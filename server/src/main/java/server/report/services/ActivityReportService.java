@@ -4,13 +4,12 @@ import common.report.ActivityReport;
 import common.enums.ReportType;
 import org.hibernate.Session;
 import server.report.ActivityStatsScheduler;
-import server.report.ReportManager;
 import server.report.ReportRequestContext;
 
 import java.time.LocalDate;
 import java.util.*;
 
-public class ActivityReportService implements ReportManager.ParamAwareReportService {
+public class ActivityReportService implements server.report.ReportManager.ParamAwareReportService {
 
     @Override
     public ReportType getType() {
@@ -22,17 +21,19 @@ public class ActivityReportService implements ReportManager.ParamAwareReportServ
 
         LocalDate from = (LocalDate) params[0];
         LocalDate to = (LocalDate) params[1];
-        Integer cityId = (Integer) params[2];
+        Integer cityId = (Integer) params[2]; // null => all cities
 
+        // Ensure daily stats exist for requested range
         LocalDate day = from;
         while (!day.isAfter(to)) {
-            server.report.ActivityStatsScheduler.aggregateDay(ctx.getSessionFactory(), day);
+            ActivityStatsScheduler.aggregateDay(ctx.getSessionFactory(), day);
             day = day.plusDays(1);
         }
 
         try (Session s = ctx.getSessionFactory().openSession()) {
             s.beginTransaction();
 
+            // 1) City aggregation (always)
             List<Object[]> stats = s.createNativeQuery("""
                 SELECT c.id, c.name,
                        COALESCE(SUM(d.one_time_purchases),0),
@@ -79,8 +80,67 @@ public class ActivityReportService implements ReportManager.ParamAwareReportServ
                 rows.add(new ActivityReport.CityRow(cid, cname, mapsN, oneTime, subs, renew, views, downloads));
             }
 
+            // 2) Map table rows (only if SINGLE city requested)
+            Integer tableCityId = null;
+            String tableCityName = null;
+            List<ActivityReport.MapRow> mapRows = Collections.emptyList();
+
+            if (cityId != null) {
+                tableCityId = cityId;
+
+                // City name for header (optional)
+                Object cityNameObj = s.createNativeQuery("SELECT name FROM cities WHERE id = :cid")
+                        .setParameter("cid", cityId)
+                        .uniqueResult();
+                tableCityName = (cityNameObj == null) ? null : cityNameObj.toString();
+
+                // views/downloads per map within range
+                List<Object[]> mapStats = s.createNativeQuery("""
+                    SELECT m.id,
+                           m.name,
+                           COALESCE(v.vcnt, 0) AS views,
+                           COALESCE(d.dcnt, 0) AS downloads
+                    FROM maps m
+                    LEFT JOIN (
+                        SELECT map_id, COUNT(*) AS vcnt
+                        FROM map_view_events
+                        WHERE city_id = :cid
+                          AND map_id IS NOT NULL
+                          AND viewed_at >= :fromTs
+                          AND viewed_at <  :toTsPlus
+                        GROUP BY map_id
+                    ) v ON v.map_id = m.id
+                    LEFT JOIN (
+                        SELECT map_id, COUNT(*) AS dcnt
+                        FROM map_download_events
+                        WHERE city_id = :cid
+                          AND map_id IS NOT NULL
+                          AND is_subscriber = 1
+                          AND downloaded_at >= :fromTs
+                          AND downloaded_at <  :toTsPlus
+                        GROUP BY map_id
+                    ) d ON d.map_id = m.id
+                    WHERE m.city_id = :cid
+                    ORDER BY views DESC, downloads DESC, m.name
+                """)
+                        .setParameter("cid", cityId)
+                        .setParameter("fromTs", from.atStartOfDay())
+                        .setParameter("toTsPlus", to.plusDays(1).atStartOfDay())
+                        .getResultList();
+
+                ArrayList<ActivityReport.MapRow> tmp = new ArrayList<>();
+                for (Object[] r : mapStats) {
+                    int mid = ((Number) r[0]).intValue();
+                    String mname = (String) r[1];
+                    int vcnt = ((Number) r[2]).intValue();
+                    int dcnt = ((Number) r[3]).intValue();
+                    tmp.add(new ActivityReport.MapRow(mid, mname, vcnt, dcnt));
+                }
+                mapRows = tmp;
+            }
+
             s.getTransaction().commit();
-            return new ActivityReport(from, to, rows);
+            return new ActivityReport(from, to, rows, tableCityId, tableCityName, mapRows);
         }
     }
 
@@ -91,9 +151,8 @@ public class ActivityReportService implements ReportManager.ParamAwareReportServ
 
     @Override
     public void refreshDaily(ReportRequestContext ctx) {
-        // aggregate stats for "today" into daily_city_activity_stats
         try {
-            java.time.LocalDate today = java.time.LocalDate.now();
+            LocalDate today = LocalDate.now();
             ActivityStatsScheduler.aggregateDay(ctx.getSessionFactory(), today);
             System.out.println("[ReportManager] Activity daily stats aggregated for " + today);
         } catch (Exception e) {
@@ -101,5 +160,4 @@ public class ActivityReportService implements ReportManager.ParamAwareReportServ
             e.printStackTrace();
         }
     }
-
 }

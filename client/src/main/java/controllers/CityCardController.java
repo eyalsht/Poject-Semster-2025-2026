@@ -8,6 +8,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import common.content.City;
+import client.GCMClient;
+import common.enums.ActionType;
+import common.messaging.Message;
+import common.user.Client;
+
+import java.util.ArrayList;
+
 
 import java.util.List;
 
@@ -112,6 +119,7 @@ public class CityCardController {
 
         if (mainController instanceof CatalogPageController catalog) {
             System.out.println("DEBUG: Navigating to city maps for: " + city.getName()); //
+            logCityViewIfClient();
             catalog.showCityMaps(city);
         }
         else if (mainController instanceof CityMapsPageController) {
@@ -128,4 +136,27 @@ public class CityCardController {
             System.out.println("Already in CityMapsPage for: " + city.getName());
         }*/
     }
+    private void logCityViewIfClient() {
+        try {
+            var user = GCMClient.getInstance().getCurrentUser();
+            if (!(user instanceof Client)) return; // only clients
+
+            Integer userId = user.getId();
+            Integer cityId = (city == null) ? null : city.getId();
+            if (cityId == null || cityId <= 0) return;
+
+            ArrayList<Object> payload = new ArrayList<>();
+            payload.add(userId);
+            payload.add(cityId);
+            payload.add(null); // mapId = null => city "enter"
+
+            new Thread(() -> {
+                try {
+                    GCMClient.getInstance().sendRequest(new Message(ActionType.LOG_MAP_VIEW_REQUEST, payload));
+                } catch (Exception ignored) {}
+            }).start();
+
+        } catch (Exception ignored) {}
+    }
+
 }

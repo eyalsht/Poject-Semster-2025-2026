@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import common.user.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -186,6 +187,7 @@ public class MapCardController {
     @FXML
     private void onMapClicked() {
         if (currentMap == null) return;
+        logMapViewIfClient();
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapContentPopup.fxml"));
@@ -216,4 +218,29 @@ public class MapCardController {
             e.printStackTrace();
         }
     }
+    private void logMapViewIfClient() {
+        try {
+            User user = GCMClient.getInstance().getCurrentUser();
+            if (!(user instanceof Client)) return; // only clients
+
+            if (currentMap == null || currentMap.getCity() == null) return;
+
+            Integer userId = user.getId();
+            Integer cityId = currentMap.getCity().getId();
+            Integer mapId  = currentMap.getId();
+
+            ArrayList<Object> payload = new ArrayList<>();
+            payload.add(userId);
+            payload.add(cityId);
+            payload.add(mapId);
+
+            new Thread(() -> {
+                try {
+                    GCMClient.getInstance().sendRequest(new Message(ActionType.LOG_MAP_VIEW_REQUEST, payload));
+                } catch (Exception ignored) {}
+            }).start();
+
+        } catch (Exception ignored) {}
+    }
+
 }
