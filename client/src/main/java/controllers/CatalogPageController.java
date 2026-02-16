@@ -17,21 +17,12 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -107,7 +98,19 @@ public class CatalogPageController {
                 if (msg.getAction() == ActionType.CATALOG_UPDATED_NOTIFICATION) {
                     refreshCatalog();
                 }
-
+                /*if (msg.getAction() == ActionType.MAP_VERSION_UPDATED_NOTIFICATION) {
+                    refreshCatalog();
+                    if (msg.getMessage() instanceof common.messaging.MapVersionNotification notif) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Map Updated");
+                        alert.setHeaderText("New Version Available");
+                        alert.setContentText("Map '" + notif.getMapName() + "' in " +
+                            notif.getCityName() + " has been updated to version " +
+                            notif.getNewVersion() + ".");
+                        alert.showAndWait();
+                        refreshPendingApprovalsCount();
+                    }
+                }*/
             });
         });
     }
@@ -276,180 +279,93 @@ public class CatalogPageController {
     }
 
     /**
-     * Display detailed search results organized by content type in collapsible sections.
-     * Order: Cities, Maps, Tours, Sites - each in its own styled card.
+     * Display detailed search results organized by content type with section headers.
      */
     private void displayDetailedSearchResults(CatalogResponse.DetailedSearchResult result) {
-        VBox sectionsBox = new VBox(20);
-        sectionsBox.setPadding(new Insets(15, 10, 20, 10));
+        List<Parent> allComponents = new ArrayList<>();
 
-        // Results summary header
-        int totalResults = result.getTotalCities() + result.getTotalMaps()
-                + result.getTotalTours() + result.getTotalSites();
-        Label headerLabel = new Label("Search Results  -  " + totalResults + " items found");
-        headerLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
-        headerLabel.setTextFill(Color.web("#ecf0f1"));
-        headerLabel.setPadding(new Insets(0, 0, 5, 5));
-        sectionsBox.getChildren().add(headerLabel);
-
-        // Thin separator line
-        Region separator = new Region();
-        separator.setPrefHeight(1);
-        separator.setMaxHeight(1);
-        separator.setStyle("-fx-background-color: rgba(255,255,255,0.15);");
-        sectionsBox.getChildren().add(separator);
-
-        // 1. Cities section
-        if (!result.getCities().isEmpty()) {
-            FlowPane citiesFlow = new FlowPane(20, 20);
-            citiesFlow.setPadding(new Insets(12));
-            for (CatalogResponse.CitySearchItem cityItem : result.getCities()) {
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityCard.fxml"));
-                    Parent card = loader.load();
-                    CityCardController controller = loader.getController();
-                    controller.setSearchData(toCitySearchResult(cityItem), this);
-                    citiesFlow.getChildren().add(card);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            sectionsBox.getChildren().add(
-                    createSearchSection("Cities", result.getTotalCities(), citiesFlow, "#27ae60"));
-        }
-
-        // 2. Maps section
+        // Maps section
         if (!result.getMaps().isEmpty()) {
-            FlowPane mapsFlow = new FlowPane(15, 15);
-            mapsFlow.setPadding(new Insets(12));
+            Label mapsHeader = new Label("MAPS (" + result.getTotalMaps() + ")");
+            mapsHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-padding: 10 0 5 0;");
+            allComponents.add(mapsHeader);
+
             for (CatalogResponse.MapSearchItem mapItem : result.getMaps()) {
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
                     Parent card = loader.load();
                     MapCardController controller = loader.getController();
                     controller.setData(toGCMMap(mapItem));
-                    mapsFlow.getChildren().add(card);
+                    allComponents.add(card);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            sectionsBox.getChildren().add(
-                    createSearchSection("Maps", result.getTotalMaps(), mapsFlow, "#3498db"));
         }
 
-        // 3. Tours section
+        // Tours section
         if (!result.getTours().isEmpty()) {
-            FlowPane toursFlow = new FlowPane(15, 15);
-            toursFlow.setPadding(new Insets(12));
+            Label toursHeader = new Label("TOURS (" + result.getTotalTours() + ")");
+            toursHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #8e44ad; -fx-padding: 15 0 5 0;");
+            allComponents.add(toursHeader);
+
             for (CatalogResponse.TourSearchItem tourItem : result.getTours()) {
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/TourMiniCard.fxml"));
                     Parent card = loader.load();
                     TourMiniCardController controller = loader.getController();
                     controller.setTourData(toTour(tourItem));
-                    toursFlow.getChildren().add(card);
+                    allComponents.add(card);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            sectionsBox.getChildren().add(
-                    createSearchSection("Tours", result.getTotalTours(), toursFlow, "#8e44ad"));
         }
 
-        // 4. Sites section
+        // Sites section
         if (!result.getSites().isEmpty()) {
-            FlowPane sitesFlow = new FlowPane(15, 15);
-            sitesFlow.setPadding(new Insets(12));
+            Label sitesHeader = new Label("SITES (" + result.getTotalSites() + ")");
+            sitesHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #e67e22; -fx-padding: 15 0 5 0;");
+            allComponents.add(sitesHeader);
+
             for (CatalogResponse.SiteSearchItem siteItem : result.getSites()) {
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/SiteMiniCard.fxml"));
                     Parent card = loader.load();
                     SiteMiniCardController controller = loader.getController();
                     controller.setSiteData(toSite(siteItem), 0);
-                    sitesFlow.getChildren().add(card);
+                    allComponents.add(card);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            sectionsBox.getChildren().add(
-                    createSearchSection("Sites", result.getTotalSites(), sitesFlow, "#e67e22"));
+        }
+
+        // Cities section
+        if (!result.getCities().isEmpty()) {
+            Label citiesHeader = new Label("CITIES (" + result.getTotalCities() + ")");
+            citiesHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #27ae60; -fx-padding: 15 0 5 0;");
+            allComponents.add(citiesHeader);
+
+            for (CatalogResponse.CitySearchItem cityItem : result.getCities()) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CityCard.fxml"));
+                    Parent card = loader.load();
+                    CityCardController controller = loader.getController();
+                    controller.setSearchData(toCitySearchResult(cityItem), this);
+                    allComponents.add(card);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         Platform.runLater(() -> {
-            if (totalResults == 0) {
-                VBox emptyBox = new VBox(10);
-                emptyBox.setAlignment(Pos.CENTER);
-                emptyBox.setPadding(new Insets(60));
-                Label emptyLabel = new Label("No results found");
-                emptyLabel.setFont(Font.font("System", FontWeight.BOLD, 20));
-                emptyLabel.setTextFill(Color.web("#95a5a6"));
-                Label emptyHint = new Label("Try a different search term");
-                emptyHint.setFont(Font.font("System", 14));
-                emptyHint.setTextFill(Color.web("#7f8c8d"));
-                emptyBox.getChildren().addAll(emptyLabel, emptyHint);
-                sectionsBox.getChildren().add(emptyBox);
+            flowPaneCities.getChildren().setAll(allComponents);
+            if (allComponents.isEmpty()) {
+                flowPaneCities.getChildren().add(new Label("No results found."));
             }
-            scrollPaneCities.setContent(sectionsBox);
         });
-    }
-
-    /**
-     * Create a styled section card with a colored header bar and collapsible content.
-     */
-    private VBox createSearchSection(String title, int count, FlowPane content, String accentColor) {
-        VBox sectionCard = new VBox(0);
-        sectionCard.setStyle(
-                "-fx-background-color: rgba(0,0,0,0.20);" +
-                "-fx-background-radius: 12;" +
-                "-fx-border-color: rgba(255,255,255,0.10);" +
-                "-fx-border-radius: 12;" +
-                "-fx-border-width: 1;"
-        );
-
-        DropShadow shadow = new DropShadow();
-        shadow.setRadius(8);
-        shadow.setOffsetY(2);
-        shadow.setColor(Color.rgb(0, 0, 0, 0.3));
-        sectionCard.setEffect(shadow);
-
-        // Header bar with accent color
-        HBox header = new HBox(10);
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(12, 18, 12, 18));
-        header.setStyle(
-                "-fx-background-color: " + accentColor + ";" +
-                "-fx-background-radius: 12 12 0 0;"
-        );
-
-        // Section title
-        Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-        titleLabel.setTextFill(Color.WHITE);
-
-        // Count badge
-        Label countBadge = new Label(String.valueOf(count));
-        countBadge.setFont(Font.font("System", FontWeight.BOLD, 12));
-        countBadge.setTextFill(Color.web(accentColor));
-        countBadge.setStyle(
-                "-fx-background-color: white;" +
-                "-fx-background-radius: 10;" +
-                "-fx-padding: 2 8 2 8;"
-        );
-
-        // Spacer
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
-
-        header.getChildren().addAll(titleLabel, countBadge, spacer);
-
-        // Content wrapper
-        VBox contentWrapper = new VBox();
-        contentWrapper.setPadding(new Insets(10, 5, 15, 5));
-        contentWrapper.getChildren().add(content);
-
-        sectionCard.getChildren().addAll(header, contentWrapper);
-
-        return sectionCard;
     }
 
     /**
@@ -645,7 +561,6 @@ public class CatalogPageController {
     @FXML
     private void onClearSearch() {
         txtSearch.clear();
-        scrollPaneCities.setContent(flowPaneCities);
         loadCatalog(null, null, null);
     }
 
