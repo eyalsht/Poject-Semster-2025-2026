@@ -4,5 +4,6 @@ public enum ReportType
 {
     CLIENTS,
     ACTIVITY,
-    PURCHASES
+    PURCHASES,
+    MAP_COUNT
 }

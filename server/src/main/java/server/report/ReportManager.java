@@ -5,6 +5,8 @@ import org.hibernate.SessionFactory;
 import server.report.services.ActivityReportService;
 import server.report.services.ClientsReportService;
 import server.report.services.PurchasesReportService;
+import server.report.services.MapCountReportService;
+
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -23,6 +25,7 @@ public class ReportManager
         register(new ActivityReportService());
         register(new ClientsReportService());
         register(new PurchasesReportService());
+        register(new MapCountReportService());
     }
 
     private void register(ParamAwareReportService service) {

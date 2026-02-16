@@ -130,6 +130,9 @@ public enum ActionType {
     //Support request report
     GET_SUPPORT_REQUESTS_REPORT_REQUEST,
     GET_SUPPORT_REQUESTS_REPORT_RESPONSE,
+    //Map count report
+    GET_MAP_COUNT_REPORT_REQUEST,
+    GET_MAP_COUNT_REPORT_RESPONSE,
 
     //Bot+ Support
     SUBMIT_SUPPORT_REQUEST,

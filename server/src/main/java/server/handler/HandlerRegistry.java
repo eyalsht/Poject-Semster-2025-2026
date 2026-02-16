@@ -88,6 +88,8 @@ public class HandlerRegistry {
                 new GetPurchasesReportHandler(reportManager));
         register(ActionType.GET_SUPPORT_REQUESTS_REPORT_REQUEST,
                 new GetSupportRequestsReportHandler());
+        register(ActionType.GET_MAP_COUNT_REPORT_REQUEST,
+                new GetMapCountReportHandler(reportManager));
 
 
         // External Map System
