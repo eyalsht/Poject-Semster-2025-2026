@@ -342,8 +342,8 @@ public class CityMapsPageController {
         currentTab = "maps";
         if (txtSearch != null) txtSearch.clear();
 
-        btnShowMaps.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-font-weight: bold;");
-        btnShowTours.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-border-color: #bdc3c7; -fx-font-weight: bold;");
+        btnShowMaps.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-background-insets: 0; -fx-font-weight: bold;");
+        btnShowTours.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-background-insets: 0; -fx-border-color: #bdc3c7; -fx-font-weight: bold;");
 
         if (selectedCity != null && flowPaneMaps != null) {
             renderMapCards(selectedCity.getMaps());
@@ -355,8 +355,8 @@ public class CityMapsPageController {
         currentTab = "tours";
         if (txtSearch != null) txtSearch.clear();
 
-        btnShowTours.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-font-weight: bold;");
-        btnShowMaps.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-border-color: #bdc3c7; -fx-font-weight: bold;");
+        btnShowTours.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-background-insets: 0; -fx-font-weight: bold;");
+        btnShowMaps.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-background-insets: 0; -fx-border-color: #bdc3c7; -fx-font-weight: bold;");
 
         displayTours();
     }
@@ -653,6 +653,7 @@ public class CityMapsPageController {
             stage.showAndWait();
 
             // Refresh maps after dialog closes
+            onShowMapsView();
             if (selectedCity != null) {
                 loadMapsFromServer(selectedCity.getName());
             }
@@ -678,6 +679,7 @@ public class CityMapsPageController {
             stage.initModality(Modality.APPLICATION_MODAL);
 
             stage.setOnHidden(event -> {
+                onShowMapsView();
                 if (selectedCity != null) {
                     loadMapsFromServer(selectedCity.getName());
                 }
@@ -703,6 +705,7 @@ public class CityMapsPageController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
 
+            onShowMapsView();
             if (selectedCity != null) {
                 loadMapsFromServer(selectedCity.getName());
             }
@@ -796,6 +799,7 @@ public class CityMapsPageController {
 
             // Refresh maps and approval count when the window is closed
             stage.setOnHidden(event -> {
+                onShowMapsView();
                 if (selectedCity != null) {
                     loadMapsFromServer(selectedCity.getName());
                 }
@@ -919,8 +923,8 @@ public class CityMapsPageController {
             // Refresh subscription status and map cards after successful subscription
             if (controller.isPurchaseComplete()) {
                 checkSubscriptionStatus(selectedCity);
-                // Re-render map cards so they pick up the new subscription status
-                displayMaps(selectedCity.getMaps());
+                // Reset to maps tab (in case user was on tours tab)
+                onShowMapsView();
             }
         } catch (Exception e) {
             e.printStackTrace();

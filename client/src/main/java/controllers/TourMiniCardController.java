@@ -5,6 +5,7 @@ import common.content.Site;
 import common.content.Tour;
 import common.user.Employee;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -50,9 +51,11 @@ public class TourMiniCardController {
                 populateSites();
             }
         } else {
-            // הודעה למשתמש שלא רכש
-            System.out.println("Access Denied: Please purchase the map to view tour sites.");
-
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Subscription Required");
+            alert.setHeaderText(null);
+            alert.setContentText("Please subscribe to this city to get full access to city tours and their details.");
+            alert.showAndWait();
         }
     }
 
