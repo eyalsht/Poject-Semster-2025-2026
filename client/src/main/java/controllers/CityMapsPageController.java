@@ -342,8 +342,8 @@ public class CityMapsPageController {
         currentTab = "maps";
         if (txtSearch != null) txtSearch.clear();
 
-        btnShowMaps.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-background-insets: 0; -fx-font-weight: bold;");
-        btnShowTours.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-background-insets: 0; -fx-border-color: #bdc3c7; -fx-font-weight: bold;");
+        btnShowMaps.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-background-insets: 0; -fx-border-width: 0; -fx-border-color: transparent; -fx-padding: 4 10; -fx-font-weight: bold;");
+        btnShowTours.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-background-insets: 0; -fx-border-color: #bdc3c7; -fx-border-radius: 5 5 0 0; -fx-border-width: 1; -fx-padding: 4 10; -fx-font-weight: bold;");
 
         if (selectedCity != null && flowPaneMaps != null) {
             renderMapCards(selectedCity.getMaps());
@@ -355,8 +355,8 @@ public class CityMapsPageController {
         currentTab = "tours";
         if (txtSearch != null) txtSearch.clear();
 
-        btnShowTours.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-background-insets: 0; -fx-font-weight: bold;");
-        btnShowMaps.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-background-insets: 0; -fx-border-color: #bdc3c7; -fx-font-weight: bold;");
+        btnShowTours.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5 5 0 0; -fx-background-insets: 0; -fx-border-width: 0; -fx-border-color: transparent; -fx-padding: 4 10; -fx-font-weight: bold;");
+        btnShowMaps.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 5 5 0 0; -fx-background-insets: 0; -fx-border-color: #bdc3c7; -fx-border-radius: 5 5 0 0; -fx-border-width: 1; -fx-padding: 4 10; -fx-font-weight: bold;");
 
         displayTours();
     }
