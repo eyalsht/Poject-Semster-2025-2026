@@ -287,16 +287,23 @@ public class CatalogPageController {
         String query = txtSearch.getText().trim(); // Get Search string
         double fullWidth = flowPaneCities.getWidth() - 50;
 
-        Label welcomeLabel = new Label("The search results for \"" + query + "\" are:");
+        boolean hasResults = !result.getMaps().isEmpty() || !result.getTours().isEmpty() ||
+                !result.getSites().isEmpty() || !result.getCities().isEmpty();
+
+        String welcomeText = hasResults ?
+                "The search results for \"" + query + "\" are:" :
+                "No search results found for \"" + query + "\".";
+
+        Label welcomeLabel = new Label(welcomeText);
         welcomeLabel.setPrefWidth(fullWidth);
-        welcomeLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #34495e; -fx-padding: 10 0 5 0;");
+        welcomeLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #f8f9fa; -fx-padding: 10 0 0 0;");
         allComponents.add(welcomeLabel);
 
         // Maps section
         if (!result.getMaps().isEmpty()) {
             Label mapsHeader = new Label(result.getTotalMaps() + " Maps:");
             mapsHeader.setPrefWidth(fullWidth);
-            mapsHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-padding: 10 0 5 0;");
+            mapsHeader.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #f8f9fa; -fx-padding: 10 0 5 0;");
             mapsHeader.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
             allComponents.add(mapsHeader);
 
