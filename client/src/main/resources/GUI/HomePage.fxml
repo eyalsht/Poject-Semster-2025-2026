@@ -14,16 +14,18 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: transparent;" styleClass="bg-home4" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.HomePageController">
+<BorderPane fx:id="rootPane" maxHeight="-Infinity"  minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: transparent;" styleClass="bg-home4" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.HomePageController">
 
    <top>
-      <AnchorPane prefHeight="210.0" prefWidth="1200.0" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="210.0"  style="-fx-background-color:  #191515;" BorderPane.alignment="CENTER">
          <children>
 
-            <ImageView fx:id="imgHomePage" fitHeight="209.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="false" />
+            <ImageView fx:id="imgHomePage" fitHeight="209.0" fitWidth="1200.0" pickOnBounds="true"
+                       preserveRatio="false" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"/>
 
             <!-- Smooth seam/fade between banner and background -->
-            <Rectangle height="120.0" mouseTransparent="true" AnchorPane.bottomAnchor="-45.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <Rectangle height="120.0" mouseTransparent="true"
+                       AnchorPane.bottomAnchor="-45.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <fill>
                   <LinearGradient cycleMethod="NO_CYCLE" endX="0.0" endY="1.0" startX="0.0" startY="0.0">
                      <stops>
@@ -48,7 +50,7 @@
                </font>
             </Label>
 
-            <!-- ✅ Background tester panel (TOP area) -->
+            <!-- Background tester panel (TOP area) -->
             <VBox layoutX="657.0" layoutY="123.0" spacing="6.0" style="-fx-background-color: rgba(0,0,0,0.45); -fx-background-radius: 12; -fx-padding: 10;" AnchorPane.leftAnchor="657.0" AnchorPane.topAnchor="123.0">
                <children>
                   <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Try different styles :)" textFill="WHITE" />
