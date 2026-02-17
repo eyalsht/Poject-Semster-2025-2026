@@ -209,6 +209,20 @@ public class EditModeController {
         City selected = cbCitySelector.getValue();
         if (selected == null) return;
 
+        // Warn if there are unsaved changes in the current city
+        if (currentCity != null && !btnSubmitAll.isDisabled()) {
+            Alert warn = new Alert(Alert.AlertType.CONFIRMATION);
+            warn.setTitle("Unsaved Changes");
+            warn.setHeaderText("You have unsaved changes in " + currentCity.getName());
+            warn.setContentText("Switching cities will discard all changes. Continue?");
+            Optional<ButtonType> result = warn.showAndWait();
+            if (result.isEmpty() || result.get() != ButtonType.OK) {
+                // Revert the ComboBox selection back to the current city
+                cbCitySelector.setValue(currentCity);
+                return;
+            }
+        }
+
         lblStatus.setText("Loading: " + selected.getName() + "...");
 
         new Thread(() -> {
