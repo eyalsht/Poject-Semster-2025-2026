@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -57,8 +58,10 @@ public class RegisterPageController {
     private LoginPageController loginController;
 
     // Regex Patterns
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
     private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z\\u0590-\\u05FF\\s]+$"); // Hebrew and English
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[A-Za-z0-9_]{3,20}$");
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*\\d).{6,}$");
     private static final Pattern ID_PATTERN = Pattern.compile("^\\d{9}$"); // Israeli ID - 9 digits
     private static final Pattern PHONE_PATTERN = Pattern.compile("^05\\d-?\\d{7}$"); // Israeli phone format
     private static final Pattern CARD_PATTERN = Pattern.compile("^\\d{16}$");
@@ -84,13 +87,39 @@ public class RegisterPageController {
 
     @FXML
     private void handleNext() {
-        if (validateStep1()) {
-            step1Container.setVisible(false);
-            step1Container.setManaged(false); // So it doesn't take up space
-            step2Container.setVisible(true);
-            step2Container.setManaged(true);
-            lblError.setText(""); // Clear errors
-        }
+        if (!validateStep1()) return;
+
+        // Check username/email availability on server
+        showMessage("Checking availability...", Color.web("#5dade2"));
+        new Thread(() -> {
+            try {
+                ArrayList<String> data = new ArrayList<>();
+                data.add(txtUsername.getText().trim());
+                data.add(txtEmail.getText().trim());
+
+                Message request = new Message(ActionType.CHECK_REGISTRATION_FIELDS_REQUEST, data);
+                Message response = (Message) GCMClient.getInstance().sendRequest(request);
+
+                Platform.runLater(() -> {
+                    if (response != null && response.getAction() == ActionType.CHECK_REGISTRATION_FIELDS_RESPONSE) {
+                        String error = (String) response.getMessage();
+                        if (error != null) {
+                            showError(error);
+                        } else {
+                            step1Container.setVisible(false);
+                            step1Container.setManaged(false);
+                            step2Container.setVisible(true);
+                            step2Container.setManaged(true);
+                            lblError.setText("");
+                        }
+                    } else {
+                        showError("Could not verify availability. Please try again.");
+                    }
+                });
+            } catch (Exception e) {
+                Platform.runLater(() -> showError("Connection error: " + e.getMessage()));
+            }
+        }).start();
     }
 
     @FXML
@@ -128,7 +157,12 @@ public class RegisterPageController {
         }
 
         if (!EMAIL_PATTERN.matcher(txtEmail.getText()).matches()) {
-            showError("Invalid email format.");
+            showError("Invalid email format (e.g., user@example.com).");
+            return false;
+        }
+
+        if (!USERNAME_PATTERN.matcher(txtUsername.getText()).matches()) {
+            showError("Username must be 3-20 characters, using only letters, digits, or underscores.");
             return false;
         }
 
@@ -137,8 +171,8 @@ public class RegisterPageController {
             return false;
         }
 
-        if (txtPassword.getText().length() < 6) {
-            showError("Password must be at least 6 characters.");
+        if (!PASSWORD_PATTERN.matcher(txtPassword.getText()).matches()) {
+            showError("Password must be at least 6 characters with at least one uppercase letter and one digit.");
             return false;
         }
 
@@ -172,9 +206,17 @@ public class RegisterPageController {
             return false;
         }
 
-        // Basic expiry validation (optional: check if date has passed)
         if (!YEAR_PATTERN.matcher(txtExpiryYear.getText()).matches()) {
             showError("Year must be 2 digits (e.g. 26).");
+            return false;
+        }
+
+        // Check if card is expired
+        int month = Integer.parseInt(txtExpiryMonth.getText());
+        int year = 2000 + Integer.parseInt(txtExpiryYear.getText());
+        LocalDate now = LocalDate.now();
+        if (year < now.getYear() || (year == now.getYear() && month < now.getMonthValue())) {
+            showError("Card has expired.");
             return false;
         }
 

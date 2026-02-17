@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -125,6 +126,15 @@ public class PaymentUpdateDialogController {
             lblError.setText("CVV must be 3 digits.");
             return false;
         }
+
+        int m = Integer.parseInt(month);
+        int y = 2000 + Integer.parseInt(year);
+        LocalDate now = LocalDate.now();
+        if (y < now.getYear() || (y == now.getYear() && m < now.getMonthValue())) {
+            lblError.setText("Card has expired.");
+            return false;
+        }
+
         return true;
     }
 

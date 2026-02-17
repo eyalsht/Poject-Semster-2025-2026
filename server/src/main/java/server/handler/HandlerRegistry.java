@@ -39,6 +39,7 @@ public class HandlerRegistry {
         // Authentication
         register(ActionType.LOGIN_REQUEST, new LoginHandler());
         register(ActionType.REGISTER_REQUEST, new RegisterHandler());
+        register(ActionType.CHECK_REGISTRATION_FIELDS_REQUEST, new CheckRegistrationFieldsHandler());
 
         // Catalog
         register(ActionType.GET_CATALOG_REQUEST, new GetCatalogHandler());
