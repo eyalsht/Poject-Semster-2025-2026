@@ -1,5 +1,7 @@
 package controllers;
 
+import common.report.PurchasesReport;
+import util.ReportPdfExporter;
 import client.GCMClient;
 import common.content.City;
 import common.dto.SubscriptionStatusDTO;
@@ -80,6 +82,15 @@ public class ReportPageController {
     // ===== STATE =====
     private long currentRequestId = 0;
     private String displayedReport = null;
+    private AllClientsReport lastClientsReport;
+    private PurchasesReport lastPurchasesReport;
+    private ActivityReport lastActivityReport;
+    private SupportRequestsReport lastSupportReport;
+
+    private LocalDate lastFrom;
+    private LocalDate lastTo;
+    private City lastCity;
+
 
     private static final DateTimeFormatter CREATED_FMT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -318,6 +329,15 @@ public class ReportPageController {
 
                     if (res != null && res.getAction() == ActionType.GET_ALL_CLIENTS_REPORT_RESPONSE) {
                         AllClientsReport report = (AllClientsReport) res.getMessage();
+                        lastClientsReport = report;
+                        lastPurchasesReport = null;
+                        lastActivityReport = null;
+                        lastSupportReport = null;
+
+                        lastFrom = null;
+                        lastTo = null;
+                        lastCity = null;
+
 
                         lblChooseReport.setVisible(false);
                         lblChooseReport.setManaged(false);
@@ -462,6 +482,15 @@ public class ReportPageController {
 
                     if (res != null && res.getAction() == ActionType.GET_ACTIVITY_REPORT_RESPONSE) {
                         ActivityReport report = (ActivityReport) res.getMessage();
+                        lastActivityReport = report;
+                        lastClientsReport = null;
+                        lastPurchasesReport = null;
+                        lastSupportReport = null;
+
+                        lastFrom = dpFrom.getValue();
+                        lastTo = dpTo.getValue();
+                        lastCity = cmbCity.getValue();
+
 
                         lblChooseReport.setVisible(false);
                         lblChooseReport.setManaged(false);
@@ -613,7 +642,8 @@ public class ReportPageController {
     }
 
     // ===== PURCHASES REPORT =====
-    private void generatePurchasesReport(long reqId) {
+    private void generatePurchasesReport(long reqId)
+    {
 
         City city = cmbCity.getValue();
         if (city == null || city.getId() == -1) {
@@ -648,6 +678,14 @@ public class ReportPageController {
 
                     if (res != null && res.getAction() == ActionType.GET_PURCHASES_REPORT_RESPONSE) {
                         common.report.PurchasesReport report = (common.report.PurchasesReport) res.getMessage();
+                        lastPurchasesReport = report;
+                        lastClientsReport = null;
+                        lastActivityReport = null;
+                        lastSupportReport = null;
+
+                        lastFrom = from;
+                        lastTo = to;
+                        lastCity = city;
                         fillPurchasesBarChart(report);
 
                         lblChooseReport.setVisible(false);
@@ -694,6 +732,15 @@ public class ReportPageController {
                     if (res != null && res.getAction() == ActionType.GET_SUPPORT_REQUESTS_REPORT_RESPONSE) {
 
                         SupportRequestsReport report = (SupportRequestsReport) res.getMessage();
+                        lastSupportReport = report;
+                        lastClientsReport = null;
+                        lastPurchasesReport = null;
+                        lastActivityReport = null;
+
+                        lastFrom = null;
+                        lastTo = null;
+                        lastCity = null;
+
 
                         lblChooseReport.setVisible(false);
                         lblChooseReport.setManaged(false);
@@ -900,61 +947,70 @@ public class ReportPageController {
     // ===== EXPORT PDF =====
     @FXML
     private void onExportPdf() {
-        if (reportArea == null) {
-            showAlert("Error", "Nothing to export.");
+        String type = displayedReport;
+        if (type == null || type.isBlank()) {
+            showAlert("Error", "Please generate a report first.");
             return;
         }
 
         FileChooser fc = new FileChooser();
         fc.setTitle("Save report as PDF");
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf"));
-        fc.setInitialFileName("report.pdf");
+
+        String safeName = type.replace(" ", "_").toLowerCase();
+        fc.setInitialFileName(safeName + ".pdf");
 
         File out = fc.showSaveDialog(reportArea.getScene().getWindow());
         if (out == null) return;
 
         try {
-            SnapshotParameters params = new SnapshotParameters();
-            WritableImage fxImg = reportArea.snapshot(params, null);
-            BufferedImage bImg = SwingFXUtils.fromFXImage(fxImg, null);
-
-            try (PDDocument doc = new PDDocument()) {
-                PDPage page = new PDPage(PDRectangle.A4);
-                doc.addPage(page);
-
-                var pdImage = LosslessFactory.createFromImage(doc, bImg);
-
-                float pageW = page.getMediaBox().getWidth();
-                float pageH = page.getMediaBox().getHeight();
-
-                float imgW = pdImage.getWidth();
-                float imgH = pdImage.getHeight();
-
-                float margin = 36;
-                float maxW = pageW - 2 * margin;
-                float maxH = pageH - 2 * margin;
-
-                float scale = Math.min(maxW / imgW, maxH / imgH);
-
-                float drawW = imgW * scale;
-                float drawH = imgH * scale;
-
-                float x = (pageW - drawW) / 2;
-                float y = (pageH - drawH) / 2;
-
-                try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
-                    cs.drawImage(pdImage, x, y, drawW, drawH);
+            switch (type) {
+                case "Clients report" -> {
+                    if (lastClientsReport == null) {
+                        showAlert("Error", "Generate Clients report first.");
+                        return;
+                    }
+                    ReportPdfExporter.exportClientsReport(out, lastClientsReport, barChart);
                 }
 
-                doc.save(out);
+                case "Purchases report" -> {
+                    if (lastPurchasesReport == null) {
+                        showAlert("Error", "Generate Purchases report first.");
+                        return;
+                    }
+                    ReportPdfExporter.exportPurchasesReport(out, lastPurchasesReport, barChart);
+                }
+
+                case "Activity report" -> {
+                    if (lastActivityReport == null) {
+                        showAlert("Error", "Generate Activity report first.");
+                        return;
+                    }
+                    ReportPdfExporter.exportActivityReport(out, lastActivityReport, lastCity, lastFrom, lastTo, barChart);
+                }
+
+                case "Support Requests report" -> {
+                    if (lastSupportReport == null) {
+                        showAlert("Error", "Generate Support Requests report first.");
+                        return;
+                    }
+                    ReportPdfExporter.exportSupportRequestsReport(out, lastSupportReport, barChart);
+                }
+
+                default -> {
+                    showAlert("Error", "This report type is not supported for PDF export yet.");
+                    return;
+                }
             }
 
-            showAlert("Saved", "PDF exported:\n" + out.getAbsolutePath());
+            showAlert("Saved", "Professional PDF exported:\n" + out.getAbsolutePath());
 
-        } catch (IOException ex) {
+        } catch (Exception ex) {
+            ex.printStackTrace();
             showAlert("Export failed", ex.getMessage());
         }
     }
+
 
     private void setChartAxisLabels(String x, String y) {
         if (barXAxis != null) barXAxis.setLabel(x);
