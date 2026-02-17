@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="350.0" prefWidth="420.0" style="-fx-background-color: rgba(0,0,0,0.65); -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PersonalDetailsUpdateDialogController">
+<AnchorPane prefHeight="400.0" prefWidth="460.0" style="-fx-background-color: rgba(0,0,0,0.65); -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PersonalDetailsUpdateDialogController">
     <children>
         <VBox alignment="TOP_CENTER" layoutX="20.0" layoutY="15.0" prefWidth="380.0" spacing="15.0">
             <children>
