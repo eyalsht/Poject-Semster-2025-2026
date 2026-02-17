@@ -166,6 +166,37 @@ public class UserRepository extends BaseRepository<User, Integer> {
     }
 
     /**
+     * Check if email is taken by another user (excluding the given user ID).
+     */
+    public boolean isEmailTakenByOther(String email, int excludeUserId) {
+        return executeQuery(session -> {
+            Long count = session.createQuery(
+                            "SELECT COUNT(u) FROM User u WHERE u.email = :email AND u.id != :uid", Long.class)
+                    .setParameter("email", email)
+                    .setParameter("uid", excludeUserId)
+                    .uniqueResult();
+            return count != null && count > 0;
+        });
+    }
+
+    /**
+     * Update user's personal details (first name, last name, email, and phone for clients).
+     */
+    public void updatePersonalDetails(int userId, String firstName, String lastName, String email, String phoneNumber) {
+        executeInTransaction(session -> {
+            User user = session.get(User.class, userId);
+            if (user != null) {
+                user.setFirstName(firstName);
+                user.setLastName(lastName);
+                user.setEmail(email);
+                if (user instanceof Client client) {
+                    client.setPhoneNumber(phoneNumber);
+                }
+            }
+        });
+    }
+
+    /**
      * Update client's payment details.
      */
     public void updatePaymentDetails(int userId, PaymentDetails newPayment) {

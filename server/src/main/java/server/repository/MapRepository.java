@@ -37,6 +37,7 @@ public class MapRepository extends BaseRepository<GCMMap, Integer> {
                 "SELECT DISTINCT m.name FROM GCMMap m " +
                 "WHERE m.city.name = :cityName " +
                 "AND m.status != :extStatus AND m.price > 0 " +
+                "AND m.sites IS NOT EMPTY " +
                 "ORDER BY m.name", String.class)
                    .setParameter("cityName", cityName)
                    .setParameter("extStatus", MapStatus.EXTERNAL)
@@ -54,6 +55,7 @@ public class MapRepository extends BaseRepository<GCMMap, Integer> {
                 "SELECT DISTINCT m.version FROM GCMMap m " +
                 "WHERE m.city.name = :cityName AND m.name = :mapName " +
                 "AND m.status != :extStatus AND m.price > 0 " +
+                "AND m.sites IS NOT EMPTY " +
                 "ORDER BY m.version", String.class)
                    .setParameter("cityName", cityName)
                    .setParameter("mapName", mapName)
@@ -71,6 +73,7 @@ public class MapRepository extends BaseRepository<GCMMap, Integer> {
         return executeQuery(session -> {
             StringBuilder hql = new StringBuilder("FROM GCMMap m JOIN FETCH m.city WHERE 1=1");
             hql.append(" AND m.status != :extStatus AND m.price > 0");
+            hql.append(" AND m.sites IS NOT EMPTY");
             hql.append(" AND m.city.priceSub > 0");
 
             if (cityName != null && !cityName.isBlank()) {
@@ -168,6 +171,7 @@ public class MapRepository extends BaseRepository<GCMMap, Integer> {
             return session.createQuery(
                 "SELECT m FROM GCMMap m JOIN FETCH m.city " +
                 "WHERE m.status != :extStatus AND m.price > 0 " +
+                "AND m.sites IS NOT EMPTY " +
                 "AND (LOWER(m.name) LIKE :pattern " +
                 "     OR LOWER(m.description) LIKE :pattern) " +
                 "ORDER BY m.city.name, m.name",

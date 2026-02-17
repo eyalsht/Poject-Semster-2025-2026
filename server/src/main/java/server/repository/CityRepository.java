@@ -71,7 +71,7 @@ public class CityRepository extends BaseRepository<City, Integer> {
             session.createQuery(
                 "SELECT c.name FROM City c " +
                 "WHERE c.priceSub > 0 " +
-                "AND EXISTS (SELECT 1 FROM GCMMap m WHERE m.city = c AND m.status != :extStatus AND m.price > 0) " +
+                "AND EXISTS (SELECT 1 FROM GCMMap m WHERE m.city = c AND m.status != :extStatus AND m.price > 0 AND m.sites IS NOT EMPTY) " +
                 "ORDER BY c.name", String.class)
                    .setParameter("extStatus", MapStatus.EXTERNAL)
                    .getResultList()
@@ -115,14 +115,14 @@ public class CityRepository extends BaseRepository<City, Integer> {
             String pattern = "%" + searchQuery.toLowerCase() + "%";
             String hql = """
                 SELECT DISTINCT c,
-                       (SELECT COUNT(m) FROM GCMMap m WHERE m.city = c AND m.status != :extStatus AND m.price > 0),
+                       (SELECT COUNT(m) FROM GCMMap m WHERE m.city = c AND m.status != :extStatus AND m.price > 0 AND m.sites IS NOT EMPTY),
                        (SELECT COUNT(s) FROM Site s WHERE s.city = c),
                        (SELECT COUNT(t) FROM Tour t WHERE t.city = c)
                 FROM City c
                 LEFT JOIN c.sites s
                 LEFT JOIN c.tours t
                 WHERE c.priceSub > 0
-                  AND EXISTS (SELECT 1 FROM GCMMap m2 WHERE m2.city = c AND m2.status != :extStatus AND m2.price > 0)
+                  AND EXISTS (SELECT 1 FROM GCMMap m2 WHERE m2.city = c AND m2.status != :extStatus AND m2.price > 0 AND m2.sites IS NOT EMPTY)
                   AND (LOWER(c.name) LIKE :pattern
                    OR LOWER(c.description) LIKE :pattern
                    OR LOWER(s.name) LIKE :pattern

@@ -98,6 +98,9 @@ public class HandlerRegistry {
         register(ActionType.ADD_EXTERNAL_MAP_REQUEST, new AddExternalMapHandler());
         register(ActionType.ADD_CITY_REQUEST, new AddCityHandler());
 
+        // Personal Details
+        register(ActionType.UPDATE_PERSONAL_DETAILS_REQUEST, new UpdatePersonalDetailsHandler());
+
         //Support
         register(ActionType.SUBMIT_SUPPORT_REQUEST, new SubmitSupportHandler());
         register(ActionType.CREATE_SUPPORT_TICKET, new CreateSupportTicketHandler());

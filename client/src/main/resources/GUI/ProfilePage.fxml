@@ -28,6 +28,8 @@
             <Label fx:id="lblName" text="-" textFill="#2e7d32" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" GridPane.columnIndex="1" GridPane.rowIndex="0">
                <font><Font name="System Bold" size="14.0" /></font></Label>
 
+            <Button fx:id="btnEditProfile" mnemonicParsing="false" onAction="#onEditProfile" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-size: 10px; -fx-padding: 3 8 3 8;" text="Edit" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+
             <!-- Row 1: Email -->
             <Label text="Email:" textFill="#388e3c" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 3, 0.5, 0, 1);" GridPane.columnIndex="0" GridPane.rowIndex="1">
                <font><Font name="System Bold" size="14.0" /></font></Label>

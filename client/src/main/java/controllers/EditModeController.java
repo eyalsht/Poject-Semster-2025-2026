@@ -1502,6 +1502,13 @@ public class EditModeController {
             }
         }
 
+        // Validate name/description fields — no empty or space-prefixed values
+        String validationError = validateAllFields();
+        if (validationError != null) {
+            showAlert("Validation Error", validationError);
+            return;
+        }
+
         // Collect all change requests from current state
         List<ContentChangeRequest> toSubmit = new ArrayList<>();
 
@@ -1744,6 +1751,55 @@ public class EditModeController {
     @FXML
     private void onClose() {
         ((Stage) cbCitySelector.getScene().getWindow()).close();
+    }
+
+    /**
+     * Validates all name and description fields for empty/whitespace/space-prefix.
+     * @return null if all valid, or an error message string
+     */
+    private String validateAllFields() {
+        for (Map.Entry<String, HBox> entry : fieldRows.entrySet()) {
+            String key = entry.getKey();
+
+            // Only validate name and description fields
+            boolean isNameField = key.equals("cityName")
+                    || key.startsWith("mapName_")
+                    || key.endsWith("_name");
+            boolean isDescField = key.equals("cityDesc")
+                    || key.startsWith("mapDesc_")
+                    || key.endsWith("_desc");
+
+            if (!isNameField && !isDescField) continue;
+
+            // Get the text value from the row's TextField or TextArea
+            String value = isDescField ? getTextAreaValue(key) : getFieldValue(key);
+            if (value == null) continue;
+
+            String label = getEntityLabelFromKey(key);
+
+            if (value.trim().isEmpty()) {
+                return label + " cannot be empty.";
+            }
+            if (value.startsWith(" ")) {
+                return label + " cannot start with a space.";
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converts a field key to a human-readable label.
+     */
+    private String getEntityLabelFromKey(String key) {
+        if (key.equals("cityName")) return "City name";
+        if (key.equals("cityDesc")) return "City description";
+        if (key.startsWith("mapName_")) return "Map name";
+        if (key.startsWith("mapDesc_")) return "Map description";
+        if (key.startsWith("site_") && key.endsWith("_name")) return "Site name";
+        if (key.startsWith("site_") && key.endsWith("_desc")) return "Site description";
+        if (key.startsWith("tour_") && key.endsWith("_name")) return "Tour name";
+        if (key.startsWith("tour_") && key.endsWith("_desc")) return "Tour description";
+        return "Field (" + key + ")";
     }
 
     private void showAlert(String title, String message) {

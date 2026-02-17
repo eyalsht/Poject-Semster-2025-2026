@@ -147,6 +147,10 @@ public enum ActionType {
     REPLY_SUPPORT_TICKET,
     LIST_CLIENT_SUPPORT_REPLIES,
     MARK_SUPPORT_REPLY_READ,
+    // ==================== PERSONAL DETAILS ====================
+    UPDATE_PERSONAL_DETAILS_REQUEST,
+    UPDATE_PERSONAL_DETAILS_RESPONSE,
+
     // ==================== EXTERNAL MAP SYSTEM ====================
     GET_EXTERNAL_MAPS_REQUEST,
     GET_EXTERNAL_MAPS_RESPONSE,

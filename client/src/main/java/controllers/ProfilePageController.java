@@ -40,6 +40,7 @@ public class ProfilePageController {
     @FXML private Button btnOpenInbox;
     @FXML private Button btnChangePayment;
     @FXML private Button btnPurchaseHistory;
+    @FXML private Button btnEditProfile;
 
     // Inbox table
     @FXML private TableView<SupportTicketRowDTO> tblInbox;
@@ -194,6 +195,32 @@ public class ProfilePageController {
         }
     }
 
+
+    // ==================== PERSONAL DETAILS ====================
+
+    @FXML
+    private void onEditProfile() {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                    getClass().getResource("/GUI/PersonalDetailsUpdateDialog.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            PersonalDetailsUpdateDialogController controller = loader.getController();
+
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("Edit Personal Details");
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            if (controller.isSaved()) {
+                User user = GCMClient.getInstance().getCurrentUser();
+                setUser(user);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // ==================== PAYMENT ====================
 
