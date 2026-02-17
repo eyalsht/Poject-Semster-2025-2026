@@ -126,16 +126,7 @@ public class CityCardController {
         else if (mainController instanceof CityMapsPageController) {
             System.out.println("DEBUG: Already inside " + city.getName()); //
         }
-       /* if (mainController != null && city != null) {
-            System.out.println("Error: City or MainController is not initialized.");
-            return;
-        }
-        if (mainController instanceof CatalogPageController catalog) {
 
-            catalog.showCityMaps(city);
-        } else if (mainController instanceof CityMapsPageController mapsPage) {
-            System.out.println("Already in CityMapsPage for: " + city.getName());
-        }*/
     }
     private void logCityViewIfClient() {
         try {
