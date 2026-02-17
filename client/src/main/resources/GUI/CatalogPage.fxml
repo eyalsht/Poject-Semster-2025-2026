@@ -19,33 +19,18 @@
     <children>
 
         <!-- Top selection area -->
-        <GridPane hgap="8.0" layoutX="27.0" layoutY="24.0" prefHeight="115.0" prefWidth="470.0" vgap="12.0">
-            <columnConstraints>
-                <ColumnConstraints prefWidth="80.0" />
-                <ColumnConstraints minWidth="150.0" prefWidth="180.0" />
-                <ColumnConstraints minWidth="10.0" prefWidth="80.0" />
-                <ColumnConstraints minWidth="10.0" prefWidth="80.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints prefHeight="30.0" />
-                <RowConstraints prefHeight="30.0" />
-                <RowConstraints prefHeight="30.0" />
-            </rowConstraints>
-
+        <HBox alignment="CENTER_LEFT" spacing="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
             <children>
-                <Label text="Search" textFill="#ecf0f1" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                <Label text="Search" textFill="#ecf0f1">
                     <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font></Label>
-                <HBox prefHeight="37.0" prefWidth="226.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <TextField fx:id="txtSearch" prefHeight="26.0" prefWidth="147.0" promptText="Search cities, sites..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="27.0" prefWidth="74.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                <Button fx:id="btnClearSearch" mnemonicParsing="false" onAction="#onClearSearch" prefHeight="27.0" prefWidth="74.0" text="Clear" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+                <TextField fx:id="txtSearch" prefHeight="30.0" prefWidth="200.0" promptText="Search cities, sites..." />
+                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Search" />
+                <Button fx:id="btnClearSearch" mnemonicParsing="false" onAction="#onClearSearch" prefHeight="30.0" prefWidth="80.0" text="Clear" />
             </children>
-            <opaqueInsets>
-                <Insets />
-            </opaqueInsets>
-        </GridPane>
+        </HBox>
 
         <!-- [COMMENTED OUT] Temp buttons - kept for easy reactivation
         <HBox alignment="CENTER_RIGHT" prefHeight="30.0" spacing="10.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="70.0">
@@ -57,7 +42,7 @@
         -->
 
         <!-- Main management buttons row -->
-        <HBox alignment="CENTER_RIGHT" prefHeight="40.0" spacing="10.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="105.0">
+        <HBox alignment="CENTER_RIGHT" prefHeight="40.0" spacing="10.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="30.0">
             <children>
                 <Button fx:id="btnEditCity" managed="false" mnemonicParsing="false" onAction="#onEditCity" prefHeight="30.0" text="Edit Mode" visible="false" />
                 <Button fx:id="btnUpdateMap" managed="false" mnemonicParsing="false" onAction="#onUpdateMap" prefHeight="30.0" text="Edit Map" visible="false" />
@@ -67,7 +52,9 @@
             </children>
         </HBox>
 
-        <ScrollPane fx:id="scrollPaneCities" fitToWidth="true" layoutX="10.0" layoutY="160.0" prefHeight="401.0" prefWidth="891.0" AnchorPane.bottomAnchor="22.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+        <ScrollPane fx:id="scrollPaneCities" fitToWidth="true" layoutX="10.0" layoutY="160.0" prefHeight="401.0" prefWidth="891.0"
+                    AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="10.0"
+                    AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="85.0">
             <content>
                 <FlowPane fx:id="flowPaneCities" hgap="20.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="45.0" prefWidth="848.0" prefWrapLength="800.0" vgap="20.0">
                     <padding>
