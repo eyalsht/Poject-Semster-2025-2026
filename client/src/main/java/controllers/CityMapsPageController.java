@@ -804,6 +804,11 @@ public class CityMapsPageController {
                         }
                         btnSubscribe.setVisible(true);
                         btnSubscribe.setManaged(true);
+
+                        // Refresh tour access if tours tab is currently showing
+                        if ("tours".equals(currentTab)) {
+                            displayTours();
+                        }
                     });
                 }
             } catch (Exception e) {
