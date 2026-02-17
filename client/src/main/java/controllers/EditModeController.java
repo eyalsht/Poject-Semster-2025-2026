@@ -1492,6 +1492,16 @@ public class EditModeController {
         saveCurrentMapState();
         saveCurrentTourState();
 
+        // Validate: no map should end up with zero sites (only if the editor removed them)
+        for (GCMMap map : cityMaps) {
+            List<Site> sites = savedMapSitesPerMap.get(map.getId());
+            Set<Integer> origIds = originalMapSiteIds.getOrDefault(map.getId(), new HashSet<>());
+            if (sites != null && sites.isEmpty() && !origIds.isEmpty()) {
+                showAlert("Error", "Map \"" + map.getName() + "\" must contain at least one site. Please add a site before submitting.");
+                return;
+            }
+        }
+
         // Collect all change requests from current state
         List<ContentChangeRequest> toSubmit = new ArrayList<>();
 
