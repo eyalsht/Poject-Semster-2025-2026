@@ -1781,6 +1781,9 @@ public class EditModeController {
         pendingMarkersPerMap.clear();
         savedMapSitesPerMap.clear();
         savedTourSitesPerTour.clear();
+        currentEditingMap = null;
+        currentEditingSite = null;
+        currentEditingTour = null;
         lvOnMapSites = null;
         currentMapOnMapSites = null;
         currentTourSites = null;
