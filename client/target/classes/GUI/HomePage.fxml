@@ -6,41 +6,35 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.paint.LinearGradient?>
 <?import javafx.scene.paint.Stop?>
-<?import javafx.scene.paint.CycleMethod?>
-<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
 
+<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: transparent;" styleClass="bg-home4" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.HomePageController">
 
-<BorderPane style="-fx-background-color: transparent;" styleClass="bg-home4" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.HomePageController">
    <top>
-      <AnchorPane style="-fx-background-color: transparent;" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="210.0" prefWidth="1200.0" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
          <children>
+
             <ImageView fx:id="imgHomePage" fitHeight="209.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="false" />
 
-            <!-- Smooth fade at the bottom to blend banner into background -->
-            <!-- Smooth seam: fade from dark (top) to transparent (bottom) and hang into center -->
-            <Rectangle height="120.0"
-                       AnchorPane.leftAnchor="0.0"
-                       AnchorPane.rightAnchor="0.0"
-                       AnchorPane.bottomAnchor="-45.0"
-                       mouseTransparent="true">
+            <!-- Smooth seam/fade between banner and background -->
+            <Rectangle height="120.0" mouseTransparent="true" AnchorPane.bottomAnchor="-45.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <fill>
-                  <LinearGradient startX="0.0" startY="0.0" endX="0.0" endY="1.0" cycleMethod="NO_CYCLE">
+                  <LinearGradient cycleMethod="NO_CYCLE" endX="0.0" endY="1.0" startX="0.0" startY="0.0">
                      <stops>
-                        <!-- top (near banner) = a bit dark -->
                         <Stop offset="0.0">
                            <color>
-                              <Color red="0" green="0" blue="0" opacity="0.35"/>
+                              <Color red="0" green="0" blue="0" opacity="0.35" />
                            </color>
                         </Stop>
-                        <!-- bottom (into background) = transparent -->
                         <Stop offset="1.0">
                            <color>
-                              <Color red="0" green="0" blue="0" opacity="0.0"/>
+                              <Color red="0" green="0" blue="0" opacity="0.0" />
                            </color>
                         </Stop>
                      </stops>
@@ -48,22 +42,46 @@
                </fill>
             </Rectangle>
 
-            <Label fx:id="lblWelcome" text="Welcome, Guest" textFill="WHITE"
-                   AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+            <Label fx:id="lblWelcome" text="Welcome, Guest" textFill="WHITE" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
+
+            <!-- ✅ Background tester panel (TOP area) -->
+            <VBox layoutX="657.0" layoutY="123.0" spacing="6.0" style="-fx-background-color: rgba(0,0,0,0.45); -fx-background-radius: 12; -fx-padding: 10;" AnchorPane.leftAnchor="657.0" AnchorPane.topAnchor="123.0">
+               <children>
+                  <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Try different styles :)" textFill="WHITE" />
+
+                  <HBox spacing="6.0">
+                     <children>
+                        <Button onAction="#onPickBackground" text="Fog" userData="bg-fog-city" />
+                        <Button onAction="#onPickBackground" text="Home" userData="bg-home-dim" />
+                        <Button onAction="#onPickBackground" text="1" userData="bg-home1" />
+                        <Button onAction="#onPickBackground" text="2" userData="bg-home2" />
+                        <Button onAction="#onPickBackground" text="3" userData="bg-home3" />
+                        <Button onAction="#onPickBackground" text="4" userData="bg-home4" />
+                        <Button onAction="#onPickBackground" text="5" userData="bg-home5" />
+                        <Button onAction="#onPickBackground" text="6" userData="bg-home6" />
+                        <Button onAction="#onPickBackground" text="7" userData="bg-home7" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+
          </children>
       </AnchorPane>
    </top>
+
    <left>
-      <VBox style="-fx-background-color: transparent;" prefHeight="430.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="430.0" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
          <children>
+
             <Button fx:id="loginBtn" mnemonicParsing="false" onAction="#onLoginOrProfile" prefHeight="30.0" prefWidth="150.0" text="Login">
                <VBox.margin>
                   <Insets left="5.0" right="5.0" />
-               </VBox.margin></Button>
+               </VBox.margin>
+            </Button>
 
             <Button fx:id="btnCatalog" mnemonicParsing="false" onAction="#onCatalog" prefHeight="30.0" prefWidth="150.0" text="Catalog">
                <VBox.margin>
@@ -86,20 +104,20 @@
             <Button fx:id="btnSupport" mnemonicParsing="false" onAction="#onSupport" prefHeight="30.0" prefWidth="150.0" text="Support">
                <VBox.margin>
                   <Insets left="5.0" right="5.0" top="10.0" />
-               </VBox.margin></Button>
+               </VBox.margin>
+            </Button>
 
             <Button mnemonicParsing="false" onAction="#onInfo" prefHeight="30.0" prefWidth="150.0" text="Info">
                <VBox.margin>
                   <Insets left="5.0" right="5.0" top="10.0" />
-               </VBox.margin></Button>
+               </VBox.margin>
+            </Button>
 
             <Button fx:id="btnReports" disable="true" managed="false" mnemonicParsing="false" onAction="#onReports" prefHeight="30.0" prefWidth="150.0" text="Reports" visible="false">
                <VBox.margin>
                   <Insets left="5.0" right="5.0" top="10.0" />
                </VBox.margin>
             </Button>
-
-
 
             <Button fx:id="btnManagement" mnemonicParsing="false" onAction="#onManagement" prefHeight="30.0" prefWidth="85.0" text="Management" visible="false">
                <VBox.margin>
@@ -109,6 +127,7 @@
                   <Font name="System Bold" size="10.0" />
                </font>
             </Button>
+
             <Button fx:id="btnLogout" disable="true" mnemonicParsing="false" onAction="#onLogout" prefHeight="30.0" prefWidth="150.0" text="Logout" visible="false">
                <VBox.margin>
                   <Insets left="5.0" right="5.0" top="10.0" />
@@ -122,12 +141,15 @@
             </Button>
 
          </children>
+
          <BorderPane.margin>
             <Insets top="20.0" />
          </BorderPane.margin>
       </VBox>
    </left>
+
    <center>
-      <AnchorPane style="-fx-background-color: transparent;" fx:id="centerHost" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <AnchorPane fx:id="centerHost" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER" />
    </center>
+
 </BorderPane>

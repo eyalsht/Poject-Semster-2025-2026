@@ -1,8 +1,12 @@
+controllers\ImportMapDialogController.class
 controllers\CityUpdatePageController$3.class
 controllers\InfoPageController.class
+controllers\AddExternalMapDialogController.class
 controllers\EditModeController$1.class
 controllers\SupportPageController.class
 controllers\MapContentPopupController.class
+controllers\ReportPageController$2.class
+controllers\ReportPageController$5.class
 oscf\AbstractClient.class
 controllers\PriceUpdateDialogController$2.class
 controllers\PurchaseHistoryDialogController$1.class
@@ -47,6 +51,7 @@ controllers\PriceUpdateDialogController.class
 controllers\TourMiniCardController.class
 controllers\MapContentPopupController$1.class
 controllers\SiteMiniCardController.class
+controllers\ReportPageController$4.class
 client\ClientLauncher.class
 controllers\CityUpdatePageController$1.class
 controllers\EditModeController$3.class
@@ -59,6 +64,7 @@ controllers\ProfilePageController.class
 controllers\EditModeController$2.class
 controllers\EditModeController.class
 controllers\SupportPageController$ChatItem.class
+controllers\ReportPageController$3.class
 controllers\ApprovalPendingPageController.class
 controllers\CityUpdatePageController$2.class
 controllers\SupportTasksPageController.class

@@ -144,7 +144,6 @@ public class ActivityReportService implements server.report.ReportManager.ParamA
                     SELECT map_id, COUNT(*) AS dcnt
                     FROM map_download_events
                     WHERE map_id IS NOT NULL
-                      AND is_subscriber = 1
                       AND (:cityId IS NULL OR city_id = :cityId)
                       AND downloaded_at >= :fromTs
                       AND downloaded_at <  :toTsPlus

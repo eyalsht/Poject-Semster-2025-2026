@@ -30,6 +30,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import java.util.ArrayList;
 
 import client.GCMClient;
 import javafx.application.Platform;
@@ -572,16 +573,44 @@ public class MapContentPopupController {
     }
 
     private void logMapDownload(int mapId) {
-        if (mapId <= 0) return;
-        new Thread(() -> {
-            try {
-                Message request = new Message(ActionType.LOG_MAP_DOWNLOAD_REQUEST, mapId);
-                GCMClient.getInstance().sendRequest(request);
-            } catch (Exception e) {
-                System.err.println("Failed to log map download: " + e.getMessage());
+        try {
+            if (mapId <= 0) return;
+
+            if (GCMClient.getInstance() == null || GCMClient.getInstance().getCurrentUser() == null) return;
+            int userId = GCMClient.getInstance().getCurrentUser().getId();
+
+            // cityId is required by the server handler
+            int cityId = -1;
+            if (currentSnapshot != null) {
+                cityId = currentSnapshot.getOriginalCityId();
+            } else if (currentMap != null && currentMap.getCity() != null) {
+                cityId = currentMap.getCity().getId();
             }
-        }).start();
+            if (cityId <= 0) return;
+
+            // FULL_ACCESS = subscriber/employee in your MapAccessLevel
+            boolean isSubscriber = (accessLevel == MapAccessLevel.FULL_ACCESS);
+
+            ArrayList<Object> payload = new ArrayList<>();
+            payload.add(userId);
+            payload.add(cityId);
+            payload.add(mapId);
+            payload.add(isSubscriber);
+
+            new Thread(() -> {
+                try {
+                    Message request = new Message(ActionType.LOG_MAP_DOWNLOAD_REQUEST, payload);
+                    GCMClient.getInstance().sendRequest(request);
+                } catch (Exception e) {
+                    System.err.println("Failed to log map download: " + e.getMessage());
+                }
+            }).start();
+
+        } catch (Exception e) {
+            System.err.println("Failed to prepare download log: " + e.getMessage());
+        }
     }
+
 
     @FXML
     private void onClose() {

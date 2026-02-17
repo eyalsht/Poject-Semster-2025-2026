@@ -6,6 +6,7 @@ C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\client\M
 C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\controllers\InfoPageController.java
 C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\controllers\TourMiniCardController.java
 C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\util\TableRowHighlighter.java
+C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\controllers\ImportMapDialogController.java
 C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\controllers\MapContentPopupController.java
 C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\controllers\MyMapsPageController.java
 C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\oscf\AbstractClient.java
@@ -13,6 +14,7 @@ C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\controll
 C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\controllers\CityCardController.java
 C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\controllers\PaymentUpdateDialogController.java
 C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\controllers\WelcomePageController.java
+C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\controllers\AddExternalMapDialogController.java
 C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\controllers\CityMapsPageController.java
 C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\controllers\MapCardController.java
 C:\Software dev labs\Lab3\Poject-Semster-2025-2026\client\src\main\java\controllers\PriceUpdateDialogController.java

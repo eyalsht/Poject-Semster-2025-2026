@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 
 <?import java.lang.String?>
-<AnchorPane prefHeight="650.0" prefWidth="500.0" style="-fx-background-color: rgba(0,0,0,0.65);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ApprovalPendingPageController">
+<AnchorPane prefHeight="650.0" prefWidth="580.0" style="-fx-background-color: rgba(0,0,0,0.65);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ApprovalPendingPageController">
    <stylesheets>
       <String fx:value="@../styles/theme.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1"/>
    </stylesheets>
@@ -38,11 +38,11 @@
       <!-- Table wrapped in glass card -->
       <VBox style="-fx-background-color: rgba(0,0,0,0.30); -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: rgba(255,255,255,0.12); -fx-border-width: 1; -fx-padding: 8;" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="85.0" AnchorPane.bottomAnchor="110.0">
          <children>
-             <TableView fx:id="tblPending" VBox.vgrow="ALWAYS">
+             <TableView fx:id="tblPending" styleClass="dark-table" VBox.vgrow="ALWAYS">
                  <columns>
-                     <TableColumn fx:id="colType" prefWidth="80.0" text="Type"/>
-                     <TableColumn fx:id="colTarget" prefWidth="220.0" text="Target"/>
-                     <TableColumn fx:id="colInfo" prefWidth="150.0" text="Info"/>
+                     <TableColumn fx:id="colType" prefWidth="120.0" text="Type"/>
+                     <TableColumn fx:id="colTarget" prefWidth="210.0" text="Target"/>
+                     <TableColumn fx:id="colInfo" prefWidth="180.0" text="Info"/>
                  </columns>
              </TableView>
          </children>
