@@ -1,5 +1,6 @@
 package server.handler;
 
+import common.content.Site;
 import common.content.Tour;
 import common.enums.ActionType;
 import common.messaging.Message;
@@ -13,10 +14,23 @@ public class GetCityToursHandler implements RequestHandler{
     @Override
     public Message handle(Message request) {
         try{
-            List<Tour> allCityTours = new ArrayList<>();
             String cityName = (String) request.getMessage();
-            allCityTours = tp.findToursByCityName(cityName);
-            return new Message(ActionType.GET_CITY_TOURS_RESPONSE,allCityTours);
+            List<Tour> allCityTours = tp.findToursByCityName(cityName);
+
+            // Break circular references before serialization:
+            // Tour -> Sites -> City -> (all Tours, Sites, Maps) -> ...
+            for (Tour tour : allCityTours) {
+                tour.setCity(null);
+                if (tour.getSites() != null) {
+                    for (Site site : tour.getSites()) {
+                        site.setCity(null);
+                        site.setMaps(new ArrayList<>());
+                        site.setTours(new ArrayList<>());
+                    }
+                }
+            }
+
+            return new Message(ActionType.GET_CITY_TOURS_RESPONSE, allCityTours);
         }
         catch (Exception e)
         {

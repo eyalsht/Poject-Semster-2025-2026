@@ -19,7 +19,9 @@ public class TourRepository extends BaseRepository<Tour,Integer>{
         System.out.println("DEBUG: Searching for tours sites in city: " + cityName);
         return executeQuery(session ->
                 session.createQuery(
-                                "SELECT t FROM Tour t JOIN t.city c " +
+                                "SELECT DISTINCT t FROM Tour t " +
+                                        "LEFT JOIN FETCH t.sites " +
+                                        "JOIN t.city c " +
                                         "WHERE c.name = :cityName", Tour.class)
                         .setParameter("cityName", cityName)
                         .getResultList()
@@ -33,7 +35,9 @@ public class TourRepository extends BaseRepository<Tour,Integer>{
         return executeQuery(session -> {
             String pattern = "%" + searchQuery.toLowerCase() + "%";
             return session.createQuery(
-                "SELECT DISTINCT t FROM Tour t JOIN FETCH t.city " +
+                "SELECT DISTINCT t FROM Tour t " +
+                "JOIN FETCH t.city " +
+                "LEFT JOIN FETCH t.sites " +
                 "WHERE LOWER(t.name) LIKE :pattern " +
                 "   OR LOWER(t.description) LIKE :pattern " +
                 "ORDER BY t.city.name, t.name",
