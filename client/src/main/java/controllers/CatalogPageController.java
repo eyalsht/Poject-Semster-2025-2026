@@ -52,10 +52,10 @@ import java.util.function.Consumer;
  */
 public class CatalogPageController {
 
-    @FXML
-    private ComboBox<String> cbCity;
-    @FXML
-    private ComboBox<String> cbMap;
+    // @FXML
+   // private ComboBox<String> cbCity;
+  //  @FXML
+  //  private ComboBox<String> cbMap;
 
     @FXML
     private ScrollPane scrollPaneCities;
@@ -93,7 +93,7 @@ public class CatalogPageController {
 
     @FXML
     public void initialize() {
-        setupComboBoxListeners();
+     //   setupComboBoxListeners();
         applyRolePermissions();
         scrollPaneCities.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPaneCities.setFitToWidth(true);
@@ -177,7 +177,7 @@ public class CatalogPageController {
     /**
      * Setup combo box change listeners for cascading filters.
      */
-    private void setupComboBoxListeners() {
+  /*  private void setupComboBoxListeners() {
         cbCity.setOnAction(e -> {
             if (isUpdatingComboBoxes) return;  // Prevent recursive calls
             String selectedCity = cbCity.getValue();
@@ -192,7 +192,7 @@ public class CatalogPageController {
             loadCatalog(selectedCity, selectedMap, null);
         });
     }
-
+*/
     /**
      * Load catalog data from server with filters.
      * Single request replaces the old 4 separate requests!
@@ -241,7 +241,7 @@ public class CatalogPageController {
             updateCityCards(catalogResponse.getMaps());
 
             // Set flag to prevent listener recursion
-            isUpdatingComboBoxes = true;
+            /*isUpdatingComboBoxes = true;
             try {
                 // Update city dropdown (only on first load or if empty)
                 if (cbCity.getItems().isEmpty() && !catalogResponse.getAvailableCities().isEmpty()) {
@@ -257,7 +257,7 @@ public class CatalogPageController {
                 }
             } finally {
                 isUpdatingComboBoxes = false;
-            }
+            }*/
         }
     }
 
@@ -547,7 +547,7 @@ public class CatalogPageController {
     /**
      * Update map combo box based on selected city.
      */
-    private void updateMapComboBox(String selectedCity) {
+   /* private void updateMapComboBox(String selectedCity) {
         cbMap.getItems().clear();
         if (selectedCity == null || selectedCity.isEmpty()) {
             return;
@@ -557,14 +557,14 @@ public class CatalogPageController {
         if (lastCatalogResponse != null && lastCatalogResponse.getAvailableMapNames() != null) {
             updateMapComboBoxFromResponse(lastCatalogResponse.getAvailableMapNames());
         }
-    }
+    }*/
 
-    private void updateMapComboBoxFromResponse(List<String> mapNames) {
+    /* private void updateMapComboBoxFromResponse(List<String> mapNames) {
         List<String> maps = new ArrayList<>();
         maps.add("");  // Empty option for "All"
         maps.addAll(mapNames);
         cbMap.setItems(FXCollections.observableArrayList(maps));
-    }
+    }*/
 
     /**
      * Apply visibility/permissions based on user role.
@@ -678,8 +678,8 @@ public class CatalogPageController {
             stage.showAndWait();
 
             // Refresh catalog after dialog closes
-            loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
-
+           // loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
+            loadCatalog(null, null, null);
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Could not open Price Update dialog: " + e.getMessage());
@@ -863,7 +863,7 @@ public class CatalogPageController {
             stage.showAndWait();
 
             // Refresh after closing
-            loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
+            loadCatalog(null, null , null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -947,8 +947,8 @@ public class CatalogPageController {
             stage.show();
 
             // Refresh after closing
-            loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
-
+           // loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
+            loadCatalog(null, null, null);
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Could not open approvals window.");
@@ -959,7 +959,8 @@ public class CatalogPageController {
      * Public method to refresh catalog (called from other controllers).
      */
     public void refreshCatalog() {
-        loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
+      //  loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
+        loadCatalog(null, null, null);
     }
 
     private void showAlert(String title, String message) {
