@@ -54,7 +54,7 @@ public class TourMiniCardController {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Subscription Required");
             alert.setHeaderText(null);
-            alert.setContentText("Please subscribe to this city to get full access to city tours and their details.");
+            alert.setContentText("Subscribe to this city to get full access to city tours and their details.");
             alert.showAndWait();
         }
     }

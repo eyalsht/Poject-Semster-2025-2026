@@ -34,6 +34,7 @@ public class ActivityReportService implements server.report.ReportManager.ParamA
                 SELECT COUNT(*)
                 FROM maps m
                 WHERE (:cityId IS NULL OR m.city_id = :cityId)
+                  AND m.status <> 'EXTERNAL'
             """).setParameter("cityId", cityId).uniqueResult();
 
             // ---- purchases metrics ----
@@ -150,6 +151,7 @@ public class ActivityReportService implements server.report.ReportManager.ParamA
                     GROUP BY map_id
                 ) d ON d.map_id = m.id
                 WHERE (:cityId IS NULL OR m.city_id = :cityId)
+                  AND m.status <> 'EXTERNAL'
                 ORDER BY c.name, views DESC, downloads DESC, m.name
             """)
                     .setParameter("cityId", cityId)
