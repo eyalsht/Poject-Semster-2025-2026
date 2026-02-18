@@ -290,7 +290,7 @@ public class SupportPageController
             return "Payment issues: please verify your card details and try again. If you were charged but didn't get access, choose 'Other' and write purchase date + city name below.";
         }
         if (t.contains("subscription") || t.contains("membership")) {
-            return "Subscription help: If you tell me the city name, I can check what you currently have (when we connect this to the server).";
+            return "Subscription help: Please choose 'Other' and write what is the problem exactly. Our support agent will write you back!";
         }
         if (t.contains("bug")) {
             return "Please choose 'Other' and write what screen you were in + what button you clicked + what happened.";
