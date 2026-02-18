@@ -18,7 +18,6 @@ public abstract class Report {
     }
 
     public void produceReport() {
-        // mark when the report was produced
         this.producedDate = LocalDateTime.now();
     }
 

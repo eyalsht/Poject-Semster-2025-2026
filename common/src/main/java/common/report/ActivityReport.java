@@ -9,19 +9,19 @@ public class ActivityReport implements Serializable {
     public LocalDate fromDate;
     public LocalDate toDate;
 
-    // Chart (business metrics)
+
     public int maps;
     public int oneTimePurchases;
     public int subscriptions;
     public int renewals;
 
-    // City-enter views count (map_id is null)
+    // counts city views
     public int cityEnterViewsTotal;
 
-    // For combo display: cityId, cityName, cityEnterViews
+    // for combo display
     public List<CityEnterRow> cityEnterRows;
 
-    // Table (always): maps rows
+    // table
     public List<MapRow> mapRows;
 
     public ActivityReport(LocalDate fromDate, LocalDate toDate,

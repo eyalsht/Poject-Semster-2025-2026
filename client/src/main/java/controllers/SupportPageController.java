@@ -31,11 +31,10 @@ public class SupportPageController
 
     private final ObservableList<ChatItem> chatItems = FXCollections.observableArrayList();
 
-    // Simple model for chat list items
     private static class ChatItem {
         final String text;
         final boolean isBot;
-        final java.util.List<SupportChoice> choices; // null/empty -> normal message
+        final java.util.List<SupportChoice> choices;
 
         ChatItem(String text, boolean isBot) {
             this(text, isBot, null);
@@ -64,7 +63,7 @@ public class SupportPageController
 
 
     public void initialize() {
-
+        //Those are costom questions prepared for a client to choose from
         questionsCombo.setItems(FXCollections.observableArrayList(
                 DEFAULT_QUESTION,
                 "I can’t log in",
@@ -75,7 +74,7 @@ public class SupportPageController
                 "Other"
         ));
 
-        // Attach list items
+
         chatList.setItems(chatItems);
 
 
@@ -116,7 +115,7 @@ public class SupportPageController
             }
         });
 
-        // Initial UI state
+
         suppressAutoSend = true;
         questionsCombo.getSelectionModel().select(DEFAULT_QUESTION);
         updateInputState();
@@ -126,7 +125,7 @@ public class SupportPageController
 
             if (newV == null) return;
 
-            // If user picked the default placeholder again
+            // If client pick the started, default question again
             if (DEFAULT_QUESTION.equals(newV)) {
                 addBot("Please choose a question from the list or write your own by choosing \"Other\" :)");
                 return;
@@ -146,7 +145,7 @@ public class SupportPageController
         suppressAutoSend = false;
     }
 
-    // enable typing + Send only for "Other"
+    // enable typing + send only for "Other"
     void updateInputState() {
         String selected = questionsCombo.getValue();
 
@@ -156,7 +155,7 @@ public class SupportPageController
         // details + send allowed only for "Other"
         detailsArea.setDisable(!isOther);
 
-        // Send button should be enabled only for "Other"
+        // send button enabled only for "Other"
         btnSend.setDisable(!isOther);
 
         if (!isOther) detailsArea.clear();
@@ -190,10 +189,9 @@ public class SupportPageController
             userText = selected;
         }
 
-        // User message
+        // clients message
         addUser(userText);
 
-        // One single decision (NO duplicates)
         if ("When my membership expires?".equals(selected)) {
             sendSupportToServer("MEMBERSHIP_EXPIRE", userText, null);
         }
@@ -205,12 +203,10 @@ public class SupportPageController
             addBot(botReply);
         }
 
-        // Cleanup
         if ("Other".equals(selected)) {
             detailsArea.clear();
         }
 
-        // Scroll
         chatList.scrollTo(chatItems.size() - 1);
     }
 
@@ -278,8 +274,7 @@ public class SupportPageController
 
 
 
-    // Temporary local bot (so UI works NOW).
-    // After UI is good, we will connect it to your real server SupportController.
+    //those are different pre prepared answers for questions client can choose from
     private String getBotReplyLocal(String userText) {
         String t = userText.toLowerCase();
 
@@ -301,8 +296,6 @@ public class SupportPageController
 
     private void onCityChoiceClicked(SupportChoice choice) {
         addUser("City: " + choice.getLabel());
-
-        // Follow up: same topic, but now with cityId
         sendSupportToServer("MEMBERSHIP_EXPIRE", "", choice.getCityId());
     }
 

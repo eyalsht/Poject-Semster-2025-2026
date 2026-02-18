@@ -21,15 +21,14 @@ public class ActivityReportService implements server.report.ReportManager.ParamA
 
         LocalDate from = (LocalDate) params[0];
         LocalDate to   = (LocalDate) params[1];
-        Integer cityId = (Integer) params[2]; // null => all cities
+        Integer cityId = (Integer) params[2]; // if null - all cities
 
-        // We compute directly from events for views (so it updates immediately)
-        // and from purchases for business metrics.
+
 
         try (Session s = ctx.getSessionFactory().openSession()) {
             s.beginTransaction();
 
-            // ---- maps count (business metric) ----
+            //maps count (business metric)
             Number mapsCount = (Number) s.createNativeQuery("""
                 SELECT COUNT(*)
                 FROM maps m
@@ -37,7 +36,7 @@ public class ActivityReportService implements server.report.ReportManager.ParamA
                   AND m.status <> 'EXTERNAL'
             """).setParameter("cityId", cityId).uniqueResult();
 
-            // ---- purchases metrics ----
+            // purchases data
             Number oneTime = (Number) s.createNativeQuery("""
                 SELECT COUNT(*)
                 FROM purchases p
@@ -79,7 +78,7 @@ public class ActivityReportService implements server.report.ReportManager.ParamA
                     .setParameter("toDatePlus", java.sql.Date.valueOf(to.plusDays(1)))
                     .uniqueResult();
 
-            // ---- city-enter views (map_id IS NULL) ----
+            // city views
             Number cityEnterTotal = (Number) s.createNativeQuery("""
                 SELECT COUNT(*)
                 FROM map_view_events v
@@ -93,7 +92,7 @@ public class ActivityReportService implements server.report.ReportManager.ParamA
                     .setParameter("toTsPlus", to.plusDays(1).atStartOfDay())
                     .uniqueResult();
 
-            // ---- per-city city-enter views (for combo text "Haifa (25)") ----
+            //city views for combo box
             List<Object[]> cityEnterRowsRaw = s.createNativeQuery("""
                 SELECT c.id, c.name,
                        COALESCE(x.cnt, 0) AS city_enter_views
@@ -120,9 +119,8 @@ public class ActivityReportService implements server.report.ReportManager.ParamA
                 cityEnterRows.add(new ActivityReport.CityEnterRow(cid, cname, cnt));
             }
 
-            // ---- map rows (ALWAYS) ----
-            // map views = map_id IS NOT NULL
-            // downloads = map_download_events (subscriber only, like your scheduler)
+
+            // map data like views and downloads
             List<Object[]> mapRowsRaw = s.createNativeQuery("""
                 SELECT m.id,
                        m.name,

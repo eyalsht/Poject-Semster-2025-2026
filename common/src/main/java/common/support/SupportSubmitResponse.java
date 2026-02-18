@@ -9,7 +9,7 @@ public class SupportSubmitResponse implements Serializable {
     private final boolean answeredByBot;
     private final String responseText;
 
-    // If bot needs user to pick something (multiple subscriptions)
+    // If bot needs user to pick something (if client subscribed to many cities)
     private final List<SupportChoiceDTO> choices;
 
     public SupportSubmitResponse(boolean answeredByBot, String responseText, List<SupportChoiceDTO> choices) {

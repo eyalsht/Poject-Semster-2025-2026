@@ -31,7 +31,7 @@ public class SupportRequest
         this.response = answer;
     }
 
-    // getters (usually expected even if not drawn)
+    // getters
     public int getId() {
         return id;
     }

@@ -14,6 +14,6 @@ public interface ReportService
 
     default void refreshDaily(ReportRequestContext ctx)
     {
-        // no-op
+        //nothing here
     }
 }

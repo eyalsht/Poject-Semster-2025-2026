@@ -52,11 +52,6 @@ import java.util.function.Consumer;
  */
 public class CatalogPageController {
 
-    // @FXML
-   // private ComboBox<String> cbCity;
-  //  @FXML
-  //  private ComboBox<String> cbMap;
-
     @FXML
     private ScrollPane scrollPaneCities;
     @FXML
@@ -79,11 +74,6 @@ public class CatalogPageController {
     private Button btnEditCity;
     @FXML
     private Button btnImportMap;
-    // [COMMENTED OUT] Temp buttons - kept for easy reactivation
-    // @FXML
-    // private Button btnAddExternalMap;
-    // @FXML
-    // private Button btnAddCity;
 
 
     private final GCMClient client = GCMClient.getInstance();
@@ -93,7 +83,6 @@ public class CatalogPageController {
 
     @FXML
     public void initialize() {
-     //   setupComboBoxListeners();
         applyRolePermissions();
         scrollPaneCities.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPaneCities.setFitToWidth(true);
@@ -108,19 +97,6 @@ public class CatalogPageController {
                 if (msg.getAction() == ActionType.CATALOG_UPDATED_NOTIFICATION) {
                     refreshCatalog();
                 }
-                /*if (msg.getAction() == ActionType.MAP_VERSION_UPDATED_NOTIFICATION) {
-                    refreshCatalog();
-                    if (msg.getMessage() instanceof common.messaging.MapVersionNotification notif) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Map Updated");
-                        alert.setHeaderText("New Version Available");
-                        alert.setContentText("Map '" + notif.getMapName() + "' in " +
-                            notif.getCityName() + " has been updated to version " +
-                            notif.getNewVersion() + ".");
-                        alert.showAndWait();
-                        refreshPendingApprovalsCount();
-                    }
-                }*/
             });
         });
     }
@@ -175,25 +151,6 @@ public class CatalogPageController {
     }
 
     /**
-     * Setup combo box change listeners for cascading filters.
-     */
-  /*  private void setupComboBoxListeners() {
-        cbCity.setOnAction(e -> {
-            if (isUpdatingComboBoxes) return;  // Prevent recursive calls
-            String selectedCity = cbCity.getValue();
-            updateMapComboBox(selectedCity);
-            loadCatalog(selectedCity, null, null);
-        });
-
-        cbMap.setOnAction(e -> {
-            if (isUpdatingComboBoxes) return;  // Prevent recursive calls
-            String selectedCity = cbCity.getValue();
-            String selectedMap = cbMap.getValue();
-            loadCatalog(selectedCity, selectedMap, null);
-        });
-    }
-*/
-    /**
      * Load catalog data from server with filters.
      * Single request replaces the old 4 separate requests!
      */
@@ -236,28 +193,7 @@ public class CatalogPageController {
                 updateCityCardsFromSearch(catalogResponse.getSearchResults());
                 return;
             }
-
-            // Regular catalog mode - Using updateCityCards instead of TableView.setItems
             updateCityCards(catalogResponse.getMaps());
-
-            // Set flag to prevent listener recursion
-            /*isUpdatingComboBoxes = true;
-            try {
-                // Update city dropdown (only on first load or if empty)
-                if (cbCity.getItems().isEmpty() && !catalogResponse.getAvailableCities().isEmpty()) {
-                    List<String> cities = new ArrayList<>();
-                    cities.add("");  // Empty option for "All"
-                    cities.addAll(catalogResponse.getAvailableCities());
-                    cbCity.setItems(FXCollections.observableArrayList(cities));
-                }
-
-                // Update map dropdown if available
-                if (!catalogResponse.getAvailableMapNames().isEmpty()) {
-                    updateMapComboBoxFromResponse(catalogResponse.getAvailableMapNames());
-                }
-            } finally {
-                isUpdatingComboBoxes = false;
-            }*/
         }
     }
 
@@ -544,27 +480,6 @@ public class CatalogPageController {
         return this.lastCatalogResponse;
     }
 
-    /**
-     * Update map combo box based on selected city.
-     */
-   /* private void updateMapComboBox(String selectedCity) {
-        cbMap.getItems().clear();
-        if (selectedCity == null || selectedCity.isEmpty()) {
-            return;
-        }
-
-        // If we have cached data, filter from it
-        if (lastCatalogResponse != null && lastCatalogResponse.getAvailableMapNames() != null) {
-            updateMapComboBoxFromResponse(lastCatalogResponse.getAvailableMapNames());
-        }
-    }*/
-
-    /* private void updateMapComboBoxFromResponse(List<String> mapNames) {
-        List<String> maps = new ArrayList<>();
-        maps.add("");  // Empty option for "All"
-        maps.addAll(mapNames);
-        cbMap.setItems(FXCollections.observableArrayList(maps));
-    }*/
 
     /**
      * Apply visibility/permissions based on user role.
@@ -581,9 +496,6 @@ public class CatalogPageController {
         setButtonState(btnPriceUpdate, false);
         setButtonState(btnApprovals, false);
         setButtonState(btnImportMap, false);
-        // [COMMENTED OUT] Temp buttons
-        // setButtonState(btnAddExternalMap, false);
-        // setButtonState(btnAddCity, false);
 
         setManagementButtonsVisible(false);
 
@@ -609,9 +521,6 @@ public class CatalogPageController {
                     setButtonState(btnPriceUpdate, true);
                     setButtonState(btnApprovals, true);
                     setButtonState(btnImportMap, true);
-                    // [COMMENTED OUT] Temp buttons
-                    // setButtonState(btnAddExternalMap, true);
-                    // setButtonState(btnAddCity, true);
                     break;
 
                 case COMPANY_MANAGER:
@@ -677,8 +586,6 @@ public class CatalogPageController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
 
-            // Refresh catalog after dialog closes
-           // loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
             loadCatalog(null, null, null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -947,7 +854,6 @@ public class CatalogPageController {
             stage.show();
 
             // Refresh after closing
-           // loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
             loadCatalog(null, null, null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -959,7 +865,6 @@ public class CatalogPageController {
      * Public method to refresh catalog (called from other controllers).
      */
     public void refreshCatalog() {
-      //  loadCatalog(cbCity.getValue(), cbMap.getValue(), null);
         loadCatalog(null, null, null);
     }
 

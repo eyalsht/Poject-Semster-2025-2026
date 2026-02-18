@@ -14,7 +14,6 @@ public class GetSupportRequestsReportHandler implements RequestHandler {
     @Override
     public Message handle(Message request) {
 
-        // NOTE: method ignores agentId, it returns all tickets ordered by status+createdAt
         List<SupportTicketRowDTO> rows = SupportTicketService.listAllTicketsForAgent(0);
 
         int pending = 0;

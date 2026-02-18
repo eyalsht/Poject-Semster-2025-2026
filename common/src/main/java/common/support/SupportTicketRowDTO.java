@@ -30,7 +30,7 @@ public class SupportTicketRowDTO implements Serializable {
                 preview, null, "Support", null);
     }
 
-    // NEW constructor
+
     public SupportTicketRowDTO(int ticketId, String clientUsername, String topic,
                                SupportTicketStatus status, LocalDateTime createdAt,
                                LocalDateTime repliedAt, boolean readByClient,

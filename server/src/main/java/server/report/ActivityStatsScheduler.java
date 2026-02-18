@@ -13,7 +13,7 @@ public class ActivityStatsScheduler {
     private static final ScheduledExecutorService exec =
             Executors.newSingleThreadScheduledExecutor(r -> {
                 Thread t = new Thread(r, "ActivityStatsScheduler");
-                t.setDaemon(true); // does not block shutdown
+                t.setDaemon(true);
                 return t;
             });
 
@@ -34,10 +34,10 @@ public class ActivityStatsScheduler {
         );
     }
 
-    // ---------------------- internal helpers ----------------------
+
 
     private static long secondsUntilNextRun(int hour, int minute) {
-        ZoneId zone = ZoneId.systemDefault(); // IMPORTANT: server timezone
+        ZoneId zone = ZoneId.systemDefault();
         LocalDateTime now = LocalDateTime.now(zone);
 
         LocalDateTime next = now.withHour(hour)
