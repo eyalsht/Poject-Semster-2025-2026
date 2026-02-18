@@ -1254,6 +1254,25 @@ public class EditModeController {
                 return "Map \"" + map.getName() + "\" must contain at least one site. Please add a site before submitting.";
             }
         }
+
+        // Validate: no tour should have zero sites
+        for (Tour tour : cityTours) {
+            int tourId = tour.getId();
+            List<Site> sites = savedTourSitesPerTour.get(tourId);
+            if (isTempTour(tour)) {
+                // New tours must have at least one site
+                if (sites == null || sites.isEmpty()) {
+                    return "Tour \"" + tour.getName() + "\" must contain at least one site.";
+                }
+            } else {
+                // Existing tours: block if all sites were removed
+                List<Integer> origIds = originalTourSiteIds.getOrDefault(tourId, new ArrayList<>());
+                if (sites != null && sites.isEmpty() && !origIds.isEmpty()) {
+                    return "Tour \"" + tour.getName() + "\" must contain at least one site. Please add a site before submitting.";
+                }
+            }
+        }
+
         return validateAllFields();
     }
 
