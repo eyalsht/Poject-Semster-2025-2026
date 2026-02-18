@@ -172,6 +172,7 @@ public class MapRepository extends BaseRepository<GCMMap, Integer> {
                 "SELECT m FROM GCMMap m JOIN FETCH m.city " +
                 "WHERE m.status != :extStatus AND m.price > 0 " +
                 "AND m.sites IS NOT EMPTY " +
+                "AND m.city.priceSub > 0 " +
                 "AND (LOWER(m.name) LIKE :pattern " +
                 "     OR LOWER(m.description) LIKE :pattern) " +
                 "ORDER BY m.city.name, m.name",

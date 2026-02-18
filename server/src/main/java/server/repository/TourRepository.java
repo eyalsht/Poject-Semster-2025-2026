@@ -2,6 +2,7 @@ package server.repository;
 
 import common.content.Site;
 import common.content.Tour;
+import common.enums.MapStatus;
 
 import java.util.List;
 
@@ -38,11 +39,14 @@ public class TourRepository extends BaseRepository<Tour,Integer>{
                 "SELECT DISTINCT t FROM Tour t " +
                 "JOIN FETCH t.city " +
                 "LEFT JOIN FETCH t.sites " +
-                "WHERE LOWER(t.name) LIKE :pattern " +
-                "   OR LOWER(t.description) LIKE :pattern " +
+                "WHERE t.city.priceSub > 0 " +
+                "AND EXISTS (SELECT 1 FROM GCMMap m WHERE m.city = t.city AND m.status != :extStatus AND m.price > 0 AND m.sites IS NOT EMPTY) " +
+                "AND (LOWER(t.name) LIKE :pattern " +
+                "   OR LOWER(t.description) LIKE :pattern) " +
                 "ORDER BY t.city.name, t.name",
                 Tour.class)
                 .setParameter("pattern", pattern)
+                .setParameter("extStatus", MapStatus.EXTERNAL)
                 .getResultList();
         });
     }
