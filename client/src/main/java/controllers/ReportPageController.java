@@ -50,7 +50,6 @@ import java.util.*;
 
 public class ReportPageController {
 
-    // ===== UI =====
     @FXML private ComboBox<String> cmbReportType;
     @FXML private ComboBox<City> cmbCity;
     @FXML private Button btnGenerate;
@@ -67,7 +66,7 @@ public class ReportPageController {
 
     @FXML private StackPane reportArea;
 
-    // Generic table (reused for all reports)
+    // this table is reused for all reports and its style is written in theme.css
     @FXML private TableView<Object> tableView;
 
     @FXML private TableColumn<Object, Number> colId;
@@ -79,7 +78,6 @@ public class ReportPageController {
 
     @FXML private Button btnExportPdf;
 
-    // ===== STATE =====
     private long currentRequestId = 0;
     private String displayedReport = null;
     private AllClientsReport lastClientsReport;
@@ -95,7 +93,7 @@ public class ReportPageController {
     private static final DateTimeFormatter CREATED_FMT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    // City enter views (for showing "Haifa (25)" in the combo after Activity generated)
+    // city enter views
     private final Map<Integer, Integer> cityEnterViewsByCityId = new HashMap<>();
 
     @FXML
@@ -115,11 +113,9 @@ public class ReportPageController {
         dpFrom.setDisable(true);
         dpTo.setDisable(true);
 
-        // defaults: last 7 days
+
         dpTo.setValue(LocalDate.now());
         dpFrom.setValue(LocalDate.now().minusDays(6));
-
-        // default converter (will be replaced after Activity report)
         cmbCity.setConverter(new StringConverter<>() {
             @Override public String toString(City city) {
                 return (city == null) ? "" : city.getName();
@@ -127,27 +123,20 @@ public class ReportPageController {
             @Override public City fromString(String s) { return null; }
         });
 
-        // Safe default table setup
         setupClientsTableColumns();
         setupClientsTableInteractions();
-
         wireUiStateListeners();
         applyUiState();
-
         displayedReport = null;
         applyReportLayout();
-
         loadCitiesFromServer();
-
-        // sizing
         barChart.prefHeightProperty().bind(reportArea.heightProperty());
         tableView.prefHeightProperty().bind(reportArea.heightProperty());
     }
 
-    // ===== UI STATE =====
+
     private void wireUiStateListeners() {
         cmbReportType.valueProperty().addListener((obs, oldV, newV) -> {
-            // reset city-enter counts display when switching report type
             cityEnterViewsByCityId.clear();
             resetCityComboCells();
             applyUiState();
@@ -185,7 +174,7 @@ public class ReportPageController {
         btnGenerate.setDisable(!hasReport || (needsCity && !cityChosen) || (supportsDateRange && !datesOk));
     }
 
-    // layout changes only after Generate
+    // layout changes after admin pushes 'Generate'
     private void applyReportLayout() {
         String report = displayedReport;
 
@@ -218,8 +207,9 @@ public class ReportPageController {
             reportContent.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
             reportContent.setSpacing(20);
 
-        } else if (isActivity) {
-            // Activity: chart + table
+        } else if (isActivity)
+        {
+            // activity report chart + table
             barChart.setVisible(true);
             barChart.setManaged(true);
             barChart.setPrefWidth(430);
@@ -230,8 +220,9 @@ public class ReportPageController {
             reportContent.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
             reportContent.setSpacing(20);
 
-        } else if (isPurchases) {
-            // Purchases: chart only
+        } else if (isPurchases)
+        {
+            // purchase report with a chart
             barChart.setVisible(true);
             barChart.setManaged(true);
             barChart.setPrefWidth(650);
@@ -253,7 +244,6 @@ public class ReportPageController {
         }
     }
 
-    // ===== LOAD CITIES =====
     private void loadCitiesFromServer() {
         new Thread(() -> {
             try {
@@ -266,7 +256,7 @@ public class ReportPageController {
                         List<City> cities = (List<City>) res.getMessage();
 
                         ArrayList<City> uiCities = new ArrayList<>();
-                        uiCities.add(new City(-1, "All cities", 0)); // special
+                        uiCities.add(new City(-1, "All cities", 0));
                         if (cities != null) uiCities.addAll(cities);
 
                         cmbCity.setItems(FXCollections.observableArrayList(uiCities));
@@ -283,7 +273,7 @@ public class ReportPageController {
         }).start();
     }
 
-    // ===== GENERATE =====
+
     @FXML
     private void onGenerate() {
         String selected = cmbReportType.getValue();
@@ -317,7 +307,7 @@ public class ReportPageController {
         }
     }
 
-    // ===== CLIENTS REPORT =====
+    // CLIENTS REPORT LOGIC
     private void generateClientsReport(long reqId) {
         new Thread(() -> {
             try {
@@ -448,7 +438,7 @@ public class ReportPageController {
         });
     }
 
-    // ===== ACTIVITY REPORT =====
+    // ACTIVITY REPORT LOGIC
     private void generateActivityReport(long reqId) {
 
         City selectedCity = cmbCity.getValue();
@@ -463,8 +453,6 @@ public class ReportPageController {
             showAlert("Invalid dates", "'From' must be before (or equal to) 'To'.");
             return;
         }
-
-        // null => all cities
         final Integer cityId = (selectedCity != null && selectedCity.getId() != -1) ? selectedCity.getId() : null;
 
         new Thread(() -> {
@@ -490,21 +478,11 @@ public class ReportPageController {
                         lastFrom = dpFrom.getValue();
                         lastTo = dpTo.getValue();
                         lastCity = cmbCity.getValue();
-
-
                         lblChooseReport.setVisible(false);
                         lblChooseReport.setManaged(false);
-
-                        // IMPORTANT: never lock city selection
                         cmbCity.setDisable(false);
-
-                        // show "Haifa (25)" based on city-enter views (if report provides it)
                         applyCityEnterCountsToCombo(report);
-
-                        // Chart: business metrics only (+ show city enters in title)
                         fillActivityChart(report, cityId);
-
-                        // Table: ALWAYS Map | City | Downloads | Views (exact ask)
                         setupActivityMapsTableColumns();
                         tableView.getItems().clear();
 
@@ -549,15 +527,8 @@ public class ReportPageController {
         barChart.getData().add(s);
     }
 
-    private void setupActivityMapsTableColumns() {
-
-        // We use existing 6 columns as:
-        // colUsername  -> Map
-        // colEmail     -> City
-        // colFirstName -> Downloads
-        // colLastName  -> Views
-        //
-        // Hide: colId, colCreatedAt
+    private void setupActivityMapsTableColumns()
+    {
 
         colUsername.setText("Map");
         colEmail.setText("City");
@@ -605,7 +576,7 @@ public class ReportPageController {
         cmbCity.setConverter(new StringConverter<>() {
             @Override public String toString(City city) {
                 if (city == null) return "";
-                if (city.getId() == -1) return city.getName(); // All cities
+                if (city.getId() == -1) return city.getName();
 
                 Integer cnt = cityEnterViewsByCityId.get(city.getId());
                 if (cnt == null) cnt = 0;
@@ -614,7 +585,7 @@ public class ReportPageController {
             @Override public City fromString(String s) { return null; }
         });
 
-        // force redraw
+
         cmbCity.setButtonCell(new ListCell<>() {
             @Override protected void updateItem(City item, boolean empty) {
                 super.updateItem(item, empty);
@@ -641,7 +612,7 @@ public class ReportPageController {
         cmbCity.setCellFactory(null);
     }
 
-    // ===== PURCHASES REPORT =====
+    // PURCHASE REPORT LOGIC
     private void generatePurchasesReport(long reqId)
     {
 
@@ -718,7 +689,7 @@ public class ReportPageController {
         barChart.getData().add(s);
     }
 
-    // ===== SUPPORT REQUESTS REPORT =====
+    // SUPPORT REQUEST REPORT LOGIC
     private void generateSupportRequestsReport(long reqId) {
 
         new Thread(() -> {
@@ -884,7 +855,7 @@ public class ReportPageController {
         dialog.showAndWait();
     }
 
-    // ===== CLIENT PURCHASE HISTORY POPUP =====
+    // pop up for client purchase history just like in the profile
     private void openClientPurchaseHistory(AllClientsReport.ClientRow clientRow) {
         if (clientRow == null) return;
 
@@ -944,7 +915,7 @@ public class ReportPageController {
         }
     }
 
-    // ===== EXPORT PDF =====
+    // export to pdf logic
     @FXML
     private void onExportPdf() {
         String type = displayedReport;
@@ -1017,7 +988,6 @@ public class ReportPageController {
         if (barYAxis != null) barYAxis.setLabel(y);
     }
 
-    // ===== UTILS =====
     private void showAlert(String title, String msg) {
         Alert a = new Alert(Alert.AlertType.INFORMATION);
         a.setTitle(title);

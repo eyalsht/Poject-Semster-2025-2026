@@ -21,7 +21,7 @@ public class ReportManager
     {
         this.ctx = new ReportRequestContext(sf);
 
-        // 🔥 one place to rule them all
+        // one place to rule them all (all report i mean)
         register(new ActivityReportService());
         register(new ClientsReportService());
         register(new PurchasesReportService());
@@ -44,7 +44,7 @@ public class ReportManager
     public void refreshDailyReports() {
         for (ParamAwareReportService s : services.values()) {
             try {
-                s.refreshDaily(ctx); // all services refresh
+                s.refreshDaily(ctx);
             } catch (Exception e) {
                 System.err.println("[ReportManager] refreshDaily failed for " + s.getType());
                 e.printStackTrace();
@@ -53,7 +53,6 @@ public class ReportManager
     }
 
 
-    // internal helper
     public interface ParamAwareReportService extends ReportService {
         Object generate(ReportRequestContext ctx, Object... params);
     }

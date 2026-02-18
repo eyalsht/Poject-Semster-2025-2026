@@ -34,7 +34,7 @@ public class PurchasesReportService implements ReportManager.ParamAwareReportSer
         try (Session s = ctx.getSessionFactory().openSession()) {
             s.beginTransaction();
 
-            // totals in range
+
             Object[] row = (Object[]) s.createNativeQuery("""
                 SELECT
                     COALESCE(SUM(d.one_time_purchases),0) AS one_time,
@@ -54,7 +54,7 @@ public class PurchasesReportService implements ReportManager.ParamAwareReportSer
             int subs = ((Number) row[1]).intValue();
             int renew = ((Number) row[2]).intValue();
 
-            // city name
+
             String cityName = (String) s.createNativeQuery("""
                 SELECT c.name FROM cities c WHERE c.id = :cityId
             """)
@@ -69,11 +69,11 @@ public class PurchasesReportService implements ReportManager.ParamAwareReportSer
 
     @Override
     public boolean supportsDailyRefresh() {
-        return false; // uses already aggregated table; no special daily job
+        return false;
     }
 
     @Override
     public void refreshDaily(ReportRequestContext ctx) {
-        // no-op
+        // nothing here
     }
 }

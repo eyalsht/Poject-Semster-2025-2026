@@ -37,14 +37,7 @@ public class ReportPdfExporter {
     private static final PDType1Font FONT_BOLD = PDType1Font.HELVETICA_BOLD;
 
     private static final DateTimeFormatter DT_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-    // ====== IMPORTANT FIX ======
-    // In the app, your chart sits on a dark background, so white axis labels are visible.
-    // In the PDF, the chart snapshot transparency ends up on a white page => white labels disappear.
-    // We DO NOT change label colors. We fill the snapshot background with a dark color.
-    private static final Color SNAPSHOT_BG = Color.rgb(12, 12, 12); // dark background behind chart labels
-
-    // ========= PUBLIC API =========
+    private static final Color SNAPSHOT_BG = Color.rgb(12, 12, 12);
 
     public static void exportClientsReport(File out,
                                            AllClientsReport report,
@@ -228,8 +221,6 @@ public class ReportPdfExporter {
         }
     }
 
-    // ========= INTERNALS =========
-
     private static class PageCtx {
         PDPage page;
         float w, h;
@@ -248,8 +239,6 @@ public class ReportPdfExporter {
 
     private static PageCtx newLandscapePage(PDDocument doc) {
         PageCtx ctx = new PageCtx();
-
-        // Create landscape A4 by swapping width/height (works with older PDFBox)
         PDRectangle a4 = PDRectangle.A4;
         PDRectangle landscape = new PDRectangle(a4.getHeight(), a4.getWidth());
 
@@ -302,12 +291,6 @@ public class ReportPdfExporter {
         }
     }
 
-    /**
-     * Chart snapshot for PDF:
-     * - NO transform (avoids clipping)
-     * - SnapshotParameters.fill is DARK so white axis labels remain visible on PDF's white page
-     * - Upscale afterwards for quality
-     */
     private static float drawChartImage(PDDocument doc, PageCtx ctx,
                                         BarChart<String, Number> chart,
                                         float yTop) throws IOException {
@@ -317,7 +300,7 @@ public class ReportPdfExporter {
         chart.layout();
 
         SnapshotParameters params = new SnapshotParameters();
-        params.setFill(SNAPSHOT_BG); // <<< FIX: makes white axis labels visible in PDF
+        params.setFill(SNAPSHOT_BG);
 
         int w = (int) Math.ceil(Math.max(1, chart.getWidth()));
         int h = (int) Math.ceil(Math.max(1, chart.getHeight()));
