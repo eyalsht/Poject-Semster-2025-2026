@@ -15,6 +15,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -22,6 +23,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import util.AlertHelper;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
@@ -53,7 +55,6 @@ public class EditModeController {
     // Change tracking — snapshot-based: store original state and compare
     private final Map<String, String> originalValues = new HashMap<>();
     private final Map<String, HBox> fieldRows = new HashMap<>();
-    // pendingChanges removed — Submit Changes now builds requests from current state
 
     // Snapshot of original site IDs per map (for dirty detection)
     private final Map<Integer, Set<Integer>> originalMapSiteIds = new HashMap<>();
@@ -92,15 +93,21 @@ public class EditModeController {
     private ObservableList<Site> currentMapOnMapSites;
     private ObservableList<Site> currentTourSites;
 
+    // ==================== INITIALIZATION & DATA LOADING ====================
+
     @FXML
     public void initialize() {
-        // Disable tabs until city is selected
         tabCityDetails.setDisable(true);
         tabMaps.setDisable(true);
         tabSites.setDisable(true);
         tabTours.setDisable(true);
 
-        // City selector setup
+        setupCellFactories();
+        setupSelectionListeners();
+        loadCities();
+    }
+
+    private void setupCellFactories() {
         cbCitySelector.setCellFactory(lv -> new ListCell<City>() {
             @Override
             protected void updateItem(City item, boolean empty) {
@@ -116,18 +123,13 @@ public class EditModeController {
                 setTextFill(Color.WHITE);
             }
         });
-        cbCitySelector.setOnAction(e -> onCitySelected());
 
-        // ListView cell factories
         lvMaps.setCellFactory(lv -> new ListCell<GCMMap>() {
             @Override
             protected void updateItem(GCMMap item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || item == null ? null : item.getName() + " v" + item.getVersion());
             }
-        });
-        lvMaps.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) populateMapEditor(newVal);
         });
 
         lvSites.setCellFactory(lv -> new ListCell<Site>() {
@@ -140,11 +142,6 @@ public class EditModeController {
                     String name = (item.getName() == null || item.getName().isBlank()) ? "Untitled" : item.getName();
                     setText(isTempSite(item) ? "(New) " + name : name);
                 }
-            }
-        });
-        lvSites.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                populateSiteEditor(newVal);
             }
         });
 
@@ -160,13 +157,22 @@ public class EditModeController {
                 }
             }
         });
-        lvTours.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                populateTourEditor(newVal);
-            }
+    }
+
+    private void setupSelectionListeners() {
+        cbCitySelector.setOnAction(e -> onCitySelected());
+
+        lvMaps.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) populateMapEditor(newVal);
         });
 
-        loadCities();
+        lvSites.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) populateSiteEditor(newVal);
+        });
+
+        lvTours.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) populateTourEditor(newVal);
+        });
     }
 
     /**
@@ -183,8 +189,6 @@ public class EditModeController {
             }
         });
     }
-
-    // ==================== DATA LOADING ====================
 
     private void loadCities() {
         new Thread(() -> {
@@ -211,11 +215,10 @@ public class EditModeController {
 
         // Warn if there are unsaved changes in the current city
         if (currentCity != null && !btnSubmitAll.isDisabled()) {
-            Alert warn = new Alert(Alert.AlertType.CONFIRMATION);
-            warn.setTitle("Unsaved Changes");
-            warn.setHeaderText("You have unsaved changes in " + currentCity.getName());
-            warn.setContentText("Switching cities will discard all changes. Continue?");
-            Optional<ButtonType> result = warn.showAndWait();
+            Optional<ButtonType> result = AlertHelper.showConfirmation(
+                    "Unsaved Changes",
+                    "You have unsaved changes in " + currentCity.getName(),
+                    "Switching cities will discard all changes. Continue?");
             if (result.isEmpty() || result.get() != ButtonType.OK) {
                 // Revert the ComboBox selection back to the current city
                 cbCitySelector.setValue(currentCity);
@@ -292,7 +295,7 @@ public class EditModeController {
         lblStatus.setText("Editing: " + city.getName());
     }
 
-    // ==================== TAB 1: CITY DETAILS ====================
+    // ==================== CITY DETAILS TAB ====================
 
     private void populateCityDetailsTab() {
         vboxCityDetails.getChildren().clear();
@@ -310,7 +313,7 @@ public class EditModeController {
         // No individual submit — use "Submit Changes" in the status bar
     }
 
-    // ==================== TAB 2: MAPS ====================
+    // ==================== MAPS TAB ====================
 
     /**
      * Save the current map's markers and site assignments before switching to another map.
@@ -321,16 +324,6 @@ public class EditModeController {
         pendingMarkersPerMap.put(mapId, new ArrayList<>(pendingMarkers));
         if (currentMapOnMapSites != null) {
             savedMapSitesPerMap.put(mapId, new ArrayList<>(currentMapOnMapSites));
-        }
-    }
-
-    /**
-     * Save the current tour's site list before switching to another tour.
-     */
-    private void saveCurrentTourState() {
-        if (currentEditingTour == null) return;
-        if (currentTourSites != null) {
-            savedTourSitesPerTour.put(currentEditingTour.getId(), new ArrayList<>(currentTourSites));
         }
     }
 
@@ -421,50 +414,50 @@ public class EditModeController {
 
         imageContainer.getChildren().addAll(mapImageView, markerOverlayPane);
 
-        // Click handler on the overlay pane (same coordinate space as marker rendering)
-        // Overlay is sized to match ImageView fitWidth/fitHeight, so coordinates align exactly
-        markerOverlayPane.setOnMouseClicked(event -> {
-            if (mapImageView.getImage() == null || lvOnMapSites == null) return;
-            Site selected = lvOnMapSites.getSelectionModel().getSelectedItem();
-            if (selected == null) {
-                lblInstruction.setText("Select a site from 'On Map' list first, then click to place its marker");
-                return;
-            }
-
-            // Compute relative position — same offset math as renderMarkersOnOverlay
-            Image img = mapImageView.getImage();
-            double imgW = img.getWidth();
-            double imgH = img.getHeight();
-            double fitW = mapImageView.getFitWidth();
-            double fitH = mapImageView.getFitHeight();
-            double scale = Math.min(fitW / imgW, fitH / imgH);
-            double renderedW = imgW * scale;
-            double renderedH = imgH * scale;
-            double offsetX = (fitW - renderedW) / 2.0;
-            double offsetY = (fitH - renderedH) / 2.0;
-
-            // event coordinates are relative to markerOverlayPane = same as ImageView fitWidth/fitHeight space
-            double relX = (event.getX() - offsetX) / renderedW;
-            double relY = (event.getY() - offsetY) / renderedH;
-
-            // Reject clicks outside the actual rendered image area
-            if (relX < 0 || relX > 1 || relY < 0 || relY > 1) return;
-
-            // Place or move marker for the selected site
-            pendingMarkers.removeIf(m -> m.getSiteId() == selected.getId());
-            pendingMarkers.add(new SiteMarker(selected.getId(), relX, relY));
-
-            renderMarkersOnOverlay();
-            lblInstruction.setText("Marker placed for: " + selected.getName() + "  \u2014  click again to reposition");
-            recalculateChangeCount();
-            if (lvOnMapSites != null) lvOnMapSites.refresh();
-        });
+        markerOverlayPane.setOnMouseClicked(event -> onMapOverlayClicked(event, lblInstruction));
 
         section.getChildren().addAll(lbl, imageContainer, lblInstruction);
 
         renderMarkersOnOverlay();
 
         return section;
+    }
+
+    private void onMapOverlayClicked(MouseEvent event, Label lblInstruction) {
+        if (mapImageView.getImage() == null || lvOnMapSites == null) return;
+        Site selected = lvOnMapSites.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            lblInstruction.setText("Select a site from 'On Map' list first, then click to place its marker");
+            return;
+        }
+
+        // Compute relative position — same offset math as renderMarkersOnOverlay
+        Image img = mapImageView.getImage();
+        double imgW = img.getWidth();
+        double imgH = img.getHeight();
+        double fitW = mapImageView.getFitWidth();
+        double fitH = mapImageView.getFitHeight();
+        double scale = Math.min(fitW / imgW, fitH / imgH);
+        double renderedW = imgW * scale;
+        double renderedH = imgH * scale;
+        double offsetX = (fitW - renderedW) / 2.0;
+        double offsetY = (fitH - renderedH) / 2.0;
+
+        // event coordinates are relative to markerOverlayPane = same as ImageView fitWidth/fitHeight space
+        double relX = (event.getX() - offsetX) / renderedW;
+        double relY = (event.getY() - offsetY) / renderedH;
+
+        // Reject clicks outside the actual rendered image area
+        if (relX < 0 || relX > 1 || relY < 0 || relY > 1) return;
+
+        // Place or move marker for the selected site
+        pendingMarkers.removeIf(m -> m.getSiteId() == selected.getId());
+        pendingMarkers.add(new SiteMarker(selected.getId(), relX, relY));
+
+        renderMarkersOnOverlay();
+        lblInstruction.setText("Marker placed for: " + selected.getName() + "  \u2014  click again to reposition");
+        recalculateChangeCount();
+        if (lvOnMapSites != null) lvOnMapSites.refresh();
     }
 
     private void renderMarkersOnOverlay() {
@@ -659,7 +652,7 @@ public class EditModeController {
         });
     }
 
-    // ==================== TAB 3: SITES ====================
+    // ==================== SITES TAB ====================
 
     @FXML
     private void onNewSite() {
@@ -749,7 +742,7 @@ public class EditModeController {
         vboxSiteEditor.getChildren().add(btnBox);
     }
 
-    // ==================== TAB 4: TOURS ====================
+    // ==================== TOURS TAB ====================
 
     @FXML
     private void onNewTour() {
@@ -759,6 +752,16 @@ public class EditModeController {
         newTours.add(tour);
         cityTours.add(tour);
         lvTours.getSelectionModel().select(tour);
+    }
+
+    /**
+     * Save the current tour's site list before switching to another tour.
+     */
+    private void saveCurrentTourState() {
+        if (currentEditingTour == null) return;
+        if (currentTourSites != null) {
+            savedTourSitesPerTour.put(currentEditingTour.getId(), new ArrayList<>(currentTourSites));
+        }
     }
 
     private void populateTourEditor(Tour tour) {
@@ -968,18 +971,7 @@ public class EditModeController {
         originalValues.put(fieldKey, origVal);
 
         tf.textProperty().addListener((obs, oldVal, newVal) -> {
-            boolean changed = !origVal.equals(newVal);
-            if (changed) {
-                if (!row.getStyleClass().contains("field-row-changed"))
-                    row.getStyleClass().add("field-row-changed");
-                btnReset.setVisible(true);
-                btnReset.setManaged(true);
-            } else {
-                row.getStyleClass().remove("field-row-changed");
-                btnReset.setVisible(false);
-                btnReset.setManaged(false);
-            }
-            recalculateChangeCount();
+            applyChangeHighlight(row, btnReset, !origVal.equals(newVal));
         });
 
         btnReset.setOnAction(e -> tf.setText(origVal));
@@ -1014,18 +1006,7 @@ public class EditModeController {
         originalValues.put(fieldKey, origVal);
 
         ta.textProperty().addListener((obs, oldVal, newVal) -> {
-            boolean changed = !origVal.equals(newVal);
-            if (changed) {
-                if (!row.getStyleClass().contains("field-row-changed"))
-                    row.getStyleClass().add("field-row-changed");
-                btnReset.setVisible(true);
-                btnReset.setManaged(true);
-            } else {
-                row.getStyleClass().remove("field-row-changed");
-                btnReset.setVisible(false);
-                btnReset.setManaged(false);
-            }
-            recalculateChangeCount();
+            applyChangeHighlight(row, btnReset, !origVal.equals(newVal));
         });
 
         btnReset.setOnAction(e -> ta.setText(origVal));
@@ -1068,18 +1049,7 @@ public class EditModeController {
         btnReset.setManaged(false);
 
         cb.setOnAction(e -> {
-            boolean changed = !Objects.equals(selected, cb.getValue());
-            if (changed) {
-                if (!row.getStyleClass().contains("field-row-changed"))
-                    row.getStyleClass().add("field-row-changed");
-                btnReset.setVisible(true);
-                btnReset.setManaged(true);
-            } else {
-                row.getStyleClass().remove("field-row-changed");
-                btnReset.setVisible(false);
-                btnReset.setManaged(false);
-            }
-            recalculateChangeCount();
+            applyChangeHighlight(row, btnReset, !Objects.equals(selected, cb.getValue()));
         });
 
         btnReset.setOnAction(e -> cb.setValue(selected));
@@ -1108,18 +1078,7 @@ public class EditModeController {
         btnReset.setManaged(false);
 
         cb.selectedProperty().addListener((obs, oldVal, newVal) -> {
-            boolean changed = initialValue != newVal;
-            if (changed) {
-                if (!row.getStyleClass().contains("field-row-changed"))
-                    row.getStyleClass().add("field-row-changed");
-                btnReset.setVisible(true);
-                btnReset.setManaged(true);
-            } else {
-                row.getStyleClass().remove("field-row-changed");
-                btnReset.setVisible(false);
-                btnReset.setManaged(false);
-            }
-            recalculateChangeCount();
+            applyChangeHighlight(row, btnReset, initialValue != newVal);
         });
 
         btnReset.setOnAction(e -> cb.setSelected(initialValue));
@@ -1129,29 +1088,43 @@ public class EditModeController {
         return row;
     }
 
+    private void applyChangeHighlight(HBox row, Button btnReset, boolean changed) {
+        if (changed) {
+            if (!row.getStyleClass().contains("field-row-changed"))
+                row.getStyleClass().add("field-row-changed");
+            btnReset.setVisible(true);
+            btnReset.setManaged(true);
+        } else {
+            row.getStyleClass().remove("field-row-changed");
+            btnReset.setVisible(false);
+            btnReset.setManaged(false);
+        }
+        recalculateChangeCount();
+    }
+
     private Label createPlaceholderLabel(String text) {
         Label lbl = new Label(text);
         lbl.getStyleClass().add("placeholder-label");
         return lbl;
     }
 
-    // ==================== CHANGE COUNTING (snapshot-based) ====================
+    // ==================== CHANGE TRACKING ====================
 
-    /**
-     * Recalculate the total change count by comparing current state to original snapshots.
-     * This ensures add+remove = 0 changes, not 2.
-     */
     private void recalculateChangeCount() {
+        int count = countFieldChanges() + countMapStructureChanges() + countTourStructureChanges();
+        updateChangeCountLabel(count);
+    }
+
+    private int countFieldChanges() {
         int count = 0;
-
-        // 1. Count changed text fields / text areas (field rows with "field-row-changed" class)
         for (HBox row : fieldRows.values()) {
-            if (row.getStyleClass().contains("field-row-changed")) {
-                count++;
-            }
+            if (row.getStyleClass().contains("field-row-changed")) count++;
         }
+        return count;
+    }
 
-        // 2. Count map site assignment and marker changes for ALL maps
+    private int countMapStructureChanges() {
+        int count = 0;
         for (GCMMap map : cityMaps) {
             int mapId = map.getId();
 
@@ -1173,19 +1146,18 @@ public class EditModeController {
                 Set<Integer> currentIds = new HashSet<>();
                 for (Site s : sites) currentIds.add(s.getId());
                 Set<Integer> origIds = originalMapSiteIds.getOrDefault(mapId, new HashSet<>());
-                if (!currentIds.equals(origIds)) {
-                    count++;
-                }
+                if (!currentIds.equals(origIds)) count++;
             }
 
             // Marker changes
             List<SiteMarker> origMarkers = originalMapMarkers.getOrDefault(mapId, new ArrayList<>());
-            if (!markersEqual(markers, origMarkers)) {
-                count++;
-            }
+            if (!markersEqual(markers, origMarkers)) count++;
         }
+        return count;
+    }
 
-        // 3. Count tour site changes for ALL tours (not just current)
+    private int countTourStructureChanges() {
+        int count = 0;
         for (Tour tour : cityTours) {
             int tourId = tour.getId();
             List<Site> tourSites;
@@ -1203,8 +1175,7 @@ public class EditModeController {
                 if (!currentIds.equals(origIds)) count++;
             }
         }
-
-        updateChangeCountLabel(count);
+        return count;
     }
 
     private boolean markersEqual(List<SiteMarker> a, List<SiteMarker> b) {
@@ -1221,38 +1192,121 @@ public class EditModeController {
         return true;
     }
 
-    // ==================== SUBMISSION METHODS ====================
+    // ==================== SUBMISSION & CHANGE REQUESTS ====================
 
-    /**
-     * Build a ContentChangeRequest for city detail changes, or null if nothing changed.
-     */
-    private ContentChangeRequest buildCityChangeRequest() {
-        if (currentCity == null) return null;
-        // Check if any city field changed
-        boolean cityChanged = false;
-        for (String key : fieldRows.keySet()) {
-            if (key.startsWith("city") && fieldRows.get(key).getStyleClass().contains("field-row-changed")) {
-                cityChanged = true;
-                break;
+    @FXML
+    private void onSubmitAll() {
+        // Flush current map/tour state before collecting
+        saveCurrentMapState();
+        saveCurrentTourState();
+
+        String validationError = validateBeforeSubmit();
+        if (validationError != null) {
+            AlertHelper.showWarning("Validation Error", validationError);
+            return;
+        }
+
+        List<ContentChangeRequest> toSubmit = collectAllChangeRequests();
+
+        if (toSubmit.isEmpty()) {
+            AlertHelper.showInfo("Info", "No changes to submit.");
+            return;
+        }
+
+        int count = toSubmit.size();
+        AlertHelper.showConfirmation(
+                "Submit Changes",
+                "Submit " + count + " change(s) for approval?",
+                "Each change will appear as a separate item in the approval queue."
+        ).ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                new Thread(() -> {
+                    int success = 0;
+                    for (ContentChangeRequest req : toSubmit) {
+                        try {
+                            Message request = new Message(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, req);
+                            Message resp = (Message) client.sendRequest(request);
+                            if (resp != null && resp.getAction() == ActionType.SUBMIT_CONTENT_CHANGE_RESPONSE) {
+                                boolean ok = (Boolean) resp.getMessage();
+                                if (ok) success++;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    int finalSuccess = success;
+                    Platform.runLater(() -> {
+                        AlertHelper.showInfo("Submitted", finalSuccess + "/" + toSubmit.size() + " changes submitted for approval.");
+                        // Close the edit mode window
+                        ((Stage) cbCitySelector.getScene().getWindow()).close();
+                    });
+                }).start();
+            }
+        });
+    }
+
+    private String validateBeforeSubmit() {
+        // Validate: no map should end up with zero sites (only if the editor removed them)
+        for (GCMMap map : cityMaps) {
+            List<Site> sites = savedMapSitesPerMap.get(map.getId());
+            Set<Integer> origIds = originalMapSiteIds.getOrDefault(map.getId(), new HashSet<>());
+            if (sites != null && sites.isEmpty() && !origIds.isEmpty()) {
+                return "Map \"" + map.getName() + "\" must contain at least one site. Please add a site before submitting.";
             }
         }
-        if (!cityChanged) return null;
+        return validateAllFields();
+    }
+
+    private List<ContentChangeRequest> collectAllChangeRequests() {
+        List<ContentChangeRequest> toSubmit = new ArrayList<>();
+
+        ContentChangeRequest cityReq = buildCityChangeRequest();
+        if (cityReq != null) toSubmit.add(cityReq);
+
+        // Build change requests for ALL maps (not just current)
+        for (GCMMap map : cityMaps) {
+            ContentChangeRequest mapReq = buildMapChangeRequestForMap(map);
+            if (mapReq != null) toSubmit.add(mapReq);
+        }
+
+        // Build change requests for ALL sites (including temp new sites)
+        for (Site site : citySites) {
+            if (isTempSite(site)) {
+                ContentChangeRequest siteReq = buildNewSiteChangeRequest(site);
+                if (siteReq != null) toSubmit.add(siteReq);
+            } else {
+                ContentChangeRequest siteReq = buildSiteChangeRequestForSite(site);
+                if (siteReq != null) toSubmit.add(siteReq);
+            }
+        }
+
+        // Build change requests for ALL tours (including temp new tours)
+        for (Tour tour : cityTours) {
+            if (isTempTour(tour)) {
+                ContentChangeRequest tourReq = buildNewTourChangeRequest(tour);
+                if (tourReq != null) toSubmit.add(tourReq);
+            } else {
+                ContentChangeRequest tourReq = buildTourChangeRequestForTour(tour);
+                if (tourReq != null) toSubmit.add(tourReq);
+            }
+        }
+
+        return toSubmit;
+    }
+
+    private ContentChangeRequest buildCityChangeRequest() {
+        if (currentCity == null) return null;
+        if (!hasChangedFieldsWithPrefix("city")) return null;
 
         String name = getFieldValue("cityName");
         String desc = getTextAreaValue("cityDesc");
         if (name == null || name.trim().isEmpty()) return null;
 
         String json = buildCityJson(name, desc);
-        User currentUser = client.getCurrentUser();
-        Integer requesterId = currentUser != null ? currentUser.getId() : null;
-        return new ContentChangeRequest(requesterId, ContentActionType.EDIT, ContentType.CITY,
+        return makeChangeRequest(ContentActionType.EDIT, ContentType.CITY,
                 currentCity.getId(), currentCity.getName(), json);
     }
 
-    /**
-     * Build a ContentChangeRequest for a specific map, or null if nothing changed.
-     * Uses per-map saved state for markers and sites.
-     */
     private ContentChangeRequest buildMapChangeRequestForMap(GCMMap map) {
         if (map == null || currentCity == null) return null;
         int mapId = map.getId();
@@ -1292,15 +1346,10 @@ public class EditModeController {
         String name = getFieldValue(nameKey);
         String desc = getTextAreaValue(descKey);
         String json = buildMapJsonForMap(map, name, desc, markers, sites);
-        User currentUser = client.getCurrentUser();
-        Integer requesterId = currentUser != null ? currentUser.getId() : null;
-        return new ContentChangeRequest(requesterId, ContentActionType.EDIT, ContentType.MAP,
+        return makeChangeRequest(ContentActionType.EDIT, ContentType.MAP,
                 mapId, currentCity.getName() + " - " + map.getName(), json);
     }
 
-    /**
-     * Build a ContentChangeRequest for a new (temp) site, or null if fields are empty.
-     */
     private ContentChangeRequest buildNewSiteChangeRequest(Site site) {
         if (currentCity == null || site == null) return null;
 
@@ -1319,15 +1368,10 @@ public class EditModeController {
         SiteDuration duration = getComboValue(prefix + "_dur");
         String json = buildSiteJson(name, desc, category, accessible, duration, location);
 
-        User currentUser = client.getCurrentUser();
-        Integer requesterId = currentUser != null ? currentUser.getId() : null;
-        return new ContentChangeRequest(requesterId, ContentActionType.ADD, ContentType.SITE,
+        return makeChangeRequest(ContentActionType.ADD, ContentType.SITE,
                 currentCity.getId(), currentCity.getName() + " - " + name, json);
     }
 
-    /**
-     * Build a ContentChangeRequest for a new (temp) tour, or null if fields are empty.
-     */
     private ContentChangeRequest buildNewTourChangeRequest(Tour tour) {
         if (currentCity == null || tour == null) return null;
 
@@ -1354,16 +1398,10 @@ public class EditModeController {
         }
         String json = buildTourJson(name, desc, duration, siteIds);
 
-        User currentUser = client.getCurrentUser();
-        Integer requesterId = currentUser != null ? currentUser.getId() : null;
-        return new ContentChangeRequest(requesterId, ContentActionType.ADD, ContentType.TOUR,
+        return makeChangeRequest(ContentActionType.ADD, ContentType.TOUR,
                 currentCity.getId(), currentCity.getName() + " - " + name, json);
     }
 
-    /**
-     * Build a ContentChangeRequest for a specific site (by reference), or null if nothing changed.
-     * Used by onSubmitAll to iterate all sites.
-     */
     private ContentChangeRequest buildSiteChangeRequestForSite(Site site) {
         if (site == null || currentCity == null) return null;
         String prefix = "site_" + site.getId();
@@ -1371,15 +1409,7 @@ public class EditModeController {
         // Skip sites that were never opened in the editor
         if (!fieldRows.containsKey(prefix + "_name")) return null;
 
-        // Check if any site field changed
-        boolean changed = false;
-        for (String key : fieldRows.keySet()) {
-            if (key.startsWith(prefix) && fieldRows.get(key).getStyleClass().contains("field-row-changed")) {
-                changed = true;
-                break;
-            }
-        }
-        if (!changed) return null;
+        if (!hasChangedFieldsWithPrefix(prefix)) return null;
 
         String name = getFieldValue(prefix + "_name");
         String desc = getTextAreaValue(prefix + "_desc");
@@ -1391,16 +1421,10 @@ public class EditModeController {
         SiteDuration duration = getComboValue(prefix + "_dur");
         String json = buildSiteJson(name, desc, category, accessible, duration, location);
 
-        User currentUser = client.getCurrentUser();
-        Integer requesterId = currentUser != null ? currentUser.getId() : null;
-        return new ContentChangeRequest(requesterId, ContentActionType.EDIT, ContentType.SITE,
+        return makeChangeRequest(ContentActionType.EDIT, ContentType.SITE,
                 site.getId(), currentCity.getName() + " - " + site.getName(), json);
     }
 
-    /**
-     * Build a ContentChangeRequest for a specific tour (by reference), or null if nothing changed.
-     * Used by onSubmitAll to iterate all tours.
-     */
     private ContentChangeRequest buildTourChangeRequestForTour(Tour tour) {
         if (tour == null || currentCity == null) return null;
         int tourId = tour.getId();
@@ -1410,13 +1434,7 @@ public class EditModeController {
         if (!fieldRows.containsKey(prefix + "_name")) return null;
 
         // Check if any tour field changed
-        boolean changed = false;
-        for (String key : fieldRows.keySet()) {
-            if (key.startsWith(prefix) && fieldRows.get(key).getStyleClass().contains("field-row-changed")) {
-                changed = true;
-                break;
-            }
-        }
+        boolean changed = hasChangedFieldsWithPrefix(prefix);
 
         // Check tour site list changes
         List<Site> sites;
@@ -1447,48 +1465,57 @@ public class EditModeController {
         }
         String json = buildTourJson(name, desc, duration, siteIds);
 
-        User currentUser = client.getCurrentUser();
-        Integer requesterId = currentUser != null ? currentUser.getId() : null;
-        return new ContentChangeRequest(requesterId, ContentActionType.EDIT, ContentType.TOUR,
+        return makeChangeRequest(ContentActionType.EDIT, ContentType.TOUR,
                 tourId, currentCity.getName() + " - " + tour.getName(), json);
     }
+
+    private void submitContentChange(ContentActionType actionType, ContentType contentType,
+                                      int targetId, String targetName, String json, String successMsg) {
+        ContentChangeRequest changeRequest = makeChangeRequest(actionType, contentType, targetId, targetName, json);
+
+        new Thread(() -> {
+            try {
+                Message request = new Message(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, changeRequest);
+                Message response = (Message) client.sendRequest(request);
+
+                Platform.runLater(() -> {
+                    if (response != null && response.getAction() == ActionType.SUBMIT_CONTENT_CHANGE_RESPONSE) {
+                        boolean success = (Boolean) response.getMessage();
+                        if (success) {
+                            AlertHelper.showInfo("Success", successMsg);
+                        } else {
+                            AlertHelper.showWarning("Error", "Failed to submit change.");
+                        }
+                    } else {
+                        AlertHelper.showWarning("Error", "Server error.");
+                    }
+                });
+            } catch (Exception e) {
+                Platform.runLater(() -> AlertHelper.showWarning("Error", "Error: " + e.getMessage()));
+            }
+        }).start();
+    }
+
+    // ==================== DELETION HANDLERS ====================
 
     private void onDeleteSite(Site site) {
         if (site == null || currentCity == null) return;
 
         if (isTempSite(site)) {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Remove New Site");
-            confirm.setHeaderText("Remove: " + site.getName());
-            confirm.setContentText("This will discard the new site.");
-            confirm.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    citySites.remove(site);
-                    newSites.remove(site);
-                    // Clean up field rows with this site's prefix
-                    String prefix = "site_" + site.getId();
-                    fieldRows.entrySet().removeIf(e -> e.getKey().startsWith(prefix));
-                    originalValues.entrySet().removeIf(e -> e.getKey().startsWith(prefix));
-                    // Clear editor
-                    currentEditingSite = null;
-                    vboxSiteEditor.getChildren().clear();
-                    vboxSiteEditor.getChildren().add(createPlaceholderLabel("Select a site to edit"));
-                    recalculateChangeCount();
-                }
+            removeTempItem("Site", site.getName(), () -> {
+                citySites.remove(site);
+                newSites.remove(site);
+                String prefix = "site_" + site.getId();
+                fieldRows.entrySet().removeIf(e -> e.getKey().startsWith(prefix));
+                originalValues.entrySet().removeIf(e -> e.getKey().startsWith(prefix));
+                currentEditingSite = null;
+                vboxSiteEditor.getChildren().clear();
+                vboxSiteEditor.getChildren().add(createPlaceholderLabel("Select a site to edit"));
             });
         } else {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Confirm Deletion");
-            confirm.setHeaderText("Delete Site: " + site.getName());
-            confirm.setContentText("This will submit a deletion request for approval.");
-            confirm.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    String json = "{\"name\":\"" + escapeJson(site.getName()) + "\"}";
-                    submitContentChange(ContentActionType.DELETE, ContentType.SITE, site.getId(),
-                            currentCity.getName() + " - " + site.getName(), json,
-                            "Site deletion submitted for approval.");
-                }
-            });
+            String json = "{\"name\":\"" + escapeJson(site.getName()) + "\"}";
+            submitDeletion("Site", ContentType.SITE, site.getId(), site.getName(),
+                    json, "Site deletion submitted for approval.");
         }
     }
 
@@ -1496,52 +1523,33 @@ public class EditModeController {
         if (tour == null || currentCity == null) return;
 
         if (isTempTour(tour)) {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Remove New Tour");
-            confirm.setHeaderText("Remove: " + tour.getName());
-            confirm.setContentText("This will discard the new tour.");
-            confirm.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    cityTours.remove(tour);
-                    newTours.remove(tour);
-                    // Clean up field rows with this tour's prefix
-                    String prefix = "tour_" + tour.getId();
-                    fieldRows.entrySet().removeIf(e -> e.getKey().startsWith(prefix));
-                    originalValues.entrySet().removeIf(e -> e.getKey().startsWith(prefix));
-                    savedTourSitesPerTour.remove(tour.getId());
-                    // Clear editor
-                    currentEditingTour = null;
-                    vboxTourEditor.getChildren().clear();
-                    vboxTourEditor.getChildren().add(createPlaceholderLabel("Select a tour to edit"));
-                    recalculateChangeCount();
-                }
+            removeTempItem("Tour", tour.getName(), () -> {
+                cityTours.remove(tour);
+                newTours.remove(tour);
+                String prefix = "tour_" + tour.getId();
+                fieldRows.entrySet().removeIf(e -> e.getKey().startsWith(prefix));
+                originalValues.entrySet().removeIf(e -> e.getKey().startsWith(prefix));
+                savedTourSitesPerTour.remove(tour.getId());
+                currentEditingTour = null;
+                vboxTourEditor.getChildren().clear();
+                vboxTourEditor.getChildren().add(createPlaceholderLabel("Select a tour to edit"));
             });
         } else {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Confirm Deletion");
-            confirm.setHeaderText("Delete Tour: " + tour.getName());
-            confirm.setContentText("This will submit a deletion request for approval.");
-            confirm.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    String json = "{\"name\":\"" + escapeJson(tour.getName()) + "\"}";
-                    submitContentChange(ContentActionType.DELETE, ContentType.TOUR, tour.getId(),
-                            currentCity.getName() + " - " + tour.getName(), json,
-                            "Tour deletion submitted for approval.");
-                }
-            });
+            String json = "{\"name\":\"" + escapeJson(tour.getName()) + "\"}";
+            submitDeletion("Tour", ContentType.TOUR, tour.getId(), tour.getName(),
+                    json, "Tour deletion submitted for approval.");
         }
     }
 
     private void onDeleteMap(GCMMap map) {
         if (map == null || currentCity == null) return;
 
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Confirm Map Deletion");
-        confirm.setHeaderText("Delete Map: " + map.getName());
-        confirm.setContentText(
+        AlertHelper.showConfirmation(
+                "Confirm Map Deletion",
+                "Delete Map: " + map.getName(),
                 "This will revert the map to the external system, removing all GCM-specific data " +
-                "(sites, markers, price). Continue?");
-        confirm.showAndWait().ifPresent(response -> {
+                "(sites, markers, price). Continue?"
+        ).ifPresent(response -> {
             if (response == ButtonType.OK) {
                 String json = "{\"mapId\":" + map.getId() +
                         ",\"mapName\":\"" + escapeJson(map.getName()) +
@@ -1553,130 +1561,31 @@ public class EditModeController {
         });
     }
 
-    @FXML
-    private void onSubmitAll() {
-        // Flush current map/tour state before collecting
-        saveCurrentMapState();
-        saveCurrentTourState();
-
-        // Validate: no map should end up with zero sites (only if the editor removed them)
-        for (GCMMap map : cityMaps) {
-            List<Site> sites = savedMapSitesPerMap.get(map.getId());
-            Set<Integer> origIds = originalMapSiteIds.getOrDefault(map.getId(), new HashSet<>());
-            if (sites != null && sites.isEmpty() && !origIds.isEmpty()) {
-                showAlert("Error", "Map \"" + map.getName() + "\" must contain at least one site. Please add a site before submitting.");
-                return;
-            }
-        }
-
-        // Validate name/description fields — no empty or space-prefixed values
-        String validationError = validateAllFields();
-        if (validationError != null) {
-            showAlert("Validation Error", validationError);
-            return;
-        }
-
-        // Collect all change requests from current state
-        List<ContentChangeRequest> toSubmit = new ArrayList<>();
-
-        ContentChangeRequest cityReq = buildCityChangeRequest();
-        if (cityReq != null) toSubmit.add(cityReq);
-
-        // Build change requests for ALL maps (not just current)
-        for (GCMMap map : cityMaps) {
-            ContentChangeRequest mapReq = buildMapChangeRequestForMap(map);
-            if (mapReq != null) toSubmit.add(mapReq);
-        }
-
-        // Build change requests for ALL sites (including temp new sites)
-        for (Site site : citySites) {
-            if (isTempSite(site)) {
-                ContentChangeRequest siteReq = buildNewSiteChangeRequest(site);
-                if (siteReq != null) toSubmit.add(siteReq);
-            } else {
-                ContentChangeRequest siteReq = buildSiteChangeRequestForSite(site);
-                if (siteReq != null) toSubmit.add(siteReq);
-            }
-        }
-
-        // Build change requests for ALL tours (including temp new tours)
-        for (Tour tour : cityTours) {
-            if (isTempTour(tour)) {
-                ContentChangeRequest tourReq = buildNewTourChangeRequest(tour);
-                if (tourReq != null) toSubmit.add(tourReq);
-            } else {
-                ContentChangeRequest tourReq = buildTourChangeRequestForTour(tour);
-                if (tourReq != null) toSubmit.add(tourReq);
-            }
-        }
-
-        if (toSubmit.isEmpty()) {
-            showAlert("Info", "No changes to submit.");
-            return;
-        }
-
-        int count = toSubmit.size();
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Submit Changes");
-        confirm.setHeaderText("Submit " + count + " change(s) for approval?");
-        confirm.setContentText("Each change will appear as a separate item in the approval queue.");
-        confirm.showAndWait().ifPresent(response -> {
+    private void removeTempItem(String entityType, String name, Runnable cleanupAction) {
+        AlertHelper.showConfirmation(
+                "Remove New " + entityType,
+                "Remove: " + name,
+                "This will discard the new " + entityType.toLowerCase() + "."
+        ).ifPresent(response -> {
             if (response == ButtonType.OK) {
-                new Thread(() -> {
-                    int success = 0;
-                    for (ContentChangeRequest req : toSubmit) {
-                        try {
-                            Message request = new Message(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, req);
-                            Message resp = (Message) client.sendRequest(request);
-                            if (resp != null && resp.getAction() == ActionType.SUBMIT_CONTENT_CHANGE_RESPONSE) {
-                                boolean ok = (Boolean) resp.getMessage();
-                                if (ok) success++;
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    int finalSuccess = success;
-                    Platform.runLater(() -> {
-                        showAlert("Submitted", finalSuccess + "/" + toSubmit.size() + " changes submitted for approval.");
-                        // Close the edit mode window
-                        ((Stage) cbCitySelector.getScene().getWindow()).close();
-                    });
-                }).start();
+                cleanupAction.run();
+                recalculateChangeCount();
             }
         });
     }
 
-    private void submitContentChange(ContentActionType actionType, ContentType contentType,
-                                      int targetId, String targetName, String json, String successMsg) {
-        User currentUser = client.getCurrentUser();
-        Integer requesterId = currentUser != null ? currentUser.getId() : null;
-
-        ContentChangeRequest changeRequest = new ContentChangeRequest(
-                requesterId, actionType, contentType, targetId, targetName, json
-        );
-
-        new Thread(() -> {
-            try {
-                Message request = new Message(ActionType.SUBMIT_CONTENT_CHANGE_REQUEST, changeRequest);
-                Message response = (Message) client.sendRequest(request);
-
-                Platform.runLater(() -> {
-                    if (response != null && response.getAction() == ActionType.SUBMIT_CONTENT_CHANGE_RESPONSE) {
-                        boolean success = (Boolean) response.getMessage();
-                        if (success) {
-                            showAlert("Success", successMsg);
-                        } else {
-                            showAlert("Error", "Failed to submit change.");
-                        }
-                    } else {
-                        showAlert("Error", "Server error.");
-                    }
-                });
-            } catch (Exception e) {
-                Platform.runLater(() -> showAlert("Error", "Error: " + e.getMessage()));
+    private void submitDeletion(String entityType, ContentType contentType, int id, String name,
+                                 String json, String successMsg) {
+        AlertHelper.showConfirmation(
+                "Confirm Deletion",
+                "Delete " + entityType + ": " + name,
+                "This will submit a deletion request for approval."
+        ).ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                submitContentChange(ContentActionType.DELETE, contentType, id,
+                        currentCity.getName() + " - " + name, json, successMsg);
             }
-        }).start();
+        });
     }
 
     // ==================== JSON BUILDERS ====================
@@ -1744,7 +1653,7 @@ public class EditModeController {
         return sb.toString();
     }
 
-    // ==================== HELPER METHODS ====================
+    // ==================== UTILITIES ====================
 
     private String getFieldValue(String fieldKey) {
         HBox row = fieldRows.get(fieldKey);
@@ -1781,6 +1690,22 @@ public class EditModeController {
             if (node instanceof CheckBox) return ((CheckBox) node).isSelected();
         }
         return null;
+    }
+
+    private boolean hasChangedFieldsWithPrefix(String prefix) {
+        for (String key : fieldRows.keySet()) {
+            if (key.startsWith(prefix) && fieldRows.get(key).getStyleClass().contains("field-row-changed")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private ContentChangeRequest makeChangeRequest(ContentActionType action, ContentType type,
+                                                    int targetId, String targetName, String json) {
+        User currentUser = client.getCurrentUser();
+        Integer requesterId = currentUser != null ? currentUser.getId() : null;
+        return new ContentChangeRequest(requesterId, action, type, targetId, targetName, json);
     }
 
     private void resetChangeTracking() {
@@ -1827,10 +1752,6 @@ public class EditModeController {
         ((Stage) cbCitySelector.getScene().getWindow()).close();
     }
 
-    /**
-     * Validates all name and description fields for empty/whitespace/space-prefix.
-     * @return null if all valid, or an error message string
-     */
     private String validateAllFields() {
         for (Map.Entry<String, HBox> entry : fieldRows.entrySet()) {
             String key = entry.getKey();
@@ -1861,9 +1782,6 @@ public class EditModeController {
         return null;
     }
 
-    /**
-     * Converts a field key to a human-readable label.
-     */
     private String getEntityLabelFromKey(String key) {
         if (key.equals("cityName")) return "City name";
         if (key.equals("cityDesc")) return "City description";
@@ -1874,13 +1792,5 @@ public class EditModeController {
         if (key.startsWith("tour_") && key.endsWith("_name")) return "Tour name";
         if (key.startsWith("tour_") && key.endsWith("_desc")) return "Tour description";
         return "Field (" + key + ")";
-    }
-
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }
