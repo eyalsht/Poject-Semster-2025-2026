@@ -78,7 +78,7 @@ public class SupportPageController
         // Attach list items
         chatList.setItems(chatItems);
 
-        // ✅ IMPORTANT: keep the custom renderer, otherwise you get ChatItem@xxxx
+
         chatList.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(ChatItem item, boolean empty) {
@@ -256,7 +256,7 @@ public class SupportPageController
                     chatList.scrollTo(chatItems.size() - 1);
                 },
                 (Throwable err) -> addBot("Support system error: " + err.getMessage()),
-                () -> btnSend.setDisable(false)   // ✅ always executed
+                () -> btnSend.setDisable(false)
         );
     }
 

@@ -151,8 +151,7 @@ public class SupportTasksPageController {
             replyText.setPromptText("Write reply...");
         }
 
-        // IMPORTANT: DO NOT set inline styles here.
-        // Let theme.css control .text-area and .text-area:readonly so it won’t turn grey.
+        //theme.css control .text-area and .text-area:readonly so it won’t turn grey.
 
         Label lblClient = new Label("Client message:");
         lblClient.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");

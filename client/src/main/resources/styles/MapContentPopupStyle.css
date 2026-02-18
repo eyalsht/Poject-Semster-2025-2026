@@ -1,16 +1,13 @@
-/* הגדרת צבע רקע אחיד לכל החלונית */
 .tab-pane {
     -fx-background-color: #2c3e50;
 }
 
-/* ביטול הרקע האפור/לבן המקורי של אזור כותרות הטאבים */
 .tab-pane .tab-header-area .tab-header-background {
     -fx-opacity: 0;
 }
 
-/* עיצוב הטאבים (SITES / TOURS) שייראו כמו כפתורי התפריט הראשי */
 .tab-pane .tab {
-    -fx-background-color: rgba(255, 255, 255, 0.1); /* חצי שקוף כמו ה-Login */
+    -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-background-radius: 15;
     -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-border-radius: 15;
@@ -19,25 +16,21 @@
     -fx-cursor: hand;
 }
 
-/* עיצוב הטאב כשהוא נבחר (פעיל) */
 .tab-pane .tab:selected {
-    -fx-background-color: #3498db; /* כחול בולט */
+    -fx-background-color: #3498db;
     -fx-border-color: #5dade2;
 }
 
-/* צבע הטקסט בתוך הטאבים */
 .tab-pane .tab .tab-label {
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 14px;
 }
 
-/* הפיכת אזור התוכן לשקוף כדי שהכחול של ה-VBox ייראה דרכו */
 .tab-pane .tab-content-area {
     -fx-background-color: transparent;
 }
 
-/* עיצוב פסי הגלילה שיהיו שקופים ולא יכערו את החלונית */
 .scroll-pane {
     -fx-background-color: transparent;
     -fx-background: transparent;

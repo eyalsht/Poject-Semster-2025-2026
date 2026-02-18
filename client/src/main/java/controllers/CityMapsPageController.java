@@ -114,7 +114,7 @@ public class CityMapsPageController {
     }
 
     private void loadMapsFromServer(String cityName) {
-        if (isLoading) return; // אם כבר יש טעינה בדרך, אל תתחיל חדשה
+        if (isLoading) return;
 
         isLoading = true;
         new Thread(() -> {
@@ -130,7 +130,7 @@ public class CityMapsPageController {
                             renderMapCards(selectedCity.getMaps());
                         }
 
-                        isLoading = false; // שחרור המנעול לאחר העדכון
+                        isLoading = false;
                 });
             } catch (Exception e) {
                 isLoading = false;
@@ -146,7 +146,6 @@ public class CityMapsPageController {
 
                 Platform.runLater(() -> {
                     if (response != null && response.getAction() == ActionType.GET_CITY_TOURS_RESPONSE) {
-                        @SuppressWarnings("unchecked")
                         List<Tour> tours = (List<Tour>) response.getMessage();
                         if (selectedCity != null) {
                             selectedCity.setTours(tours);
@@ -176,7 +175,7 @@ public class CityMapsPageController {
         java.util.Set<Integer> seenMapIds = new java.util.HashSet<>();
 
 
-        // 2. הכנת רשימת הכרטיסים ב-Thread הנוכחי (לא ב-UI Thread) כדי לא לתקוע את המסך
+
         List<Parent> newCards = new java.util.ArrayList<>();
         for (GCMMap map : maps) {
             if (map != null && !seenMapIds.contains(map.getId())) {
@@ -202,27 +201,7 @@ public class CityMapsPageController {
                 System.out.println("Displaying " + newCards.size() + " unique maps for " + selectedCity.getName());
             }
         });
-      /*  Platform.runLater(() -> {
-        flowPaneMaps.getChildren().clear();
 
-        if (maps == null || maps.isEmpty()) {
-            Label noMaps = new Label("No maps available for this city.");
-            flowPaneMaps.getChildren().add(noMaps);
-            return;
-        }
-        selectedCity.setMaps(maps);
-        for (GCMMap map : maps) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
-                Parent card = loader.load();
-                MapCardController controller = loader.getController();
-                controller.setData(map);
-                flowPaneMaps.getChildren().add(card);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    });*/
     }
 
     private void renderMapCards(List<GCMMap> mapsToDisplay) {
@@ -260,9 +239,9 @@ public class CityMapsPageController {
             if (selectedCity == null || selectedCity.getMaps() == null ) return;
 
             try {
-                // 2. מעבר על רשימת המפות של העיר שנבחרה
+
                 for (GCMMap map : selectedCity.getMaps()) {
-                    // טעינת ה-FXML של כרטיס המפה הבודד (MapCard.fxml)
+
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/MapCard.fxml"));
                     Parent card = loader.load();
 

@@ -34,7 +34,6 @@ public class CityCardController {
     private Object mainController;
 
     public void setData(GCMMap mapData, Object controller) {
-        //this.mainController = mainController;
         this.mainController = controller;
         this.city = mapData.getCity();
         if (controller == null) {
@@ -120,7 +119,7 @@ public class CityCardController {
 
         if (mainController instanceof CatalogPageController catalog) {
             System.out.println("DEBUG: Navigating to city maps for: " + city.getName()); //
-            logCityEnterViewIfClient();   // ✅ only once
+            logCityEnterViewIfClient();
             catalog.showCityMaps(city);
         }
         else if (mainController instanceof CityMapsPageController) {

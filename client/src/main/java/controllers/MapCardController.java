@@ -189,7 +189,7 @@ public class MapCardController {
     @FXML
     private void onMapClicked(MouseEvent event)
     {
-        if (event != null) event.consume(); // ✅ prevent parent (city) click handler
+        if (event != null) event.consume(); // prevent parent (city) click handler
 
         if (currentMap == null) return;
         if (logViewsFromCatalogOnly) {

@@ -291,7 +291,6 @@
     -fx-background-color: rgba(52,152,219,0.35);
 }
 
-/* ✅ Selected row text = GREEN (including inbox read/unread) */
 .table-row-cell:filled:selected .table-cell {
     -fx-text-fill: #bff2bf;
     -fx-font-weight: bold;
@@ -348,7 +347,6 @@
 .table-row-cell:unread { -fx-background-color: #bff2bf; } /* green */
 .table-row-cell:read   { -fx-background-color: #f2f2f2; } /* grey */
 
-/* ✅ IMPORTANT: when unread/read row is selected, keep it readable */
 .table-row-cell:unread:selected,
 .table-row-cell:read:selected {
     -fx-background-color: rgba(52,152,219,0.35);

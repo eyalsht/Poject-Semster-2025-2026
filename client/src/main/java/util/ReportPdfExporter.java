@@ -249,7 +249,7 @@ public class ReportPdfExporter {
     private static PageCtx newLandscapePage(PDDocument doc) {
         PageCtx ctx = new PageCtx();
 
-        // Create landscape A4 by swapping width/height (works with older PDFBox)
+        // Create landscape A4 by swapping width/height
         PDRectangle a4 = PDRectangle.A4;
         PDRectangle landscape = new PDRectangle(a4.getHeight(), a4.getWidth());
 
