@@ -27,9 +27,8 @@ public class SupportService {
             }
 
             // ---- Topic 1: membership expiry ----
-            if ("MEMBERSHIP_EXPIRE".equals(req.getTopic())) {
-
-                // Query all subscriptions for this user
+            if ("MEMBERSHIP_EXPIRE".equals(req.getTopic()))
+            {
                 List<Subscription> subs = session.createQuery(
                         "select s from Subscription s where s.user.id = :uid",
                         Subscription.class
