@@ -18,10 +18,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import util.AlertHelper;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Controller for the Price Update Request dialog.
@@ -197,6 +199,18 @@ public class PriceUpdateDialogController {
     private void onCitySelected() {
         City basicCity = cbCitySelect.getValue();
         if (basicCity == null) return;
+
+        // Warn if there are unsaved price changes
+        if (selectedCity != null && changeCount > 0) {
+            Optional<ButtonType> result = AlertHelper.showConfirmation(
+                    "Unsaved Changes",
+                    "You have unsaved price changes in " + selectedCity.getName(),
+                    "Switching cities will discard all changes. Continue?");
+            if (result.isEmpty() || result.get() != ButtonType.OK) {
+                cbCitySelect.setValue(selectedCity);
+                return;
+            }
+        }
 
         btnSubmit.setDisable(true);
         vboxMapPrices.getChildren().clear();
