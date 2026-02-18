@@ -17,7 +17,7 @@ public class SupportTicket implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // who opened the ticket
+    // who opened the ticket (client)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private User client;
@@ -66,7 +66,7 @@ public class SupportTicket implements Serializable {
         this.status = SupportTicketStatus.OPEN;
     }
 
-    // ===== getters/setters =====
+    //getters and setters
     public int getId() { return id; }
     public User getClient() { return client; }
     public String getTopic() { return topic; }

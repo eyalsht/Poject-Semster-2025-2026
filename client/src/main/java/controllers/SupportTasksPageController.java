@@ -49,7 +49,7 @@ public class SupportTasksPageController {
         tblTickets.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
                 SupportTicketRowDTO selected = tblTickets.getSelectionModel().getSelectedItem();
-                if (selected != null) onOpen(); // reuse same logic as the button
+                if (selected != null) onOpen();
             }
         });
 
@@ -74,20 +74,16 @@ public class SupportTasksPageController {
                         rows.addAll(r.getRows());
 
                         rows.sort((a, b) -> {
-                            // OPEN first, DONE after
                             int ga = (a.getStatus() == SupportTicketStatus.OPEN) ? 0 : 1;
                             int gb = (b.getStatus() == SupportTicketStatus.OPEN) ? 0 : 1;
                             if (ga != gb) return Integer.compare(ga, gb);
-
-                            // OPEN: createdAt ASC (oldest first)
-                            if (a.getStatus() == SupportTicketStatus.OPEN) {
+                            if (a.getStatus() == SupportTicketStatus.OPEN)
+                            {
                                 if (a.getCreatedAt() == null && b.getCreatedAt() == null) return 0;
                                 if (a.getCreatedAt() == null) return 1;
                                 if (b.getCreatedAt() == null) return -1;
                                 return a.getCreatedAt().compareTo(b.getCreatedAt());
                             }
-
-                            // DONE: repliedAt DESC (newest first)
                             if (a.getRepliedAt() == null && b.getRepliedAt() == null) return 0;
                             if (a.getRepliedAt() == null) return 1;
                             if (b.getRepliedAt() == null) return -1;
@@ -113,15 +109,10 @@ public class SupportTasksPageController {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Ticket #" + row.getTicketId());
         dialog.getDialogPane().setStyle("-fx-background-color: #1e1e2e;");
-
-
-        // Apply BOTH stylesheets (theme + purchase-history)
         String themeCss = getClass().getResource("/styles/theme.css").toExternalForm();
         String phCss = getClass().getResource("/styles/purchase-history.css").toExternalForm();
 
         dialog.getDialogPane().getStylesheets().addAll(themeCss, phCss);
-
-        // Dialog creates its Scene late => make sure Scene also gets both CSS files
         dialog.getDialogPane().sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
                 if (!newScene.getStylesheets().contains(themeCss)) newScene.getStylesheets().add(themeCss);
@@ -151,8 +142,6 @@ public class SupportTasksPageController {
             replyText.setPromptText("Write reply...");
         }
 
-        // IMPORTANT: DO NOT set inline styles here.
-        // Let theme.css control .text-area and .text-area:readonly so it won’t turn grey.
 
         Label lblClient = new Label("Client message:");
         lblClient.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
