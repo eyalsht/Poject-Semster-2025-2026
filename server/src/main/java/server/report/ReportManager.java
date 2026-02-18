@@ -20,8 +20,6 @@ public class ReportManager
     public ReportManager(SessionFactory sf)
     {
         this.ctx = new ReportRequestContext(sf);
-
-        // one place to rule them all (all report i mean)
         register(new ActivityReportService());
         register(new ClientsReportService());
         register(new PurchasesReportService());
@@ -53,6 +51,7 @@ public class ReportManager
     }
 
 
+    // internal helper
     public interface ParamAwareReportService extends ReportService {
         Object generate(ReportRequestContext ctx, Object... params);
     }

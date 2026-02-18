@@ -17,9 +17,6 @@ public class ApproveContentHandler implements RequestHandler {
     public Message handle(Message request) {
         try {
             int pendingId = (Integer) request.getMessage();
-
-            // TODO: Get the approver user from the request if needed
-            // For now, passing null as approver
             String error = repository.approveWithError(pendingId, null);
 
             if (error == null) {

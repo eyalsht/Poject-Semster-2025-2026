@@ -16,8 +16,6 @@ public class GetCityToursHandler implements RequestHandler{
         try{
             String cityName = (String) request.getMessage();
             List<Tour> allCityTours = tp.findToursByCityName(cityName);
-
-            // Break circular references before serialization:
             // Tour -> Sites -> City -> (all Tours, Sites, Maps) -> ...
             for (Tour tour : allCityTours) {
                 tour.setCity(null);

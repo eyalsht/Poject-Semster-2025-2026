@@ -85,17 +85,6 @@ public class GcmServer extends AbstractServer {
         System.out.println("  GCM Server started on port " + getPort());
         System.out.println("===========================================");
 
-        /*try {
-            HibernateUtil.initialize("dbHibernate.cfg.xml");
-            System.out.println("✓ Database connected via Hibernate");
-            System.out.println("✓ Handler registry initialized");
-            System.out.println("Server ready to accept connections.");
-        } catch (Exception e) {
-            System.err.println("✗ Failed to initialize server:");
-            e.printStackTrace();
-        }
-
-         */
     }
 
     // ==================== SESSION MANAGEMENT ====================

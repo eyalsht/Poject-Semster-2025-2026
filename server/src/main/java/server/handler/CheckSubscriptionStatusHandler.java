@@ -19,8 +19,6 @@ public class CheckSubscriptionStatusHandler implements RequestHandler {
             int cityId = params.get(1);
 
             PurchaseRepository purchaseRepo = PurchaseRepository.getInstance();
-
-            // Use native SQL to avoid loading full entities (which corrupts connection pool)
             Object[] row = purchaseRepo.checkSubscriptionStatusNative(userId, cityId);
 
             if (row == null) {

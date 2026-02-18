@@ -14,16 +14,13 @@ public class DenyContentHandler implements RequestHandler {
 
     @Override
     public Message handle(Message request) {
-        try {
+        try
+        {
             int pendingId = (Integer) request.getMessage();
-            
-            // TODO: Get the denier user from the request if needed
-            // For now, passing null as denier
             boolean success = repository.deny(pendingId, null);
-            
             return new Message(ActionType.DENY_CONTENT_RESPONSE, success);
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             return new Message(ActionType.ERROR, "Error denying content request: " + e.getMessage());
         }

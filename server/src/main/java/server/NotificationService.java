@@ -12,10 +12,18 @@ import java.util.Properties;
 
 public class NotificationService
 {
+    /**  we are using enviornment variables to avoid hard coding passwords and personal information.
+     * Necessary Environment Variables for Mail sending
+     * SMTP_HOST is the address of Google's mail sending server
+     * 587 is the standard port used for mail sending (in SendEmail method)
+     */
     private static final String SMTP_HOST = "smtp.gmail.com";
     private static final String EMAIL_USER = System.getenv("EMAIL_USER");
     private static final String EMAIL_PASSWORD = System.getenv("EMAIL_PASSWORD");
 
+    /** Necessary Environment Variables for SMS sending using external service - TWILIO
+     * all TWILIO strings are our account's sensitive information
+     */
     public static final String TWILIO_ACCOUNT_SID = System.getenv("TWILIO_ACCOUNT_SID");
     public static final String TWILIO_AUTH_TOKEN = System.getenv("TWILIO_AUTH_TOKEN");
     public static final String TWILIO_NUMBER = System.getenv("TWILIO_NUMBER");
@@ -30,6 +38,7 @@ public class NotificationService
         prop.put("mail.smtp.port", "587");
         prop.put("mail.smtp.auth", "true");
         prop.put("mail.smtp.starttls.enable", "true");
+        //opening a line of communication with google's server
         Session session = Session.getInstance(prop, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {

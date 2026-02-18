@@ -131,7 +131,6 @@ public class PendingContentRequestRepository extends BaseRepository<PendingConte
                 // Mark as approved
                 pending.setStatus(RequestStatus.APPROVED);
                 pending.setProcessedAt(LocalDateTime.now());
-                //TODO implent the approver pending.setProcessedBy(approver);
                 session.merge(pending);
 
                 // If this was a DELETE, auto-deny all other OPEN requests for the same target

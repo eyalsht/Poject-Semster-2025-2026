@@ -17,7 +17,6 @@ public class GetUserSubscriptionsHandler implements RequestHandler {
             int userId = (Integer) request.getMessage();
             PurchaseRepository repo = PurchaseRepository.getInstance();
 
-            // Use native SQL to avoid loading full entities (which corrupts connection pool)
             List<Object[]> rows = repo.findActiveSubscriptionDTOsNative(userId);
             ArrayList<SubscriptionStatusDTO> result = new ArrayList<>();
 
