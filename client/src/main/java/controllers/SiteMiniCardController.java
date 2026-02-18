@@ -8,6 +8,7 @@ import javafx.scene.layout.VBox;
 public class SiteMiniCardController {
     @FXML private Label lblNumber;
     @FXML private Label lblSiteName;
+    @FXML private Label lblCity;
     @FXML private Label lblCategory;
     @FXML private Label lblDescription;
     @FXML private Label lblLocation;
@@ -29,6 +30,15 @@ public class SiteMiniCardController {
                 lblNumber.setManaged(false);
             }
             lblSiteName.setText(site.getName());
+            if (lblCity != null) {
+                String cityName = site.getCityName();
+                if (cityName != null && !cityName.isEmpty()) {
+                    lblCity.setText(cityName);
+                } else {
+                    lblCity.setVisible(false);
+                    lblCity.setManaged(false);
+                }
+            }
             lblCategory.setText(site.getCategory() != null ? site.getCategory().toString() : "");
             lblDescription.setText(site.getDescription() != null ? site.getDescription() : "");
             lblLocation.setText(site.getLocation() != null && !site.getLocation().isEmpty() ? site.getLocation() : "-");

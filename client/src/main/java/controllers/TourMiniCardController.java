@@ -11,13 +11,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 public class TourMiniCardController {
+    @FXML private VBox cardRoot;
     @FXML private Label lblTourName;
     @FXML private Label lblDuration;
     @FXML private Label lblDescription;
     @FXML private VBox detailsPane;
     @FXML private VBox vboxTourSites;
     @FXML private Label lblArrow;
-    // הגדרת המשתנה כחלק מהמחלקה כדי שכל המתודות יכירו אותו
+
+    private static final double COLLAPSED_WIDTH = 340;
+    private static final double EXPANDED_WIDTH = 700;
+
     private Tour currentTour;
     private boolean hasAccess = false;
 
@@ -26,7 +30,7 @@ public class TourMiniCardController {
     }
 
     public void setTourData(Tour tour) {
-        this.currentTour = tour; // שמירת האובייקט שהתקבל
+        this.currentTour = tour;
         if (tour != null) {
             lblTourName.setText(tour.getName());
             lblDuration.setText("Duration: " + tour.getRecommendedDuration());
@@ -47,6 +51,17 @@ public class TourMiniCardController {
 
             lblArrow.setText(isExpanded ? "▼" : "▶");
 
+            // Resize card: expanded takes full row, collapsed is compact
+            if (isExpanded) {
+                cardRoot.setPrefWidth(EXPANDED_WIDTH);
+                cardRoot.setMaxWidth(EXPANDED_WIDTH);
+                lblDescription.setMaxWidth(EXPANDED_WIDTH - 30);
+            } else {
+                cardRoot.setPrefWidth(COLLAPSED_WIDTH);
+                cardRoot.setMaxWidth(COLLAPSED_WIDTH);
+                lblDescription.setMaxWidth(COLLAPSED_WIDTH - 30);
+            }
+
             if (isExpanded && vboxTourSites.getChildren().isEmpty()) {
                 populateSites();
             }
@@ -60,7 +75,6 @@ public class TourMiniCardController {
     }
 
     private void populateSites() {
-        // כעת currentTour מוכר למחלקה והשגיאה תיעלם
         if (currentTour != null && currentTour.getSites() != null) {
             vboxTourSites.getChildren().clear();
             for (Site site : currentTour.getSites()) {
