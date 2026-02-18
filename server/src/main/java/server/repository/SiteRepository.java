@@ -1,6 +1,7 @@
 package server.repository;
 
 import common.content.Site;
+import common.enums.MapStatus;
 
 import java.util.List;
 
@@ -36,12 +37,15 @@ public class SiteRepository extends BaseRepository<Site, Integer>
             String pattern = "%" + searchQuery.toLowerCase() + "%";
             return session.createQuery(
                 "SELECT s FROM Site s JOIN FETCH s.city " +
-                "WHERE LOWER(s.name) LIKE :pattern " +
+                "WHERE s.city.priceSub > 0 " +
+                "AND EXISTS (SELECT 1 FROM GCMMap m WHERE m.city = s.city AND m.status != :extStatus AND m.price > 0 AND m.sites IS NOT EMPTY) " +
+                "AND (LOWER(s.name) LIKE :pattern " +
                 "   OR LOWER(s.description) LIKE :pattern " +
-                "   OR LOWER(s.location) LIKE :pattern " +
+                "   OR LOWER(s.location) LIKE :pattern) " +
                 "ORDER BY s.city.name, s.name",
                 Site.class)
                 .setParameter("pattern", pattern)
+                .setParameter("extStatus", MapStatus.EXTERNAL)
                 .getResultList();
         });
     }
