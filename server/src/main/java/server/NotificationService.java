@@ -88,7 +88,7 @@ public class NotificationService
         }
     }
 
-    public static void sendSubscriptionAlert(String email, String phone, String firstName, int days, String city)
+    public static void sendExpiringSubscriptionAlert(String email, String phone, String firstName, int days, String city)
     {
         String subject = "GCM Subscription Expiry Warning";
         String message = "Hello " + firstName + ",\n\n" +

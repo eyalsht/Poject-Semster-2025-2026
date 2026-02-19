@@ -21,8 +21,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static server.NotificationService.sendOneTimePurchaseAlert;
-import static server.NotificationService.sendSubscriptionAlert;
+import static server.NotificationService.*;
 
 
 /**
@@ -409,7 +408,7 @@ public class PurchaseRepository extends BaseRepository<Purchase, Integer> {
             String firstName = (String) row[2];
             String cityName = (String) row[3];
 
-            sendSubscriptionAlert(
+            sendExpiringSubscriptionAlert(
                     email,
                     phone,
                     firstName,
