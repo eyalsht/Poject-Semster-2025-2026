@@ -46,6 +46,9 @@ Report Generator for Admin use:
 
 <img width="1500" height="1030" alt="image" src="https://github.com/user-attachments/assets/a77af963-7dd1-49d6-a4c1-8264ae9d88fe" />
 
+© Global City Map – University of Haifa
+Academic project – not for commercial reuse
+No License / All Rights Reserved
 
 
 
