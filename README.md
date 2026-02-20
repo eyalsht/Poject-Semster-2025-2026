@@ -1,5 +1,5 @@
 # Project GCM Software Engenireing Semester 2025–2026
-Eyal Shtinmetz, Imree Cohen, Roni , Daneil Groshko, Renat Krimov, Guy Segal
+Eyal Shtinmetz, Imree Cohen, Roni , Daneil Groshko, Renat Karimov, Guy Segal
 
 A shared workspace for building and maintaining the GMC project Semester 2025–2026.
 
